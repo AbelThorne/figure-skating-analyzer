@@ -1,0 +1,284 @@
+{
+    "N2 - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT001RS.HTM"
+    },
+    "N2 - POUSSINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-POUSSINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - POUSSINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT002RS.HTM"
+    },
+    "N1 - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT003RS.HTM"
+    },
+    "N2 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT004RS.HTM"
+    },
+    "N1 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT005RS.HTM"
+    },
+    "N2 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT006RS.HTM"
+    },
+    "N1 - BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT007RS.HTM"
+    },
+    "N1 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-MINIMESMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT008RS.HTM"
+    },
+    "N1 - NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-NOVICESMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT009RS.HTM"
+    },
+    "N2 - BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT010RS.HTM"
+    },
+    "N1 - SENIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-SENIORSMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-SENIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - SENIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT011RS.HTM"
+    },
+    "N1 - JUINIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-JUINIORSMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-JUINIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - JUINIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT012RS.HTM"
+    },
+    "N2 - JUNIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-JUNIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - JUNIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT013RS.HTM"
+    },
+    "N1 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-MINIMESDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT014RS.HTM"
+    },
+    "N1 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-NOVICESDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT015RS.HTM"
+    },
+    "N1 - JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG023OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG023.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-JUNIORSDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG024.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT016RS.HTM"
+    },
+    "N1 - SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-SENIORSDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N1-SENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT017RS.HTM"
+    },
+    "N2 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/TDFNANTES2_N2-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C9_Nantes_RESULTS/CAT018RS.HTM"
+    }
+}

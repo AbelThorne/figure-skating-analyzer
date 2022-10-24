@@ -1,0 +1,431 @@
+{
+    "Cat D Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG001OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG001.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatDPoussinFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat D Poussin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT001EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT001RS.HTM"
+    },
+    "Cat C Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG002OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG002.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatCPoussinFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat C Poussin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT002EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT002RS.HTM"
+    },
+    "Cat C Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG003OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG003.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatCBenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat C Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT003EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT003RS.HTM"
+    },
+    "Cat C Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG004OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG004.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatCMinimeFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat C Minime Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT004EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT004RS.HTM"
+    },
+    "Cat B Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG005OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG005.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatBBenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat B Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT005EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT005RS.HTM"
+    },
+    "Cat B Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG006OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG006.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatBMinimeFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat B Minime Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT006EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT006RS.HTM"
+    },
+    "Cat A Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG007OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG007.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatABenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat A Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT007EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT007RS.HTM"
+    },
+    "Cat A Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG008OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG008.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatAMinimeFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat A Minime Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT008EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT008RS.HTM"
+    },
+    "Cat BN Minime/Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG009OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG009.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatBNMinimeNoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat BN Minime/Novice Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT009EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT009RS.HTM"
+    },
+    "Cat BN Junior/Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG010OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG010.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatBNJuniorSeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat BN Junior/Senior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT010EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT010RS.HTM"
+    },
+    "Cat BN Junior/Senior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG011OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG011.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatBNJuniorSeniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat BN Junior/Senior Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT011EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT011RS.HTM"
+    },
+    "Cat IN Junior/Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG012OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG012.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatINJuniorSeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat IN Junior/Senior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT012EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT012RS.HTM"
+    },
+    "Cat F2 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG013OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG013.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF2BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F2 Benjamin Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT013EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT013RS.HTM"
+    },
+    "Cat F2 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG014OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG014.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF2MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F2 Minime Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT014EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT014RS.HTM"
+    },
+    "Cat F2 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG015OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG015.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF2NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F2 Novice Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT015EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT015RS.HTM"
+    },
+    "Cat F2 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG016OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG016.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF2JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F2 Junior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT016EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT016RS.HTM"
+    },
+    "Cat F1 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG017OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG017.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Benjamin Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT017EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT017RS.HTM"
+    },
+    "Cat F1 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG018OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG018.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Benjamin Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT018EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT018RS.HTM"
+    },
+    "Cat F1 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG019OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG019.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Minime Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT019EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT019RS.HTM"
+    },
+    "Cat F1 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG020OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG020.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Novice Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT020EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT020RS.HTM"
+    },
+    "Cat F1 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG021OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG021.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Novice Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT021EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT021RS.HTM"
+    },
+    "Cat F1 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG022OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG022.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Junior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT022EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT022RS.HTM"
+    },
+    "Cat F1 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG023OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG023.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatF1JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat F1 Junior Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT023EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT023RS.HTM"
+    },
+    "Cat N2 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG024OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG024.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2PoussinDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Poussin Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT024EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT024RS.HTM"
+    },
+    "Cat N2 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG025OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG025.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Benjamin Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT025EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT025RS.HTM"
+    },
+    "Cat N2 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG026OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG026.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Novice Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT026EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT026RS.HTM"
+    },
+    "Cat N2 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG027OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG027.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Novice Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT027EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT027RS.HTM"
+    },
+    "Cat N2 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG028OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG028.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Junior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT028EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT028RS.HTM"
+    },
+    "Cat N2 Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG029OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG029.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Senior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT029EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT029RS.HTM"
+    },
+    "Cat N2 Senior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG030OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG030.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN2SeniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N2 Senior Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT030EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT030RS.HTM"
+    },
+    "Cat N1 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG031OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG031.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN1NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N1 Novice Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT031EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT031RS.HTM"
+    },
+    "Cat N1 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG032OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG032.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN1JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N1 Junior Messieurs",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT032EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT032RS.HTM"
+    },
+    "Cat N1 Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG033OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SEG033.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/SFCSO-22_CatN1SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat N1 Senior Dames",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT033EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-SFC-SO-2022-TCP/CAT033RS.HTM"
+    }
+}

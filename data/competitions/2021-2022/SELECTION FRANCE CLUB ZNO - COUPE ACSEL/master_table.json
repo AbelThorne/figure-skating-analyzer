@@ -1,0 +1,782 @@
+{
+    "D3 - BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT001RS.HTM"
+    },
+    "D3 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT002RS.HTM"
+    },
+    "D3 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT003RS.HTM"
+    },
+    "D3 - NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT004RS.HTM"
+    },
+    "D3 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT005RS.HTM"
+    },
+    "D3 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT006RS.HTM"
+    },
+    "D3 - JUNIORS/SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-JUNIORSSENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - JUNIORS/SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT007RS.HTM"
+    },
+    "D3 - JUNIORS/SENIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D3-JUNIORSSENIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 - JUNIORS/SENIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT008RS.HTM"
+    },
+    "D2 - JUNIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-JUNIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - JUNIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT009RS.HTM"
+    },
+    "D2 - JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT010RS.HTM"
+    },
+    "D2 - SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-SENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT011RS.HTM"
+    },
+    "D2 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT012RS.HTM"
+    },
+    "D2 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT013RS.HTM"
+    },
+    "D2 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT014RS.HTM"
+    },
+    "D2 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT015RS.HTM"
+    },
+    "D2 - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D2-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT016RS.HTM"
+    },
+    "D1 - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT017RS.HTM"
+    },
+    "D1 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT018RS.HTM"
+    },
+    "D1 - BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT019RS.HTM"
+    },
+    "D1 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT020RS.HTM"
+    },
+    "D1 - NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT021EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT021RS.HTM"
+    },
+    "D1 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT022EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT022RS.HTM"
+    },
+    "D1 - JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG023OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG023.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT023EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT023RS.HTM"
+    },
+    "D1 - JUNIOR COUPLE": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG024.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_D1-JUNIORCOUPLE_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 - JUNIOR COUPLE",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT024EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT024RS.HTM"
+    },
+    "R2 - NOVICES/JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R2-NOVICESJUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "R2 - NOVICES/JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT025EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT025RS.HTM"
+    },
+    "R2 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R2-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "R2 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT026EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT026RS.HTM"
+    },
+    "F2 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F2-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT027EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT027RS.HTM"
+    },
+    "F2 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F2-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT028EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT028RS.HTM"
+    },
+    "R1 - JUNIORS/SENIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-JUNIORSSENIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - JUNIORS/SENIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT030EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT030RS.HTM"
+    },
+    "R1 - JUNIORS/SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG031OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG031.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-JUNIORSSENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - JUNIORS/SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT031EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT031RS.HTM"
+    },
+    "F2 - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG032OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG032.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F2-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT032EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT032RS.HTM"
+    },
+    "F2 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG034OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG034.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F2-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT034EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT034RS.HTM"
+    },
+    "ADULTES ETAIN DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG035OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG035.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_ADULTESETAINDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "ADULTES ETAIN DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT035EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT035RS.HTM"
+    },
+    "ADULTES ACIER DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG064OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG064.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_ADULTESACIERDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "ADULTES ACIER DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT036EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT036RS.HTM"
+    },
+    "ADULTES BRONZE DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG036OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG036.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_ADULTESBRONZEDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "ADULTES BRONZE DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT037EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT037RS.HTM"
+    },
+    "ADULTES ARGENT DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG037OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG037.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_ADULTESARGENTDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "ADULTES ARGENT DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT038EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT038RS.HTM"
+    },
+    "SCD - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG039OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG039.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCD-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCD - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT040EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT040RS.HTM"
+    },
+    "SCD - BAMBIS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG040OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG040.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCD-BAMBISDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCD - BAMBIS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT041EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT041RS.HTM"
+    },
+    "SCD - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG041OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG041.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCD-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCD - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT042EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT042RS.HTM"
+    },
+    "SCD - BAMBIS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG042OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG042.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCD-BAMBISMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCD - BAMBIS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT043EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT043RS.HTM"
+    },
+    "SCD - POUSSINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG043OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG043.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCD-POUSSINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCD - POUSSINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT044EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT044RS.HTM"
+    },
+    "SCC -  BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG044OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG044.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCC-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCC -  BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT045EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT045RS.HTM"
+    },
+    "SCC - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG045OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG045.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCC-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCC - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT046EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT046RS.HTM"
+    },
+    "SCC - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG046OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG046.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCC-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCC - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT047EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT047RS.HTM"
+    },
+    "SCB - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG047OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG047.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCB-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCB - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT048EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT048RS.HTM"
+    },
+    "SCB - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG048OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG048.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCB-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCB - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT049EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT049RS.HTM"
+    },
+    "SCB - BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG063OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG063.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCB-BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCB - BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT050EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT050RS.HTM"
+    },
+    "SCA - POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG049OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG049.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCA-POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCA - POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT051EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT051RS.HTM"
+    },
+    "SCA - BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG050OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG050.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_SCA-BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "SCA - BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT052EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT052RS.HTM"
+    },
+    "R1 - MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG051OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG051.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT053EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT053RS.HTM"
+    },
+    "R1 - NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG052OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG052.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT054EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT054RS.HTM"
+    },
+    "R1 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG053OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG053.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT055EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT055RS.HTM"
+    },
+    "R1 - NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG054OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG054.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_R1-NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "R1 - NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT056EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT056RS.HTM"
+    },
+    "N2 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG055OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG055.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_N2-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT057EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT057RS.HTM"
+    },
+    "F1 - JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG056OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG056.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F1-JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 - JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT058EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT058RS.HTM"
+    },
+    "OPEN SOCLE COMMUN A": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG057OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG057.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_OPENSOCLECOMMUNA_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN SOCLE COMMUN A",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT059EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT059RS.HTM"
+    },
+    "OPEN NOVICE BASIC DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG058OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG058.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_OPENNOVICEBASICDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE BASIC DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT060EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT060RS.HTM"
+    },
+    "OPEN NOVICE INTERMEDIAIRE": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG059OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG059.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_OPENNOVICEINTERMEDIAIRE_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE INTERMEDIAIRE",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT061EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT061RS.HTM"
+    },
+    "F2 - JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG060OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG060.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F2-JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 - JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT062EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT062RS.HTM"
+    },
+    "F1 - MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG061OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/SEG061.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAENSFC202_F1-MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 - MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT063EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-NO_2022_CAEN_RESULTS/CAT063RS.HTM"
+    }
+}

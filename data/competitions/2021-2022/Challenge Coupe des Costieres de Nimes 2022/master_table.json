@@ -1,0 +1,218 @@
+{
+    "Challenge 1 Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG001OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG001.HTM"
+            }
+        ],
+        "name": "Challenge 1 Poussin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT001EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT001RS.HTM"
+    },
+    "Challenge 1 Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG002OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG002.HTM"
+            }
+        ],
+        "name": "Challenge 1 Benjamin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT002EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT002RS.HTM"
+    },
+    "Challenge 1 Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG003OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG003.HTM"
+            }
+        ],
+        "name": "Challenge 1 Minime Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT003EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT003RS.HTM"
+    },
+    "Challenge 2 Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG004OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG004.HTM"
+            }
+        ],
+        "name": "Challenge 2 Poussin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT004EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT004RS.HTM"
+    },
+    "Challenge 2 Poussin Garcons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG005OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG005.HTM"
+            }
+        ],
+        "name": "Challenge 2 Poussin Garcons",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT005EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT005RS.HTM"
+    },
+    "Challenge 2 Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG006OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG006.HTM"
+            }
+        ],
+        "name": "Challenge 2 Benjamin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT006EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT006RS.HTM"
+    },
+    "Challenge 2 Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG007OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG007.HTM"
+            }
+        ],
+        "name": "Challenge 2 Minime Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT007EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT007RS.HTM"
+    },
+    "Challenge 2 Minime Garcons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG008OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG008.HTM"
+            }
+        ],
+        "name": "Challenge 2 Minime Garcons",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT008EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT008RS.HTM"
+    },
+    "Challenge 3 Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG009OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG009.HTM"
+            }
+        ],
+        "name": "Challenge 3 Poussin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT009EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT009RS.HTM"
+    },
+    "Challenge 3 Poussin Garcons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG010OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG010.HTM"
+            }
+        ],
+        "name": "Challenge 3 Poussin Garcons",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT010EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT010RS.HTM"
+    },
+    "Challenge 3 Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG011OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG011.HTM"
+            }
+        ],
+        "name": "Challenge 3 Minime Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT011EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT011RS.HTM"
+    },
+    "Challenge 4 Poussin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG012OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG012.HTM"
+            }
+        ],
+        "name": "Challenge 4 Poussin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT012EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT012RS.HTM"
+    },
+    "Challenge 4 Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG013OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG013.HTM"
+            }
+        ],
+        "name": "Challenge 4 Benjamin Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT013EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT013RS.HTM"
+    },
+    "Challenge 4 Minime Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG014OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG014.HTM"
+            }
+        ],
+        "name": "Challenge 4 Minime Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT014EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT014RS.HTM"
+    },
+    "Challenge 4 Junior Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG015OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG015.HTM"
+            }
+        ],
+        "name": "Challenge 4 Junior Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT015EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT015RS.HTM"
+    },
+    "Cat\u00e9gorie Duo": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG016OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG016.HTM"
+            }
+        ],
+        "name": "Cat\u00e9gorie Duo",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT016EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT016RS.HTM"
+    },
+    "Cat\u00e9gorie Adulte Acier Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG017OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG017.HTM"
+            }
+        ],
+        "name": "Cat\u00e9gorie Adulte Acier Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT017EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT017RS.HTM"
+    },
+    "Cat\u00e9gorie Adulte Argent Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG018OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/SEG018.HTM"
+            }
+        ],
+        "name": "Cat\u00e9gorie Adulte Argent Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT018EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Challenge-Nimes-2022/CAT018RS.HTM"
+    }
+}

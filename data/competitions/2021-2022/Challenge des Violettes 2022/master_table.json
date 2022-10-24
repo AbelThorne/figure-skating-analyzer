@@ -1,0 +1,67 @@
+{
+    "Cat 1 Poussin/Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG001OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG001.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CHGTCP22_Cat1PoussinBenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat 1 Poussin/Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT001EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT001RS.HTM"
+    },
+    "Cat 1 Poussin/Benjamin Garcons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG002OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG002.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CHGTCP22_Cat1PoussinBenjaminGarcons_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat 1 Poussin/Benjamin Garcons",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT002EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT002RS.HTM"
+    },
+    "Cat 2 Poussin/Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG003OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG003.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CHGTCP22_Cat2PoussinBenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat 2 Poussin/Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT003EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT003RS.HTM"
+    },
+    "Cat 2 Minime/Novice Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG004OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG004.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CHGTCP22_Cat2MinimeNoviceFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat 2 Minime/Novice Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT004EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT004RS.HTM"
+    },
+    "Cat 3 Poussin/Benjamin Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG005OF.HTM",
+                "details_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/SEG005.HTM",
+                "scores_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CHGTCP22_Cat3PoussinBenjaminFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "Cat 3 Poussin/Benjamin Filles",
+        "entries_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT005EN.HTM",
+        "results_link": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/CAT005RS.HTM"
+    }
+}

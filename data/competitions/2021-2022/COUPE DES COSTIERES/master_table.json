@@ -1,0 +1,392 @@
+{
+    "CAT A Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG001OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG001.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATAMinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT001EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT001RS.HTM"
+    },
+    "CAT A Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG002OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG002.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATANovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT002EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT002RS.HTM"
+    },
+    "CAT B Benjamines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG003OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG003.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATBBenjaminesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B Benjamines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT003EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT003RS.HTM"
+    },
+    "CAT B Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG004OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG004.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATBMinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT004EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT004RS.HTM"
+    },
+    "CAT B Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG005OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG005.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATBNovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT005EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT005RS.HTM"
+    },
+    "CAT B Juniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG006OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG006.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATBJuniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B Juniors Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT006EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT006RS.HTM"
+    },
+    "CAT C Benjamines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG007OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG007.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATCBenjaminesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C Benjamines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT007EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT007RS.HTM"
+    },
+    "CAT C Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG008OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG008.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATCMinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT008EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT008RS.HTM"
+    },
+    "CAT C Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG009OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG009.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATCNovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT009EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT009RS.HTM"
+    },
+    "CAT C Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG010OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG010.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATCNovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C Novices Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT010EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT010RS.HTM"
+    },
+    "CAT D Poussines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG011OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG011.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CATDPoussinesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT D Poussines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT011EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT011RS.HTM"
+    },
+    "BASIC NOVICE Minimes Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG012OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG012.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/BASICNOVICEMinimesNovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE Minimes Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT012EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT012RS.HTM"
+    },
+    "BASIC NOVICE Minimes Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG013OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG013.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/BASICNOVICEMinimesNovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE Minimes Novices Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT013EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT013RS.HTM"
+    },
+    "BASIC NOVICE  Juniors Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG014OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG014.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/BASICNOVICEJuniorsSeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE  Juniors Seniors Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT014EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT014RS.HTM"
+    },
+    "INTERMEDIAIRE Juniors Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG015OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG015.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/INTERMEDIAIREJuniorsSeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIAIRE Juniors Seniors Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT015EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT015RS.HTM"
+    },
+    "INTERMEDIAIRE Juniors Seniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG016OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG016.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/INTERMEDIAIREJuniorsSeniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIAIRE Juniors Seniors Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT016EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT016RS.HTM"
+    },
+    "FEDERAL 2 Benjamines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG017OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG017.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL2BenjaminesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 2 Benjamines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT017EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT017RS.HTM"
+    },
+    "FEDERAL 2 Benjamins Gar\u00e7ons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG018OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG018.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL2BenjaminsGarons_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 2 Benjamins Gar\u00e7ons",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT018EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT018RS.HTM"
+    },
+    "FEDERAL 2 Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG019OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG019.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL2MinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 2 Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT019EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT019RS.HTM"
+    },
+    "FEDERAL 2 Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG020OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG020.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL2NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 2 Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT020EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT020RS.HTM"
+    },
+    "FEDERAL 1 Benjamines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG021OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG021.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1BenjaminesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Benjamines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT021EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT021RS.HTM"
+    },
+    "FEDERAL 1 Benjamins Gar\u00e7ons": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG022OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG022.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1BenjaminsGarons_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Benjamins Gar\u00e7ons",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT022EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT022RS.HTM"
+    },
+    "FEDERAL 1 Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG023OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG023.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1MinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT023EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT023RS.HTM"
+    },
+    "FEDERAL 1 Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG024OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG024.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT024EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT024RS.HTM"
+    },
+    "FEDERAL 1 Novices Messsieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG025OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG025.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1NovicesMesssieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Novices Messsieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT025EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT025RS.HTM"
+    },
+    "FEDERAL 1 Juniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG026OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG026.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/FEDERAL1JuniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "FEDERAL 1 Juniors Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT026EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT026RS.HTM"
+    },
+    "N2 Poussines Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG027OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG027.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/N2PoussinesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Poussines Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT027EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT027RS.HTM"
+    },
+    "N2 Minimes Filles": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG028OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG028.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/N2MinimesFilles_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Minimes Filles",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT028EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT028RS.HTM"
+    },
+    "N2 Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG029OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG029.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/N2NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novices Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT029EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT029RS.HTM"
+    },
+    "N2 Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG030OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/SEG030.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/N2NovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novices Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT030EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/Regional-Nimes-2022/CAT030RS.HTM"
+    }
+}

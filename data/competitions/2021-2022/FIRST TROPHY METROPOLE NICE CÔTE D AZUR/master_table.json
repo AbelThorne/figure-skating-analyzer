@@ -1,0 +1,135 @@
+{
+    "JUNIORS WOMEN": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSWOMEN_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSWOMEN_FS_Scores.pdf"
+            }
+        ],
+        "name": "JUNIORS WOMEN",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT001RS.HTM"
+    },
+    "JUNIORS MEN": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSMEN_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSMEN_FS_Scores.pdf"
+            }
+        ],
+        "name": "JUNIORS MEN",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT002RS.HTM"
+    },
+    "JUNIORS PAIRS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSPAIRS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSPAIRS_FS_Scores.pdf"
+            }
+        ],
+        "name": "JUNIORS PAIRS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT003RS.HTM"
+    },
+    "JUNIORS DANCE": {
+        "segments": [
+            {
+                "name": "Rhythm Dance",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSDANCE_RD_Scores.pdf"
+            },
+            {
+                "name": "Free Dance",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_JUNIORSDANCE_FD_Scores.pdf"
+            }
+        ],
+        "name": "JUNIORS DANCE",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT004RS.HTM"
+    },
+    "SENIORS WOMEN": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSWOMEN_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSWOMEN_FS_Scores.pdf"
+            }
+        ],
+        "name": "SENIORS WOMEN",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT005RS.HTM"
+    },
+    "SENIORS MEN": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSMEN_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSMEN_FS_Scores.pdf"
+            }
+        ],
+        "name": "SENIORS MEN",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT006RS.HTM"
+    },
+    "SENIORS PAIRS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSPAIRS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/TMNCA21_SENIORSPAIRS_FS_Scores.pdf"
+            }
+        ],
+        "name": "SENIORS PAIRS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CupOfNice_2021_RESULTS/CAT007RS.HTM"
+    }
+}

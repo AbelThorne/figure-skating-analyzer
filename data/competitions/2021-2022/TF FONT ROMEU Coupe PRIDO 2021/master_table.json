@@ -1,0 +1,496 @@
+{
+    "N1 SENIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG001OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG001.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/N1SENIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 SENIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT001EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT001RS.HTM"
+    },
+    "N2 MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG005OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG005.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/N2MINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT002EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT002RS.HTM"
+    },
+    "N2 NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG004OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG004.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/N2NOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT003EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT003RS.HTM"
+    },
+    "F1 BENJAMINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG036OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG036.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1BENJAMINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 BENJAMINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT004EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT004RS.HTM"
+    },
+    "F1 MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG012OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG012.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1MINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT005EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT005RS.HTM"
+    },
+    "F1 NOVICES Dame": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG011OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG011.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1NOVICESDame_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 NOVICES Dame",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT006EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT006RS.HTM"
+    },
+    "F1 NOVICES Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG010OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG010.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1NOVICESMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 NOVICES Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT007EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT007RS.HTM"
+    },
+    "F1 JUNIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG003OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG003.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1JUNIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 JUNIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT008EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT008RS.HTM"
+    },
+    "F1 SENIORS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG002OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG002.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F1SENIORSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 SENIORS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT009EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT009RS.HTM"
+    },
+    "F2 BENJAMINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG037OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG037.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2BENJAMINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 BENJAMINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT010EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT010RS.HTM"
+    },
+    "F2 BENJAMINS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG039OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG039.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2BENJAMINSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 BENJAMINS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT011EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT011RS.HTM"
+    },
+    "F2 MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG014OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG014.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2MINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT012EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT012RS.HTM"
+    },
+    "F2 NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG013OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG013.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2NOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT013EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT013RS.HTM"
+    },
+    "F2 JUNIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG007OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG007.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2JUNIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 JUNIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT014EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT014RS.HTM"
+    },
+    "F2 JUNIORS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG009OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG009.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/F2JUNIORSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 JUNIORS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT015EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT015RS.HTM"
+    },
+    "INTERMEDIAIRE JUNIORS/SENIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG006OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG006.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/INTERMEDIAIREJUNIORSSENIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIAIRE JUNIORS/SENIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT016EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT016RS.HTM"
+    },
+    "INTERMEDIAIRE JUNIORS/SENIORS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG008OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG008.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/INTERMEDIAIREJUNIORSSENIORSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIAIRE JUNIORS/SENIORS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT017EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT017RS.HTM"
+    },
+    "BASIC NOVICE MINIMES/NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG038OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG038.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/BASICNOVICEMINIMESNOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE MINIMES/NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT018EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT018RS.HTM"
+    },
+    "BASIC NOVICE MINIMES/NOVICES Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG016OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG016.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/BASICNOVICEMINIMESNOVICESMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE MINIMES/NOVICES Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT019EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT019RS.HTM"
+    },
+    "BASIC NOVICE JUNIORS/SENIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG015OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG015.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/BASICNOVICEJUNIORSSENIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE JUNIORS/SENIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT020EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT020RS.HTM"
+    },
+    "BASIC NOVICE JUNIORS/SENIORS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG017OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG017.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/BASICNOVICEJUNIORSSENIORSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE JUNIORS/SENIORS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT021EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT021RS.HTM"
+    },
+    "CATEGORIE A POUSSINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG031OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG031.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAPOUSSINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A POUSSINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT022EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT022RS.HTM"
+    },
+    "CATEGORIE A BENJAMINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG032OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG032.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEABENJAMINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A BENJAMINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT023EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT023RS.HTM"
+    },
+    "CATEGORIE A BENJAMINS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG034OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG034.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEABENJAMINSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A BENJAMINS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT024EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT024RS.HTM"
+    },
+    "CATEGORIE A MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG027OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG027.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAMINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT025EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT025RS.HTM"
+    },
+    "CATEGORIE A NOVICE Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG028OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG028.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEANOVICEDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A NOVICE Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT026EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT026RS.HTM"
+    },
+    "CATEGORIE A OPEN MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG020OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG020.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAOPENMINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A OPEN MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT027EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT027RS.HTM"
+    },
+    "CATEGORIE A OPEN MINIMES Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG035OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG035.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAOPENMINIMESMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A OPEN MINIMES Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT028EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT028RS.HTM"
+    },
+    "CATEGORIE A OPEN NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG018OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG018.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAOPENNOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A OPEN NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT029EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT029RS.HTM"
+    },
+    "CATEGORIE A MODIFIE MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG026OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG026.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAMODIFIEMINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A MODIFIE MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT030EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT030RS.HTM"
+    },
+    "CATEGORIE A MODIFIE NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG025OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG025.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAMODIFIENOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A MODIFIE NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT031EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT031RS.HTM"
+    },
+    "CATEGORIE A MODIFIE JUNIORS/SENIORS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG024OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG024.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEAMODIFIEJUNIORSSENIORSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE A MODIFIE JUNIORS/SENIORS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT032EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT032RS.HTM"
+    },
+    "CATEGORIE B POUSSINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG021OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG021.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEBPOUSSINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE B POUSSINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT033EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT033RS.HTM"
+    },
+    "CATEGORIE B BENJAMINS Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG033OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG033.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEBBENJAMINSDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE B BENJAMINS Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT034EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT034RS.HTM"
+    },
+    "CATEGORIE B MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG029OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG029.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEBMINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE B MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT035EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT035RS.HTM"
+    },
+    "CATEGORIE B NOVICES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG030OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG030.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEBNOVICESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE B NOVICES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT036EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT036RS.HTM"
+    },
+    "CATEGORIE OPEN B MINIMES Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG019OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG019.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIEOPENBMINIMESDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE OPEN B MINIMES Dames",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT037EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT037RS.HTM"
+    },
+    "CATEGORIE C BENJAMINS Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG022OF.HTM",
+                "details_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/SEG022.HTM",
+                "scores_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CATEGORIECBENJAMINSMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE C BENJAMINS Messieurs",
+        "entries_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT038EN.HTM",
+        "results_link": "http://isujs.so.free.fr/Resultats/Resultats-2021-2022/TF-Font-Romeu-2021/CAT038RS.HTM"
+    }
+}

@@ -1,0 +1,67 @@
+{
+    "CATEGORIE 1 POUSSIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG001OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG001.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CATEGORIE1POUSSINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE 1 POUSSIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT001EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT001RS.HTM"
+    },
+    "CATEGORIE 1 POUSSIN GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG002OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG002.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CATEGORIE1POUSSINGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE 1 POUSSIN GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT002EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT002RS.HTM"
+    },
+    "CATEGORIE 2 POUSSIN GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG003OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG003.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CATEGORIE2POUSSINGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE 2 POUSSIN GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT003EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT003RS.HTM"
+    },
+    "CATEGORIE 2 POUSSIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG004OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG004.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CATEGORIE2POUSSINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE 2 POUSSIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT004EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT004RS.HTM"
+    },
+    "CATEGORIE 2 MINIMES FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG005OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/SEG005.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CATEGORIE2MINIMESFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CATEGORIE 2 MINIMES FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT005EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/CAT005RS.HTM"
+    }
+}

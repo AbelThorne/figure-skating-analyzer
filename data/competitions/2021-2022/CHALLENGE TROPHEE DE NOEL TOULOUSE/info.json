@@ -1,0 +1,10 @@
+{
+    "url": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-Challenge/",
+    "competition": "CHALLENGE TROPHEE DE NOEL TOULOUSE",
+    "type": "Challenge",
+    "start": "2021-11-12",
+    "end": "2021-12-12",
+    "location": "TOULOUSE",
+    "rink_name": "PATINOIRE ALEX JANY",
+    "scores_dir": "scores"
+}

@@ -1,0 +1,247 @@
+{
+    "N2 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2PoussinDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Poussin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT001RS.HTM"
+    },
+    "N2 Poussin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2PoussinMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Poussin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT002RS.HTM"
+    },
+    "N2 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT003RS.HTM"
+    },
+    "N2 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT004RS.HTM"
+    },
+    "N2 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT005RS.HTM"
+    },
+    "N2 Minime Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2MinimeMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Minime Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT006RS.HTM"
+    },
+    "N2 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT007RS.HTM"
+    },
+    "N2 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novice Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT008RS.HTM"
+    },
+    "N2 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT009RS.HTM"
+    },
+    "N2 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT010RS.HTM"
+    },
+    "N2 Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N2SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Senior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT011RS.HTM"
+    },
+    "N1 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT012RS.HTM"
+    },
+    "N1 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT013RS.HTM"
+    },
+    "N1 Minime Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1MinimeDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT014RS.HTM"
+    },
+    "N1 Novice Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1NoviceDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT015RS.HTM"
+    },
+    "N1 Junior Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1JuniorDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT016RS.HTM"
+    },
+    "N1 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1JuniorMessieurs_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/N1JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C7_Bercy_RESULTS/CAT017RS.HTM"
+    }
+}

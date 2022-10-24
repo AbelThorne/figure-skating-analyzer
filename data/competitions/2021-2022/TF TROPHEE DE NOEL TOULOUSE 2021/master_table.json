@@ -1,0 +1,496 @@
+{
+    "CAT A POUSSIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG001OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG001.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAPOUSSINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A POUSSIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT001EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT001RS.HTM"
+    },
+    "CAT A BENJAMIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG002OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG002.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATABENJAMINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A BENJAMIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT002EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT002RS.HTM"
+    },
+    "CAT A MODIFIE MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG006OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG006.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAMODIFIEMINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A MODIFIE MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT006EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT006RS.HTM"
+    },
+    "CAT A MODIFIE NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG007OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG007.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAMODIFIENOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A MODIFIE NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT007EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT007RS.HTM"
+    },
+    "CAT A MODIFIE JUNIOR/SENIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG008OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG008.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAMODIFIEJUNIORSENIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A MODIFIE JUNIOR/SENIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT008EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT008RS.HTM"
+    },
+    "CAT B BENJAMIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG009OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG009.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATBBENJAMINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B BENJAMIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT009EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT009RS.HTM"
+    },
+    "CAT C POUSSIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG011OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG011.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATCPOUSSINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C POUSSIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT011EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT011RS.HTM"
+    },
+    "CAT C BENJAMIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG012OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG012.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATCBENJAMINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C BENJAMIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT012EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT012RS.HTM"
+    },
+    "CAT C MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG013OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG013.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATCMINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT C MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT013EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT013RS.HTM"
+    },
+    "BASIC NOVICE MINIME/NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG014OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG014.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/BASICNOVICEMINIMENOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE MINIME/NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT014EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT014RS.HTM"
+    },
+    "BASIC NOVICE MINIME/NOVICE GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG015OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG015.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/BASICNOVICEMINIMENOVICEGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE MINIME/NOVICE GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT015EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT015RS.HTM"
+    },
+    "BASIC NOVICE JUNIOR/SENIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG016OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG016.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/BASICNOVICEJUNIORSENIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE JUNIOR/SENIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT016EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT016RS.HTM"
+    },
+    "BASIC NOVICE JUNIOR/SENIOR GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG017OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG017.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/BASICNOVICEJUNIORSENIORGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "BASIC NOVICE JUNIOR/SENIOR GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT017EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT017RS.HTM"
+    },
+    "F2 BENJAMIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG018OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG018.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F2BENJAMINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 BENJAMIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT018EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT018RS.HTM"
+    },
+    "F2 BENJAMIN GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG019OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG019.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F2BENJAMINGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 BENJAMIN GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT019EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT019RS.HTM"
+    },
+    "F2 MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG020OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG020.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F2MINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT020EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT020RS.HTM"
+    },
+    "F2 NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG021OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG021.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F2NOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT021EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT021RS.HTM"
+    },
+    "F2 JUNIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG025OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG025.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F2JUNIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F2 JUNIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT023EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT023RS.HTM"
+    },
+    "F1 BENJAMIN FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG023OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG023.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1BENJAMINFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 BENJAMIN FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT024EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT024RS.HTM"
+    },
+    "F1 BENJAMIN GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG024OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG024.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1BENJAMINGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 BENJAMIN GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT025EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT025RS.HTM"
+    },
+    "F1 MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG026OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG026.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1MINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT026EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT026RS.HTM"
+    },
+    "F1 NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG027OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG027.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1NOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT027EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT027RS.HTM"
+    },
+    "F1 NOVICE GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG028OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG028.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1NOVICEGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 NOVICE GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT028EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT028RS.HTM"
+    },
+    "F1 JUNIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG029OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG029.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1JUNIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 JUNIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT029EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT029RS.HTM"
+    },
+    "F1 JUNIOR GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG030OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG030.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/F1JUNIORGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "F1 JUNIOR GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT030EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT030RS.HTM"
+    },
+    "INTERMEDIARE JUNIOR/SENIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG031OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG031.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/INTERMEDIAREJUNIORSENIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIARE JUNIOR/SENIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT031EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT031RS.HTM"
+    },
+    "INTERMEDIARE JUNIOR/SENIOR GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG032OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG032.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/INTERMEDIAREJUNIORSENIORGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "INTERMEDIARE JUNIOR/SENIOR GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT032EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT032RS.HTM"
+    },
+    "CAT A OPEN MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG033OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG033.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAOPENMINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A OPEN MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT033EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT033RS.HTM"
+    },
+    "CAT A OPEN NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG034OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG034.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATAOPENNOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT A OPEN NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT034EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT034RS.HTM"
+    },
+    "CAT B OPEN MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG035OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG035.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATBOPENMINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B OPEN MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT035EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT035RS.HTM"
+    },
+    "CAT B OPEN NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG036OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG036.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATBOPENNOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B OPEN NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT036EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT036RS.HTM"
+    },
+    "CAT B OPEN JUNIOR/SENIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG037OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG037.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CATBOPENJUNIORSENIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "CAT B OPEN JUNIOR/SENIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT037EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT037RS.HTM"
+    },
+    "N2 MINIME FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG038OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG038.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N2MINIMEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 MINIME FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT038EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT038RS.HTM"
+    },
+    "N2 NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG039OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG039.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N2NOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT039EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT039RS.HTM"
+    },
+    "N2 NOVICE GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG040OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG040.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N2NOVICEGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICE GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT040EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT040RS.HTM"
+    },
+    "N2 SENIOR FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG041OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG041.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N2SENIORFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 SENIOR FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT041EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT041RS.HTM"
+    },
+    "N2 SENIOR GARCONS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG042OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG042.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N2SENIORGARCONS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 SENIOR GARCONS",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT042EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT042RS.HTM"
+    },
+    "N1 NOVICE FILLES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG043OF.HTM",
+                "details_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/SEG043.HTM",
+                "scores_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/N1NOVICEFILLES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 NOVICE FILLES",
+        "entries_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT043EN.HTM",
+        "results_link": "http://www.toulouseclubpatinage.com/Divers/html-TCP-2021-TF/CAT043RS.HTM"
+    }
+}

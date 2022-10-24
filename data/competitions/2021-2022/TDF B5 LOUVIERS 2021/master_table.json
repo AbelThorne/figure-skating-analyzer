@@ -1,0 +1,420 @@
+{
+    "N2 MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT001RS.HTM"
+    },
+    "N2 POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT002RS.HTM"
+    },
+    "N2 POUSSINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2POUSSINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 POUSSINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT003RS.HTM"
+    },
+    "N2 BENJAMINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2BENJAMINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 BENJAMINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT004RS.HTM"
+    },
+    "N1 POUSSINS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1POUSSINSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 POUSSINS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT005RS.HTM"
+    },
+    "N1 POUSSINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1POUSSINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 POUSSINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT006RS.HTM"
+    },
+    "N2 BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT007RS.HTM"
+    },
+    "N1 BENJAMINS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1BENJAMINSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 BENJAMINS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT008RS.HTM"
+    },
+    "N2 NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT009RS.HTM"
+    },
+    "N1 MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1MINIMESMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT010RS.HTM"
+    },
+    "N1 NOVICES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1NOVICESMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1NOVICESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 NOVICES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT011RS.HTM"
+    },
+    "N1 MINIMES DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1MINIMESDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1MINIMESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 MINIMES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT012RS.HTM"
+    },
+    "N1 NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1NOVICESDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT013RS.HTM"
+    },
+    "N2 JUNIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2JUNIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 JUNIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT014RS.HTM"
+    },
+    "N1 JUNIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1JUNIORSMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1JUNIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 JUNIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT015RS.HTM"
+    },
+    "N1 JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1JUNIORSDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT016RS.HTM"
+    },
+    "N1 COUPLES JUNIORS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG024.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1COUPLESJUNIORS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1COUPLESJUNIORS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 COUPLES JUNIORS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT018RS.HTM"
+    },
+    "N1 SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1SENIORSDAMES_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1SENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT019RS.HTM"
+    },
+    "N1 SENIORS MESSIEURS": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1SENIORSMESSIEURS_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG029OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG029.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N1SENIORSMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 SENIORS MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT020RS.HTM"
+    },
+    "OPEN SOCLE COMMUN \"A\" DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_OPENSOCLECOMMUNADAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN SOCLE COMMUN \"A\" DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT028EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT028RS.HTM"
+    },
+    "OPEN NOVICE BASIC MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG031OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG031.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_OPENNOVICEBASICMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE BASIC MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT029EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT029RS.HTM"
+    },
+    "OPEN NOVICE BASIC DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG032OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG032.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_OPENNOVICEBASICDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE BASIC DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT030EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT030RS.HTM"
+    },
+    "OPEN NOVICE INTERMEDIATE MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG033OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG033.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_OPENNOVICEINTERMEDIATEMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE INTERMEDIATE MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT031EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT031RS.HTM"
+    },
+    "OPEN NOVICE INTERMEDIATE DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG034OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG034.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_OPENNOVICEINTERMEDIATEDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "OPEN NOVICE INTERMEDIATE DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT032EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT032RS.HTM"
+    },
+    "N2 MINIMES MESSIEURS": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG035OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG035.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2MINIMESMESSIEURS_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 MINIMES MESSIEURS",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT033EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT033RS.HTM"
+    },
+    "N2 NOVICES DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG036OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG036.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2NOVICESDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICES DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT034EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT034RS.HTM"
+    },
+    "N2 JUNIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG037OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG037.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2JUNIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 JUNIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT035EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT035RS.HTM"
+    },
+    "N2 SENIORS DAMES": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG038OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/SEG038.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/TDFB5LOU21_N2SENIORSDAMES_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 SENIORS DAMES",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT036EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_B5_Louviers_RESULTS/CAT036RS.HTM"
+    }
+}

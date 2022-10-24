@@ -1,0 +1,349 @@
+{
+    "N1 JUNIOR COUPLE": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORCOUPLE_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORCOUPLE_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 JUNIOR COUPLE",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT001RS.HTM"
+    },
+    "N1 JUNIOR FEMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORFEMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 JUNIOR FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT002RS.HTM"
+    },
+    "N1 JUNIOR HOMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORHOMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1JUNIORHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 JUNIOR HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT003RS.HTM"
+    },
+    "N1 MINIME COUPLE": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1MINIMECOUPLE_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1MINIMECOUPLE_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 MINIME COUPLE",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT004RS.HTM"
+    },
+    "N1 MINIME FEMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1MINIMEFEMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1MINIMEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 MINIME FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT005RS.HTM"
+    },
+    "N1 NOVICE FEMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1NOVICEFEMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1NOVICEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 NOVICE FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT006RS.HTM"
+    },
+    "N1 NOVICE HOMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1NOVICEHOMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1NOVICEHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 NOVICE HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT007RS.HTM"
+    },
+    "N1 POUSSIN FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1POUSSINFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 POUSSIN FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT008RS.HTM"
+    },
+    "N1 POUSSIN HOMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1POUSSINHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 POUSSIN HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT009RS.HTM"
+    },
+    "N1 SENIOR FEMME": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1SENIORFEMME_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N1SENIORFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 SENIOR FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT010RS.HTM"
+    },
+    "N2 BENJAMIN FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2BENJAMINFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 BENJAMIN FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT011RS.HTM"
+    },
+    "N2 BENJAMIN HOMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2BENJAMINHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 BENJAMIN HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT012RS.HTM"
+    },
+    "N2 JUNIOR FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2JUNIORFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 JUNIOR FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT013RS.HTM"
+    },
+    "N2 JUNIOR HOMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2JUNIORHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 JUNIOR HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT014RS.HTM"
+    },
+    "N2 MINIME FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG023OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG023.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2MINIMEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 MINIME FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT015RS.HTM"
+    },
+    "N2 NOVICE FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG024.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2NOVICEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 NOVICE FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT016RS.HTM"
+    },
+    "N2 POUSSIN FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2POUSSINFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 POUSSIN FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT017RS.HTM"
+    },
+    "N2 POUSSIN HOMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_N2POUSSINHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 POUSSIN HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT018RS.HTM"
+    },
+    "MEDAILLE OPEN SANS PRELIMINAIRE SOCLE A": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_MEDAILLEOPENSANSPRELIMINAIRESOCLEA_FS_Scores.pdf"
+            }
+        ],
+        "name": "MEDAILLE OPEN SANS PRELIMINAIRE SOCLE A",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT019RS.HTM"
+    },
+    "MEDAILLE OPEN BASIC NOVICE HOMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_MEDAILLEOPENBASICNOVICEHOMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "MEDAILLE OPEN BASIC NOVICE HOMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT020RS.HTM"
+    },
+    "MEDAILLE OPEN BASIC NOVICE FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG029OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG029.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_MEDAILLEOPENBASICNOVICEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "MEDAILLE OPEN BASIC NOVICE FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT021EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT021RS.HTM"
+    },
+    "MEDAILLE OPEN INTERMEDIATE NOVICE FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_MEDAILLEOPENINTERMEDIATENOVICEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "MEDAILLE OPEN INTERMEDIATE NOVICE FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT022EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT022RS.HTM"
+    },
+    "MEDAILLE OPEN ADV NOVICE FEMME": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG031OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/SEG031.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/2022TDFG_MEDAILLEOPENADVNOVICEFEMME_FS_Scores.pdf"
+            }
+        ],
+        "name": "MEDAILLE OPEN ADV NOVICE FEMME",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT023EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2022_C8_Garges_RESULTS/CAT023RS.HTM"
+    }
+}

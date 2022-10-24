@@ -1,0 +1,10 @@
+{
+    "url": "https://www.toulouseclubpatinage.com/Divers/html-TCP-2022-Challenge/",
+    "competition": "Challenge des Violettes 2022",
+    "type": "Challenge",
+    "start": "2022-02-19",
+    "end": "2022-02-20",
+    "location": "TOULOUSE",
+    "rink_name": "Patinoire Alex JANY",
+    "scores_dir": "scores"
+}

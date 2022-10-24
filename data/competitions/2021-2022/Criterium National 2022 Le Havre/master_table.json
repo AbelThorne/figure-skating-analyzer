@@ -1,0 +1,119 @@
+{
+    "Criterium Benjamins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumBenjaminsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Benjamins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT001RS.HTM"
+    },
+    "Criterium Benjamins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumBenjaminsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Benjamins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT002RS.HTM"
+    },
+    "Criterium Minimes Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumMinimesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Minimes Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT003RS.HTM"
+    },
+    "Criterium Minimes Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumMinimesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Minimes Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT004RS.HTM"
+    },
+    "Criterium Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumNovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Novices Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT005RS.HTM"
+    },
+    "Criterium Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumNovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Novices Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT006RS.HTM"
+    },
+    "Criterium Juniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumJuniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Juniors Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT007RS.HTM"
+    },
+    "Criterium Juniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumJuniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Juniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT008RS.HTM"
+    },
+    "Criterium Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CNLH2022_CriteriumSeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "Criterium Seniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/CRITERIUM_2022_LE_HAVRE_RESULTS/CAT009RS.HTM"
+    }
+}

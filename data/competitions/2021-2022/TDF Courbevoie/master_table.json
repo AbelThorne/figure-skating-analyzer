@@ -1,0 +1,355 @@
+{
+    "N1 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1PoussinDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Poussin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT001RS.HTM"
+    },
+    "N1 Poussin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1PoussinMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Poussin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT002RS.HTM"
+    },
+    "N1 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG003.HTM"
+            }
+        ],
+        "name": "N1 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT003RS.HTM"
+    },
+    "N1 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG052OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG052.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT004RS.HTM"
+    },
+    "N1 Minime Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG050OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG050.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1MinimeDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG051OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG051.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT005RS.HTM"
+    },
+    "N1 Minime Messieurs": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG048OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG048.HTM"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG049OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG049.HTM"
+            }
+        ],
+        "name": "N1 Minime Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT006RS.HTM"
+    },
+    "N1 Novice Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG046OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG046.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1NoviceDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG047OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG047.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT007RS.HTM"
+    },
+    "N1 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG044OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG044.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1NoviceMessieurs_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG045OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG045.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Novice Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT008RS.HTM"
+    },
+    "N1 Junior Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG042OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG042.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1JuniorDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG043OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG043.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT009RS.HTM"
+    },
+    "N1 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG040OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG040.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1JuniorMessieurs_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG041OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG041.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT010RS.HTM"
+    },
+    "N1 Senior Dames": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG038OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG038.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1SeniorDames_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG039OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG039.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Senior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT011RS.HTM"
+    },
+    "N1 Senior Messieurs": {
+        "segments": [
+            {
+                "name": "Short Program",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG036OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG036.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1SeniorMessieurs_SP_Scores.pdf"
+            },
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG037OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG037.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N1SeniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 Senior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT012RS.HTM"
+    },
+    "N2 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG035OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG035.HTM"
+            }
+        ],
+        "name": "N2 Poussin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT013RS.HTM"
+    },
+    "N2 Poussin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG034OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG034.HTM"
+            }
+        ],
+        "name": "N2 Poussin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT014RS.HTM"
+    },
+    "N2 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG033OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG033.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT015RS.HTM"
+    },
+    "N2 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG032OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG032.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT016RS.HTM"
+    },
+    "N2 Minime Dames Serie 1": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG031OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG031.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2MinimeDamesSerie1_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Minime Dames Serie 1",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT017RS.HTM"
+    },
+    "N2 Minime Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2MinimeMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Minime Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT018RS.HTM"
+    },
+    "N2 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG029OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG029.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT019RS.HTM"
+    },
+    "N2 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Novice Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT020RS.HTM"
+    },
+    "N2 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2JuniorDames_FS_TimeSchedule.pdf"
+            }
+        ],
+        "name": "N2 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT021EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT021RS.HTM"
+    },
+    "N2 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG026.HTM"
+            }
+        ],
+        "name": "N2 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT022EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT022RS.HTM"
+    },
+    "N2 Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/N2SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 Senior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT023EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT023RS.HTM"
+    },
+    "N2 Senior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/SEG024.HTM"
+            }
+        ],
+        "name": "N2 Senior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT024EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/TDF_2021_A1_Courbevoie_RESULTS/CAT024RS.HTM"
+    }
+}

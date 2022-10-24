@@ -1,0 +1,418 @@
+{
+    "N1 - Poussins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-PoussinsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Poussins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT001RS.HTM"
+    },
+    "N1 - Poussins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-PoussinsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Poussins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT002RS.HTM"
+    },
+    "N1 - Benjamins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-BenjaminsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Benjamins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT003RS.HTM"
+    },
+    "N1 - Benjamins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG004OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG004.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-BenjaminsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Benjamins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT004RS.HTM"
+    },
+    "N1 - Minimes Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG005OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG005.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-MinimesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Minimes Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT005RS.HTM"
+    },
+    "N1 - Minimes Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG006OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG006.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-MinimesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Minimes Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT006EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT006RS.HTM"
+    },
+    "N1 - Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG008OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG008.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Novices Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT007RS.HTM"
+    },
+    "N1 - Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG007OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG007.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-NovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Novices Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT008RS.HTM"
+    },
+    "N1 - Juniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG009OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG009.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-JuniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Juniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT009RS.HTM"
+    },
+    "N1 - Juniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG010OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG010.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-JuniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Juniors Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT010RS.HTM"
+    },
+    "N1 - Juniors Couples": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG011OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG011.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-JuniorsCouples_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Juniors Couples",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT011RS.HTM"
+    },
+    "N1 - Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG012OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG012.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-SeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Seniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT012EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT012RS.HTM"
+    },
+    "N1 - Seniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG013OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG013.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N1-SeniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N1 - Seniors Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT013RS.HTM"
+    },
+    "N2 - Poussins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG014OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG014.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-PoussinsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Poussins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT014RS.HTM"
+    },
+    "N2 - Poussins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG015OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG015.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-PoussinsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Poussins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT015RS.HTM"
+    },
+    "N2 - Benjamins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-BenjaminsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Benjamins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT016RS.HTM"
+    },
+    "N2 - Benjamins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-BenjaminsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Benjamins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT017RS.HTM"
+    },
+    "N2 - Minimes Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG018OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG018.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-MinimesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Minimes Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT018RS.HTM"
+    },
+    "N2 - Minimes Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-MinimesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Minimes Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT019RS.HTM"
+    },
+    "N2 - Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Novices Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT020RS.HTM"
+    },
+    "N2 - Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG020OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG020.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-NovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Novices Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT021EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT021RS.HTM"
+    },
+    "N2 - Juniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-JuniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Juniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT022EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT022RS.HTM"
+    },
+    "N2 - Juniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG023OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG023.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-JuniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Juniors Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT023EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT023RS.HTM"
+    },
+    "N2 - Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG032OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG032.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-SeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Seniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT024EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT024RS.HTM"
+    },
+    "N2 - Seniors Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG033OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG033.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N2-SeniorsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N2 - Seniors Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT025EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT025RS.HTM"
+    },
+    "N3 - Benjamins Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG024OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG024.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-BenjaminsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Benjamins Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT026EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT026RS.HTM"
+    },
+    "N3 - Benjamins Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG025OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG025.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-BenjaminsMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Benjamins Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT027EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT027RS.HTM"
+    },
+    "N3 - Minimes Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG029OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG029.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-MinimesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Minimes Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT028EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT028RS.HTM"
+    },
+    "N3 - Minimes Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-MinimesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Minimes Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT029EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT029RS.HTM"
+    },
+    "N3 - Novices Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-NovicesDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Novices Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT030EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT030RS.HTM"
+    },
+    "N3 - Novices Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-NovicesMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Novices Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT031EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT031RS.HTM"
+    },
+    "N3 - Juniors/Seniors Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/FC_N3-JuniorsSeniorsDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "N3 - Juniors/Seniors Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT032EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/FC2022_ANNECY_RESULTS/CAT032RS.HTM"
+    }
+}

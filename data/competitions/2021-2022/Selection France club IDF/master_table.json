@@ -1,0 +1,340 @@
+{
+    "D1 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG001OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG001.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1PoussinDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Poussin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT001EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT001RS.HTM"
+    },
+    "D1 Poussin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG002OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG002.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1PoussinMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Poussin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT002EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT002RS.HTM"
+    },
+    "D1 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG003OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG003.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT003EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT003RS.HTM"
+    },
+    "D1 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG052OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG052.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT004EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT004RS.HTM"
+    },
+    "D1 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG051OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG051.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT005EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT005RS.HTM"
+    },
+    "D1 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG047OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG047.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT007EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT007RS.HTM"
+    },
+    "D1 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG045OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG045.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Novice Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT008EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT008RS.HTM"
+    },
+    "D1 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG043OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG043.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT009EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT009RS.HTM"
+    },
+    "D1 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG041OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG041.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT010EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT010RS.HTM"
+    },
+    "D1 Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG039OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG039.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D1SeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D1 Senior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT011EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT011RS.HTM"
+    },
+    "D2 Poussin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG035OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG035.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2PoussinDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Poussin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT013EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT013RS.HTM"
+    },
+    "D2 Poussin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG034OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG034.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2PoussinMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Poussin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT014EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT014RS.HTM"
+    },
+    "D2 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG033OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG033.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT015EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT015RS.HTM"
+    },
+    "D2 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG032OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG032.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT016EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT016RS.HTM"
+    },
+    "D2 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG031OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG031.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT017EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT017RS.HTM"
+    },
+    "D2 Minime Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG030OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG030.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2MinimeMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Minime Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT018EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT018RS.HTM"
+    },
+    "D2 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG029OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG029.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT019EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT019RS.HTM"
+    },
+    "D2 Novice Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG028OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG028.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2NoviceMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Novice Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT020EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT020RS.HTM"
+    },
+    "D2 Junior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG027OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG027.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2JuniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Junior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT021EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT021RS.HTM"
+    },
+    "D2 Junior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG026OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG026.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D2JuniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D2 Junior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT022EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT022RS.HTM"
+    },
+    "D3 Benjamin Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG023OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG023.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3BenjaminDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Benjamin Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT025EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT025RS.HTM"
+    },
+    "D3 Benjamin Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG022OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG022.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3BenjaminMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Benjamin Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT026EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT026RS.HTM"
+    },
+    "D3 Minime Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG021OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG021.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3MinimeDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Minime Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT027EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT027RS.HTM"
+    },
+    "D3 Novice Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG019OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG019.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3NoviceDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Novice Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT029EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT029RS.HTM"
+    },
+    "D3 Junior Senior Dames": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG017OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG017.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3JuniorSeniorDames_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Junior Senior Dames",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT031EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT031RS.HTM"
+    },
+    "D3 Junior Senior Messieurs": {
+        "segments": [
+            {
+                "name": "Free Skating",
+                "officials_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG016OF.HTM",
+                "details_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/SEG016.HTM",
+                "scores_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/D3JuniorSeniorMessieurs_FS_Scores.pdf"
+            }
+        ],
+        "name": "D3 Junior Senior Messieurs",
+        "entries_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT032EN.HTM",
+        "results_link": "http://ligue-des-alpes-patinage.org/CSNPA/Saison20212022/SFC-IDF_2022_CERGY_RESULTS/CAT032RS.HTM"
+    }
+}
