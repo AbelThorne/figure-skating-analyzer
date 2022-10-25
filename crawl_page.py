@@ -374,9 +374,7 @@ if __name__ == "__main__":
             competition_name = uri.name
         crawl_competition(
             comp,
-            Path(
-                "/Users/julien/Library/CloudStorage/GoogleDrive-julien.erny@toulouseclubpatinage.com/Drive partagés/Drive TCP/Résultats Compétitions/2022-2023"
-            ).joinpath(competition_name),
+            Path("./data/competitions/2022-2023").joinpath(competition_name),
             overwrite_entries=True,
             overwrite_info=True,
         )
