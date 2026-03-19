@@ -61,10 +61,10 @@ export interface Skater {
 
 export interface ImportResult {
   competition_id: number;
-  site_competitors_found: number;
-  pdfs_downloaded: number;
+  events_found: number;
   scores_imported: number;
-  errors: { file: string; error: string }[];
+  scores_skipped: number;
+  errors: { skater: string; error: string }[];
 }
 
 // --- API Functions ---

@@ -96,8 +96,11 @@ class FSManagerScraper:
                 second_cell_text = _clean_text(cells[1].get_text()) if len(cells) > 1 else ""
 
                 if first_cell_text:
-                    # Category row — store category name
-                    current_category = first_cell_text
+                    # Category row — store category name, but skip schedule rows (date like "07.02.2026")
+                    if re.match(r"^\d{2}\.\d{2}\.\d{4}$", first_cell_text):
+                        current_category = None  # reset so segment rows under this are skipped
+                    else:
+                        current_category = first_cell_text
                 elif second_cell_text and current_category:
                     # Segment row — extract SEG URL and PDF URL
                     segment_name = second_cell_text
