@@ -55,6 +55,8 @@ def _score_to_dict(s: Score) -> dict:
         "technical_score": s.technical_score,
         "component_score": s.component_score,
         "deductions": s.deductions,
+        "components": s.components,
+        "elements": s.elements,
     }
 
 

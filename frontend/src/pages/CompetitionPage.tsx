@@ -65,13 +65,30 @@ export default function CompetitionPage() {
         </p>
       )}
 
-      {groups.map(({ category, segment, scores: groupScores }) => (
-        <div key={`${category}-${segment}`} className="mt-8">
-          <div className="flex items-baseline gap-3 mb-2">
-            <h2 className="text-lg font-semibold">{category ?? segment}</h2>
-            {category && (
-              <span className="text-sm text-gray-500 font-medium">{segment}</span>
-            )}
+      {groups.length > 1 && (
+        <nav className="flex flex-wrap gap-2 mb-6">
+          {groups.map(({ category, segment }) => {
+            const anchor = `${category ?? ""}-${segment}`.replace(/\s+/g, "-");
+            return (
+              <a
+                key={anchor}
+                href={`#${anchor}`}
+                className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200"
+              >
+                {category ? `${category} · ${segment}` : segment}
+              </a>
+            );
+          })}
+        </nav>
+      )}
+
+      {groups.map(({ category, segment, scores: groupScores }) => {
+        const anchor = `${category ?? ""}-${segment}`.replace(/\s+/g, "-");
+        return (
+        <div key={`${category}-${segment}`} id={anchor} className="mt-8 scroll-mt-16">
+          <div className="mb-2">
+            {category && <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">{category}</p>}
+            <h2 className="text-lg font-semibold">{segment}</h2>
           </div>
           <ScoreChart scores={groupScores} />
           <div className="overflow-x-auto mt-3">
@@ -119,7 +136,8 @@ export default function CompetitionPage() {
             </table>
           </div>
         </div>
-      ))}
+        );
+      })}
     </div>
   );
 }

@@ -1,0 +1,18 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "Backend (Litestar)",
+      "runtimeExecutable": "uv",
+      "runtimeArgs": ["run", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
+      "cwd": "/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/backend",
+      "port": 8000
+    },
+    {
+      "name": "Frontend (Vite)",
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/frontend && node_modules/.bin/vite"],
+      "port": 5173
+    }
+  ]
+}

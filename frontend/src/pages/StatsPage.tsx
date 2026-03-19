@@ -27,10 +27,14 @@ export default function StatsPage() {
   });
 
   const progressionData = (skaterScores ?? [])
-    .filter((s) => s.competition_date && s.total_score != null)
-    .sort((a, b) => (a.competition_date! > b.competition_date! ? 1 : -1))
+    .filter((s) => s.total_score != null)
+    .sort((a, b) => {
+      if (a.competition_date && b.competition_date)
+        return a.competition_date > b.competition_date ? 1 : -1;
+      return 0;
+    })
     .map((s) => ({
-      date: s.competition_date!.slice(0, 10),
+      date: s.competition_date ? s.competition_date.slice(0, 10) : s.competition_name ?? "?",
       label: `${s.competition_name ?? ""} (${s.segment})`,
       total: s.total_score,
       tes: s.technical_score,

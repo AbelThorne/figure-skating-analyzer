@@ -36,8 +36,9 @@ export default function HomePage() {
     mutationFn: api.competitions.import,
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["competitions"] });
+      qc.invalidateQueries({ queryKey: ["scores"] });
       alert(
-        `Import done:\n• ${result.site_competitors_found} competitors found on site\n• ${result.pdfs_downloaded} PDFs downloaded\n• ${result.scores_imported} scores imported` +
+        `Import done:\n• ${result.events_found} events found\n• ${result.scores_imported} scores imported\n• ${result.scores_skipped} skipped` +
           (result.errors.length ? `\n• ${result.errors.length} errors` : "")
       );
     },
