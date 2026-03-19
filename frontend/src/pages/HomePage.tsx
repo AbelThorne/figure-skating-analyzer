@@ -37,8 +37,8 @@ export default function HomePage() {
     onSuccess: (result) => {
       qc.invalidateQueries({ queryKey: ["competitions"] });
       alert(
-        `Import done: ${result.pdfs_downloaded} PDFs downloaded, ${result.scores_imported} scores imported.` +
-          (result.errors.length ? `\n${result.errors.length} errors.` : "")
+        `Import done:\n• ${result.site_competitors_found} competitors found on site\n• ${result.pdfs_downloaded} PDFs downloaded\n• ${result.scores_imported} scores imported` +
+          (result.errors.length ? `\n• ${result.errors.length} errors` : "")
       );
     },
   });

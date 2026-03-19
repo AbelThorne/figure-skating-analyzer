@@ -13,6 +13,8 @@ class Score(Base):
     competition_id: Mapped[int] = mapped_column(ForeignKey("competitions.id"), nullable=False)
     skater_id: Mapped[int] = mapped_column(ForeignKey("skaters.id"), nullable=False)
     segment: Mapped[str] = mapped_column(String(50), nullable=False)  # e.g. "SP", "FS"
+    category: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)  # e.g. "Novice A", "Junior"
+    starting_number: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     rank: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     total_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     technical_score: Mapped[Optional[float]] = mapped_column(Float, nullable=True)

@@ -40,7 +40,10 @@ export interface Score {
   skater_id: number;
   skater_name: string | null;
   skater_nationality: string | null;
+  skater_club: string | null;
   segment: string;
+  category: string | null;
+  starting_number: number | null;
   rank: number | null;
   total_score: number | null;
   technical_score: number | null;
@@ -52,10 +55,13 @@ export interface Skater {
   id: number;
   name: string;
   nationality: string | null;
+  club: string | null;
+  birth_year: number | null;
 }
 
 export interface ImportResult {
   competition_id: number;
+  site_competitors_found: number;
   pdfs_downloaded: number;
   scores_imported: number;
   errors: { file: string; error: string }[];
