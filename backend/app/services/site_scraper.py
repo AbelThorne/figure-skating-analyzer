@@ -7,7 +7,8 @@ from __future__ import annotations
 import logging
 import re
 import unicodedata
-from dataclasses import dataclass, field
+from dataclasses import dataclass
+from typing import Any
 from urllib.parse import urljoin
 
 import httpx
@@ -40,7 +41,7 @@ class ScrapedResult:
     total_score: float | None = None
     technical_score: float | None = None
     component_score: float | None = None
-    components: dict | None = None   # e.g. {"CO": 3.42, "PR": 3.25, "SK": 3.25}
+    components: dict[str, float] | None = None   # e.g. {"CO": 3.42, "PR": 3.25, "SK": 3.25}
     deductions: float | None = None
     starting_number: int | None = None
 
@@ -105,7 +106,7 @@ class FSManagerScraper:
 
                     for a in row.find_all("a", href=True):
                         href = a["href"]
-                        if re.search(r"SEG\d+\.htm$", href, re.IGNORECASE) and "OF" not in href.upper():
+                        if re.search(r"SEG\d+\.htm$", href, re.IGNORECASE) and "OF" not in href.upper():  # SEG018OF.htm = order of finish page, not results
                             seg_url = urljoin(base_dir, href)
                         elif re.search(r"\.pdf$", href, re.IGNORECASE):
                             pdf_url = urljoin(base_dir, href)
@@ -159,8 +160,8 @@ class FSManagerScraper:
 
         return results
 
-    def _map_seg_columns(self, headers: list[str]) -> dict[str, int]:
-        col_map: dict[str, int] = {}
+    def _map_seg_columns(self, headers: list[str]) -> dict[str, Any]:
+        col_map: dict[str, Any] = {}
         component_cols: list[tuple[int, str]] = []
         for i, h in enumerate(headers):
             h = h.strip().rstrip(".=+- ").strip()
@@ -184,13 +185,13 @@ class FSManagerScraper:
                 col_map["stn"] = i
             elif h in ("co", "pr", "sk", "in", "ch"):
                 component_cols.append((i, h.upper()))
-        col_map["_components"] = component_cols  # type: ignore
+        col_map["_components"] = component_cols
         return col_map
 
     def _parse_seg_row(
         self,
         cells: list[Tag],
-        col_map: dict,
+        col_map: dict[str, Any],
         category: str,
         segment: str,
     ) -> ScrapedResult | None:
@@ -298,22 +299,6 @@ def _clean_text(text: str) -> str:
     return " ".join(text.split())
 
 
-def _title_case_name(name: str) -> str:
-    stripped = name.strip()
-    alpha_chars = [c for c in stripped if c.isalpha()]
-    if not alpha_chars or not all(c.isupper() for c in alpha_chars):
-        return stripped
-    _PARTICLES = {"de", "du", "des", "le", "la", "les", "d", "l", "van", "von", "da"}
-    parts = stripped.split()
-    result = []
-    for i, part in enumerate(parts):
-        lower = part.lower()
-        if i > 0 and lower in _PARTICLES:
-            result.append(lower)
-        else:
-            result.append(part.capitalize())
-    return " ".join(result)
-
 
 def _parse_float(text: str | None) -> float | None:
     if not text:
@@ -343,6 +328,6 @@ async def _fetch(url: str, client: httpx.AsyncClient) -> str | None:
         declared = charset_match.group(1) if charset_match else None
         encoding = declared or "windows-1252"
         return resp.content.decode(encoding, errors="replace")
-    except Exception as exc:
+    except (httpx.HTTPError, OSError) as exc:
         logger.warning("Failed to fetch %s: %s", url, exc)
         return None
