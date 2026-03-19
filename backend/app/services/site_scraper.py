@@ -205,6 +205,12 @@ class FSManagerScraper:
         if not name_text or len(name_text) < 2:
             return None
 
+        # Reject rows that look like section headers (e.g. "Technical Element Score")
+        # A valid skater row must have a numeric total score
+        tss_raw = cell_text("tss")
+        if not tss_raw or _parse_float(tss_raw) is None:
+            return None
+
         # Extract nation from nested flag table if present
         nationality: str | None = None
         nat_idx = col_map.get("nation")
