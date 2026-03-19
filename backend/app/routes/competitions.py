@@ -11,6 +11,8 @@ from app.models.competition import Competition
 from app.models.skater import Skater
 from app.models.score import Score
 from app.services.site_scraper import FSManagerScraper
+from app.services.downloader import download_pdfs, url_to_slug
+from app.services.parser import parse_elements
 
 
 # --- DTOs ---
@@ -140,6 +142,68 @@ async def import_competition(competition_id: int, session: AsyncSession) -> dict
     }
 
 
+@post("/{competition_id:int}/enrich")
+async def enrich_competition(competition_id: int, session: AsyncSession) -> dict:
+    """Enrich existing scores with element details from PDF score cards."""
+    comp = await session.get(Competition, competition_id)
+    if not comp:
+        raise NotFoundException(f"Competition {competition_id} not found")
+
+    # Discover PDF URLs from site
+    scraper = FSManagerScraper()
+    events, _ = await scraper.scrape(comp.url)
+    pdf_urls = [e.pdf_url for e in events if e.pdf_url]
+
+    if not pdf_urls:
+        return {"competition_id": competition_id, "pdfs_downloaded": 0, "scores_enriched": 0, "errors": []}
+
+    # Download PDFs
+    slug = url_to_slug(comp.url)
+    pdf_paths = await download_pdfs(pdf_urls, slug)
+
+    # Parse elements and match to scores
+    enriched = 0
+    unmatched = []
+    errors = []
+
+    for pdf_path in pdf_paths:
+        try:
+            parsed = parse_elements(pdf_path)
+            for entry in parsed:
+                skater_name = entry["skater_name"]
+                elements = entry["elements"]
+
+                # Find all matching scores for this skater in this competition
+                result = await session.execute(
+                    select(Score)
+                    .join(Skater)
+                    .where(
+                        Score.competition_id == comp.id,
+                        Skater.name == skater_name,
+                    )
+                )
+                scores = result.scalars().all()
+                if scores:
+                    for score in scores:
+                        if not score.elements:  # don't overwrite
+                            score.elements = elements
+                            score.pdf_path = str(pdf_path)
+                            enriched += 1
+                else:
+                    unmatched.append(skater_name)
+        except Exception as e:
+            errors.append({"file": str(pdf_path), "error": str(e)})
+
+    await session.commit()
+    return {
+        "competition_id": competition_id,
+        "pdfs_downloaded": len(pdf_paths),
+        "scores_enriched": enriched,
+        "unmatched": unmatched,
+        "errors": errors,
+    }
+
+
 router = Router(
     path="/api/competitions",
     route_handlers=[
@@ -148,6 +212,7 @@ router = Router(
         create_competition,
         delete_competition,
         import_competition,
+        enrich_competition,
     ],
     dependencies={"session": Provide(get_session)},
 )
