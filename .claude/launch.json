@@ -10,8 +10,8 @@
     },
     {
       "name": "Frontend (Vite)",
-      "runtimeExecutable": "/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/frontend/node_modules/.bin/vite",
-      "runtimeArgs": ["/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/frontend"],
+      "runtimeExecutable": "bash",
+      "runtimeArgs": ["-c", "cd /Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/frontend && node_modules/.bin/vite"],
       "port": 5173
     }
   ]
