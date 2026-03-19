@@ -191,7 +191,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
                             enriched += 1
                 else:
                     unmatched.append(skater_name)
-        except Exception as e:
+        except Exception as e:  # noqa: BLE001 — intentional: enrich is fault-tolerant per PDF
             errors.append({"file": str(pdf_path), "error": str(e)})
 
     await session.commit()
