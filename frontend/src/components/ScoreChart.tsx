@@ -25,7 +25,8 @@ export default function ScoreChart({ scores }: Props) {
   }));
 
   return (
-    <ResponsiveContainer width="100%" height={220}>
+    <div style={{ width: "100%", height: 220 }}>
+    <ResponsiveContainer width="100%" height="100%">
       <BarChart data={data} margin={{ top: 4, right: 8, left: 0, bottom: 4 }}>
         <CartesianGrid strokeDasharray="3 3" />
         <XAxis dataKey="name" tick={{ fontSize: 11 }} />
@@ -37,5 +38,6 @@ export default function ScoreChart({ scores }: Props) {
         <Bar dataKey="Ded" stackId="a" fill="#dc2626" />
       </BarChart>
     </ResponsiveContainer>
+    </div>
   );
 }
