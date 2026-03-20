@@ -32,6 +32,17 @@ export interface CreateCompetitionPayload {
   discipline?: string;
 }
 
+export interface ScoreElement {
+  number: number;
+  name: string;                 // clean element code, markers stripped (e.g. "3Lz")
+  markers: string[];            // ISU markers: "<", "<<", "q", "e", "!", "*", "x"
+  base_value: number;           // base value (×1.10 already applied when "x" present)
+  judge_goe: number[];          // per-judge GOE scores (−5 to +5), length 3–9
+  goe: number;                  // panel GOE (trimmed mean)
+  score: number;                // final element score (base_value + goe)
+  info_flag: string | null;     // reserved
+}
+
 export interface Score {
   id: number;
   competition_id: number;
@@ -50,7 +61,7 @@ export interface Score {
   component_score: number | null;
   deductions: number | null;
   components: Record<string, number> | null;
-  elements: Array<Record<string, unknown>> | null;
+  elements: ScoreElement[] | null;
 }
 
 export interface CategoryResult {
