@@ -2,17 +2,24 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "Backend (Litestar)",
-      "runtimeExecutable": "uv",
-      "runtimeArgs": ["run", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
-      "cwd": "/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/nostalgic-lichterman/backend",
-      "port": 8000
+      "name": "Frontend (Vite)",
+      "runtimeExecutable": "/opt/homebrew/bin/npm",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "frontend",
+      "port": 5173,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
     },
     {
-      "name": "Frontend (Vite)",
-      "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd /Users/julien/projects/figure-skating-analyzer/.claude/worktrees/nostalgic-lichterman/frontend && node_modules/.bin/vite --port 5173"],
-      "port": 5173
+      "name": "Backend (Litestar)",
+      "runtimeExecutable": "/opt/homebrew/bin/uv",
+      "runtimeArgs": ["run", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
+      "cwd": "backend",
+      "port": 8000,
+      "env": {
+        "PATH": "/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin"
+      }
     }
   ]
 }

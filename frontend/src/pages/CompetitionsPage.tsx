@@ -61,6 +61,27 @@ export default function CompetitionsPage() {
     },
   });
 
+  const reimportMutation = useMutation({
+    mutationFn: (id: number) => {
+      setImportingId(id);
+      return api.competitions.reimport(id);
+    },
+    onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["competitions"] });
+      qc.invalidateQueries({ queryKey: ["scores"] });
+      setImportResults((prev) => ({ ...prev, [result.competition_id]: result }));
+      setDismissedResults((prev) => {
+        const next = new Set(prev);
+        next.delete(result.competition_id);
+        return next;
+      });
+      setImportingId(null);
+    },
+    onError: () => {
+      setImportingId(null);
+    },
+  });
+
   return (
     <div>
       {/* Page header */}
@@ -205,6 +226,22 @@ export default function CompetitionsPage() {
                   <button
                     onClick={() => {
                       if (
+                        confirm(`Réimporter ${c.name} ? Les données existantes seront remplacées.`)
+                      ) {
+                        reimportMutation.mutate(c.id);
+                      }
+                    }}
+                    disabled={isImporting}
+                    className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-base leading-none">
+                      refresh
+                    </span>
+                    Réimporter
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (
                         confirm(`Supprimer "${c.name}" ?`)
                       ) {
                         deleteMutation.mutate(c.id);
@@ -222,21 +259,53 @@ export default function CompetitionsPage() {
 
               {/* Inline import result notification */}
               {result && !isDismissed && (
-                <div className="flex items-center gap-2 px-5 pt-2">
-                  <p className="text-xs text-primary font-medium">
-                    {result.scores_imported} scores importés · {result.scores_skipped} ignorés
-                  </p>
-                  <button
-                    onClick={() =>
-                      setDismissedResults((prev) => new Set(prev).add(c.id))
-                    }
-                    className="text-on-surface-variant hover:text-on-surface transition-colors"
-                    aria-label="Fermer"
-                  >
-                    <span className="material-symbols-outlined text-sm leading-none">
-                      close
-                    </span>
-                  </button>
+                <div className="px-5 pt-2">
+                  {result.errors.length > 0 ? (
+                    <div className="border-l-4 border-error pl-3 py-1">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-error shrink-0" />
+                        <p className="text-xs text-error font-medium">
+                          Importé {result.scores_imported}/{result.scores_imported + result.errors.length} événements · {result.errors.length} erreur(s)
+                        </p>
+                        <button
+                          onClick={() =>
+                            setDismissedResults((prev) => new Set(prev).add(c.id))
+                          }
+                          className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
+                          aria-label="Fermer"
+                        >
+                          <span className="material-symbols-outlined text-sm leading-none">
+                            close
+                          </span>
+                        </button>
+                      </div>
+                      <ul className="mt-1 space-y-0.5">
+                        {result.errors.map((e, i) => (
+                          <li key={i} className="text-xs text-error/80">
+                            {e.skater} : {e.error}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 rounded-full bg-primary shrink-0" />
+                      <p className="text-xs text-primary font-medium">
+                        {result.events_found} événements · {result.scores_imported} scores importés · {result.scores_skipped} ignorés
+                      </p>
+                      <button
+                        onClick={() =>
+                          setDismissedResults((prev) => new Set(prev).add(c.id))
+                        }
+                        className="text-on-surface-variant hover:text-on-surface transition-colors"
+                        aria-label="Fermer"
+                      >
+                        <span className="material-symbols-outlined text-sm leading-none">
+                          close
+                        </span>
+                      </button>
+                    </div>
+                  )}
                 </div>
               )}
             </div>

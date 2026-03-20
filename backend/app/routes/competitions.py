@@ -3,14 +3,14 @@ from __future__ import annotations
 from litestar import Router, get, post, delete
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import select
+from sqlalchemy import select, delete as sa_delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_session
 from app.models.competition import Competition
 from app.models.skater import Skater
 from app.models.score import Score
-from app.services.site_scraper import FSManagerScraper
+from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
 from app.services.parser import parse_elements
 
@@ -69,13 +69,19 @@ async def delete_competition(competition_id: int, session: AsyncSession) -> None
 
 
 @post("/{competition_id:int}/import")
-async def import_competition(competition_id: int, session: AsyncSession) -> dict:
+async def import_competition(competition_id: int, session: AsyncSession, force: bool = False) -> dict:
     """Import competition results from website HTML (SEG pages)."""
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
 
-    scraper = FSManagerScraper()
+    if force:
+        await session.execute(
+            sa_delete(Score).where(Score.competition_id == competition_id)
+        )
+        await session.flush()
+
+    scraper = get_scraper(comp.url)
     events, results = await scraper.scrape(comp.url)
 
     imported = 0
@@ -132,14 +138,36 @@ async def import_competition(competition_id: int, session: AsyncSession) -> dict
         except Exception as e:
             errors.append({"skater": r.name, "error": str(e)})
 
-    await session.commit()
-    return {
-        "competition_id": competition_id,
+    status = "success" if not errors else "partial"
+    import_log = {
+        "status": status,
         "events_found": len(events),
         "scores_imported": imported,
         "scores_skipped": skipped,
         "errors": errors,
     }
+    comp.last_import_log = import_log
+    await session.commit()
+
+    return {
+        "competition_id": competition_id,
+        "status": status,
+        "events_found": len(events),
+        "scores_imported": imported,
+        "scores_skipped": skipped,
+        "errors": errors,
+    }
+
+
+@get("/{competition_id:int}/import-status")
+async def get_import_status(competition_id: int, session: AsyncSession) -> dict:
+    """Return the last import log for a competition."""
+    comp = await session.get(Competition, competition_id)
+    if not comp:
+        raise NotFoundException(f"Competition {competition_id} not found")
+    if comp.last_import_log is None:
+        return {"status": "never_imported"}
+    return comp.last_import_log
 
 
 @post("/{competition_id:int}/enrich")
@@ -150,7 +178,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
         raise NotFoundException(f"Competition {competition_id} not found")
 
     # Discover PDF URLs from site
-    scraper = FSManagerScraper()
+    scraper = get_scraper(comp.url)
     events, _ = await scraper.scrape(comp.url)
     pdf_urls = [e.pdf_url for e in events if e.pdf_url]
 
@@ -212,6 +240,7 @@ router = Router(
         create_competition,
         delete_competition,
         import_competition,
+        get_import_status,
         enrich_competition,
     ],
     dependencies={"session": Provide(get_session)},

@@ -63,11 +63,18 @@ export interface Skater {
 
 export interface ImportResult {
   competition_id: number;
+  status: "success" | "partial" | "error";
   events_found: number;
   scores_imported: number;
   scores_skipped: number;
   errors: { skater: string; error: string }[];
 }
+
+export interface NeverImported {
+  status: "never_imported";
+}
+
+export type ImportStatus = ImportResult | NeverImported;
 
 export interface DashboardMedal {
   skater_name: string;
@@ -142,6 +149,10 @@ export const api = {
       request<void>(`/competitions/${id}`, { method: "DELETE" }),
     import: (id: number) =>
       request<ImportResult>(`/competitions/${id}/import`, { method: "POST" }),
+    reimport: (id: number) =>
+      request<ImportResult>(`/competitions/${id}/import?force=true`, { method: "POST" }),
+    importStatus: (id: number) =>
+      request<ImportStatus>(`/competitions/${id}/import-status`),
   },
 
   skaters: {
