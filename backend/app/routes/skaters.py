@@ -13,6 +13,7 @@ from app.database import get_session
 from app.models.skater import Skater
 from app.models.score import Score
 from app.models.competition import Competition
+from app.models.category_result import CategoryResult
 
 
 @get("/")
@@ -116,8 +117,39 @@ async def get_skater_scores(skater_id: int, session: AsyncSession) -> list[dict]
     ]
 
 
+@get("/{skater_id:int}/category-results")
+async def get_skater_category_results(skater_id: int, session: AsyncSession) -> list[dict]:
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        raise NotFoundException(f"Skater {skater_id} not found")
+
+    result = await session.execute(
+        select(CategoryResult)
+        .where(CategoryResult.skater_id == skater_id)
+        .options(selectinload(CategoryResult.competition))
+        .join(CategoryResult.competition)
+        .order_by(Competition.date.desc())
+    )
+    cat_results = result.scalars().all()
+    return [
+        {
+            "id": cr.id,
+            "competition_id": cr.competition_id,
+            "competition_name": cr.competition.name if cr.competition else None,
+            "competition_date": cr.competition.date.isoformat() if cr.competition and cr.competition.date else None,
+            "category": cr.category,
+            "overall_rank": cr.overall_rank,
+            "combined_total": cr.combined_total,
+            "segment_count": cr.segment_count,
+            "sp_rank": cr.sp_rank,
+            "fs_rank": cr.fs_rank,
+        }
+        for cr in cat_results
+    ]
+
+
 router = Router(
     path="/api/skaters",
-    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores],
+    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results],
     dependencies={"session": Provide(get_session)},
 )

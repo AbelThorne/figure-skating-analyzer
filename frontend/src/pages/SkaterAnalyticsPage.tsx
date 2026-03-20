@@ -1,3 +1,4 @@
+import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -10,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { api, Element, Score } from "../api/client";
+import { api, Element, Score, CategoryResult } from "../api/client";
 import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
@@ -120,7 +121,12 @@ export default function SkaterAnalyticsPage() {
     queryFn: () => api.skaters.elements(skaterId),
   });
 
-  const isLoading = loadingSkater || loadingScores || loadingElements;
+  const { data: categoryResults, isLoading: loadingCatResults } = useQuery({
+    queryKey: ["skater-category-results", skaterId],
+    queryFn: () => api.skaters.categoryResults(skaterId),
+  });
+
+  const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
 
   // ── Derived: score progression ──────────────────────────────────────────────
   const progressionData = (scores ?? [])
@@ -143,6 +149,46 @@ export default function SkaterAnalyticsPage() {
       return a.competition_date > b.competition_date ? -1 : 1;
     return 0;
   });
+
+  // ── Derived: competition history rows (group by competition+category) ────
+  interface HistoryRow {
+    key: string;
+    competitionId: number;
+    competitionName: string | null;
+    competitionDate: string | null;
+    category: string | null;
+    catResult: CategoryResult | null;
+    segmentScores: Score[];
+  }
+
+  const historyRows: HistoryRow[] = (() => {
+    const map = new Map<string, HistoryRow>();
+    for (const s of sortedScores) {
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!map.has(key)) {
+        // Find matching category result
+        const cr = (categoryResults ?? []).find(
+          (r) => r.competition_id === s.competition_id && r.category === s.category
+        ) ?? null;
+        map.set(key, {
+          key,
+          competitionId: s.competition_id,
+          competitionName: s.competition_name,
+          competitionDate: s.competition_date,
+          category: s.category,
+          catResult: cr,
+          segmentScores: [],
+        });
+      }
+      map.get(key)!.segmentScores.push(s);
+    }
+    // Sort by date desc
+    return [...map.values()].sort((a, b) => {
+      if (a.competitionDate && b.competitionDate)
+        return a.competitionDate > b.competitionDate ? -1 : 1;
+      return 0;
+    });
+  })();
 
   // ── Derived: best TSS ──────────────────────────────────────────────────────
   const bestTss =
@@ -236,7 +282,7 @@ export default function SkaterAnalyticsPage() {
             />
             <HeroStatBox
               label="Compétitions"
-              value={String(scores?.length ?? 0)}
+              value={String(historyRows.length)}
             />
           </div>
         </div>
@@ -317,7 +363,7 @@ export default function SkaterAnalyticsPage() {
             </h2>
             {isLoading ? (
               <Skeleton className="h-40 w-full" />
-            ) : sortedScores.length === 0 ? (
+            ) : historyRows.length === 0 ? (
               <p className="text-on-surface-variant text-sm">
                 Aucune compétition enregistrée.
               </p>
@@ -326,7 +372,7 @@ export default function SkaterAnalyticsPage() {
                 <table className="w-full min-w-[560px] border-collapse">
                   <thead>
                     <tr className="bg-surface-container-low">
-                      {["Compétition", "Date", "Épreuve", "Rang", "TES", "PCS", "Total"].map(
+                      {["Compétition", "Date", "Catégorie", "Rang", "TES", "PCS", "Total"].map(
                         (col, i) => (
                           <th
                             key={col}
@@ -341,53 +387,128 @@ export default function SkaterAnalyticsPage() {
                     </tr>
                   </thead>
                   <tbody>
-                    {sortedScores.map((s, idx) => (
-                      <tr
-                        key={s.id}
-                        className={
-                          idx % 2 === 0
-                            ? "bg-surface-container-lowest"
-                            : "bg-surface-container-low/30"
-                        }
-                      >
-                        <td className="px-3 py-2 text-sm text-on-surface">
-                          <Link
-                            to={`/competitions/${s.competition_id}`}
-                            className="text-primary hover:underline font-medium"
-                          >
-                            {s.competition_name ?? `#${s.competition_id}`}
-                          </Link>
-                        </td>
-                        <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
-                          {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
-                        </td>
-                        <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
-                          {s.segment}
-                        </td>
-                        <td className="px-3 py-2 text-right">
-                          {s.rank != null ? (
-                            s.rank <= 3 ? (
-                              <span className="bg-tertiary-container/30 text-on-tertiary-container text-xs font-bold px-2 py-1 rounded-full">
-                                {s.rank}
-                              </span>
-                            ) : (
-                              <span className="font-mono text-sm text-on-surface">{s.rank}</span>
-                            )
-                          ) : (
-                            <span className="text-on-surface-variant text-sm">—</span>
-                          )}
-                        </td>
-                        <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
-                          {s.technical_score?.toFixed(2) ?? "—"}
-                        </td>
-                        <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
-                          {s.component_score?.toFixed(2) ?? "—"}
-                        </td>
-                        <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
-                          {s.total_score?.toFixed(2) ?? "—"}
-                        </td>
-                      </tr>
-                    ))}
+                    {historyRows.map((row, rowIdx) => {
+                      const isMultiSegment = row.catResult != null && row.catResult.segment_count > 1;
+
+                      return (
+                        <React.Fragment key={row.key}>
+                          {/* Overall result row (or single segment row) */}
+                          {isMultiSegment && row.catResult ? (
+                            <tr
+                              className={
+                                rowIdx % 2 === 0
+                                  ? "bg-surface-container-lowest"
+                                  : "bg-surface-container-low/30"
+                              }
+                            >
+                              <td className="px-3 py-2 text-sm text-on-surface">
+                                <Link
+                                  to={`/competitions/${row.competitionId}`}
+                                  className="text-primary hover:underline font-medium"
+                                >
+                                  {row.competitionName ?? `#${row.competitionId}`}
+                                </Link>
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
+                                {row.competitionDate ? row.competitionDate.slice(0, 10) : "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
+                                {row.category ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                {row.catResult.overall_rank != null ? (
+                                  row.catResult.overall_rank <= 3 ? (
+                                    <span className="bg-tertiary-container/30 text-on-tertiary-container text-xs font-bold px-2 py-1 rounded-full">
+                                      {row.catResult.overall_rank}
+                                    </span>
+                                  ) : (
+                                    <span className="font-mono text-sm text-on-surface">
+                                      {row.catResult.overall_rank}
+                                    </span>
+                                  )
+                                ) : (
+                                  <span className="text-on-surface-variant text-sm">—</span>
+                                )}
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">
+                                —
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">
+                                —
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
+                                {row.catResult.combined_total?.toFixed(2) ?? "—"}
+                              </td>
+                            </tr>
+                          ) : null}
+
+                          {/* Individual segment rows */}
+                          {row.segmentScores.map((s) => (
+                            <tr
+                              key={s.id}
+                              className={
+                                rowIdx % 2 === 0
+                                  ? "bg-surface-container-lowest"
+                                  : "bg-surface-container-low/30"
+                              }
+                            >
+                              {isMultiSegment ? (
+                                <>
+                                  <td className="px-3 py-2 text-sm text-on-surface-variant pl-6">
+                                    <span className="text-xs text-on-surface-variant/60">
+                                      {s.segment}
+                                    </span>
+                                  </td>
+                                  <td className="px-3 py-2" />
+                                  <td className="px-3 py-2" />
+                                </>
+                              ) : (
+                                <>
+                                  <td className="px-3 py-2 text-sm text-on-surface">
+                                    <Link
+                                      to={`/competitions/${s.competition_id}`}
+                                      className="text-primary hover:underline font-medium"
+                                    >
+                                      {s.competition_name ?? `#${s.competition_id}`}
+                                    </Link>
+                                  </td>
+                                  <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
+                                    {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
+                                  </td>
+                                  <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
+                                    {s.category ?? "—"}
+                                  </td>
+                                </>
+                              )}
+                              <td className="px-3 py-2 text-right">
+                                {s.rank != null ? (
+                                  !isMultiSegment && s.rank <= 3 ? (
+                                    <span className="bg-tertiary-container/30 text-on-tertiary-container text-xs font-bold px-2 py-1 rounded-full">
+                                      {s.rank}
+                                    </span>
+                                  ) : (
+                                    <span className="font-mono text-sm text-on-surface-variant">
+                                      {s.rank}
+                                    </span>
+                                  )
+                                ) : (
+                                  <span className="text-on-surface-variant text-sm">—</span>
+                                )}
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
+                                {s.technical_score?.toFixed(2) ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
+                                {s.component_score?.toFixed(2) ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
+                                {s.total_score?.toFixed(2) ?? "—"}
+                              </td>
+                            </tr>
+                          ))}
+                        </React.Fragment>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

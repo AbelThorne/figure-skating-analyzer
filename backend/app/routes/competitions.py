@@ -10,6 +10,7 @@ from app.database import get_session
 from app.models.competition import Competition
 from app.models.skater import Skater
 from app.models.score import Score
+from app.models.category_result import CategoryResult
 from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
 from app.services.parser import parse_elements
@@ -68,9 +69,30 @@ async def delete_competition(competition_id: int, session: AsyncSession) -> None
     await session.commit()
 
 
+async def _get_or_create_skater(
+    session: AsyncSession,
+    name: str,
+    nationality: str | None,
+    club: str | None,
+) -> Skater:
+    """Get an existing skater by name or create a new one."""
+    stmt = select(Skater).where(Skater.name == name)
+    skater = (await session.execute(stmt)).scalar_one_or_none()
+    if not skater:
+        skater = Skater(name=name, nationality=nationality, club=club)
+        session.add(skater)
+        await session.flush()
+    else:
+        if not skater.nationality and nationality:
+            skater.nationality = nationality
+        if not skater.club and club:
+            skater.club = club
+    return skater
+
+
 @post("/{competition_id:int}/import")
 async def import_competition(competition_id: int, session: AsyncSession, force: bool = False) -> dict:
-    """Import competition results from website HTML (SEG pages)."""
+    """Import competition results from website HTML (SEG + CAT pages)."""
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
@@ -79,33 +101,24 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
         await session.execute(
             sa_delete(Score).where(Score.competition_id == competition_id)
         )
+        await session.execute(
+            sa_delete(CategoryResult).where(CategoryResult.competition_id == competition_id)
+        )
         await session.flush()
 
     scraper = get_scraper(comp.url)
-    events, results = await scraper.scrape(comp.url)
+    events, results, cat_results = await scraper.scrape(comp.url)
 
     imported = 0
     skipped = 0
+    cat_imported = 0
+    cat_skipped = 0
     errors = []
 
+    # --- Import segment scores ---
     for r in results:
         try:
-            # Get or create skater
-            stmt = select(Skater).where(Skater.name == r.name)
-            skater = (await session.execute(stmt)).scalar_one_or_none()
-            if not skater:
-                skater = Skater(
-                    name=r.name,
-                    nationality=r.nationality,
-                    club=r.club,
-                )
-                session.add(skater)
-                await session.flush()
-            else:
-                if not skater.nationality and r.nationality:
-                    skater.nationality = r.nationality
-                if not skater.club and r.club:
-                    skater.club = r.club
+            skater = await _get_or_create_skater(session, r.name, r.nationality, r.club)
 
             # Check for existing score (idempotency)
             existing = await session.execute(
@@ -138,12 +151,46 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
         except Exception as e:
             errors.append({"skater": r.name, "error": str(e)})
 
+    # --- Import category results (overall standings) ---
+    for cr in cat_results:
+        try:
+            skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club)
+
+            # Check for existing category result (idempotency)
+            existing = await session.execute(
+                select(CategoryResult).where(
+                    CategoryResult.competition_id == comp.id,
+                    CategoryResult.skater_id == skater.id,
+                    CategoryResult.category == cr.category,
+                )
+            )
+            if existing.scalar_one_or_none():
+                cat_skipped += 1
+                continue
+
+            cat_result = CategoryResult(
+                competition_id=comp.id,
+                skater_id=skater.id,
+                category=cr.category or "UNKNOWN",
+                overall_rank=cr.overall_rank,
+                combined_total=cr.combined_total,
+                segment_count=cr.segment_count,
+                sp_rank=cr.sp_rank,
+                fs_rank=cr.fs_rank,
+            )
+            session.add(cat_result)
+            cat_imported += 1
+        except Exception as e:
+            errors.append({"skater": cr.name, "error": str(e)})
+
     status = "success" if not errors else "partial"
     import_log = {
         "status": status,
         "events_found": len(events),
         "scores_imported": imported,
         "scores_skipped": skipped,
+        "category_results_imported": cat_imported,
+        "category_results_skipped": cat_skipped,
         "errors": errors,
     }
     comp.last_import_log = import_log
@@ -155,6 +202,8 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
         "events_found": len(events),
         "scores_imported": imported,
         "scores_skipped": skipped,
+        "category_results_imported": cat_imported,
+        "category_results_skipped": cat_skipped,
         "errors": errors,
     }
 
@@ -179,7 +228,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
 
     # Discover PDF URLs from site
     scraper = get_scraper(comp.url)
-    events, _ = await scraper.scrape(comp.url)
+    events, _, _ = await scraper.scrape(comp.url)
     pdf_urls = [e.pdf_url for e in events if e.pdf_url]
 
     if not pdf_urls:

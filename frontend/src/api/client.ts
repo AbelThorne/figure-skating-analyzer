@@ -53,6 +53,23 @@ export interface Score {
   elements: Array<Record<string, unknown>> | null;
 }
 
+export interface CategoryResult {
+  id: number;
+  competition_id: number;
+  competition_name: string | null;
+  competition_date: string | null;
+  skater_id: number;
+  skater_name: string | null;
+  skater_nationality: string | null;
+  skater_club: string | null;
+  category: string;
+  overall_rank: number | null;
+  combined_total: number | null;
+  segment_count: number;
+  sp_rank: number | null;
+  fs_rank: number | null;
+}
+
 export interface Skater {
   id: number;
   name: string;
@@ -67,6 +84,8 @@ export interface ImportResult {
   events_found: number;
   scores_imported: number;
   scores_skipped: number;
+  category_results_imported: number;
+  category_results_skipped: number;
   errors: { skater: string; error: string }[];
 }
 
@@ -80,8 +99,9 @@ export interface DashboardMedal {
   skater_name: string;
   rank: number;
   competition_name: string;
-  segment: string;
   category: string | null;
+  combined_total: number | null;
+  segment_count: number;
 }
 
 export interface DashboardTopScore {
@@ -159,6 +179,8 @@ export const api = {
     list: () => request<Skater[]>("/skaters/"),
     get: (id: number) => request<Skater>(`/skaters/${id}`),
     scores: (id: number) => request<Score[]>(`/skaters/${id}/scores`),
+    categoryResults: (id: number) =>
+      request<CategoryResult[]>(`/skaters/${id}/category-results`),
     elements: (id: number, elementType?: string) => {
       const qs = elementType ? `?element_type=${encodeURIComponent(elementType)}` : "";
       return request<Element[]>(`/skaters/${id}/elements${qs}`);
@@ -181,6 +203,18 @@ export const api = {
       return request<Score[]>(`/scores/${query}`);
     },
     elements: (id: number) => request<Element[]>(`/scores/${id}/elements`),
+    categoryResults: (params?: {
+      competition_id?: number;
+      skater_id?: number;
+    }) => {
+      const qs = new URLSearchParams();
+      if (params?.competition_id !== undefined)
+        qs.set("competition_id", String(params.competition_id));
+      if (params?.skater_id !== undefined)
+        qs.set("skater_id", String(params.skater_id));
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<CategoryResult[]>(`/scores/category-results${query}`);
+    },
   },
 
   dashboard: {

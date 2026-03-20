@@ -13,6 +13,7 @@ from app.database import get_session
 from app.models.competition import Competition
 from app.models.score import Score
 from app.models.skater import Skater
+from app.models.category_result import CategoryResult
 
 
 @get("/")
@@ -88,14 +89,14 @@ async def get_dashboard(
     total_programs_result = await session.execute(total_programs_stmt)
     total_programs = total_programs_result.scalar() or 0
 
-    # --- medals (rank <= 3) ---
+    # --- medals (overall_rank <= 3, from category results) ---
     medals_stmt = (
-        select(Score)
-        .options(selectinload(Score.skater), selectinload(Score.competition))
-        .join(Score.skater)
-        .join(Score.competition)
-        .where(Score.rank <= 3)
-        .order_by(Score.rank)
+        select(CategoryResult)
+        .options(selectinload(CategoryResult.skater), selectinload(CategoryResult.competition))
+        .join(CategoryResult.skater)
+        .join(CategoryResult.competition)
+        .where(CategoryResult.overall_rank <= 3)
+        .order_by(CategoryResult.overall_rank)
     )
     if club_name != "":
         medals_stmt = medals_stmt.where(
@@ -105,16 +106,17 @@ async def get_dashboard(
         medals_stmt = medals_stmt.where(Competition.season == season)
 
     medals_result = await session.execute(medals_stmt)
-    medal_scores = medals_result.scalars().all()
+    medal_rows = medals_result.scalars().all()
     medals = [
         {
-            "skater_name": s.skater.name if s.skater else None,
-            "rank": s.rank,
-            "competition_name": s.competition.name if s.competition else None,
-            "segment": s.segment,
-            "category": s.category,
+            "skater_name": cr.skater.name if cr.skater else None,
+            "rank": cr.overall_rank,
+            "competition_name": cr.competition.name if cr.competition else None,
+            "category": cr.category,
+            "combined_total": cr.combined_total,
+            "segment_count": cr.segment_count,
         }
-        for s in medal_scores
+        for cr in medal_rows
     ]
 
     # --- top_scores (up to 5, highest total_score) ---

@@ -1,31 +1,207 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { api, Score } from "../api/client";
+import { api, Score, CategoryResult } from "../api/client";
 import ScoreChart from "../components/ScoreChart";
 
-interface ScoreGroup {
+// --- Grouping helpers ---
+
+interface CategoryGroup {
   category: string | null;
-  segment: string;
-  scores: Score[];
+  segmentCount: number;
+  /** For multi-segment categories: overall standings from CAT page */
+  categoryResults: CategoryResult[];
+  /** Segment-level scores grouped by segment name */
+  segments: { segment: string; scores: Score[] }[];
 }
 
-function groupByCategory(scores: Score[]): ScoreGroup[] {
-  const map = new Map<string, ScoreGroup>();
+function buildCategoryGroups(
+  scores: Score[],
+  catResults: CategoryResult[]
+): CategoryGroup[] {
+  // Group scores by category
+  const catScoreMap = new Map<string, Score[]>();
   for (const s of scores) {
-    const key = `${s.category ?? ""}__${s.segment}`;
-    if (!map.has(key)) {
-      map.set(key, { category: s.category, segment: s.segment, scores: [] });
+    const key = s.category ?? "";
+    if (!catScoreMap.has(key)) catScoreMap.set(key, []);
+    catScoreMap.get(key)!.push(s);
+  }
+
+  // Group category results by category
+  const catResultMap = new Map<string, CategoryResult[]>();
+  for (const cr of catResults) {
+    const key = cr.category ?? "";
+    if (!catResultMap.has(key)) catResultMap.set(key, []);
+    catResultMap.get(key)!.push(cr);
+  }
+
+  // Build groups for each known category
+  const allCategories = new Set([...catScoreMap.keys(), ...catResultMap.keys()]);
+  const groups: CategoryGroup[] = [];
+
+  for (const cat of allCategories) {
+    const catScores = catScoreMap.get(cat) ?? [];
+    const results = catResultMap.get(cat) ?? [];
+
+    // Determine segment count from category results or from distinct segments in scores
+    const distinctSegments = [...new Set(catScores.map((s) => s.segment))].sort();
+    const segmentCount = results.length > 0 ? results[0].segment_count : distinctSegments.length;
+
+    // Build segment sub-groups
+    const segMap = new Map<string, Score[]>();
+    for (const s of catScores) {
+      if (!segMap.has(s.segment)) segMap.set(s.segment, []);
+      segMap.get(s.segment)!.push(s);
     }
-    map.get(key)!.scores.push(s);
+    const segments = [...segMap.entries()]
+      .sort(([a], [b]) => a.localeCompare(b))
+      .map(([segment, segScores]) => ({
+        segment,
+        scores: segScores.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999)),
+      }));
+
+    // Sort category results by overall rank
+    results.sort((a, b) => (a.overall_rank ?? 999) - (b.overall_rank ?? 999));
+
+    groups.push({
+      category: cat || null,
+      segmentCount,
+      categoryResults: results,
+      segments,
+    });
   }
-  for (const g of map.values()) {
-    g.scores.sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999));
-  }
-  return [...map.values()].sort((a, b) => {
-    const catCmp = (a.category ?? "").localeCompare(b.category ?? "");
-    return catCmp !== 0 ? catCmp : a.segment.localeCompare(b.segment);
-  });
+
+  return groups.sort((a, b) => (a.category ?? "").localeCompare(b.category ?? ""));
 }
+
+// --- Components ---
+
+function OverallResultsTable({ group }: { group: CategoryGroup }) {
+  const hasMultipleSegments = group.segmentCount > 1;
+
+  return (
+    <div className="overflow-x-auto mt-3">
+      <table className="w-full text-sm border rounded bg-white shadow-sm">
+        <thead className="bg-gray-100 text-left">
+          <tr>
+            <th className="px-3 py-2">Rang</th>
+            <th className="px-3 py-2">Patineur</th>
+            <th className="px-3 py-2">Club</th>
+            <th className="px-3 py-2">Nat.</th>
+            <th className="px-3 py-2 text-right">Total</th>
+            {hasMultipleSegments && (
+              <>
+                <th className="px-3 py-2 text-right">Rg SP</th>
+                <th className="px-3 py-2 text-right">Rg PL</th>
+              </>
+            )}
+          </tr>
+        </thead>
+        <tbody>
+          {group.categoryResults.map((cr) => (
+            <tr key={cr.id} className="border-t hover:bg-gray-50">
+              <td className="px-3 py-2">
+                {cr.overall_rank != null ? (
+                  cr.overall_rank <= 3 ? (
+                    <span className="bg-amber-100 text-amber-800 text-xs font-bold px-2 py-1 rounded-full">
+                      {cr.overall_rank}
+                    </span>
+                  ) : (
+                    cr.overall_rank
+                  )
+                ) : (
+                  "-"
+                )}
+              </td>
+              <td className="px-3 py-2">
+                <Link
+                  to={`/patineurs/${cr.skater_id}/analyse`}
+                  className="font-medium hover:text-primary transition-colors"
+                >
+                  {cr.skater_name ?? "-"}
+                </Link>
+              </td>
+              <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">
+                {cr.skater_club ?? "-"}
+              </td>
+              <td className="px-3 py-2 text-gray-500">{cr.skater_nationality ?? "-"}</td>
+              <td className="px-3 py-2 text-right font-mono font-bold">
+                {cr.combined_total?.toFixed(2) ?? "-"}
+              </td>
+              {hasMultipleSegments && (
+                <>
+                  <td className="px-3 py-2 text-right font-mono text-gray-500">
+                    {cr.sp_rank ?? "-"}
+                  </td>
+                  <td className="px-3 py-2 text-right font-mono text-gray-500">
+                    {cr.fs_rank ?? "-"}
+                  </td>
+                </>
+              )}
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+function SegmentScoresTable({ scores }: { scores: Score[] }) {
+  return (
+    <div className="overflow-x-auto mt-3">
+      <table className="w-full text-sm border rounded bg-white shadow-sm">
+        <thead className="bg-gray-100 text-left">
+          <tr>
+            <th className="px-3 py-2">Rang</th>
+            <th className="px-3 py-2">N°</th>
+            <th className="px-3 py-2">Patineur</th>
+            <th className="px-3 py-2">Club</th>
+            <th className="px-3 py-2">Nat.</th>
+            <th className="px-3 py-2 text-right">Total</th>
+            <th className="px-3 py-2 text-right">TES</th>
+            <th className="px-3 py-2 text-right">PCS</th>
+            <th className="px-3 py-2 text-right">Pénal.</th>
+          </tr>
+        </thead>
+        <tbody>
+          {scores.map((s: Score) => (
+            <tr key={s.id} className="border-t hover:bg-gray-50">
+              <td className="px-3 py-2">{s.rank ?? "-"}</td>
+              <td className="px-3 py-2 text-gray-400">{s.starting_number ?? "-"}</td>
+              <td className="px-3 py-2">
+                <Link
+                  to={`/patineurs/${s.skater_id}/analyse`}
+                  className="font-medium hover:text-primary transition-colors"
+                >
+                  {s.skater_name ?? "-"}
+                </Link>
+              </td>
+              <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">
+                {s.skater_club ?? "-"}
+              </td>
+              <td className="px-3 py-2 text-gray-500">{s.skater_nationality ?? "-"}</td>
+              <td className="px-3 py-2 text-right font-mono">
+                {s.total_score?.toFixed(2) ?? "-"}
+              </td>
+              <td className="px-3 py-2 text-right font-mono">
+                {s.technical_score?.toFixed(2) ?? "-"}
+              </td>
+              <td className="px-3 py-2 text-right font-mono">
+                {s.component_score?.toFixed(2) ?? "-"}
+              </td>
+              <td className="px-3 py-2 text-right font-mono text-red-600">
+                {s.deductions != null && s.deductions !== 0
+                  ? `-${s.deductions.toFixed(2)}`
+                  : "-"}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+}
+
+// --- Main page ---
 
 export default function CompetitionPage() {
   const { id } = useParams<{ id: string }>();
@@ -41,16 +217,26 @@ export default function CompetitionPage() {
     queryFn: () => api.scores.list({ competition_id: competitionId }),
   });
 
-  if (loadingComp || loadingScores) return <p className="text-gray-500">Chargement...</p>;
-  if (!competition) return <p className="text-red-600">Compétition introuvable.</p>;
+  const { data: catResults, isLoading: loadingCatResults } = useQuery({
+    queryKey: ["category-results", { competition_id: competitionId }],
+    queryFn: () => api.scores.categoryResults({ competition_id: competitionId }),
+  });
 
-  // Group by category + segment for a clearer layout
-  const groups = groupByCategory(scores ?? []);
+  if (loadingComp || loadingScores || loadingCatResults)
+    return <p className="text-gray-500">Chargement...</p>;
+  if (!competition)
+    return <p className="text-red-600">Compétition introuvable.</p>;
+
+  const groups = buildCategoryGroups(scores ?? [], catResults ?? []);
 
   return (
     <div>
-      <Link to="/competitions" className="text-primary text-xs font-bold uppercase tracking-wider hover:underline flex items-center gap-1">
-        <span className="material-symbols-outlined text-base">arrow_back</span> Retour
+      <Link
+        to="/competitions"
+        className="text-primary text-xs font-bold uppercase tracking-wider hover:underline flex items-center gap-1"
+      >
+        <span className="material-symbols-outlined text-base">arrow_back</span>{" "}
+        Retour
       </Link>
       <h1 className="text-2xl font-bold mt-2">{competition.name}</h1>
       <div className="text-sm text-gray-500 mb-4">
@@ -65,81 +251,59 @@ export default function CompetitionPage() {
         </p>
       )}
 
+      {/* Category navigation */}
       {groups.length > 1 && (
         <nav className="flex flex-wrap gap-2 mb-6">
-          {groups.map(({ category, segment }) => {
-            const anchor = `${category ?? ""}-${segment}`.replace(/\s+/g, "-");
+          {groups.map(({ category }) => {
+            const anchor = (category ?? "").replace(/\s+/g, "-");
             return (
               <a
                 key={anchor}
                 href={`#${anchor}`}
                 className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200"
               >
-                {category ? `${category} · ${segment}` : segment}
+                {category ?? "—"}
               </a>
             );
           })}
         </nav>
       )}
 
-      {groups.map(({ category, segment, scores: groupScores }) => {
-        const anchor = `${category ?? ""}-${segment}`.replace(/\s+/g, "-");
+      {groups.map((group) => {
+        const anchor = (group.category ?? "").replace(/\s+/g, "-");
+        const hasOverallResults = group.categoryResults.length > 0;
+        const isMultiSegment = group.segmentCount > 1;
+
         return (
-        <div key={`${category}-${segment}`} id={anchor} className="mt-8 scroll-mt-16">
-          <div className="mb-2">
-            {category && <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">{category}</p>}
-            <h2 className="text-lg font-semibold">{segment}</h2>
+          <div key={anchor} id={anchor} className="mt-8 scroll-mt-16">
+            {/* Category title */}
+            <div className="mb-2">
+              {group.category && (
+                <h2 className="text-lg font-semibold">{group.category}</h2>
+              )}
+              {isMultiSegment && (
+                <p className="text-xs text-gray-400">
+                  {group.segmentCount} programmes (SP + PL)
+                </p>
+              )}
+            </div>
+
+            {/* Overall results table for this category */}
+            {hasOverallResults && <OverallResultsTable group={group} />}
+
+            {/* Segment detail tables */}
+            {group.segments.map(({ segment, scores: segScores }) => (
+              <div key={segment} className="mt-6">
+                <div className="mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {segment}
+                  </p>
+                </div>
+                <ScoreChart scores={segScores} />
+                <SegmentScoresTable scores={segScores} />
+              </div>
+            ))}
           </div>
-          <ScoreChart scores={groupScores} />
-          <div className="overflow-x-auto mt-3">
-            <table className="w-full text-sm border rounded bg-white shadow-sm">
-              <thead className="bg-gray-100 text-left">
-                <tr>
-                  <th className="px-3 py-2">Rang</th>
-                  <th className="px-3 py-2">N°</th>
-                  <th className="px-3 py-2">Patineur</th>
-                  <th className="px-3 py-2">Club</th>
-                  <th className="px-3 py-2">Nat.</th>
-                  <th className="px-3 py-2 text-right">Total</th>
-                  <th className="px-3 py-2 text-right">TES</th>
-                  <th className="px-3 py-2 text-right">PCS</th>
-                  <th className="px-3 py-2 text-right">Pénal.</th>
-                </tr>
-              </thead>
-              <tbody>
-                {groupScores.map((s: Score) => (
-                  <tr key={s.id} className="border-t hover:bg-gray-50">
-                    <td className="px-3 py-2">{s.rank ?? "-"}</td>
-                    <td className="px-3 py-2 text-gray-400">{s.starting_number ?? "-"}</td>
-                    <td className="px-3 py-2">
-                      <Link to={`/patineurs/${s.skater_id}/analyse`} className="font-medium hover:text-primary transition-colors">
-                        {s.skater_name ?? "-"}
-                      </Link>
-                    </td>
-                    <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">
-                      {s.skater_club ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-gray-500">{s.skater_nationality ?? "-"}</td>
-                    <td className="px-3 py-2 text-right font-mono">
-                      {s.total_score?.toFixed(2) ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono">
-                      {s.technical_score?.toFixed(2) ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono">
-                      {s.component_score?.toFixed(2) ?? "-"}
-                    </td>
-                    <td className="px-3 py-2 text-right font-mono text-red-600">
-                      {s.deductions != null && s.deductions !== 0
-                        ? `-${s.deductions.toFixed(2)}`
-                        : "-"}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </div>
         );
       })}
     </div>

@@ -21,3 +21,6 @@ class Competition(Base):
     scores: Mapped[list["Score"]] = relationship(  # noqa: F821
         "Score", back_populates="competition", cascade="all, delete-orphan"
     )
+    category_results: Mapped[list["CategoryResult"]] = relationship(  # noqa: F821
+        "CategoryResult", back_populates="competition", cascade="all, delete-orphan"
+    )

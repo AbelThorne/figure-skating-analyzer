@@ -30,6 +30,26 @@ class ScrapedEvent:
     pdf_url: str | None = None   # URL to judges scores PDF
 
 @dataclass
+class ScrapedCategory:
+    """A category discovered on the competition index page with its CAT result URL."""
+    category: str          # e.g. "National Novice Femme"
+    cat_url: str | None = None   # URL to CATxxxRS.htm overall result page
+    segments: list[str] | None = None  # segment names discovered (e.g. ["Short Program", "Free Skating"])
+
+@dataclass
+class ScrapedCategoryResult:
+    """An overall category result from a CATxxxRS.htm page."""
+    name: str
+    club: str | None = None
+    nationality: str | None = None
+    category: str | None = None
+    overall_rank: int | None = None
+    combined_total: float | None = None
+    sp_rank: int | None = None
+    fs_rank: int | None = None
+    segment_count: int = 1
+
+@dataclass
 class ScrapedResult:
     """A competitor result scraped from a SEG detail page."""
     name: str
@@ -59,23 +79,36 @@ _SEGMENT_MAP = {
 
 
 class FSManagerScraper:
-    """Scraper for FS Manager (Swiss Timing) competition result sites."""
+    """Scraper for FS Manager (Swiss Timing) competition result sites.
 
-    def parse_index(self, html: str, base_url: str) -> list[ScrapedEvent]:
-        """Parse the competition index page and return discovered events."""
+    Implements the BaseScraper interface (duck-typed to avoid circular imports).
+    """
+
+    def parse_index(self, html: str, base_url: str) -> tuple[list[ScrapedEvent], list[ScrapedCategory]]:
+        """Parse the competition index page and return discovered events and categories.
+
+        Returns:
+            A tuple of (events, categories) where events are individual segments
+            and categories group segments together with their CATxxxRS.htm URL.
+        """
         soup = BeautifulSoup(html, "html.parser")
         base_dir = base_url.rsplit("/", 1)[0] + "/"
         events: list[ScrapedEvent] = []
+        categories: list[ScrapedCategory] = []
 
         # Find the main event table — it has a TabHeadWhite header row.
         # Use only the innermost qualifying table (avoid processing nested tables multiple times).
         all_tables = soup.find_all("table")
         qualifying = [t for t in all_tables if t.find("tr", class_=re.compile(r"TabHead"))]
-        # Skip tables that are ancestors of another qualifying table
+        # Keep only innermost: skip tables that contain another qualifying table as descendant
         qualifying_set = set(id(t) for t in qualifying)
         tables_to_process = [
             t for t in qualifying
-            if not any(id(p) in qualifying_set for p in t.parents if p.name == "table")
+            if not any(
+                id(child) in qualifying_set
+                for child in t.find_all("table")
+                if id(child) != id(t)
+            )
         ]
 
         for table in tables_to_process:
@@ -84,8 +117,12 @@ class FSManagerScraper:
                 continue
 
             current_category: str | None = None
+            current_cat_url: str | None = None
+            current_segments: list[str] = []
+
             for row in table.find_all("tr"):
-                if "TabHead" in (row.get("class") or [""]):
+                row_classes = " ".join(row.get("class") or [])
+                if "TabHead" in row_classes:
                     continue
 
                 cells = row.find_all(["td", "th"])
@@ -96,14 +133,33 @@ class FSManagerScraper:
                 second_cell_text = _clean_text(cells[1].get_text()) if len(cells) > 1 else ""
 
                 if first_cell_text:
+                    # Save previous category before starting a new one
+                    if current_category:
+                        categories.append(ScrapedCategory(
+                            category=current_category,
+                            cat_url=current_cat_url,
+                            segments=current_segments if current_segments else None,
+                        ))
+
                     # Category row — store category name, but skip schedule rows (date like "07.02.2026")
                     if re.match(r"^\d{2}\.\d{2}\.\d{4}$", first_cell_text):
                         current_category = None  # reset so segment rows under this are skipped
+                        current_cat_url = None
+                        current_segments = []
                     else:
                         current_category = first_cell_text
+                        current_cat_url = None
+                        current_segments = []
+
+                        # Extract CATxxxRS.htm URL from the category row
+                        for a in row.find_all("a", href=True):
+                            href = a["href"]
+                            if re.search(r"CAT\d+RS\.htm$", href, re.IGNORECASE):
+                                current_cat_url = urljoin(base_dir, href)
                 elif second_cell_text and current_category:
                     # Segment row — extract SEG URL and PDF URL
                     segment_name = second_cell_text
+                    current_segments.append(segment_name)
                     seg_url: str | None = None
                     pdf_url: str | None = None
 
@@ -122,7 +178,15 @@ class FSManagerScraper:
                             pdf_url=pdf_url,
                         ))
 
-        return events
+            # Don't forget the last category
+            if current_category:
+                categories.append(ScrapedCategory(
+                    category=current_category,
+                    cat_url=current_cat_url,
+                    segments=current_segments if current_segments else None,
+                ))
+
+        return events, categories
 
     def parse_seg_page(self, html: str, category: str, segment: str) -> list[ScrapedResult]:
         """Parse a SEG detail page and return competitor results."""
@@ -136,7 +200,11 @@ class FSManagerScraper:
         qualifying_set = set(id(t) for t in qualifying)
         tables_to_process = [
             t for t in qualifying
-            if not any(id(p) in qualifying_set for p in t.parents if p.name == "table")
+            if not any(
+                id(child) in qualifying_set
+                for child in t.find_all("table")
+                if id(child) != id(t)
+            )
         ]
 
         for table in tables_to_process:
@@ -260,18 +328,133 @@ class FSManagerScraper:
             starting_number=stn,
         )
 
-    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult]]:
-        """Full scrape: fetch index, discover events, fetch all SEG pages."""
+    def parse_cat_page(self, html: str, category: str, segment_count: int) -> list[ScrapedCategoryResult]:
+        """Parse a CATxxxRS.htm page and return overall category results.
+
+        The CAT result page has columns like: FPl. | Name | Club | Nation | Points | SP | FS
+        For single-segment categories: FPl. | Name | Club | Nation | Points | FS
+        """
+        soup = BeautifulSoup(html, "html.parser")
+        results: list[ScrapedCategoryResult] = []
+
+        all_tables = soup.find_all("table")
+        qualifying = [t for t in all_tables if t.find("tr", class_=re.compile(r"TabHead"))]
+        qualifying_set = set(id(t) for t in qualifying)
+        tables_to_process = [
+            t for t in qualifying
+            if not any(
+                id(child) in qualifying_set
+                for child in t.find_all("table")
+                if id(child) != id(t)
+            )
+        ]
+
+        for table in tables_to_process:
+            header_row = table.find("tr", class_=re.compile(r"TabHead"))
+            if not header_row:
+                continue
+
+            headers = [_clean_text(th.get_text()).lower() for th in header_row.find_all(["th", "td"], recursive=False)]
+            col_map = self._map_cat_columns(headers)
+            if "name" not in col_map:
+                continue
+
+            for row in table.find_all("tr"):
+                css = " ".join(row.get("class") or [])
+                if "TabHead" in css:
+                    continue
+                if not re.search(r"Line\d", css):
+                    continue
+
+                cells = row.find_all(["td", "th"], recursive=False)
+                result = self._parse_cat_row(cells, col_map, category, segment_count)
+                if result:
+                    results.append(result)
+
+        return results
+
+    def _map_cat_columns(self, headers: list[str]) -> dict[str, int]:
+        """Map CAT result page column headers to indices."""
+        col_map: dict[str, int] = {}
+        for i, h in enumerate(headers):
+            h = h.strip().rstrip(".=+- ").strip()
+            if h in ("fpl", "pl"):
+                col_map["rank"] = i
+            elif h == "name":
+                col_map["name"] = i
+            elif h == "club":
+                col_map["club"] = i
+            elif h == "nation":
+                col_map["nation"] = i
+            elif h == "points":
+                col_map["points"] = i
+            elif h == "sp":
+                col_map["sp"] = i
+            elif h == "fs":
+                col_map["fs"] = i
+        return col_map
+
+    def _parse_cat_row(
+        self,
+        cells: list[Tag],
+        col_map: dict[str, int],
+        category: str,
+        segment_count: int,
+    ) -> ScrapedCategoryResult | None:
+        def cell_text(key: str) -> str | None:
+            idx = col_map.get(key)
+            if idx is None or idx >= len(cells):
+                return None
+            return _clean_text(cells[idx].get_text()) or None
+
+        name_text = cell_text("name")
+        if not name_text or len(name_text) < 2:
+            return None
+
+        # Skip withdrawn / disqualified rows (Points will be empty or "WD")
+        points_raw = cell_text("points")
+        combined_total = _parse_float(points_raw)
+        if combined_total is None:
+            return None
+
+        # Extract nation
+        nationality: str | None = None
+        nat_idx = col_map.get("nation")
+        if nat_idx is not None and nat_idx < len(cells):
+            nat_text = _clean_text(cells[nat_idx].get_text())
+            m = re.search(r"\b([A-Z]{2,3})\b", nat_text)
+            if m:
+                nationality = m.group(1)
+
+        return ScrapedCategoryResult(
+            name=name_text,
+            club=cell_text("club"),
+            nationality=nationality,
+            category=category,
+            overall_rank=_parse_int(cell_text("rank")),
+            combined_total=combined_total,
+            sp_rank=_parse_int(cell_text("sp")),
+            fs_rank=_parse_int(cell_text("fs")),
+            segment_count=segment_count,
+        )
+
+    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult]]:
+        """Full scrape: fetch index, discover events, fetch all SEG and CAT pages.
+
+        Returns:
+            A tuple of (events, segment_results, category_results).
+        """
         async with httpx.AsyncClient(
             timeout=30.0,
             headers={"User-Agent": "Mozilla/5.0 (compatible; skating-analyzer/1.0)"},
         ) as client:
             index_html = await _fetch(url, client)
             if not index_html:
-                return [], []
+                return [], [], []
 
-            events = self.parse_index(index_html, url)
+            events, categories = self.parse_index(index_html, url)
             all_results: list[ScrapedResult] = []
+            all_cat_results: list[ScrapedCategoryResult] = []
 
             for event in events:
                 if not event.seg_url:
@@ -283,7 +466,18 @@ class FSManagerScraper:
                 results = self.parse_seg_page(seg_html, event.category, event.segment)
                 all_results.extend(results)
 
-            return events, all_results
+            for cat in categories:
+                if not cat.cat_url:
+                    continue
+                cat_html = await _fetch(cat.cat_url, client)
+                if not cat_html:
+                    logger.warning("Failed to fetch %s", cat.cat_url)
+                    continue
+                segment_count = len(cat.segments) if cat.segments else 1
+                cat_results = self.parse_cat_page(cat_html, cat.category, segment_count)
+                all_cat_results.extend(cat_results)
+
+            return events, all_results, all_cat_results
 
 
 # ---------------------------------------------------------------------------

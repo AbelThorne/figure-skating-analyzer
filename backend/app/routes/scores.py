@@ -12,6 +12,7 @@ from sqlalchemy.orm import selectinload
 
 from app.database import get_session
 from app.models.score import Score
+from app.models.category_result import CategoryResult
 
 
 @get("/")
@@ -69,8 +70,50 @@ async def get_score_elements(score_id: int, session: AsyncSession) -> list[dict]
     return score.elements or []
 
 
+@get("/category-results")
+async def list_category_results(
+    session: AsyncSession,
+    competition_id: Optional[int] = None,
+    skater_id: Optional[int] = None,
+) -> list[dict]:
+    stmt = (
+        select(CategoryResult)
+        .options(
+            selectinload(CategoryResult.competition),
+            selectinload(CategoryResult.skater),
+        )
+        .order_by(CategoryResult.competition_id, CategoryResult.category, CategoryResult.overall_rank)
+    )
+    if competition_id is not None:
+        stmt = stmt.where(CategoryResult.competition_id == competition_id)
+    if skater_id is not None:
+        stmt = stmt.where(CategoryResult.skater_id == skater_id)
+
+    result = await session.execute(stmt)
+    return [_category_result_to_dict(cr) for cr in result.scalars().all()]
+
+
+def _category_result_to_dict(cr: CategoryResult) -> dict:
+    return {
+        "id": cr.id,
+        "competition_id": cr.competition_id,
+        "competition_name": cr.competition.name if cr.competition else None,
+        "competition_date": cr.competition.date.isoformat() if cr.competition and cr.competition.date else None,
+        "skater_id": cr.skater_id,
+        "skater_name": cr.skater.name if cr.skater else None,
+        "skater_nationality": cr.skater.nationality if cr.skater else None,
+        "skater_club": cr.skater.club if cr.skater else None,
+        "category": cr.category,
+        "overall_rank": cr.overall_rank,
+        "combined_total": cr.combined_total,
+        "segment_count": cr.segment_count,
+        "sp_rank": cr.sp_rank,
+        "fs_rank": cr.fs_rank,
+    }
+
+
 router = Router(
     path="/api/scores",
-    route_handlers=[list_scores, get_score_elements],
+    route_handlers=[list_scores, get_score_elements, list_category_results],
     dependencies={"session": Provide(get_session)},
 )

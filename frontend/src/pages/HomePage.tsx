@@ -116,8 +116,9 @@ function MedalsPanel({ medals }: { medals: DashboardMedal[] }) {
             <div className="min-w-0">
               <div className="text-sm font-medium text-on-surface truncate">{medal.skater_name}</div>
               <div className="text-xs text-on-surface-variant truncate">
-                {medal.competition_name} · {medal.segment}
+                {medal.competition_name}
                 {medal.category ? ` · ${medal.category}` : ""}
+                {medal.combined_total != null ? ` · ${medal.combined_total.toFixed(2)} pts` : ""}
               </div>
             </div>
           </li>
