@@ -229,7 +229,7 @@ async def get_import_status(competition_id: int, session: AsyncSession) -> dict:
 
 
 @post("/{competition_id:int}/enrich")
-async def enrich_competition(competition_id: int, session: AsyncSession) -> dict:
+async def enrich_competition(competition_id: int, session: AsyncSession, force: bool = False) -> dict:
     """Enrich existing scores with element details from PDF score cards."""
     comp = await session.get(Competition, competition_id)
     if not comp:
@@ -271,7 +271,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
                 scores = result.scalars().all()
                 if scores:
                     for score in scores:
-                        if not score.elements:  # don't overwrite
+                        if not score.elements or force:  # don't overwrite unless forced
                             score.elements = elements
                             score.pdf_path = str(pdf_path)
                             enriched += 1

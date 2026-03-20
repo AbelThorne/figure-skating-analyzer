@@ -97,15 +97,33 @@ def _parse_element_row(line: str) -> dict | None:
     # Second token is the raw element code (may include markers as suffixes)
     raw_name = tokens[1]
 
-    # Third token must be a float (base value)
+    # ISU marker tokens that may appear standalone in the token stream
+    _STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x"}
+
+    # Collect any standalone marker tokens that appear between name and base_value
+    # e.g. "4 2Lz+2T< < 3.14 ..." — the lone "<" at tokens[2] is a duplicate marker
+    idx = 2
+    pre_base_markers: list[str] = []
+    while idx < len(tokens) and tokens[idx] in _STANDALONE_MARKERS:
+        pre_base_markers.append(tokens[idx])
+        idx += 1
+
+    # Next token after optional pre-base markers must be a float (base value)
+    if idx >= len(tokens):
+        return None
     try:
-        base_value = float(tokens[2])
+        base_value = float(tokens[idx])
     except ValueError:
         return None
+    idx += 1
 
-    # Remaining tokens: [j1, j2, ..., jN, panel_goe, element_score]
-    # Last two are always panel_goe and score; the rest are judge GOE integers.
-    remaining = tokens[3:]
+    # Remaining tokens after base_value may contain more standalone ISU marker tokens
+    # (e.g. "x" for second-half bonus) before the numeric GOE/score values.
+    remaining = list(tokens[idx:])
+    inline_markers: list[str] = pre_base_markers
+    while remaining and remaining[0] in _STANDALONE_MARKERS:
+        inline_markers.append(remaining.pop(0))
+
     if len(remaining) < 3:  # need ≥1 judge + goe + score
         return None
 
@@ -125,7 +143,15 @@ def _parse_element_row(line: str) -> dict | None:
     except ValueError:
         return None
 
-    clean_name, markers = _extract_markers(raw_name)
+    clean_name, name_markers = _extract_markers(raw_name)
+    # Merge: name-embedded markers first, then standalone inline markers
+    # Deduplicate while preserving order
+    seen: set[str] = set()
+    markers: list[str] = []
+    for m in name_markers + inline_markers:
+        if m not in seen:
+            seen.add(m)
+            markers.append(m)
 
     return {
         "number": number,
