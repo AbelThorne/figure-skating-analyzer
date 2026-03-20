@@ -29,6 +29,26 @@ _STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x"}
 # Marker extraction
 # ---------------------------------------------------------------------------
 
+def _strip_trailing_markers(part: str) -> tuple[str, list[str]]:
+    """Strip all trailing ISU markers from a single element part.
+
+    Returns (clean_part, markers_list). Strips longest match first to
+    avoid "<<" being parsed as two "<" markers.
+    """
+    markers: list[str] = []
+    while True:
+        changed = False
+        for marker in ("<<", "<", "q", "e", "!", "*", "x"):
+            if part.endswith(marker):
+                markers.insert(0, marker)
+                part = part[: -len(marker)]
+                changed = True
+                break
+        if not changed:
+            break
+    return part, markers
+
+
 def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
     """Split an element name string into (clean_name, list_of_markers).
 
@@ -41,31 +61,58 @@ def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
         *    Nullified element (over program limit, BV=0 GOE=0)
         x    Second-half bonus (BV already ×1.10 in base_value)
 
-    Examples:
-        "3Lz<"      -> ("3Lz",    ["<"])
-        "3Lo<<"     -> ("3Lo",    ["<<"])
-        "3F+2Te"    -> ("3F+2T",  ["e"])
-        "StSq3*"    -> ("StSq3",  ["*"])
-        "3Lzx"      -> ("3Lz",    ["x"])
-        "2Aq"       -> ("2A",     ["q"])
-        "3Lz+2T"    -> ("3Lz+2T", [])
+    For non-combo elements the marker list is flat:
+        "3Lz<"      -> ("3Lz",      ["<"])
+        "3Lo<<"     -> ("3Lo",      ["<<"])
+        "StSq3*"    -> ("StSq3",    ["*"])
+        "3Lzx"      -> ("3Lz",      ["x"])
+        "2Aq"       -> ("2A",       ["q"])
+
+    For combo elements (containing "+") the returned markers list is
+    positional — one entry per jump, aligned by index:
+        "+"  means no marker on that jump position
+        otherwise the marker string applies to that jump
+
+        "3F+2Te"       -> ("3F+2T",     ["+", "e"])
+        "2S<+1T"       -> ("2S+1T",     ["<", "+"])
+        "3F!+2T<<"     -> ("3F+2T",     ["!", "<<"])
+        "3Lz+2T<+2Lo"  -> ("3Lz+2T+2Lo", ["+", "<", "+"])
+        "3Lz+2T"       -> ("3Lz+2T",   [])   # no markers → empty list
     """
-    markers: list[str] = []
     name = raw_name.strip()
 
-    # Strip trailing markers repeatedly (longest first to avoid << being parsed as < + <)
-    while True:
-        changed = False
-        for marker in ("<<", "<", "q", "e", "!", "*", "x"):
-            if name.endswith(marker):
-                markers.insert(0, marker)
-                name = name[: -len(marker)]
-                changed = True
-                break
-        if not changed:
-            break
+    if "+" not in name:
+        # Non-combo: strip trailing markers from the whole token
+        clean, markers = _strip_trailing_markers(name)
+        return clean, markers
 
-    return name, markers
+    # Combo: split on "+", strip markers from each part
+    parts = name.split("+")
+    clean_parts: list[str] = []
+    part_markers: list[list[str]] = []
+    for part in parts:
+        clean, ms = _strip_trailing_markers(part)
+        clean_parts.append(clean)
+        part_markers.append(ms)
+
+    clean_name = "+".join(clean_parts)
+
+    # Check if any part has markers
+    any_marked = any(ms for ms in part_markers)
+    if not any_marked:
+        return clean_name, []
+
+    # Build positional marker list: one entry per jump
+    # If a jump has exactly one marker use it; if none use "+"; multi-marker
+    # parts collapse to their first marker (rare edge case)
+    positional: list[str] = []
+    for ms in part_markers:
+        if ms:
+            positional.append(ms[0])  # primary marker for this jump
+        else:
+            positional.append("+")
+
+    return clean_name, positional
 
 
 # ---------------------------------------------------------------------------
@@ -144,14 +191,21 @@ def _parse_element_row(line: str) -> dict | None:
         return None
 
     clean_name, name_markers = _extract_markers(raw_name)
-    # Merge: name-embedded markers first, then standalone inline markers
-    # Deduplicate while preserving order
-    seen: set[str] = set()
-    markers: list[str] = []
-    for m in name_markers + inline_markers:
-        if m not in seen:
-            seen.add(m)
-            markers.append(m)
+    # If name_markers is positional (contains "+" sentinels), use it as-is —
+    # the inline standalone tokens are redundant duplicates of what's already
+    # embedded in the element code. Merging/deduplicating would corrupt the
+    # positional structure (e.g. turn ["e", "+", "+"] into ["e", "+"]).
+    if "+" in name_markers:
+        markers = name_markers
+    else:
+        # Flat format: merge name-embedded markers with standalone inline markers,
+        # deduplicating while preserving order.
+        seen: set[str] = set()
+        markers = []
+        for m in name_markers + inline_markers:
+            if m not in seen:
+                seen.add(m)
+                markers.append(m)
 
     return {
         "number": number,

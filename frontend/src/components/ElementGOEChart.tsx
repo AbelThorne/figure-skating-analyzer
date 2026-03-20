@@ -20,6 +20,7 @@ interface ChartEntry {
   label: string;
   goe: number;
   elementName: string;
+  markers: string[];
   competition: string;
   date: string;
 }
@@ -64,18 +65,55 @@ export default function ElementGOEChart({ elements }: Props) {
         label: selected ? shortComp : `${el.element_name}`,
         goe: el.goe!,
         elementName: el.element_name,
+        markers: el.markers ?? [],
         competition: el.competition_name ?? "?",
         date: el.competition_date ? el.competition_date.slice(0, 10) : "?",
       };
     });
 
+  // Marker labels in French for the tooltip
+  const MARKER_LABELS: Record<string, string> = {
+    "*":  "annulé",
+    "<<": "déclassé",
+    "<":  "sous-rotation",
+    "q":  "quart court",
+    "e":  "carre incorrecte",
+    "!":  "carre incertaine",
+    "x":  "bonus 2e moitié",
+  };
+
   const CustomTooltip = ({ active, payload }: any) => {
     if (!active || !payload?.length) return null;
     const entry: ChartEntry = payload[0].payload;
+    // Filter out the "+" positional sentinel before display
+    const displayMarkers = (entry.markers ?? []).filter((m) => m !== "+");
+    const hasMarkers = displayMarkers.length > 0;
     return (
-      <div className="bg-surface-container-lowest rounded-xl shadow-sm p-3 text-xs font-body">
-        <p className="font-mono font-bold text-on-surface">{entry.elementName}</p>
-        <p className="text-on-surface-variant">{entry.competition}</p>
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm p-3 text-xs font-body min-w-[160px]">
+        <p className="font-mono font-bold text-on-surface">
+          {entry.elementName}
+          {hasMarkers && (
+            <span className="ml-1 font-normal text-[10px] text-on-surface-variant">
+              {displayMarkers.join(" ")}
+            </span>
+          )}
+        </p>
+        {hasMarkers && (
+          <div className="mt-1 flex flex-wrap gap-1">
+            {displayMarkers.map((m) => (
+              <span
+                key={m}
+                className={`inline-flex items-center rounded px-1.5 py-0.5 text-[10px] font-bold font-mono
+                  ${m === "x" ? "bg-primary/10 text-primary" :
+                    m === "!" ? "bg-amber-50 text-amber-700" :
+                    "bg-error/10 text-[#ba1a1a]"}`}
+              >
+                {m} · {MARKER_LABELS[m] ?? m}
+              </span>
+            ))}
+          </div>
+        )}
+        <p className="text-on-surface-variant mt-1.5">{entry.competition}</p>
         <p className={`font-mono font-bold mt-1 ${entry.goe >= 0 ? "text-primary" : "text-[#ba1a1a]"}`}>
           GOE : {entry.goe >= 0 ? "+" : ""}{entry.goe.toFixed(2)}
         </p>
@@ -125,13 +163,18 @@ export default function ElementGOEChart({ elements }: Props) {
             <ReferenceLine y={0} stroke="#e0e3e5" strokeWidth={1.5} />
             <Tooltip content={<CustomTooltip />} />
             <Bar dataKey="goe" radius={[3, 3, 0, 0]}>
-              {data.map((entry, index) => (
-                <Cell
-                  key={`cell-${index}`}
-                  fill={entry.goe >= 0 ? "#2e6385" : "#ba1a1a"}
-                  fillOpacity={0.85}
-                />
-              ))}
+              {data.map((entry, index) => {
+                const hasPenalty = entry.markers.some((m) =>
+                  ["*", "<", "<<", "q", "e", "!"].includes(m)
+                );
+                return (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={entry.goe >= 0 ? "#2e6385" : "#ba1a1a"}
+                    fillOpacity={hasPenalty ? 0.45 : 0.85}
+                  />
+                );
+              })}
             </Bar>
           </BarChart>
         </ResponsiveContainer>

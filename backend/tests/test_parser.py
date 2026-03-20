@@ -61,21 +61,40 @@ class TestExtractMarkers:
         assert markers == []
 
     def test_combo_edge_on_last_jump(self):
-        # "3F+2Te" → edge call applies to the combo (2T)
+        # "3F+2Te" → edge call on 2T (last jump): positional ["+", "e"]
         name, markers = _extract_markers("3F+2Te")
         assert name == "3F+2T"
-        assert "e" in markers
+        assert markers == ["+", "e"]
 
-    def test_combo_unclear_edge(self):
-        # "3F!+2T" → ! appears after the first jump before +
-        # In real FS Manager HTML, ! on Flip in a combo may appear as "3F!+2T"
+    def test_combo_marker_on_first_jump(self):
+        # "2S<+1T" → under-rotation on 2S (first jump): positional ["<", "+"]
+        name, markers = _extract_markers("2S<+1T")
+        assert name == "2S+1T"
+        assert markers == ["<", "+"]
+
+    def test_combo_markers_on_both_jumps(self):
+        # "3F!+2T<<" → ! on 3F, << on 2T: positional ["!", "<<"]
+        name, markers = _extract_markers("3F!+2T<<")
+        assert name == "3F+2T"
+        assert markers == ["!", "<<"]
+
+    def test_combo_three_parts_middle_marker(self):
+        # "3Lz+2T<+2Lo" → < on 2T (middle jump): ["+" , "<", "+"]
+        name, markers = _extract_markers("3Lz+2T<+2Lo")
+        assert name == "3Lz+2T+2Lo"
+        assert markers == ["+", "<", "+"]
+
+    def test_combo_x_on_last_jump(self):
+        # "3Lzx+2T" → x bonus applies to whole combo via last jump notation
+        name, markers = _extract_markers("3Lzx+2T")
+        assert name == "3Lz+2T"
+        assert markers == ["x", "+"]
+
+    def test_combo_unclear_edge_on_first(self):
+        # "3F!+2T" → ! on 3F (first jump), nothing on 2T
         name, markers = _extract_markers("3F!+2T")
-        # After stripping: name ends with "T", not a marker → no markers stripped
-        # The ! is embedded, not a trailing suffix — stays in name
-        # This is an edge case: some formats put ! before +, not at the end
-        # Acceptable: name="3F!+2T", markers=[] (no trailing markers)
-        assert "3F" in name  # the jump code is present
-        # Do not assert markers here — format varies; just ensure no crash
+        assert name == "3F+2T"
+        assert markers == ["!", "+"]
 
     def test_spin_no_markers(self):
         name, markers = _extract_markers("CSSp4")
@@ -124,15 +143,23 @@ class TestParseElementRow:
         assert result["markers"] == ["<<"]
         assert result["base_value"] == pytest.approx(1.70)
 
-    def test_unclear_edge_on_combo(self):
+    def test_unclear_edge_on_first_jump_of_combo(self):
         line = " 3  3F!+2T                        5.30   0   0   0   1   0   0   0   0   0   0.00   5.30"
         result = _parse_element_row(line)
         assert result is not None
-        # "3F!+2T" — ! is embedded before + so may stay in name depending on format
-        # At minimum: element parses without error and number is correct
         assert result["number"] == 3
+        assert result["name"] == "3F+2T"
+        assert result["markers"] == ["!", "+"]
         assert result["base_value"] == pytest.approx(5.30)
         assert result["judge_goe"] == [0, 0, 0, 1, 0, 0, 0, 0, 0]
+
+    def test_underrotation_on_first_jump_of_combo(self):
+        line = " 3  2S<+1T                         2.84  -2  -2  -3  -2  -2  -2  -2  -2  -2  -2.11   0.73"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "2S+1T"
+        assert result["markers"] == ["<", "+"]
+        assert result["base_value"] == pytest.approx(2.84)
 
     def test_nullified_element(self):
         line = " 6  StSq3*                        0.00   0   0   0   0   0   0   0   0   0   0.00   0.00"
@@ -289,12 +316,20 @@ class TestParseElementsFromText:
         assert "q" in elem8["markers"]
         assert elem8["name"] == "2A"
 
-    def test_second_skater_edge_call(self, protocol_text):
+    def test_combo_marker_on_first_jump_detected(self, protocol_text):
         results = parse_elements_from_text(protocol_text)
-        # DUPONT Lea element 2: "3F+2Te" (index 1)
+        # MARTIN Emma element 3: "2S<+1T" (index 2) — < on first jump
+        elem3 = results[0]["elements"][2]
+        assert elem3["number"] == 3
+        assert elem3["name"] == "2S+1T"
+        assert elem3["markers"] == ["<", "+"]
+
+    def test_second_skater_edge_call_on_last_jump(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        # DUPONT Lea element 2: "3F+2Te" (index 1) — e on last jump
         elem2 = results[1]["elements"][1]
-        assert "e" in elem2["markers"]
         assert elem2["name"] == "3F+2T"
+        assert elem2["markers"] == ["+", "e"]
 
     def test_category_segment_extracted(self, protocol_text):
         results = parse_elements_from_text(protocol_text)

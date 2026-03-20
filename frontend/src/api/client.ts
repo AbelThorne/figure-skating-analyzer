@@ -172,6 +172,7 @@ export interface Element {
   goe: number | null;
   judges: number[] | null;
   total: number | null;
+  markers: string[];
 }
 
 export interface ClubConfig {

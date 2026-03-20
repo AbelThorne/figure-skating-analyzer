@@ -81,8 +81,9 @@ async def get_skater_elements(
                 "element_name": name,
                 "base_value": element.get("base_value"),
                 "goe": element.get("goe"),
-                "judges": element.get("judges"),
-                "total": element.get("total"),
+                "judges": element.get("judge_goe") or element.get("judges"),
+                "total": element.get("score") or element.get("total"),
+                "markers": element.get("markers") or [],
             })
     return records
 
