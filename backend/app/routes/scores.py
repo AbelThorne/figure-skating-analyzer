@@ -4,6 +4,7 @@ from typing import Optional
 
 from litestar import Router, get
 from litestar.di import Provide
+from litestar.exceptions import NotFoundException
 from litestar.params import Parameter
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -60,8 +61,16 @@ def _score_to_dict(s: Score) -> dict:
     }
 
 
+@get("/{score_id:int}/elements")
+async def get_score_elements(score_id: int, session: AsyncSession) -> list[dict]:
+    score = await session.get(Score, score_id)
+    if not score:
+        raise NotFoundException(f"Score {score_id} not found")
+    return score.elements or []
+
+
 router = Router(
     path="/api/scores",
-    route_handlers=[list_scores],
+    route_handlers=[list_scores, get_score_elements],
     dependencies={"session": Provide(get_session)},
 )

@@ -8,6 +8,7 @@ from app.database import init_db
 from app.routes.competitions import router as competitions_router
 from app.routes.skaters import router as skaters_router
 from app.routes.scores import router as scores_router
+from app.routes.dashboard import router as dashboard_router
 
 
 @asynccontextmanager
@@ -23,7 +24,7 @@ cors_config = CORSConfig(
 )
 
 app = Litestar(
-    route_handlers=[competitions_router, skaters_router, scores_router],
+    route_handlers=[competitions_router, skaters_router, scores_router, dashboard_router],
     cors_config=cors_config,
     lifespan=[lifespan],
 )

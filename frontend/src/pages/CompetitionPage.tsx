@@ -41,16 +41,16 @@ export default function CompetitionPage() {
     queryFn: () => api.scores.list({ competition_id: competitionId }),
   });
 
-  if (loadingComp || loadingScores) return <p className="text-gray-500">Loading...</p>;
-  if (!competition) return <p className="text-red-600">Competition not found.</p>;
+  if (loadingComp || loadingScores) return <p className="text-gray-500">Chargement...</p>;
+  if (!competition) return <p className="text-red-600">Compétition introuvable.</p>;
 
   // Group by category + segment for a clearer layout
   const groups = groupByCategory(scores ?? []);
 
   return (
     <div>
-      <Link to="/" className="text-blue-600 hover:underline text-sm">
-        ← Back
+      <Link to="/competitions" className="text-primary text-xs font-bold uppercase tracking-wider hover:underline flex items-center gap-1">
+        <span className="material-symbols-outlined text-base">arrow_back</span> Retour
       </Link>
       <h1 className="text-2xl font-bold mt-2">{competition.name}</h1>
       <div className="text-sm text-gray-500 mb-4">
@@ -61,7 +61,7 @@ export default function CompetitionPage() {
 
       {(!scores || scores.length === 0) && (
         <p className="text-gray-500">
-          No scores yet. Use the Import button on the home page to download score sheets.
+          Aucun résultat. Utilisez le bouton Importer sur la page Compétitions.
         </p>
       )}
 
@@ -95,15 +95,15 @@ export default function CompetitionPage() {
             <table className="w-full text-sm border rounded bg-white shadow-sm">
               <thead className="bg-gray-100 text-left">
                 <tr>
-                  <th className="px-3 py-2">Rank</th>
+                  <th className="px-3 py-2">Rang</th>
                   <th className="px-3 py-2">N°</th>
-                  <th className="px-3 py-2">Skater</th>
+                  <th className="px-3 py-2">Patineur</th>
                   <th className="px-3 py-2">Club</th>
                   <th className="px-3 py-2">Nat.</th>
                   <th className="px-3 py-2 text-right">Total</th>
                   <th className="px-3 py-2 text-right">TES</th>
                   <th className="px-3 py-2 text-right">PCS</th>
-                  <th className="px-3 py-2 text-right">Ded.</th>
+                  <th className="px-3 py-2 text-right">Pénal.</th>
                 </tr>
               </thead>
               <tbody>
@@ -111,7 +111,11 @@ export default function CompetitionPage() {
                   <tr key={s.id} className="border-t hover:bg-gray-50">
                     <td className="px-3 py-2">{s.rank ?? "-"}</td>
                     <td className="px-3 py-2 text-gray-400">{s.starting_number ?? "-"}</td>
-                    <td className="px-3 py-2 font-medium">{s.skater_name ?? "-"}</td>
+                    <td className="px-3 py-2">
+                      <Link to={`/patineurs/${s.skater_id}/analyse`} className="font-medium hover:text-primary transition-colors">
+                        {s.skater_name ?? "-"}
+                      </Link>
+                    </td>
                     <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">
                       {s.skater_club ?? "-"}
                     </td>

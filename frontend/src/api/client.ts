@@ -49,6 +49,8 @@ export interface Score {
   technical_score: number | null;
   component_score: number | null;
   deductions: number | null;
+  components: Record<string, number> | null;
+  elements: Array<Record<string, unknown>> | null;
 }
 
 export interface Skater {
@@ -65,6 +67,64 @@ export interface ImportResult {
   scores_imported: number;
   scores_skipped: number;
   errors: { skater: string; error: string }[];
+}
+
+export interface DashboardMedal {
+  skater_name: string;
+  rank: number;
+  competition_name: string;
+  segment: string;
+  category: string | null;
+}
+
+export interface DashboardTopScore {
+  skater_name: string;
+  tss: number;
+  competition_name: string;
+  competition_date: string | null;
+  segment: string;
+}
+
+export interface DashboardMostImproved {
+  skater_name: string;
+  skater_id: number;
+  tss_gain: number;
+  first_tss: number;
+  last_tss: number;
+}
+
+export interface DashboardRecentCompetition {
+  id: number;
+  name: string;
+  date: string | null;
+  season: string | null;
+  discipline: string | null;
+}
+
+export interface Dashboard {
+  club_name: string;
+  season: string;
+  active_skaters: number;
+  competitions_tracked: number;
+  total_programs: number;
+  medals: DashboardMedal[];
+  top_scores: DashboardTopScore[];
+  most_improved: DashboardMostImproved[];
+  recent_competitions: DashboardRecentCompetition[];
+}
+
+export interface Element {
+  score_id: number;
+  competition_id: number;
+  competition_name: string | null;
+  competition_date: string | null;
+  segment: string;
+  category: string | null;
+  element_name: string;
+  base_value: number | null;
+  goe: number | null;
+  judges: number[] | null;
+  total: number | null;
 }
 
 // --- API Functions ---
@@ -88,6 +148,10 @@ export const api = {
     list: () => request<Skater[]>("/skaters/"),
     get: (id: number) => request<Skater>(`/skaters/${id}`),
     scores: (id: number) => request<Score[]>(`/skaters/${id}/scores`),
+    elements: (id: number, elementType?: string) => {
+      const qs = elementType ? `?element_type=${encodeURIComponent(elementType)}` : "";
+      return request<Element[]>(`/skaters/${id}/elements${qs}`);
+    },
   },
 
   scores: {
@@ -104,6 +168,14 @@ export const api = {
       if (params?.segment) qs.set("segment", params.segment);
       const query = qs.toString() ? `?${qs}` : "";
       return request<Score[]>(`/scores/${query}`);
+    },
+    elements: (id: number) => request<Element[]>(`/scores/${id}/elements`),
+  },
+
+  dashboard: {
+    get: (season?: string) => {
+      const qs = season ? `?season=${encodeURIComponent(season)}` : "";
+      return request<Dashboard>(`/dashboard/${qs}`);
     },
   },
 };

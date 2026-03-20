@@ -5,13 +5,13 @@
       "name": "Backend (Litestar)",
       "runtimeExecutable": "uv",
       "runtimeArgs": ["run", "uvicorn", "app.main:app", "--reload", "--port", "8000"],
-      "cwd": "/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/backend",
+      "cwd": "/Users/julien/projects/figure-skating-analyzer/.claude/worktrees/nostalgic-lichterman/backend",
       "port": 8000
     },
     {
       "name": "Frontend (Vite)",
       "runtimeExecutable": "bash",
-      "runtimeArgs": ["-c", "cd /Users/julien/projects/figure-skating-analyzer/.claude/worktrees/focused-leakey/frontend && node_modules/.bin/vite"],
+      "runtimeArgs": ["-c", "cd /Users/julien/projects/figure-skating-analyzer/.claude/worktrees/nostalgic-lichterman/frontend && node_modules/.bin/vite --port 5173"],
       "port": 5173
     }
   ]

@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from typing import Optional
+
 from litestar import Router, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
@@ -35,6 +37,49 @@ def _skater_to_dict(s: Skater) -> dict:
         "club": s.club,
         "birth_year": s.birth_year,
     }
+
+
+@get("/{skater_id:int}/elements")
+async def get_skater_elements(
+    skater_id: int,
+    session: AsyncSession,
+    element_type: Optional[str] = None,
+) -> list[dict]:
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        raise NotFoundException(f"Skater {skater_id} not found")
+
+    result = await session.execute(
+        select(Score)
+        .where(Score.skater_id == skater_id)
+        .options(selectinload(Score.competition))
+        .order_by(Competition.date)
+        .join(Score.competition)
+    )
+    scores = result.scalars().all()
+
+    records = []
+    for s in scores:
+        if not s.elements:
+            continue
+        for element in s.elements:
+            name = element.get("name", "")
+            if element_type is not None and not name.lower().startswith(element_type.lower()):
+                continue
+            records.append({
+                "score_id": s.id,
+                "competition_id": s.competition_id,
+                "competition_name": s.competition.name if s.competition else None,
+                "competition_date": s.competition.date.isoformat() if s.competition and s.competition.date else None,
+                "segment": s.segment,
+                "category": s.category,
+                "element_name": name,
+                "base_value": element.get("base_value"),
+                "goe": element.get("goe"),
+                "judges": element.get("judges"),
+                "total": element.get("total"),
+            })
+    return records
 
 
 @get("/{skater_id:int}/scores")
@@ -73,6 +118,6 @@ async def get_skater_scores(skater_id: int, session: AsyncSession) -> list[dict]
 
 router = Router(
     path="/api/skaters",
-    route_handlers=[list_skaters, get_skater, get_skater_scores],
+    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores],
     dependencies={"session": Provide(get_session)},
 )
