@@ -12,6 +12,55 @@ from pathlib import Path
 import pdfplumber
 
 
+def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
+    """Split an element name string into (clean_name, list_of_markers).
+
+    ISU markers are suffix characters that may appear after element codes:
+        <<   Downgrade (≥½ rotation short)
+        <    Under-rotation (¼–½ rotation short)
+        q    Quarter short (exactly ¼, no BV reduction, GOE capped at −1)
+        e    Incorrect edge takeoff (Flip/Lutz)
+        !    Unclear/warning edge
+        *    Nullified element (over program limit, BV=0 GOE=0)
+        x    Second-half bonus (BV already ×1.10 in base_value)
+
+    Examples:
+        "3Lz<"      -> ("3Lz",    ["<"])
+        "3Lo<<"     -> ("3Lo",    ["<<"])
+        "3F+2Te"    -> ("3F+2T",  ["e"])
+        "StSq3*"    -> ("StSq3",  ["*"])
+        "3Lzx"      -> ("3Lz",    ["x"])
+        "2Aq"       -> ("2A",     ["q"])
+        "3Lz+2T"    -> ("3Lz+2T", [])
+    """
+    markers: list[str] = []
+    name = raw_name.strip()
+
+    # Strip trailing markers repeatedly (longest first to avoid << being parsed as < + <)
+    while True:
+        changed = False
+        for marker in ("<<", "<", "q", "e", "!", "*", "x"):
+            if name.endswith(marker):
+                markers.insert(0, marker)
+                name = name[: -len(marker)]
+                changed = True
+                break
+        if not changed:
+            break
+
+    return name, markers
+
+
+def _parse_element_row(line: str) -> dict | None:
+    """Parse a single element row from a protocol. (Stub — not yet implemented)."""
+    raise NotImplementedError("_parse_element_row not yet implemented")
+
+
+def parse_elements_from_text(text: str) -> list[dict]:
+    """Parse elements from protocol text. (Stub — not yet implemented)."""
+    raise NotImplementedError("parse_elements_from_text not yet implemented")
+
+
 def parse_elements(pdf_path: Path) -> list[dict]:
     """
     Parse a PDF and return per-skater element details.
