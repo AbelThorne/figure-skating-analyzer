@@ -16,6 +16,7 @@ import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
+import ScoreCardModal from "../components/ScoreCardModal";
 
 // ─── Jump detection ───────────────────────────────────────────────────────────
 const JUMP_PATTERN = /\d*(A|T|S|F|Lo|Lz|q)\b/i;
@@ -347,6 +348,9 @@ export default function SkaterAnalyticsPage() {
   const [selectedScoreId, setSelectedScoreId] = useState<number | null>(null);
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
 
+  // ── Score card modal ───────────────────────────────────────────────────────
+  const [modalScore, setModalScore] = useState<Score | null>(null);
+
   function toggleCollapsed(key: string) {
     setExpandedRows((prev) => {
       const next = new Set(prev);
@@ -372,6 +376,15 @@ export default function SkaterAnalyticsPage() {
 
   return (
     <div className="min-h-screen bg-surface font-body">
+      {/* Score card modal */}
+      {modalScore && (
+        <ScoreCardModal
+          score={modalScore}
+          skaterName={skater?.name ?? ""}
+          onClose={() => setModalScore(null)}
+        />
+      )}
+
       {/* Back link */}
       <div className="px-6 pt-5 pb-2">
         <Link
@@ -569,13 +582,13 @@ export default function SkaterAnalyticsPage() {
                 <table className="w-full min-w-[560px] border-collapse">
                   <thead>
                     <tr className="bg-surface-container-low">
-                      {["Compétition", "Date", "Catégorie", "Rang", "TES", "PCS", "Total"].map(
+                      {["Compétition", "Date", "Catégorie", "Rang", "TES", "PCS", "Total", ""].map(
                         (col, i) => (
                           <th
-                            key={col}
+                            key={col || `col-${i}`}
                             className={`text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-3 py-2.5 ${
                               i === 0 ? "text-left rounded-tl-xl" : "text-right"
-                            } ${i === 6 ? "rounded-tr-xl" : ""}`}
+                            } ${i === 7 ? "rounded-tr-xl" : ""}`}
                           >
                             {col}
                           </th>
@@ -645,6 +658,7 @@ export default function SkaterAnalyticsPage() {
                               <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
                                 {row.catResult.combined_total?.toFixed(2) ?? "—"}
                               </td>
+                              <td className="px-3 py-2" />
                             </tr>
                           ) : null}
 
@@ -709,6 +723,17 @@ export default function SkaterAnalyticsPage() {
                               </td>
                               <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
                                 {s.total_score?.toFixed(2) ?? "—"}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                {s.elements && s.elements.length > 0 && (
+                                  <button
+                                    onClick={() => setModalScore(s)}
+                                    className="inline-flex items-center gap-0.5 text-primary hover:text-primary/80 transition-colors text-[10px] font-bold uppercase tracking-wider"
+                                    title="Voir le détail"
+                                  >
+                                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           ))}
