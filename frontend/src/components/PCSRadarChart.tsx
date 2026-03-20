@@ -15,11 +15,9 @@ interface Props {
 }
 
 const PCS_KEYS = [
-  { key: "co", label: "CO — Composition" },
-  { key: "pr", label: "PR — Présentation" },
-  { key: "sk", label: "SK — Patinage de base" },
-  { key: "pe", label: "PE — Performance" },
-  { key: "in", label: "IN — Interprétation" },
+  { key: "CO", label: "Composition" },
+  { key: "PR", label: "Présentation" },
+  { key: "SK", label: "Patinage" },
 ];
 
 const COLORS = ["#2e6385", "#a5d8ff", "#fdc97f"];

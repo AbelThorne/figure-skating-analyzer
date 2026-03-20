@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import {
@@ -18,8 +18,6 @@ import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
 
 // ─── Jump detection ───────────────────────────────────────────────────────────
-// Standard single-element jump codes: Axel family + toe/edge jumps
-// Matches if element_name contains one of these as a recognisable jump component
 const JUMP_PATTERN = /\d*(A|T|S|F|Lo|Lz|q)\b/i;
 function isJumpElement(name: string) {
   return JUMP_PATTERN.test(name);
@@ -29,9 +27,12 @@ function isJumpElement(name: string) {
 function isSpinElement(name: string) {
   return /Sp/i.test(name);
 }
-function spinLevel(name: string): number | null {
-  const match = name.match(/(\d)$/);
-  return match ? parseInt(match[1], 10) : null;
+/** Extract spin/step level: digit at end = that digit, B suffix = 0.5, otherwise 0 */
+function elementLevel(name: string): number {
+  const digitMatch = name.match(/(\d)$/);
+  if (digitMatch) return parseInt(digitMatch[1], 10);
+  if (/B$/i.test(name)) return 0.5;
+  return 0;
 }
 
 // ─── Step / choreo detection ──────────────────────────────────────────────────
@@ -60,17 +61,29 @@ function MetricCard({
   value,
   unit,
   percent,
+  info,
 }: {
   label: string;
   value: string;
   unit?: string;
-  percent?: number; // 0–100 for progress bar
+  percent?: number;
+  info?: string;
 }) {
   return (
     <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
-      <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-2">
-        {label}
-      </p>
+      <div className="flex items-center gap-1.5 mb-2">
+        <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+          {label}
+        </p>
+        {info && (
+          <span className="group relative cursor-help">
+            <span className="material-symbols-outlined text-on-surface-variant text-[14px]">info</span>
+            <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 w-56 bg-on-surface text-surface text-[11px] font-body font-normal normal-case tracking-normal rounded-lg px-3 py-2 shadow-lg z-50 leading-relaxed">
+              {info}
+            </span>
+          </span>
+        )}
+      </div>
       <p className="text-2xl font-extrabold font-headline text-on-surface font-mono">
         {value}
         {unit && (
@@ -87,6 +100,59 @@ function MetricCard({
           />
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── Dual metric card (level + GOE side by side) ────────────────────────────
+function DualMetricCard({
+  label,
+  leftLabel,
+  leftValue,
+  rightLabel,
+  rightValue,
+  info,
+}: {
+  label: string;
+  leftLabel: string;
+  leftValue: string;
+  rightLabel: string;
+  rightValue: string;
+  info?: string;
+}) {
+  return (
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+      <div className="flex items-center gap-1.5 mb-3">
+        <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+          {label}
+        </p>
+        {info && (
+          <span className="group relative cursor-help">
+            <span className="material-symbols-outlined text-on-surface-variant text-[14px]">info</span>
+            <span className="invisible group-hover:visible absolute left-1/2 -translate-x-1/2 bottom-full mb-1.5 w-56 bg-on-surface text-surface text-[11px] font-body font-normal normal-case tracking-normal rounded-lg px-3 py-2 shadow-lg z-50 leading-relaxed">
+              {info}
+            </span>
+          </span>
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-0.5">
+            {leftLabel}
+          </p>
+          <p className="text-xl font-extrabold font-headline text-on-surface font-mono">
+            {leftValue}
+          </p>
+        </div>
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-widest text-on-surface-variant mb-0.5">
+            {rightLabel}
+          </p>
+          <p className="text-xl font-extrabold font-headline text-on-surface font-mono">
+            {rightValue}
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
@@ -166,7 +232,6 @@ export default function SkaterAnalyticsPage() {
     for (const s of sortedScores) {
       const key = `${s.competition_id}__${s.category ?? ""}`;
       if (!map.has(key)) {
-        // Find matching category result
         const cr = (categoryResults ?? []).find(
           (r) => r.competition_id === s.competition_id && r.category === s.category
         ) ?? null;
@@ -182,7 +247,6 @@ export default function SkaterAnalyticsPage() {
       }
       map.get(key)!.segmentScores.push(s);
     }
-    // Sort by date desc
     return [...map.values()].sort((a, b) => {
       if (a.competitionDate && b.competitionDate)
         return a.competitionDate > b.competitionDate ? -1 : 1;
@@ -208,28 +272,36 @@ export default function SkaterAnalyticsPage() {
     return (positive / jumps.length) * 100;
   })();
 
-  const avgSpinLevel = (() => {
+  const spinStats = (() => {
     if (!elements?.length) return null;
-    const levels = elements
-      .filter((el) => isSpinElement(el.element_name))
-      .map((el) => spinLevel(el.element_name))
-      .filter((l): l is number => l != null);
-    return avg(levels);
+    const spins = elements.filter((el) => isSpinElement(el.element_name));
+    if (!spins.length) return null;
+    const levels = spins.map((el) => elementLevel(el.element_name));
+    const goeVals = spins.map((el) => el.goe).filter((g): g is number => g != null);
+    return {
+      avgLevel: avg(levels),
+      avgGoe: avg(goeVals),
+    };
   })();
 
-  const stepGoe = (() => {
+  const stepStats = (() => {
     if (!elements?.length) return null;
-    const goeVals = elements
-      .filter((el) => isStepElement(el.element_name))
-      .map((el) => el.goe)
-      .filter((g): g is number => g != null);
-    return avg(goeVals);
+    const steps = elements.filter((el) => isStepElement(el.element_name));
+    if (!steps.length) return null;
+    const levels = steps.map((el) => elementLevel(el.element_name));
+    const goeVals = steps.map((el) => el.goe).filter((g): g is number => g != null);
+    return {
+      avgLevel: avg(levels),
+      avgGoe: avg(goeVals),
+    };
   })();
 
-  // ── Derived: last score elements for judge panel ───────────────────────────
-  const lastScore = sortedScores[0] ?? null;
-  const lastScoreElements = (elements ?? []).filter(
-    (el) => lastScore && el.score_id === lastScore.id
+  // ── Selected score for element detail panel ────────────────────────────────
+  const [selectedScoreId, setSelectedScoreId] = useState<number | null>(null);
+  const activeScoreId = selectedScoreId ?? sortedScores[0]?.id ?? null;
+  const activeScore = sortedScores.find((s) => s.id === activeScoreId) ?? null;
+  const activeScoreElements = (elements ?? []).filter(
+    (el) => activeScore && el.score_id === activeScore.id
   );
 
   // ─────────────────────────────────────────────────────────────────────────────
@@ -259,7 +331,6 @@ export default function SkaterAnalyticsPage() {
         <Skeleton className="mx-6 h-36 rounded-2xl" />
       ) : (
         <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant py-8 px-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          {/* Left: avatar + name */}
           <div className="flex items-center gap-5 flex-1 min-w-0">
             <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl font-extrabold font-headline text-white ring-2 ring-white/30 shrink-0">
               {skater?.name?.[0]?.toUpperCase() ?? "?"}
@@ -274,7 +345,6 @@ export default function SkaterAnalyticsPage() {
               </p>
             </div>
           </div>
-          {/* Right: stat boxes */}
           <div className="flex gap-3 shrink-0">
             <HeroStatBox
               label="Meilleur TSS"
@@ -392,7 +462,7 @@ export default function SkaterAnalyticsPage() {
 
                       return (
                         <React.Fragment key={row.key}>
-                          {/* Overall result row (or single segment row) */}
+                          {/* Overall result row for multi-segment */}
                           {isMultiSegment && row.catResult ? (
                             <tr
                               className={
@@ -541,23 +611,39 @@ export default function SkaterAnalyticsPage() {
                   label="Précision de saut"
                   value={`${jumpPrecision.toFixed(1)}%`}
                   percent={jumpPrecision}
+                  info="Pourcentage de sauts ayant reçu un GOE strictement positif, sur l'ensemble des compétitions."
                 />
               )}
-              {avgSpinLevel != null && (
-                <MetricCard
-                  label="Niveau de spin moyen"
-                  value={avgSpinLevel.toFixed(2)}
+              {spinStats && (
+                <DualMetricCard
+                  label="Pirouettes"
+                  leftLabel="Niveau moyen"
+                  leftValue={spinStats.avgLevel?.toFixed(2) ?? "—"}
+                  rightLabel="GOE moyen"
+                  rightValue={
+                    spinStats.avgGoe != null
+                      ? `${spinStats.avgGoe >= 0 ? "+" : ""}${spinStats.avgGoe.toFixed(2)}`
+                      : "—"
+                  }
+                  info="Niveau moyen des pirouettes (B = 0.5, sans niveau = 0) et GOE moyen, sur l'ensemble des compétitions."
                 />
               )}
-              {stepGoe != null && (
-                <MetricCard
-                  label="Note de pas"
-                  value={`${stepGoe >= 0 ? "+" : ""}${stepGoe.toFixed(2)}`}
+              {stepStats && (
+                <DualMetricCard
+                  label="Pas et séquences"
+                  leftLabel="Niveau moyen"
+                  leftValue={stepStats.avgLevel?.toFixed(2) ?? "—"}
+                  rightLabel="GOE moyen"
+                  rightValue={
+                    stepStats.avgGoe != null
+                      ? `${stepStats.avgGoe >= 0 ? "+" : ""}${stepStats.avgGoe.toFixed(2)}`
+                      : "—"
+                  }
+                  info="Niveau moyen des pas et séquences chorégraphiques (B = 0.5, sans niveau = 0) et GOE moyen."
                 />
               )}
             </>
           ) : (
-            /* No elements: enrichissement card */
             <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 border-l-4 border-tertiary">
               <div className="flex items-start gap-3">
                 <span className="material-symbols-outlined text-tertiary text-2xl mt-0.5">
@@ -591,20 +677,30 @@ export default function SkaterAnalyticsPage() {
           )}
         </div>
 
-        {/* Judge panel */}
+        {/* Element detail panel */}
         <div className="lg:col-span-1 bg-surface-container-lowest rounded-xl shadow-sm p-6">
-          <h2 className="text-base font-extrabold font-headline text-on-surface mb-2">
-            Détail des juges — dernière épreuve
+          <h2 className="text-base font-extrabold font-headline text-on-surface mb-3">
+            Détail des éléments
           </h2>
-          {lastScore && (
-            <p className="text-xs text-on-surface-variant mb-4">
-              {lastScore.competition_name ?? "?"} · {lastScore.segment}
-            </p>
+          {sortedScores.length > 0 && (
+            <select
+              className="bg-surface-container-high rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary w-full mb-4"
+              value={activeScoreId ?? ""}
+              onChange={(e) =>
+                setSelectedScoreId(e.target.value ? Number(e.target.value) : null)
+              }
+            >
+              {sortedScores.map((s) => (
+                <option key={s.id} value={s.id}>
+                  {s.competition_name ?? "?"} · {s.segment}
+                </option>
+              ))}
+            </select>
           )}
           {isLoading ? (
             <Skeleton className="h-[200px] w-full" />
           ) : (
-            <JudgePanel elements={lastScoreElements} />
+            <JudgePanel elements={activeScoreElements} />
           )}
         </div>
 

@@ -17,7 +17,7 @@ export default function StatsPage() {
 
   const { data: skaters } = useQuery({
     queryKey: ["skaters"],
-    queryFn: api.skaters.list,
+    queryFn: () => api.skaters.list(),
   });
 
   const { data: skaterScores } = useQuery({
