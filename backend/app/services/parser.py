@@ -2,6 +2,16 @@
 Parser service: extracts element-by-element details from PDF score sheets.
 
 Used for enrichment — the main scores come from HTML scraping.
+
+Each element dict contains:
+    number      int             Element order in the program (1–12)
+    name        str             Clean element code (all markers stripped)
+    markers     list[str]       ISU markers present: "<", "<<", "q", "e", "!", "*", "x"
+    base_value  float           Base value (already ×1.10 when "x" marker present)
+    judge_goe   list[int]       Per-judge GOE scores (−5 to +5), length 3–9
+    goe         float           Panel GOE (trimmed mean of judge GOEs)
+    score       float           Final element score (base_value + goe)
+    info_flag   str | None      Reserved for future Info-column data
 """
 
 from __future__ import annotations
@@ -11,6 +21,10 @@ from pathlib import Path
 
 import pdfplumber
 
+
+# ---------------------------------------------------------------------------
+# Marker extraction
+# ---------------------------------------------------------------------------
 
 def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
     """Split an element name string into (clean_name, list_of_markers).
@@ -51,17 +65,21 @@ def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
     return name, markers
 
 
+# ---------------------------------------------------------------------------
+# Element row parsing
+# ---------------------------------------------------------------------------
+
 def _parse_element_row(line: str) -> dict | None:
     """Parse one element row from extracted protocol text.
 
     Line format (space-separated tokens):
         N  ElementCode  base_value  j1 j2 ... jN  panel_goe  element_score
 
-    Where N is 1–12, ElementCode may contain markers, and judge count is 3–9.
+    Where N is 1–12, ElementCode may carry marker suffixes, and
+    judge count is 3–9 (local competitions may have fewer than 9).
 
-    Returns a dict with keys:
-        number, name, markers, base_value, judge_goe, goe, score, info_flag
-    or None if the line does not match the expected format.
+    Returns a dict with enriched element data, or None if the line
+    does not match the expected element row format.
     """
     tokens = line.split()
 
@@ -69,14 +87,14 @@ def _parse_element_row(line: str) -> dict | None:
     if len(tokens) < 8:
         return None
 
-    # First token must be a 1-or-2-digit element number
+    # First token must be a 1-or-2-digit element number (1–12)
     if not re.match(r"^\d{1,2}$", tokens[0]):
         return None
     number = int(tokens[0])
     if not (1 <= number <= 12):
         return None
 
-    # Second token is the raw element code (may contain markers)
+    # Second token is the raw element code (may include markers as suffixes)
     raw_name = tokens[1]
 
     # Third token must be a float (base value)
@@ -85,11 +103,10 @@ def _parse_element_row(line: str) -> dict | None:
     except ValueError:
         return None
 
-    # Remaining tokens: judge GOEs (ints) + panel GOE (float) + score (float)
-    # The last two tokens are always panel_goe and score (floats).
-    # Everything between index 3 and len-2 are judge GOEs (integers).
+    # Remaining tokens: [j1, j2, ..., jN, panel_goe, element_score]
+    # Last two are always panel_goe and score; the rest are judge GOE integers.
     remaining = tokens[3:]
-    if len(remaining) < 3:  # need at least 1 judge + goe + score
+    if len(remaining) < 3:  # need ≥1 judge + goe + score
         return None
 
     try:
@@ -99,7 +116,7 @@ def _parse_element_row(line: str) -> dict | None:
     except ValueError:
         return None
 
-    # Validate judge count: 3–9
+    # Enforce judge count range (3–9)
     if not (3 <= len(judge_tokens) <= 9):
         return None
 
@@ -122,51 +139,50 @@ def _parse_element_row(line: str) -> dict | None:
     }
 
 
+# ---------------------------------------------------------------------------
+# Skater header pattern
+# ---------------------------------------------------------------------------
+
+# Matches the rank/name/nation/score header line for each skater:
+# "1  MARTIN Emma  FRA  3  28.14  12.50  15.64  0.00"
+_SKATER_HEADER_RE = re.compile(
+    r"^(\d{1,3})\s+(.+?)\s+([A-Z]{2,3})\s+\d{1,3}\s+\d+\.\d+\s+\d+\.\d+\s+\d+\.\d+\s+-?\d+\.\d+",
+    re.MULTILINE,
+)
+
+
+# ---------------------------------------------------------------------------
+# Public API
+# ---------------------------------------------------------------------------
+
 def parse_elements_from_text(text: str) -> list[dict]:
-    """Parse elements from protocol text. (Stub — not yet implemented)."""
-    raise NotImplementedError("parse_elements_from_text not yet implemented")
+    """Parse protocol text (as extracted by pdfplumber) into per-skater element data.
 
+    Returns a list of dicts, one per skater:
+        {
+            "skater_name":      str,
+            "category_segment": str | None,
+            "elements":         list[dict],
+        }
 
-def parse_elements(pdf_path: Path) -> list[dict]:
-    """
-    Parse a PDF and return per-skater element details.
-
-    Returns a list of dicts:
-        {"skater_name": str, "category_segment": str, "elements": [...]}
+    Each element dict contains: number, name, markers, base_value,
+    judge_goe, goe, score, info_flag.
     """
     results = []
-    with pdfplumber.open(pdf_path) as pdf:
-        full_text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+    category_segment = _extract_category_segment(text)
 
-    # The category/segment line is near the top, e.g. "R3 C BABIES FEMME FREE SKATING"
-    category_segment = _extract_category_segment(full_text)
-
-    # Find each skater block: starts with the header data line
-    skater_re = re.compile(
-        r"^(\d{1,3})\s+(.+?)\s+([A-Z]{2,3})\s+\d{1,3}\s+\d+\.\d+\s+\d+\.\d+\s+\d+\.\d+\s+-?\d+\.\d+",
-        re.MULTILINE,
-    )
-    element_re = re.compile(
-        r"^(\d{1,2})\s+(\S+(?:\*|<<)?(?:\s+\*)?)\s+(\d+\.\d+)\s+.*?(-?\d+\.\d+)\s+",
-        re.MULTILINE,
-    )
-
-    matches = list(skater_re.finditer(full_text))
-    for i, m in enumerate(matches):
-        skater_name = m.group(2).strip()
-        # Extract elements between this skater header and the next
-        start = m.end()
-        end = matches[i + 1].start() if i + 1 < len(matches) else len(full_text)
-        block = full_text[start:end]
+    skater_matches = list(_SKATER_HEADER_RE.finditer(text))
+    for i, sm in enumerate(skater_matches):
+        skater_name = sm.group(2).strip()
+        block_start = sm.end()
+        block_end = skater_matches[i + 1].start() if i + 1 < len(skater_matches) else len(text)
+        block = text[block_start:block_end]
 
         elements = []
-        for em in element_re.finditer(block):
-            elements.append({
-                "number": int(em.group(1)),
-                "name": em.group(2).strip(),
-                "base_value": float(em.group(3)),
-                "goe": float(em.group(4)),
-            })
+        for line in block.splitlines():
+            elem = _parse_element_row(line)
+            if elem is not None:
+                elements.append(elem)
 
         if elements:
             results.append({
@@ -178,10 +194,25 @@ def parse_elements(pdf_path: Path) -> list[dict]:
     return results
 
 
+def parse_elements(pdf_path: Path) -> list[dict]:
+    """Parse a PDF score sheet and return per-skater element details.
+
+    Thin wrapper: extracts text via pdfplumber, then delegates to
+    parse_elements_from_text for all parsing logic.
+    """
+    with pdfplumber.open(pdf_path) as pdf:
+        full_text = "\n".join(page.extract_text() or "" for page in pdf.pages)
+    return parse_elements_from_text(full_text)
+
+
+# ---------------------------------------------------------------------------
+# Internal helpers
+# ---------------------------------------------------------------------------
+
 def _extract_category_segment(text: str) -> str | None:
-    """Extract the category/segment line from near the top of the PDF."""
+    """Extract the category/segment line from near the top of the protocol text."""
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    for line in lines[:5]:
+    for line in lines[:10]:
         if "JUDGES DETAILS" in line.upper():
             continue
         if re.search(r"\b(FREE SKATING|SHORT PROGRAM|RHYTHM DANCE|FREE DANCE)\b", line, re.IGNORECASE):
