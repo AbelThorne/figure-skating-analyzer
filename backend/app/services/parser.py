@@ -120,20 +120,29 @@ def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
 # ---------------------------------------------------------------------------
 
 def _parse_element_row(line: str) -> dict | None:
-    """Parse one element row from extracted protocol text.
+    """Parse one element row from extracted ISU Judges Details protocol text.
 
-    Line format (space-separated tokens):
-        N  ElementCode  base_value  j1 j2 ... jN  panel_goe  element_score
+    Real PDF column order (space-separated tokens after the element number):
+        ElementCode  [info_tokens]  BaseValue  [standalone_markers]
+        ScoreOfPanel  GOE  J1 J2 ... Jn
 
-    Where N is 1–12, ElementCode may carry marker suffixes, and
-    judge count is 3–9 (local competitions may have fewer than 9).
+    Where:
+    - ElementCode may carry embedded marker suffixes (e.g. "3Lz<", "3F+2Te")
+    - info_tokens are ISU info-column values: "F" (fall/flag), "<<", "<", "*"
+      printed between the element name and the base value; they are skipped
+      (ISU markers among them are already embedded in the element code)
+    - standalone_markers (e.g. "x") may appear right after the base value
+    - ScoreOfPanel is the final element score (second float after base value)
+    - GOE is the panel GOE (third float after base value)
+    - J1..Jn are per-judge GOE integers; nullified elements use "-" (treated as 0)
+    - Judge count is 3–9
 
-    Returns a dict with enriched element data, or None if the line
-    does not match the expected element row format.
+    Returns a dict with enriched element data, or None if the line does not
+    match the expected element row format.
     """
     tokens = line.split()
 
-    # Minimum: num + code + base_val + 3 judges + goe + score = 8 tokens
+    # Minimum: num + code + base_val + score + goe + 3 judges = 8 tokens
     if len(tokens) < 8:
         return None
 
@@ -144,18 +153,27 @@ def _parse_element_row(line: str) -> dict | None:
     if not (1 <= number <= 12):
         return None
 
-    # Second token is the raw element code (may include markers as suffixes)
+    # Second token is the raw element code (may include marker suffixes)
     raw_name = tokens[1]
 
-    # Collect any standalone marker tokens that appear between name and base_value
-    # e.g. "4 2Lz+2T< < 3.14 ..." — the lone "<" at tokens[2] is a duplicate marker
+    # Skip info-column tokens between name and base value.
+    # These are: ISU standalone markers (<<, <, *, q, e, !, x) and the
+    # "F" info flag (fall / false edge flag printed by FS Manager).
+    # We collect ISU markers; "F" is purely informational and discarded.
+    _INFO_SKIP = {"F"}
     idx = 2
     pre_base_markers: list[str] = []
-    while idx < len(tokens) and tokens[idx] in _STANDALONE_MARKERS:
-        pre_base_markers.append(tokens[idx])
-        idx += 1
+    while idx < len(tokens):
+        tok = tokens[idx]
+        if tok in _STANDALONE_MARKERS:
+            pre_base_markers.append(tok)
+            idx += 1
+        elif tok in _INFO_SKIP:
+            idx += 1  # discard F flag
+        else:
+            break
 
-    # Next token after optional pre-base markers must be a float (base value)
+    # Next token must be a float (base value)
     if idx >= len(tokens):
         return None
     try:
@@ -164,20 +182,23 @@ def _parse_element_row(line: str) -> dict | None:
         return None
     idx += 1
 
-    # Remaining tokens after base_value may contain more standalone ISU marker tokens
-    # (e.g. "x" for second-half bonus) before the numeric GOE/score values.
-    remaining = list(tokens[idx:])
-    inline_markers: list[str] = pre_base_markers
-    while remaining and remaining[0] in _STANDALONE_MARKERS:
-        inline_markers.append(remaining.pop(0))
+    # Immediately after base value, collect any standalone marker tokens (e.g. "x")
+    inline_markers: list[str] = list(pre_base_markers)
+    while idx < len(tokens) and tokens[idx] in _STANDALONE_MARKERS:
+        inline_markers.append(tokens[idx])
+        idx += 1
 
-    if len(remaining) < 3:  # need ≥1 judge + goe + score
+    # Remaining tokens: GOE  J1 J2 ... Jn  ScoreOfPanel
+    # Real PDF column order: BaseValue GOE J1..Jn ScoreOfPanel
+    # Layout: remaining[0]=goe, remaining[1:-1]=judges, remaining[-1]=score
+    remaining = tokens[idx:]
+    if len(remaining) < 5:  # goe + at least 3 judges + score
         return None
 
     try:
+        goe = float(remaining[0])
+        judge_tokens = remaining[1:-1]
         score = float(remaining[-1])
-        goe = float(remaining[-2])
-        judge_tokens = remaining[:-2]
     except ValueError:
         return None
 
@@ -185,8 +206,9 @@ def _parse_element_row(line: str) -> dict | None:
     if not (3 <= len(judge_tokens) <= 9):
         return None
 
+    # Parse judge scores; nullified elements use "-" → treat as 0
     try:
-        judge_goe = [int(float(t)) for t in judge_tokens]
+        judge_goe = [0 if t == "-" else int(float(t)) for t in judge_tokens]
     except ValueError:
         return None
 
