@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date as date_type
+
 from litestar import Router, get, post, delete
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
@@ -107,7 +109,13 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
         await session.flush()
 
     scraper = get_scraper(comp.url)
-    events, results, cat_results = await scraper.scrape(comp.url)
+    events, results, cat_results, comp_info = await scraper.scrape(comp.url)
+
+    # Update competition name and date from scraped metadata
+    if comp_info.name and (comp.name == comp.url or not comp.name or comp.name == "index.htm"):
+        comp.name = comp_info.name
+    if comp_info.date and not comp.date:
+        comp.date = date_type.fromisoformat(comp_info.date)
 
     imported = 0
     skipped = 0
@@ -228,7 +236,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
 
     # Discover PDF URLs from site
     scraper = get_scraper(comp.url)
-    events, _, _ = await scraper.scrape(comp.url)
+    events, _, _, _ = await scraper.scrape(comp.url)
     pdf_urls = [e.pdf_url for e in events if e.pdf_url]
 
     if not pdf_urls:

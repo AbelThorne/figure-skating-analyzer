@@ -37,6 +37,12 @@ class ScrapedCategory:
     segments: list[str] | None = None  # segment names discovered (e.g. ["Short Program", "Free Skating"])
 
 @dataclass
+class ScrapedCompetitionInfo:
+    """Competition metadata extracted from the index page."""
+    name: str | None = None
+    date: str | None = None  # ISO format YYYY-MM-DD (first day of competition)
+
+@dataclass
 class ScrapedCategoryResult:
     """An overall category result from a CATxxxRS.htm page."""
     name: str
@@ -83,6 +89,25 @@ class FSManagerScraper:
 
     Implements the BaseScraper interface (duck-typed to avoid circular imports).
     """
+
+    def parse_competition_info(self, html: str) -> ScrapedCompetitionInfo:
+        """Extract competition name and date from the index page."""
+        soup = BeautifulSoup(html, "html.parser")
+        info = ScrapedCompetitionInfo()
+
+        # Name from <title> tag
+        title_tag = soup.find("title")
+        if title_tag:
+            info.name = _clean_text(title_tag.get_text())
+
+        # Date from first DD.MM.YYYY pattern found (typically in a date range row)
+        text = soup.get_text()
+        date_match = re.search(r"(\d{2})\.(\d{2})\.(\d{4})", text)
+        if date_match:
+            day, month, year = date_match.groups()
+            info.date = f"{year}-{month}-{day}"
+
+        return info
 
     def parse_index(self, html: str, base_url: str) -> tuple[list[ScrapedEvent], list[ScrapedCategory]]:
         """Parse the competition index page and return discovered events and categories.
@@ -438,11 +463,11 @@ class FSManagerScraper:
             segment_count=segment_count,
         )
 
-    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult]]:
+    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult], ScrapedCompetitionInfo]:
         """Full scrape: fetch index, discover events, fetch all SEG and CAT pages.
 
         Returns:
-            A tuple of (events, segment_results, category_results).
+            A tuple of (events, segment_results, category_results, competition_info).
         """
         async with httpx.AsyncClient(
             timeout=30.0,
@@ -450,8 +475,9 @@ class FSManagerScraper:
         ) as client:
             index_html = await _fetch(url, client)
             if not index_html:
-                return [], [], []
+                return [], [], [], ScrapedCompetitionInfo()
 
+            comp_info = self.parse_competition_info(index_html)
             events, categories = self.parse_index(index_html, url)
             all_results: list[ScrapedResult] = []
             all_cat_results: list[ScrapedCategoryResult] = []
@@ -477,7 +503,7 @@ class FSManagerScraper:
                 cat_results = self.parse_cat_page(cat_html, cat.category, segment_count)
                 all_cat_results.extend(cat_results)
 
-            return events, all_results, all_cat_results
+            return events, all_results, all_cat_results, comp_info
 
 
 # ---------------------------------------------------------------------------
