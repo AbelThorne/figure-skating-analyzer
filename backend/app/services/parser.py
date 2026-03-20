@@ -6,7 +6,7 @@ Used for enrichment — the main scores come from HTML scraping.
 Each element dict contains:
     number      int             Element order in the program (1–12)
     name        str             Clean element code (all markers stripped)
-    markers     list[str]       ISU markers present: "<", "<<", "q", "e", "!", "*", "x"
+    markers     list[str]       ISU markers present: "<", "<<", "q", "e", "!", "*", "x", "F"
     base_value  float           Base value (already ×1.10 when "x" marker present)
     judge_goe   list[int]       Per-judge GOE scores (−5 to +5), length 3–9
     goe         float           Panel GOE (trimmed mean of judge GOEs)
@@ -158,18 +158,19 @@ def _parse_element_row(line: str) -> dict | None:
 
     # Skip info-column tokens between name and base value.
     # These are: ISU standalone markers (<<, <, *, q, e, !, x) and the
-    # "F" info flag (fall / false edge flag printed by FS Manager).
-    # We collect ISU markers; "F" is purely informational and discarded.
-    _INFO_SKIP = {"F"}
+    # "F" info flag (fall on this element printed by FS Manager).
+    # We collect both: ISU markers into pre_base_markers, fall flag separately.
     idx = 2
     pre_base_markers: list[str] = []
+    has_fall = False
     while idx < len(tokens):
         tok = tokens[idx]
         if tok in _STANDALONE_MARKERS:
             pre_base_markers.append(tok)
             idx += 1
-        elif tok in _INFO_SKIP:
-            idx += 1  # discard F flag
+        elif tok == "F":
+            has_fall = True
+            idx += 1
         else:
             break
 
@@ -228,6 +229,10 @@ def _parse_element_row(line: str) -> dict | None:
             if m not in seen:
                 seen.add(m)
                 markers.append(m)
+
+    # "F" (fall) is an element-level flag — always appended last, never positional.
+    if has_fall:
+        markers.append("F")
 
     return {
         "number": number,

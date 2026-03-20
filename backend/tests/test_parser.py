@@ -190,23 +190,25 @@ class TestParseElementRow:
         assert result["score"] == pytest.approx(4.30)
 
     def test_info_flag_F_before_base_value(self):
-        # "F" info flag (fall) appears between element name and base value
+        # "F" fall flag appears between element name and base value — must appear in markers
         line = " 9  2S                F  x        1.30  -0.65  -5  -5  -5  -5  -5   0.65"
         result = _parse_element_row(line)
         assert result is not None
         assert result["name"] == "2S"
         assert "x" in result["markers"]
+        assert "F" in result["markers"]
         assert result["base_value"] == pytest.approx(1.30)
         assert result["goe"] == pytest.approx(-0.65)
         assert result["judge_goe"] == [-5, -5, -5, -5, -5]
 
     def test_info_flag_with_downgrade_marker(self):
-        # "2Lo<< F <<" — element name has <<, then Info F and standalone <<
+        # "2Lo<< F <<" — element name has <<, then fall flag F and standalone <<
         line = " 2  2Lo<<             F  <<       0.50  -0.25  -5  -5  -5  -5  -5   0.25"
         result = _parse_element_row(line)
         assert result is not None
         assert result["name"] == "2Lo"
         assert "<<" in result["markers"]
+        assert "F" in result["markers"]
         assert result["base_value"] == pytest.approx(0.50)
         assert result["goe"] == pytest.approx(-0.25)
 
@@ -356,13 +358,14 @@ class TestParseElementsFromText:
         results = parse_elements_from_text(protocol_text)
         assert len(results[2]["elements"]) == 9
 
-    def test_info_flag_F_skipped(self, protocol_text):
+    def test_info_flag_F_captured(self, protocol_text):
         results = parse_elements_from_text(protocol_text)
-        # ERNY element 2: "2Lo<< F <<" → name=2Lo, markers=[<<]
+        # ERNY element 2: "2Lo<< F <<" → name=2Lo, markers contain both << and F
         elem2 = results[2]["elements"][1]
         assert elem2["number"] == 2
         assert elem2["name"] == "2Lo"
         assert "<<" in elem2["markers"]
+        assert "F" in elem2["markers"]
         assert elem2["base_value"] == pytest.approx(0.50)
         assert elem2["goe"] == pytest.approx(-0.25)
 
@@ -376,20 +379,22 @@ class TestParseElementsFromText:
 
     def test_info_flag_F_with_underrotation(self, protocol_text):
         results = parse_elements_from_text(protocol_text)
-        # ERNY element 4: "1A+2T< F <" → name=1A+2T, markers=[+, <]
+        # ERNY element 4: "1A+2T< F <" → name=1A+2T, positional markers + F appended
         elem4 = results[2]["elements"][3]
         assert elem4["number"] == 4
         assert elem4["name"] == "1A+2T"
         assert "<" in elem4["markers"]
+        assert "F" in elem4["markers"]
         assert elem4["goe"] == pytest.approx(-0.55)
 
     def test_info_flag_x_standalone(self, protocol_text):
         results = parse_elements_from_text(protocol_text)
-        # ERNY element 9: "2S F x" → name=2S, markers=[x], goe=-0.65
+        # ERNY element 9: "2S F x" → name=2S, markers contain both x and F
         elem9 = results[2]["elements"][8]
         assert elem9["number"] == 9
         assert elem9["name"] == "2S"
         assert "x" in elem9["markers"]
+        assert "F" in elem9["markers"]
         assert elem9["goe"] == pytest.approx(-0.65)
         assert elem9["judge_goe"] == [-5, -5, -5, -5, -5]
 

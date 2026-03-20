@@ -13,6 +13,7 @@ const MARKER_STYLE: Record<string, { color: string; title: string }> = {
   "e":  { color: "text-[#e65100]", title: "Carre incorrecte (décollage)" },
   "!":  { color: "text-[#b45309]", title: "Carre incertaine (avertissement)" },
   "x":  { color: "text-primary",   title: "Bonus seconde moitié (×1,10)" },
+  "F":  { color: "text-[#ba1a1a]", title: "Chute" },
 };
 
 /**
