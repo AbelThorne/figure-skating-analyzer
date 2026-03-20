@@ -1,4 +1,6 @@
 import { Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { api } from "./api/client";
 import HomePage from "./pages/HomePage";
 import CompetitionPage from "./pages/CompetitionPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
@@ -27,21 +29,31 @@ export default function App() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
 
+  const { data: config } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
+  });
+
   return (
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col">
         {/* Club header */}
-        <div className="px-6 py-6">
-          <div className="flex items-center gap-2">
+        <div className="px-6 py-5 flex items-center gap-3">
+          {config?.logo_url ? (
+            <img src={config.logo_url} alt="" className="w-10 h-10 object-contain" />
+          ) : (
             <span className="material-symbols-outlined text-primary text-2xl">sports_score</span>
-            <span className="font-headline font-bold text-on-surface text-base leading-tight">
-              Analyse Patinage
+          )}
+          <div className="min-w-0">
+            <span className="font-headline font-bold text-on-surface text-xs leading-tight block">
+              {config?.club_name ?? "Analyse Patinage"}
             </span>
+            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant mt-0.5">
+              Patinage artistique
+            </p>
           </div>
-          <p className="text-[10px] uppercase tracking-widest text-on-surface-variant mt-1 ml-8">
-            Division Technique
-          </p>
         </div>
 
         {/* Nav links */}

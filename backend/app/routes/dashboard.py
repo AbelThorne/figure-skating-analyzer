@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import os
 from typing import Optional
 
 from litestar import Router, get
@@ -9,6 +8,7 @@ from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.config import CLUB_NAME, CLUB_SHORT
 from app.database import get_session
 from app.models.competition import Competition
 from app.models.score import Score
@@ -21,7 +21,7 @@ async def get_dashboard(
     session: AsyncSession,
     season: Optional[str] = None,
 ) -> dict:
-    club_name = os.environ.get("CLUB_NAME", "")
+    club_name = CLUB_SHORT
 
     # Build a base subquery: scores joined with skaters (and competitions for season filter)
     # that belong to the club.
@@ -235,7 +235,7 @@ async def get_dashboard(
     ]
 
     return {
-        "club_name": club_name,
+        "club_name": CLUB_NAME,
         "season": season,
         "active_skaters": active_skaters,
         "competitions_tracked": competitions_tracked,

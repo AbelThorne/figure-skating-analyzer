@@ -154,9 +154,19 @@ export interface Element {
   total: number | null;
 }
 
+export interface ClubConfig {
+  club_name: string;
+  club_short: string;
+  logo_url: string;
+}
+
 // --- API Functions ---
 
 export const api = {
+  config: {
+    get: () => request<ClubConfig>("/config/"),
+  },
+
   competitions: {
     list: () => request<Competition[]>("/competitions/"),
     get: (id: number) => request<Competition>(`/competitions/${id}`),
