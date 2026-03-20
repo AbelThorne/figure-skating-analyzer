@@ -13,6 +13,32 @@ Key personality traits:
 - **Layered, not bordered** — depth through background shifts, never lines
 - **Coaches first** — density is tamed by hierarchy, not by hiding information
 
+## Language
+
+**The entire frontend is in French.** No multilingual support is planned. All labels, buttons, headings, placeholder text, empty states, and error messages must be written in French from the start. Examples:
+
+| English (don't use) | French (use this) |
+|---------------------|-------------------|
+| Dashboard | Tableau de bord |
+| Skaters | Patineurs |
+| Import | Importer |
+| Competitions | Compétitions |
+| Recent Results | Résultats récents |
+| Total Score | Score total |
+| Export Season Report | Exporter le rapport de saison |
+| Personal Best | Record personnel |
+| View All | Voir tout |
+| Active Roster | Effectif actif |
+| Most Improved | Plus grande progression |
+| Elements | Éléments |
+| Short Program | Programme court |
+| Free Skate | Programme libre |
+| Rank | Rang |
+| Club | Club |
+| Season | Saison |
+| Setup | Configuration |
+| Save | Enregistrer |
+
 ---
 
 ## 2. UI Framework: Tailwind CSS (no component library)
@@ -189,12 +215,12 @@ Use `rounded-xl` for cards, `rounded-full` for chips/badges/avatar, `rounded-lg`
 │  │ "Technical Division" label (tiny uppercase)  │   │
 │  ├──────────────────────────────────────────────┤   │
 │  │ Nav links (uppercase, tracking-wider, 11px)  │   │
-│  │  • Dashboard                                 │   │
-│  │  • Skaters                                   │   │
-│  │  • Competitions (admin)                      │   │
-│  │  • Comparisons (future)                      │   │
+│  │  • Tableau de bord                           │   │
+│  │  • Patineurs                                 │   │
+│  │  • Compétitions (admin)                      │   │
+│  │  • Comparaisons (futur)                      │   │
 │  ├──────────────────────────────────────────────┤   │
-│  │ Help / Logout (bottom)                       │   │
+│  │ Aide / Déconnexion (bas)                     │   │
 │  └──────────────────────────────────────────────┘   │
 │                                                      │
 │  Main (ml-64, min-h-screen)                          │
@@ -348,38 +374,94 @@ flex justify-between items-center px-8 py-4
 
 ## 10. Page-Specific Layout Notes
 
-### Dashboard (`/`)
+### Dashboard (`/`) — Tableau de bord
 
 Per plan Phase 1.0:
-- Season selector: top-right, ghost dropdown
-- KPI row (3 cards): Active Skaters | Avg Performance Increase | Recent Competition highlight
-- Bento grid: Club Progress chart (2/3) + Coach Alerts (1/3)
-- Recent Results table below chart
-- "Export Season Report" → dark quick-action card in sidebar
+- Sélecteur de saison: top-right, ghost dropdown
+- Rangée KPI (3 cartes): Effectif actif | Progression moyenne | Compétition récente (highlight)
+- Grille bento: graphique Progression du club (2/3) + Alertes entraîneur (1/3)
+- Tableau Résultats récents sous le graphique
+- "Exporter le rapport de saison" → dark quick-action card in sidebar
 
-### Skater Browser (`/skaters`)
+### Liste des patineurs (`/patineurs`)
 
-- List of club skaters as cards or table rows (avatar initial, name, category, last score, # competitions)
-- "Show all clubs" toggle in header
-- Click → Skater Analytics page
+- Liste des patineurs du club par défaut: cards ou lignes de tableau (initiale avatar, nom, catégorie, dernier score, nb compétitions)
+- Bouton "Afficher tous les clubs" en haut
+- Clic → page Analyse patineur
 
 ### Skater Analytics (`/skaters/:id/analytics`)
 
-- Header: skater name (Manrope display), club, category + "Export Season Report" button
-- Tab row: Overview | Elements | PCS | Programs
-- Charts fill the 2/3 wide panel; selected program detail in 1/3 sidebar
+Inspired by the Stitch skater profile mockup. **The mockup is more ambitious than the current plan — use it as a design reference, not a feature list.** Implement only what the plan specifies; the layout language below is the visual target.
 
-### Competition Detail (`/competitions/:id`)
+#### Hero Header
 
-- Grouped by category + segment
-- Score table follows data table design above
-- Skater names are links → analytics page
+Full-width banner with a gradient background (`from-primary to-primary-container/30`, subtle linear gradient left-to-right):
 
-### Setup (`/setup`)
+```
+┌──────────────────────────────────────────────────────────────┐
+│  [Avatar photo]  Prénom N.          CLASSEMENT   RECORD SAISON│
+│  Catégorie · Club · Age · X ans actif    #14        218.42   │
+└──────────────────────────────────────────────────────────────┘
+```
 
-- Centered card on `bg-surface` background
-- Club name input, save button
-- Minimal — no nav/sidebar
+- Avatar: `w-20 h-20 rounded-full` with a subtle white ring `ring-2 ring-white/50`
+- Skater name: `text-3xl font-extrabold font-headline text-on-primary` (white on gradient)
+- Category chip: small `bg-white/20 text-white rounded-full px-3 py-1 text-xs font-bold uppercase`
+- Stat boxes (Classement, Record saison): `bg-white/15 backdrop-blur-sm rounded-xl px-4 py-3 text-center` — glassmorphism on the gradient
+  - Value: `text-2xl font-extrabold font-headline text-white`
+  - Label: `text-[10px] uppercase tracking-widest text-white/70`
+- "Télécharger le rapport complet" link: `text-white/80 text-xs font-bold hover:text-white underline`
+
+#### Main Layout
+
+Same bento pattern as dashboard: `grid grid-cols-1 lg:grid-cols-3 gap-8`
+
+**Left/wide panel (2/3): Score chart + Recent competition history**
+
+- `Analyse longitudinale des scores` — Recharts LineChart (TES + PCS lines, 12 months x-axis)
+  - Legend chips: TES (primary dot) / PCS (primary-container dot)
+  - Chart height: `h-64`
+  - Grid: very light (`stroke="#e0e3e5"`)
+
+- `Historique des compétitions récentes` — results table
+  - Columns: Compétition | Date | Rang | TES | PCS | Total | Tendance
+  - Rang badge: `bg-tertiary-container/30 text-on-tertiary-container` for podium, plain text otherwise
+  - Tendance: `+X.X` in `text-primary font-mono` for positive, `text-error` for negative — with a tiny arrow icon
+
+**Right/narrow panel (1/3): Performance KPI cards**
+
+Stack of metric cards (each `bg-surface-container-lowest rounded-xl p-4 shadow-sm`):
+
+```
+┌─────────────────────────────────────┐
+│  PRÉCISION DE SAUT        ★  92.4%  │
+│  ████████████████████░░   progress  │
+│  Basé sur les GOE des éléments saut │
+└─────────────────────────────────────┘
+```
+
+- Metric cards currently planned: available from PDF enrichment data
+  - **Précision de saut** — avg positive GOE rate on jump elements
+  - **Niveau de spin moyen** — average spin level achieved
+  - **Note de pas** — step sequence grade
+- Card header: metric name in `label-sm` + icon (Material Symbol) + value in `text-2xl font-extrabold font-headline`
+- Progress bar: `h-1.5 rounded-full bg-primary-container` track, `bg-primary` fill
+- Gold star icon for milestones/PBs: `text-tertiary` Material Symbol `star` (filled)
+- Caption text: `text-xs text-slate-500 mt-1`
+
+> **Implementation note:** These KPI cards require PDF enrichment data (`elements` JSON). Only show them when elements are available; otherwise show an "Enrichir avec les PDF" prompt instead.
+
+### Détail compétition (`/competitions/:id`)
+
+- Regroupé par catégorie + segment
+- Tableau de scores selon le modèle data table ci-dessus
+- Noms des patineurs = liens → page analyse patineur
+
+### Configuration initiale (`/configuration`)
+
+- Carte centrée sur fond `bg-surface`
+- Saisie du nom du club, bouton Enregistrer
+- Minimal — sans nav/sidebar
 
 ---
 
