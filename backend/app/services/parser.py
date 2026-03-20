@@ -52,8 +52,74 @@ def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
 
 
 def _parse_element_row(line: str) -> dict | None:
-    """Parse a single element row from a protocol. (Stub — not yet implemented)."""
-    raise NotImplementedError("_parse_element_row not yet implemented")
+    """Parse one element row from extracted protocol text.
+
+    Line format (space-separated tokens):
+        N  ElementCode  base_value  j1 j2 ... jN  panel_goe  element_score
+
+    Where N is 1–12, ElementCode may contain markers, and judge count is 3–9.
+
+    Returns a dict with keys:
+        number, name, markers, base_value, judge_goe, goe, score, info_flag
+    or None if the line does not match the expected format.
+    """
+    tokens = line.split()
+
+    # Minimum: num + code + base_val + 3 judges + goe + score = 8 tokens
+    if len(tokens) < 8:
+        return None
+
+    # First token must be a 1-or-2-digit element number
+    if not re.match(r"^\d{1,2}$", tokens[0]):
+        return None
+    number = int(tokens[0])
+    if not (1 <= number <= 12):
+        return None
+
+    # Second token is the raw element code (may contain markers)
+    raw_name = tokens[1]
+
+    # Third token must be a float (base value)
+    try:
+        base_value = float(tokens[2])
+    except ValueError:
+        return None
+
+    # Remaining tokens: judge GOEs (ints) + panel GOE (float) + score (float)
+    # The last two tokens are always panel_goe and score (floats).
+    # Everything between index 3 and len-2 are judge GOEs (integers).
+    remaining = tokens[3:]
+    if len(remaining) < 3:  # need at least 1 judge + goe + score
+        return None
+
+    try:
+        score = float(remaining[-1])
+        goe = float(remaining[-2])
+        judge_tokens = remaining[:-2]
+    except ValueError:
+        return None
+
+    # Validate judge count: 3–9
+    if not (3 <= len(judge_tokens) <= 9):
+        return None
+
+    try:
+        judge_goe = [int(float(t)) for t in judge_tokens]
+    except ValueError:
+        return None
+
+    clean_name, markers = _extract_markers(raw_name)
+
+    return {
+        "number": number,
+        "name": clean_name,
+        "markers": markers,
+        "base_value": base_value,
+        "judge_goe": judge_goe,
+        "goe": goe,
+        "score": score,
+        "info_flag": None,
+    }
 
 
 def parse_elements_from_text(text: str) -> list[dict]:
