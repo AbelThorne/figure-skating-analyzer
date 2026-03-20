@@ -226,12 +226,23 @@ export default function CompetitionsPage() {
               <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex items-center justify-between">
                 {/* Left: name + meta */}
                 <div className="min-w-0">
-                  <Link
-                    to={`/competitions/${c.id}`}
-                    className="font-bold font-headline text-on-surface hover:text-primary transition-colors"
-                  >
-                    {c.name}
-                  </Link>
+                  <div className="flex items-center gap-1.5">
+                    <Link
+                      to={`/competitions/${c.id}`}
+                      className="font-bold font-headline text-on-surface hover:text-primary transition-colors"
+                    >
+                      {c.name}
+                    </Link>
+                    <a
+                      href={c.url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-on-surface-variant hover:text-primary transition-colors"
+                      title="Ouvrir les résultats"
+                    >
+                      <span className="material-symbols-outlined text-[16px] leading-none">open_in_new</span>
+                    </a>
+                  </div>
                   <p className="text-xs text-on-surface-variant mt-1">
                     {[c.discipline, c.season, c.date].filter(Boolean).join(" · ")}
                   </p>
