@@ -62,7 +62,14 @@ function TopScoresTable({ scores }: { scores: DashboardTopScore[] }) {
                 key={i}
                 className="hover:bg-surface-container-low/50 transition-colors border-t border-outline-variant/20 first:border-t-0"
               >
-                <td className="px-4 py-3 text-sm font-medium text-on-surface">{score.skater_name}</td>
+                <td className="px-4 py-3 text-sm font-medium">
+                  <Link
+                    to={`/patineurs/${score.skater_id}/analyse`}
+                    className="text-on-surface hover:text-primary transition-colors"
+                  >
+                    {score.skater_name}
+                  </Link>
+                </td>
                 <td className="px-4 py-3 text-sm text-on-surface-variant">{score.competition_name}</td>
                 <td className="px-4 py-3 text-sm text-on-surface-variant">{score.segment}</td>
                 <td className="px-4 py-3 text-right">

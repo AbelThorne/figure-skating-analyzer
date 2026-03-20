@@ -139,6 +139,7 @@ async def get_dashboard(
     top_score_rows = top_scores_result.scalars().all()
     top_scores = [
         {
+            "skater_id": s.skater_id,
             "skater_name": s.skater.name if s.skater else None,
             "tss": s.total_score,
             "competition_name": s.competition.name if s.competition else None,

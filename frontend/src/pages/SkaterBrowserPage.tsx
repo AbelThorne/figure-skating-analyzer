@@ -3,27 +3,27 @@ import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, Skater } from "../api/client";
 
-const clubName = import.meta.env.VITE_CLUB_NAME as string | undefined;
-
 export default function SkaterBrowserPage() {
-  const [showAll, setShowAll] = useState(!clubName);
+  const [showAll, setShowAll] = useState(false);
   const [search, setSearch] = useState("");
 
-  const { data: skaters = [], isLoading } = useQuery({
-    queryKey: ["skaters"],
-    queryFn: api.skaters.list,
+  const { data: config } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
   });
 
-  const filtered = skaters.filter((s: Skater) => {
-    const matchesClub =
-      showAll || !clubName
-        ? true
-        : s.club?.toLowerCase() === clubName.toLowerCase();
-    const matchesSearch = s.name
-      .toLowerCase()
-      .includes(search.toLowerCase().trim());
-    return matchesClub && matchesSearch;
+  const clubShort = config?.club_short;
+
+  const { data: skaters = [], isLoading } = useQuery({
+    queryKey: ["skaters", showAll ? null : clubShort],
+    queryFn: () => api.skaters.list(showAll ? undefined : clubShort),
+    enabled: showAll || !!clubShort,
   });
+
+  const filtered = skaters.filter((s: Skater) =>
+    s.name.toLowerCase().includes(search.toLowerCase().trim())
+  );
 
   return (
     <div className="p-6 space-y-6">
@@ -33,7 +33,7 @@ export default function SkaterBrowserPage() {
           Patineurs
         </h1>
         <p className="font-body text-sm text-on-surface-variant mt-1">
-          {showAll || !clubName
+          {showAll
             ? "Tous les patineurs"
             : "Patineurs de votre club"}
         </p>
@@ -55,8 +55,8 @@ export default function SkaterBrowserPage() {
           />
         </div>
 
-        {/* Toggle button — only show if a club is configured */}
-        {clubName && (
+        {/* Toggle button */}
+        {clubShort && (
           <button
             onClick={() => setShowAll((v) => !v)}
             className="border border-outline-variant text-on-surface-variant rounded-lg py-2 px-3 text-xs font-bold font-body active:scale-95 transition-all"

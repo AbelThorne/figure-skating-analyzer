@@ -5,7 +5,7 @@ from typing import Optional
 from litestar import Router, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import select
+from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -17,8 +17,11 @@ from app.models.category_result import CategoryResult
 
 
 @get("/")
-async def list_skaters(session: AsyncSession) -> list[dict]:
-    result = await session.execute(select(Skater).order_by(Skater.name))
+async def list_skaters(session: AsyncSession, club: Optional[str] = None) -> list[dict]:
+    stmt = select(Skater).order_by(Skater.name)
+    if club:
+        stmt = stmt.where(func.lower(Skater.club) == club.lower())
+    result = await session.execute(stmt)
     return [_skater_to_dict(s) for s in result.scalars()]
 
 

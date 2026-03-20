@@ -105,6 +105,7 @@ export interface DashboardMedal {
 }
 
 export interface DashboardTopScore {
+  skater_id: number;
   skater_name: string;
   tss: number;
   competition_name: string;
@@ -186,7 +187,10 @@ export const api = {
   },
 
   skaters: {
-    list: () => request<Skater[]>("/skaters/"),
+    list: (club?: string) => {
+      const qs = club ? `?club=${encodeURIComponent(club)}` : "";
+      return request<Skater[]>(`/skaters/${qs}`);
+    },
     get: (id: number) => request<Skater>(`/skaters/${id}`),
     scores: (id: number) => request<Score[]>(`/skaters/${id}/scores`),
     categoryResults: (id: number) =>
