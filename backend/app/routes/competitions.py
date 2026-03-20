@@ -153,6 +153,7 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
                 components=r.components,
                 deductions=r.deductions,
                 starting_number=r.starting_number,
+                event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
             )
             session.add(score)
             imported += 1

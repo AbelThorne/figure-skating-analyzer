@@ -133,6 +133,7 @@ async def seed():
                         components=r.components,
                         deductions=r.deductions,
                         starting_number=r.starting_number,
+                        event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
                     )
                     session.add(score)
                     imported += 1

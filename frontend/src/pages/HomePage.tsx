@@ -49,10 +49,10 @@ function TopScoresTable({ scores }: { scores: DashboardTopScore[] }) {
                 Compétition
               </th>
               <th className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-4 py-3 text-left">
-                Épreuve
+                Catégorie
               </th>
               <th className="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-4 py-3 text-right">
-                Score TSS
+                Score total
               </th>
             </tr>
           </thead>
@@ -71,7 +71,7 @@ function TopScoresTable({ scores }: { scores: DashboardTopScore[] }) {
                   </Link>
                 </td>
                 <td className="px-4 py-3 text-sm text-on-surface-variant">{score.competition_name}</td>
-                <td className="px-4 py-3 text-sm text-on-surface-variant">{score.segment}</td>
+                <td className="px-4 py-3 text-sm text-on-surface-variant">{score.category ?? "—"}</td>
                 <td className="px-4 py-3 text-right">
                   <span className="bg-primary-container/30 px-3 py-1 rounded-lg font-mono font-bold text-sm text-on-primary-container">
                     {score.tss.toFixed(2)}

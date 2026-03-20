@@ -119,13 +119,14 @@ async def get_dashboard(
         for cr in medal_rows
     ]
 
-    # --- top_scores (up to 5, highest total_score) ---
+    # --- top_scores (up to 5, highest combined_total from category results) ---
     top_scores_stmt = (
-        select(Score)
-        .options(selectinload(Score.skater), selectinload(Score.competition))
-        .join(Score.skater)
-        .join(Score.competition)
-        .order_by(Score.total_score.desc())
+        select(CategoryResult)
+        .options(selectinload(CategoryResult.skater), selectinload(CategoryResult.competition))
+        .join(CategoryResult.skater)
+        .join(CategoryResult.competition)
+        .where(CategoryResult.combined_total.isnot(None))
+        .order_by(CategoryResult.combined_total.desc())
         .limit(5)
     )
     if club_name != "":
@@ -139,56 +140,57 @@ async def get_dashboard(
     top_score_rows = top_scores_result.scalars().all()
     top_scores = [
         {
-            "skater_id": s.skater_id,
-            "skater_name": s.skater.name if s.skater else None,
-            "tss": s.total_score,
-            "competition_name": s.competition.name if s.competition else None,
+            "skater_id": cr.skater_id,
+            "skater_name": cr.skater.name if cr.skater else None,
+            "tss": cr.combined_total,
+            "competition_name": cr.competition.name if cr.competition else None,
             "competition_date": (
-                s.competition.date.isoformat()
-                if s.competition and s.competition.date
+                cr.competition.date.isoformat()
+                if cr.competition and cr.competition.date
                 else None
             ),
-            "segment": s.segment,
+            "category": cr.category,
         }
-        for s in top_score_rows
+        for cr in top_score_rows
     ]
 
     # --- most_improved (up to 3) ---
-    # Fetch all club skater scores in the season, ordered by competition date asc,
-    # then compute first/last TSS per skater.
-    all_scores_stmt = (
-        select(Score)
-        .options(selectinload(Score.skater), selectinload(Score.competition))
-        .join(Score.skater)
-        .join(Score.competition)
+    # Use category results (combined totals) ordered by competition date asc,
+    # compute first/last combined total per skater.
+    all_cat_stmt = (
+        select(CategoryResult)
+        .options(selectinload(CategoryResult.skater), selectinload(CategoryResult.competition))
+        .join(CategoryResult.skater)
+        .join(CategoryResult.competition)
+        .where(CategoryResult.combined_total.isnot(None))
         .order_by(Competition.date.asc())
     )
     if club_name != "":
-        all_scores_stmt = all_scores_stmt.where(
+        all_cat_stmt = all_cat_stmt.where(
             func.lower(Skater.club) == club_name.lower()
         )
     if season is not None:
-        all_scores_stmt = all_scores_stmt.where(Competition.season == season)
+        all_cat_stmt = all_cat_stmt.where(Competition.season == season)
 
-    all_scores_result = await session.execute(all_scores_stmt)
-    all_score_rows = all_scores_result.scalars().all()
+    all_cat_result = await session.execute(all_cat_stmt)
+    all_cat_rows = all_cat_result.scalars().all()
 
-    # Group by skater_id, track first and last TSS (in chronological order)
+    # Group by skater_id, track first and last combined total (chronological)
     skater_tss: dict[int, dict] = {}
-    for s in all_score_rows:
-        sid = s.skater_id
-        tss = s.total_score
-        if tss is None:
+    for cr in all_cat_rows:
+        sid = cr.skater_id
+        total = cr.combined_total
+        if total is None:
             continue
         if sid not in skater_tss:
             skater_tss[sid] = {
                 "skater_id": sid,
-                "skater_name": s.skater.name if s.skater else None,
-                "first_tss": tss,
-                "last_tss": tss,
+                "skater_name": cr.skater.name if cr.skater else None,
+                "first_tss": total,
+                "last_tss": total,
             }
         else:
-            skater_tss[sid]["last_tss"] = tss
+            skater_tss[sid]["last_tss"] = total
 
     improved_list = []
     for sid, data in skater_tss.items():

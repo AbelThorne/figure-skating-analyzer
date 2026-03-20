@@ -1,6 +1,7 @@
+from datetime import date
 from typing import Optional
 
-from sqlalchemy import ForeignKey, String, Float, Integer, JSON, Text, UniqueConstraint
+from sqlalchemy import Date, ForeignKey, String, Float, Integer, JSON, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -25,6 +26,7 @@ class Score(Base):
     deductions: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
     components: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
     elements: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    event_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     pdf_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     raw_data: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
 

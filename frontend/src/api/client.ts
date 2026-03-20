@@ -89,6 +89,14 @@ export interface ImportResult {
   errors: { skater: string; error: string }[];
 }
 
+export interface EnrichResult {
+  competition_id: number;
+  pdfs_downloaded: number;
+  scores_enriched: number;
+  unmatched: string[];
+  errors: { file: string; error: string }[];
+}
+
 export interface NeverImported {
   status: "never_imported";
 }
@@ -110,7 +118,7 @@ export interface DashboardTopScore {
   tss: number;
   competition_name: string;
   competition_date: string | null;
-  segment: string;
+  category: string | null;
 }
 
 export interface DashboardMostImproved {
@@ -182,6 +190,8 @@ export const api = {
       request<ImportResult>(`/competitions/${id}/import`, { method: "POST" }),
     reimport: (id: number) =>
       request<ImportResult>(`/competitions/${id}/import?force=true`, { method: "POST" }),
+    enrich: (id: number) =>
+      request<EnrichResult>(`/competitions/${id}/enrich`, { method: "POST" }),
     importStatus: (id: number) =>
       request<ImportStatus>(`/competitions/${id}/import-status`),
   },

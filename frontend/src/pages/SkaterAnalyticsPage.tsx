@@ -194,20 +194,61 @@ export default function SkaterAnalyticsPage() {
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
 
-  // ── Derived: score progression ──────────────────────────────────────────────
-  const progressionData = (scores ?? [])
-    .filter((s) => s.total_score != null)
-    .sort((a, b) => {
-      if (a.competition_date && b.competition_date)
-        return a.competition_date > b.competition_date ? 1 : -1;
-      return 0;
-    })
-    .map((s) => ({
-      date: s.competition_date ? s.competition_date.slice(0, 10) : (s.competition_name ?? "?"),
-      label: `${s.competition_name ?? ""} (${s.segment})`,
-      tes: s.technical_score,
-      pcs: s.component_score,
-    }));
+  // ── Progression chart mode ─────────────────────────────────────────────────
+  const [progressionMode, setProgressionMode] = useState<"result" | "segments">("result");
+
+  // ── Derived: score progression (competition results) ───────────────────────
+  // Use categoryResults as primary source; fall back to scores for competitions
+  // where no category_result row exists (e.g. single-segment with missing row).
+  const progressionDataResult = (() => {
+    const map = new Map<string, { date: string; label: string; total: number | null }>();
+
+    // Seed from categoryResults first
+    for (const r of categoryResults ?? []) {
+      if (r.combined_total == null) continue;
+      const key = `${r.competition_id}__${r.category ?? ""}`;
+      map.set(key, {
+        date: r.competition_date ? r.competition_date.slice(0, 10) : (r.competition_name ?? "?"),
+        label: `${r.competition_name ?? ""} · ${r.category ?? ""}`,
+        total: r.combined_total,
+      });
+    }
+
+    // Fill gaps from scores (single-segment competitions missing a category result)
+    for (const s of scores ?? []) {
+      if (s.total_score == null) continue;
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          date: s.competition_date ? s.competition_date.slice(0, 10) : (s.competition_name ?? "?"),
+          label: `${s.competition_name ?? ""} · ${s.category ?? ""}`,
+          total: s.total_score,
+        });
+      }
+    }
+
+    return [...map.values()].sort((a, b) => (a.date > b.date ? 1 : -1));
+  })();
+
+  // ── Derived: score progression (segments: SP and FS on separate series) ────
+  const progressionDataSegments = (() => {
+    // Group scores by competition+category, keyed by date label
+    const map = new Map<string, { date: string; label: string; sp?: number; fs?: number }>();
+    for (const s of (scores ?? []).filter((s) => s.total_score != null)) {
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          date: s.competition_date ? s.competition_date.slice(0, 10) : (s.competition_name ?? "?"),
+          label: `${s.competition_name ?? ""} · ${s.category ?? ""}`,
+        });
+      }
+      const entry = map.get(key)!;
+      const seg = s.segment?.toUpperCase();
+      if (seg === "SP" || seg === "PH") entry.sp = s.total_score ?? undefined;
+      else if (seg === "FS" || seg === "FP" || seg === "LD") entry.fs = s.total_score ?? undefined;
+    }
+    return [...map.values()].sort((a, b) => (a.date > b.date ? 1 : -1));
+  })();
 
   // ── Derived: sorted competition history ────────────────────────────────────
   const sortedScores: Score[] = [...(scores ?? [])].sort((a, b) => {
@@ -254,12 +295,18 @@ export default function SkaterAnalyticsPage() {
     });
   })();
 
-  // ── Derived: best TSS ──────────────────────────────────────────────────────
-  const bestTss =
-    (scores ?? []).reduce<number | null>((best, s) => {
+  // ── Derived: best TSS (prefer combined result; fall back to best segment) ──
+  const bestTss = (() => {
+    const bestResult = (categoryResults ?? []).reduce<number | null>((best, r) => {
+      if (r.combined_total == null) return best;
+      return best == null || r.combined_total > best ? r.combined_total : best;
+    }, null);
+    if (bestResult != null) return bestResult;
+    return (scores ?? []).reduce<number | null>((best, s) => {
       if (s.total_score == null) return best;
       return best == null || s.total_score > best ? s.total_score : best;
-    }, null) ?? null;
+    }, null);
+  })();
 
   // ── Derived: element KPIs ──────────────────────────────────────────────────
   const hasElements = elements && elements.length > 0;
@@ -298,6 +345,16 @@ export default function SkaterAnalyticsPage() {
 
   // ── Selected score for element detail panel ────────────────────────────────
   const [selectedScoreId, setSelectedScoreId] = useState<number | null>(null);
+  const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set());
+
+  function toggleCollapsed(key: string) {
+    setExpandedRows((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  }
   const activeScoreId = selectedScoreId ?? sortedScores[0]?.id ?? null;
   const activeScore = sortedScores.find((s) => s.id === activeScoreId) ?? null;
   const activeScoreElements = (elements ?? []).filter(
@@ -347,7 +404,7 @@ export default function SkaterAnalyticsPage() {
           </div>
           <div className="flex gap-3 shrink-0">
             <HeroStatBox
-              label="Meilleur TSS"
+              label="Meilleur score"
               value={bestTss != null ? bestTss.toFixed(2) : "—"}
             />
             <HeroStatBox
@@ -364,18 +421,86 @@ export default function SkaterAnalyticsPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Score progression chart */}
           <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
-            <h2 className="text-base font-extrabold font-headline text-on-surface mb-4">
-              Analyse longitudinale des scores
-            </h2>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-base font-extrabold font-headline text-on-surface">
+                Analyse longitudinale des scores
+              </h2>
+              <div className="flex rounded-lg overflow-hidden border border-outline-variant text-xs font-bold">
+                <button
+                  onClick={() => setProgressionMode("result")}
+                  className={`px-3 py-1.5 transition-colors ${
+                    progressionMode === "result"
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface text-on-surface-variant hover:bg-surface-container"
+                  }`}
+                >
+                  Résultat
+                </button>
+                <button
+                  onClick={() => setProgressionMode("segments")}
+                  className={`px-3 py-1.5 transition-colors ${
+                    progressionMode === "segments"
+                      ? "bg-primary text-on-primary"
+                      : "bg-surface text-on-surface-variant hover:bg-surface-container"
+                  }`}
+                >
+                  Segments
+                </button>
+              </div>
+            </div>
             {isLoading ? (
               <Skeleton className="h-[260px] w-full" />
-            ) : progressionData.length === 0 ? (
+            ) : progressionMode === "result" && progressionDataResult.length === 0 ? (
               <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
-                Aucune donnée de score disponible
+                Aucune donnée de résultat disponible
               </div>
+            ) : progressionMode === "segments" && progressionDataSegments.length === 0 ? (
+              <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
+                Aucune donnée de segment disponible
+              </div>
+            ) : progressionMode === "result" ? (
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart data={progressionDataResult} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
+                  <CartesianGrid vertical={false} stroke="#e0e3e5" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 10, fontFamily: "Inter, sans-serif", fill: "#41484d" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 10, fontFamily: "monospace", fill: "#41484d" }}
+                    axisLine={false}
+                    tickLine={false}
+                    domain={["auto", "auto"]}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => [value?.toFixed(2), "Total"]}
+                    labelFormatter={(label, payload) =>
+                      payload?.[0]?.payload?.label ?? label
+                    }
+                    contentStyle={{
+                      fontSize: 11,
+                      fontFamily: "Inter, sans-serif",
+                      borderRadius: 12,
+                      border: "none",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+                    }}
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="total"
+                    name="Total"
+                    stroke="#2e6385"
+                    strokeWidth={2.5}
+                    dot={{ r: 4, fill: "#2e6385", stroke: "#fff", strokeWidth: 1.5 }}
+                    activeDot={{ r: 6 }}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
             ) : (
               <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={progressionData} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
+                <LineChart data={progressionDataSegments} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
                   <CartesianGrid vertical={false} stroke="#e0e3e5" />
                   <XAxis
                     dataKey="date"
@@ -405,21 +530,23 @@ export default function SkaterAnalyticsPage() {
                   <Legend wrapperStyle={{ fontSize: 11 }} />
                   <Line
                     type="monotone"
-                    dataKey="tes"
-                    name="TES"
+                    dataKey="sp"
+                    name="Programme Court"
                     stroke="#2e6385"
                     strokeWidth={2}
                     dot={{ r: 3, fill: "#2e6385", stroke: "#fff", strokeWidth: 1.5 }}
                     activeDot={{ r: 5 }}
+                    connectNulls={false}
                   />
                   <Line
                     type="monotone"
-                    dataKey="pcs"
-                    name="PCS"
-                    stroke="#a5d8ff"
+                    dataKey="fs"
+                    name="Programme Libre"
+                    stroke="#7cb9e8"
                     strokeWidth={2}
-                    dot={{ r: 3, fill: "#a5d8ff", stroke: "#fff", strokeWidth: 1.5 }}
+                    dot={{ r: 3, fill: "#7cb9e8", stroke: "#fff", strokeWidth: 1.5 }}
                     activeDot={{ r: 5 }}
+                    connectNulls={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
@@ -459,6 +586,7 @@ export default function SkaterAnalyticsPage() {
                   <tbody>
                     {historyRows.map((row, rowIdx) => {
                       const isMultiSegment = row.catResult != null && row.catResult.segment_count > 1;
+                      const isCollapsed = !expandedRows.has(row.key);
 
                       return (
                         <React.Fragment key={row.key}>
@@ -466,18 +594,26 @@ export default function SkaterAnalyticsPage() {
                           {isMultiSegment && row.catResult ? (
                             <tr
                               className={
-                                rowIdx % 2 === 0
+                                (rowIdx % 2 === 0
                                   ? "bg-surface-container-lowest"
-                                  : "bg-surface-container-low/30"
+                                  : "bg-surface-container-low/30") +
+                                " cursor-pointer select-none hover:bg-surface-container-low/60 transition-colors"
                               }
+                              onClick={() => toggleCollapsed(row.key)}
                             >
                               <td className="px-3 py-2 text-sm text-on-surface">
-                                <Link
-                                  to={`/competitions/${row.competitionId}`}
-                                  className="text-primary hover:underline font-medium"
-                                >
-                                  {row.competitionName ?? `#${row.competitionId}`}
-                                </Link>
+                                <div className="flex items-center gap-1.5">
+                                  <span className="material-symbols-outlined text-sm text-on-surface-variant leading-none">
+                                    {isCollapsed ? "chevron_right" : "expand_more"}
+                                  </span>
+                                  <Link
+                                    to={`/competitions/${row.competitionId}`}
+                                    className="text-primary hover:underline font-medium"
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    {row.competitionName ?? `#${row.competitionId}`}
+                                  </Link>
+                                </div>
                               </td>
                               <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
                                 {row.competitionDate ? row.competitionDate.slice(0, 10) : "—"}
@@ -513,7 +649,7 @@ export default function SkaterAnalyticsPage() {
                           ) : null}
 
                           {/* Individual segment rows */}
-                          {row.segmentScores.map((s) => (
+                          {(!isMultiSegment || !isCollapsed) && row.segmentScores.map((s) => (
                             <tr
                               key={s.id}
                               className={

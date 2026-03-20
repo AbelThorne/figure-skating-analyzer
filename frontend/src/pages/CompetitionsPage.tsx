@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, ImportResult } from "../api/client";
+import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult } from "../api/client";
 
 const inputClass =
   "bg-surface-container rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary text-sm text-on-surface placeholder:text-on-surface-variant";
@@ -23,8 +23,11 @@ export default function CompetitionsPage() {
   });
 
   const [importResults, setImportResults] = useState<Record<number, ImportResult>>({});
+  const [enrichResults, setEnrichResults] = useState<Record<number, EnrichResult>>({});
   const [importingId, setImportingId] = useState<number | null>(null);
+  const [enrichingId, setEnrichingId] = useState<number | null>(null);
   const [dismissedResults, setDismissedResults] = useState<Set<number>>(new Set());
+  const [dismissedEnrich, setDismissedEnrich] = useState<Set<number>>(new Set());
 
   const createMutation = useMutation({
     mutationFn: api.competitions.create,
@@ -79,6 +82,26 @@ export default function CompetitionsPage() {
     },
     onError: () => {
       setImportingId(null);
+    },
+  });
+
+  const enrichMutation = useMutation({
+    mutationFn: (id: number) => {
+      setEnrichingId(id);
+      return api.competitions.enrich(id);
+    },
+    onSuccess: (result) => {
+      qc.invalidateQueries({ queryKey: ["scores"] });
+      setEnrichResults((prev) => ({ ...prev, [result.competition_id]: result }));
+      setDismissedEnrich((prev) => {
+        const next = new Set(prev);
+        next.delete(result.competition_id);
+        return next;
+      });
+      setEnrichingId(null);
+    },
+    onError: () => {
+      setEnrichingId(null);
     },
   });
 
@@ -192,8 +215,11 @@ export default function CompetitionsPage() {
       <div className="space-y-3">
         {competitions?.map((c: Competition) => {
           const isImporting = importingId === c.id;
+          const isEnriching = enrichingId === c.id;
           const result = importResults[c.id];
           const isDismissed = dismissedResults.has(c.id);
+          const enrichResult = enrichResults[c.id];
+          const isEnrichDismissed = dismissedEnrich.has(c.id);
 
           return (
             <div key={c.id}>
@@ -238,6 +264,16 @@ export default function CompetitionsPage() {
                       refresh
                     </span>
                     Réimporter
+                  </button>
+                  <button
+                    onClick={() => enrichMutation.mutate(c.id)}
+                    disabled={isEnriching || isImporting}
+                    className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                  >
+                    <span className="material-symbols-outlined text-base leading-none">
+                      description
+                    </span>
+                    {isEnriching ? "Enrichissement..." : "Enrichir PDF"}
                   </button>
                   <button
                     onClick={() => {
@@ -303,6 +339,54 @@ export default function CompetitionsPage() {
                         <span className="material-symbols-outlined text-sm leading-none">
                           close
                         </span>
+                      </button>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Inline enrich result notification */}
+              {enrichResult && !isEnrichDismissed && (
+                <div className="px-5 pt-2">
+                  {enrichResult.errors.length > 0 ? (
+                    <div className="border-l-4 border-error pl-3 py-1">
+                      <div className="flex items-center gap-2">
+                        <span className="inline-block w-2 h-2 rounded-full bg-error shrink-0" />
+                        <p className="text-xs text-error font-medium">
+                          {enrichResult.pdfs_downloaded} PDF téléchargés · {enrichResult.scores_enriched} scores enrichis · {enrichResult.errors.length} erreur(s)
+                        </p>
+                        <button
+                          onClick={() =>
+                            setDismissedEnrich((prev) => new Set(prev).add(c.id))
+                          }
+                          className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
+                          aria-label="Fermer"
+                        >
+                          <span className="material-symbols-outlined text-sm leading-none">close</span>
+                        </button>
+                      </div>
+                      <ul className="mt-1 space-y-0.5">
+                        {enrichResult.errors.map((e, i) => (
+                          <li key={i} className="text-xs text-error/80">
+                            {e.file} : {e.error}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 rounded-full bg-primary shrink-0" />
+                      <p className="text-xs text-primary font-medium">
+                        {enrichResult.pdfs_downloaded} PDF téléchargés · {enrichResult.scores_enriched} scores enrichis
+                      </p>
+                      <button
+                        onClick={() =>
+                          setDismissedEnrich((prev) => new Set(prev).add(c.id))
+                        }
+                        className="text-on-surface-variant hover:text-on-surface transition-colors"
+                        aria-label="Fermer"
+                      >
+                        <span className="material-symbols-outlined text-sm leading-none">close</span>
                       </button>
                     </div>
                   )}

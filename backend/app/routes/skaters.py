@@ -18,11 +18,12 @@ from app.models.category_result import CategoryResult
 
 @get("/")
 async def list_skaters(session: AsyncSession, club: Optional[str] = None) -> list[dict]:
-    stmt = select(Skater).order_by(Skater.name)
+    stmt = select(Skater)
     if club:
         stmt = stmt.where(func.lower(Skater.club) == club.lower())
     result = await session.execute(stmt)
-    return [_skater_to_dict(s) for s in result.scalars()]
+    skaters = sorted(result.scalars(), key=lambda s: s.name.split()[-1].upper() if s.name else "")
+    return [_skater_to_dict(s) for s in skaters]
 
 
 @get("/{skater_id:int}")
@@ -115,6 +116,7 @@ async def get_skater_scores(skater_id: int, session: AsyncSession) -> list[dict]
             "deductions": s.deductions,
             "components": s.components,
             "elements": s.elements,
+            "event_date": s.event_date.isoformat() if s.event_date else None,
         }
         for s in scores
     ]

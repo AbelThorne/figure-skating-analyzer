@@ -59,6 +59,7 @@ def _score_to_dict(s: Score) -> dict:
         "deductions": s.deductions,
         "components": s.components,
         "elements": s.elements,
+        "event_date": s.event_date.isoformat() if s.event_date else None,
     }
 
 

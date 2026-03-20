@@ -28,6 +28,7 @@ class ScrapedEvent:
     segment: str           # e.g. "Free Skating"
     seg_url: str | None = None   # URL to SEG detail page
     pdf_url: str | None = None   # URL to judges scores PDF
+    event_date: str | None = None  # ISO format YYYY-MM-DD (from Time Schedule)
 
 @dataclass
 class ScrapedCategory:
@@ -70,6 +71,7 @@ class ScrapedResult:
     components: dict[str, float] | None = None   # e.g. {"CO": 3.42, "PR": 3.25, "SK": 3.25}
     deductions: float | None = None
     starting_number: int | None = None
+    event_date: str | None = None    # ISO format YYYY-MM-DD
 
 
 # ---------------------------------------------------------------------------
@@ -144,10 +146,33 @@ class FSManagerScraper:
             current_category: str | None = None
             current_cat_url: str | None = None
             current_segments: list[str] = []
+            in_time_schedule = False
+            schedule_date: str | None = None
+            schedule_dates: dict[str, str] = {}  # "category|segment_short" -> ISO date
 
             for row in table.find_all("tr"):
                 row_classes = " ".join(row.get("class") or [])
                 if "TabHead" in row_classes:
+                    cells = row.find_all(["td", "th"], recursive=False)
+                    if cells:
+                        first_text = _clean_text(cells[0].get_text())
+                        if first_text.lower() in ("date", "time"):
+                            in_time_schedule = True
+                        elif re.match(r"^\d{2}\.\d{2}\.\d{4}$", first_text) and in_time_schedule:
+                            schedule_date = _parse_eu_date(first_text)
+                        elif first_text.lower() in ("category",):
+                            in_time_schedule = False
+                    continue
+
+                if in_time_schedule:
+                    if re.search(r"Line\d", row_classes) and schedule_date:
+                        cells = row.find_all(["td", "th"], recursive=False)
+                        texts = [_clean_text(c.get_text()) for c in cells]
+                        non_time = [t for t in texts if t and not re.match(r"^\d{1,2}:\d{2}(:\d{2})?$", t)]
+                        if len(non_time) >= 2:
+                            sched_cat = non_time[0]
+                            sched_seg = _SEGMENT_MAP.get(non_time[1].lower(), non_time[1])
+                            schedule_dates[f"{sched_cat}|{sched_seg}"] = schedule_date
                     continue
 
                 cells = row.find_all(["td", "th"])
@@ -196,11 +221,14 @@ class FSManagerScraper:
                             pdf_url = urljoin(base_dir, href)
 
                     if seg_url:
+                        short_seg = _SEGMENT_MAP.get(segment_name.lower(), segment_name)
+                        event_date = schedule_dates.get(f"{current_category}|{short_seg}")
                         events.append(ScrapedEvent(
                             category=current_category,
                             segment=segment_name,
                             seg_url=seg_url,
                             pdf_url=pdf_url,
+                            event_date=event_date,
                         ))
 
             # Don't forget the last category
@@ -210,6 +238,12 @@ class FSManagerScraper:
                     cat_url=current_cat_url,
                     segments=current_segments if current_segments else None,
                 ))
+
+            # Apply schedule dates to events that didn't get one yet (schedule may appear after results)
+            for event in events:
+                if not event.event_date:
+                    short_seg = _SEGMENT_MAP.get(event.segment.lower(), event.segment)
+                    event.event_date = schedule_dates.get(f"{event.category}|{short_seg}")
 
         return events, categories
 
@@ -490,6 +524,11 @@ class FSManagerScraper:
                     logger.warning("Failed to fetch %s", event.seg_url)
                     continue
                 results = self.parse_seg_page(seg_html, event.category, event.segment)
+                # Propagate event_date from the index page to each result
+                if event.event_date:
+                    for r in results:
+                        if not r.event_date:
+                            r.event_date = event.event_date
                 all_results.extend(results)
 
             for cat in categories:
@@ -527,6 +566,13 @@ def _strip_accents(text: str) -> str:
 def _clean_text(text: str) -> str:
     return " ".join(text.split())
 
+
+def _parse_eu_date(text: str) -> str | None:
+    """Convert DD.MM.YYYY to ISO YYYY-MM-DD."""
+    m = re.match(r"(\d{2})\.(\d{2})\.(\d{4})", text.strip())
+    if not m:
+        return None
+    return f"{m.group(3)}-{m.group(2)}-{m.group(1)}"
 
 
 def _parse_float(text: str | None) -> float | None:
