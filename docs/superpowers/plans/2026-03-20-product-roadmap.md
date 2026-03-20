@@ -13,6 +13,19 @@ Data is sourced from:
 
 The #1 priority is **better analytics & charts** — specifically element-level GOE trends, PCS component breakdown, judge panel analysis, and element difficulty tracking.
 
+## Design System
+
+All frontend work **must follow** the "Kinetic Lens" design system defined in:
+**`docs/superpowers/specs/2026-03-20-frontend-design.md`**
+
+Key constraints for every agent working on the frontend:
+- **UI framework: Tailwind CSS only** — no Ant Design, MUI, or shadcn
+- **No borders for sectioning** — use surface color layering instead
+- **Fonts: Manrope** (headlines) + **Inter** (body/labels) + **Material Symbols Outlined** (icons)
+- **Colors: strict token map** — never use raw hex values outside the defined palette
+- **Charts: Recharts** with custom colors from the token map (`#2e6385` primary, `#a5d8ff` secondary)
+- All numeric scores use `font-mono`; all text uses `on-surface` (#191c1e), never pure black
+
 ---
 
 ## Current State (What's Built)
