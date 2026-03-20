@@ -16,6 +16,7 @@ const MARKER_STYLE: Record<string, { color: string; label: string }> = {
   "e":  { color: "text-[#e65100]", label: "Carre incorrecte" },
   "!":  { color: "text-[#b45309]", label: "Carre incertaine" },
   "x":  { color: "text-primary",   label: "Bonus 2e moitié" },
+  "F":  { color: "text-[#ba1a1a]", label: "Chute" },
 };
 
 const COMPONENT_LABELS: Record<string, string> = {
