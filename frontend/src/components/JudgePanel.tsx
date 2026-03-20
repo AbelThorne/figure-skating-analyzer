@@ -92,11 +92,13 @@ function ElementName({ name, markers }: { name: string; markers: string[] }) {
 function MarkerBadge({ marker }: { marker: string }) {
   const style = MARKER_STYLE[marker] ?? { color: "text-on-surface-variant", title: marker };
   return (
-    <span
-      className={`font-mono text-[10px] font-bold ${style.color} align-super ml-[1px] cursor-help`}
-      title={style.title}
-    >
-      {marker}
+    <span className="relative group inline-flex align-super">
+      <span className={`font-mono text-[10px] font-bold ${style.color} ml-[1px] cursor-default`}>
+        {marker}
+      </span>
+      <span className="invisible group-hover:visible absolute bottom-full left-1/2 -translate-x-1/2 mb-1 z-50 whitespace-nowrap bg-on-surface text-surface text-[10px] font-body font-normal rounded-lg px-2 py-1 shadow-lg pointer-events-none">
+        {style.title}
+      </span>
     </span>
   );
 }
