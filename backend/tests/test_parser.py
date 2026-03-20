@@ -174,6 +174,26 @@ class TestParseElementRow:
         assert result["goe"] == pytest.approx(1.00)
         assert result["score"] == pytest.approx(4.30)
 
+    def test_standalone_x_token_between_name_and_base_value(self):
+        # Some PDFs emit: "7  3Lz  x  7.92  1  1  1  2  1  1  1  1  1  1.22  9.14"
+        # where x is a standalone token before the base value
+        line = " 7  3Lz  x  7.92   1   1   1   2   1   1   1   1   1   1.22   9.14"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "3Lz"
+        assert "x" in result["markers"]
+        assert result["base_value"] == pytest.approx(7.92)
+
+    def test_standalone_underrotation_token(self):
+        # Some PDFs emit: "2  3Lz  <  4.20  -3  -3  -4  -3  -3  -3  -3  -3  -3  -3.00  1.20"
+        line = " 2  3Lz  <  4.20  -3  -3  -4  -3  -3  -3  -3  -3  -3  -3.00   1.20"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "3Lz"
+        assert "<" in result["markers"]
+        assert result["base_value"] == pytest.approx(4.20)
+        assert len(result["judge_goe"]) == 9
+
     def test_non_element_header_returns_none(self):
         assert _parse_element_row("# Executed Elements") is None
         assert _parse_element_row(" #  Executed Elements       Info  Base Value") is None

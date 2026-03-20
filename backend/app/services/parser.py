@@ -21,6 +21,9 @@ from pathlib import Path
 
 import pdfplumber
 
+# ISU marker tokens that may appear standalone in the token stream
+_STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x"}
+
 
 # ---------------------------------------------------------------------------
 # Marker extraction
@@ -96,9 +99,6 @@ def _parse_element_row(line: str) -> dict | None:
 
     # Second token is the raw element code (may include markers as suffixes)
     raw_name = tokens[1]
-
-    # ISU marker tokens that may appear standalone in the token stream
-    _STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x"}
 
     # Collect any standalone marker tokens that appear between name and base_value
     # e.g. "4 2Lz+2T< < 3.14 ..." — the lone "<" at tokens[2] is a duplicate marker
