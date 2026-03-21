@@ -12,6 +12,9 @@ dependencies = [
     "beautifulsoup4>=4.12",
     "python-multipart>=0.0.9",
     "uvicorn[standard]>=0.30",
+    "PyJWT>=2.8",
+    "passlib[bcrypt]>=1.7",
+    "google-auth>=2.0",
 ]
 
 [project.optional-dependencies]
