@@ -1,0 +1,96 @@
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  type ReactNode,
+} from "react";
+import { api, setAccessToken, type AuthUser } from "../api/client";
+
+interface AuthState {
+  user: AuthUser | null;
+  loading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  loginWithGoogle: (credential: string) => Promise<void>;
+  logout: () => Promise<void>;
+  setup: (data: {
+    email: string;
+    password: string;
+    display_name: string;
+    club_name: string;
+    club_short: string;
+  }) => Promise<void>;
+}
+
+const AuthContext = createContext<AuthState | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  // Attempt silent refresh on mount
+  useEffect(() => {
+    api.auth
+      .refresh()
+      .then((data) => {
+        setAccessToken(data.access_token);
+        setUser(data.user);
+      })
+      .catch(() => {
+        // Not authenticated — that's fine
+      })
+      .finally(() => setLoading(false));
+  }, []);
+
+  const login = useCallback(async (email: string, password: string) => {
+    const resp = await api.auth.login(email, password);
+    setAccessToken(resp.access_token);
+    setUser(resp.user);
+  }, []);
+
+  const loginWithGoogle = useCallback(async (credential: string) => {
+    const resp = await api.auth.loginWithGoogle(credential);
+    setAccessToken(resp.access_token);
+    setUser(resp.user);
+  }, []);
+
+  const logout = useCallback(async () => {
+    try {
+      await api.auth.logout();
+    } catch {
+      // Ignore errors
+    }
+    setAccessToken(null);
+    setUser(null);
+  }, []);
+
+  const setup = useCallback(
+    async (data: {
+      email: string;
+      password: string;
+      display_name: string;
+      club_name: string;
+      club_short: string;
+    }) => {
+      const resp = await api.auth.setup(data);
+      setAccessToken(resp.access_token);
+      setUser(resp.user);
+    },
+    []
+  );
+
+  return (
+    <AuthContext.Provider
+      value={{ user, loading, login, loginWithGoogle, logout, setup }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth(): AuthState {
+  const ctx = useContext(AuthContext);
+  if (!ctx) throw new Error("useAuth must be used within AuthProvider");
+  return ctx;
+}
