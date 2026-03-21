@@ -1,10 +1,65 @@
 const BASE = "/api";
 
+let _accessToken: string | null = null;
+let _refreshPromise: Promise<string | null> | null = null;
+
+export function setAccessToken(token: string | null) {
+  _accessToken = token;
+}
+
+export function getAccessToken(): string | null {
+  return _accessToken;
+}
+
+async function _tryRefresh(): Promise<string | null> {
+  try {
+    const res = await fetch(`${BASE}/auth/refresh`, {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    _accessToken = data.access_token;
+    return _accessToken;
+  } catch {
+    return null;
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const res = await fetch(`${BASE}${path}`, {
-    headers: { "Content-Type": "application/json" },
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+    ...(options?.headers as Record<string, string>),
+  };
+  if (_accessToken) {
+    headers["Authorization"] = `Bearer ${_accessToken}`;
+  }
+
+  let res = await fetch(`${BASE}${path}`, {
     ...options,
+    headers,
+    credentials: "include",
   });
+
+  // On 401, try silent refresh once
+  if (res.status === 401 && _accessToken) {
+    if (!_refreshPromise) {
+      _refreshPromise = _tryRefresh();
+    }
+    const newToken = await _refreshPromise;
+    _refreshPromise = null;
+
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(`${BASE}${path}`, {
+        ...options,
+        headers,
+        credentials: "include",
+      });
+    }
+  }
+
   if (!res.ok) {
     const text = await res.text();
     throw new Error(`${res.status} ${res.statusText}: ${text}`);
@@ -181,11 +236,113 @@ export interface ClubConfig {
   logo_url: string;
 }
 
+// --- Auth Types ---
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  display_name: string;
+  role: "admin" | "reader";
+}
+
+export interface LoginResponse {
+  access_token: string;
+  user: AuthUser;
+}
+
+export interface UserRecord {
+  id: string;
+  email: string;
+  display_name: string;
+  role: "admin" | "reader";
+  is_active: boolean;
+  google_oauth_enabled: boolean;
+}
+
+export interface AllowedDomainRecord {
+  id: string;
+  domain: string;
+  created_at: string;
+}
+
+export interface ConfigResponse {
+  setup_required: boolean;
+  club_name?: string;
+  club_short?: string;
+  logo_url?: string;
+  current_season?: string;
+  google_client_id?: string;
+}
+
 // --- API Functions ---
 
 export const api = {
   config: {
-    get: () => request<ClubConfig>("/config/"),
+    get: () => request<ConfigResponse>("/config/"),
+    update: (data: { club_name?: string; club_short?: string; current_season?: string }) =>
+      request<ConfigResponse>("/config/", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+  },
+
+  auth: {
+    login: (email: string, password: string) =>
+      request<LoginResponse>("/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      }),
+    loginWithGoogle: (credential: string) =>
+      request<LoginResponse>("/auth/google", {
+        method: "POST",
+        body: JSON.stringify({ credential }),
+      }),
+    refresh: () =>
+      request<LoginResponse>("/auth/refresh", { method: "POST" }),
+    logout: () => request<void>("/auth/logout", { method: "POST" }),
+    setup: (data: {
+      email: string;
+      password: string;
+      display_name: string;
+      club_name: string;
+      club_short: string;
+    }) =>
+      request<LoginResponse>("/auth/setup", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+  },
+
+  users: {
+    list: () => request<UserRecord[]>("/users/"),
+    create: (data: {
+      email: string;
+      display_name: string;
+      role: string;
+      password?: string;
+    }) =>
+      request<UserRecord>("/users/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    update: (id: string, data: Partial<UserRecord>) =>
+      request<UserRecord>(`/users/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    delete: (id: string) =>
+      request<void>(`/users/${id}`, { method: "DELETE" }),
+  },
+
+  domains: {
+    list: () => request<AllowedDomainRecord[]>("/domains/"),
+    create: (domain: string) =>
+      request<AllowedDomainRecord>("/domains/", {
+        method: "POST",
+        body: JSON.stringify({ domain }),
+      }),
+    delete: (id: string) =>
+      request<void>(`/domains/${id}`, { method: "DELETE" }),
   },
 
   competitions: {
