@@ -243,7 +243,29 @@ volumes:
 | `ALLOWED_ORIGINS` | No | `http://localhost:5173` | CORS origins (only needed for local dev; in Docker, nginx proxies API calls same-origin) |
 | `SECURE_COOKIES` | No | `true` | Set to `false` for local HTTP dev |
 
-### 5.5 Database Abstraction
+### 5.5 CI/CD — GitHub Actions
+
+Two workflows, one per image, triggered on push to `main` and on tag creation.
+
+**`ci-backend.yml`:**
+- Trigger: push to `main` with changes in `backend/**`, or any tag `v*`
+- Auth: Workload Identity Federation to GCP (no service account keys)
+- Steps: checkout → authenticate to Artifact Registry → build & push `europe-west9-docker.pkg.dev/skating-analyzer/skating-analyzer/backend`
+- **Tag on push to main:** short commit SHA (e.g. `backend:abc1234`)
+- **Tag on git tag:** the tag name (e.g. `backend:v1.2.0`)
+
+**`ci-frontend.yml`:**
+- Trigger: push to `main` with changes in `frontend/**`, or any tag `v*`
+- Same auth and registry
+- Image: `europe-west9-docker.pkg.dev/skating-analyzer/skating-analyzer/frontend`
+- Same tagging strategy
+
+**GCP prerequisites (manual, documented in `.env.example` or README):**
+- Artifact Registry repository `skating-analyzer` in `europe-west9`
+- Workload Identity Federation pool + provider configured for GitHub Actions
+- Service account with `roles/artifactregistry.writer` bound to the WIF provider
+
+### 5.6 Database Abstraction
 
 - `DATABASE_URL` env var drives the SQLAlchemy engine
 - Default: SQLite. Switchable to PostgreSQL by changing the URL to `postgresql+asyncpg://...`
@@ -276,3 +298,5 @@ Add to `pyproject.toml`:
 8. **User management:** Admin creates/edits/disables users → changes take effect immediately
 9. **Docker local:** `docker compose up` → app accessible on `localhost:80`, data persists across restarts
 10. **Docker GCP:** Deploy on VM behind LB → app accessible via HTTPS domain
+11. **CI push:** Push to `main` with backend changes → GitHub Actions builds and pushes `backend:<sha>` to Artifact Registry
+12. **CI tag:** Create git tag `v1.0.0` → both images tagged `v1.0.0` in Artifact Registry
