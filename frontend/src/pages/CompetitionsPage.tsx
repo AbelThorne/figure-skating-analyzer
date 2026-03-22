@@ -2,12 +2,15 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult } from "../api/client";
+import { useAuth } from "../auth/AuthContext";
 
 const inputClass =
   "bg-surface-container rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary text-sm text-on-surface placeholder:text-on-surface-variant";
 
 export default function CompetitionsPage() {
   const qc = useQueryClient();
+  const { user } = useAuth();
+  const isAdmin = user?.role === "admin";
 
   const { data: competitions, isLoading, error } = useQuery({
     queryKey: ["competitions"],
@@ -117,12 +120,14 @@ export default function CompetitionsPage() {
             Gérez vos compétitions et importez les résultats
           </p>
         </div>
-        <button
-          onClick={() => setShowForm((v) => !v)}
-          className="bg-primary text-on-primary rounded-lg py-2 px-4 text-xs font-bold active:scale-95 transition-all"
-        >
-          + Ajouter
-        </button>
+        {isAdmin && (
+          <button
+            onClick={() => setShowForm((v) => !v)}
+            className="bg-primary text-on-primary rounded-lg py-2 px-4 text-xs font-bold active:scale-95 transition-all"
+          >
+            + Ajouter
+          </button>
+        )}
       </div>
 
       {/* Add competition form */}
@@ -248,60 +253,62 @@ export default function CompetitionsPage() {
                   </p>
                 </div>
 
-                {/* Right: action buttons */}
-                <div className="flex gap-2 ml-4 shrink-0">
-                  <button
-                    onClick={() => importMutation.mutate(c.id)}
-                    disabled={isImporting}
-                    className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-base leading-none">
-                      download
-                    </span>
-                    {isImporting ? "Importation..." : "Importer"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (
-                        confirm(`Réimporter ${c.name} ? Les données existantes seront remplacées.`)
-                      ) {
-                        reimportMutation.mutate(c.id);
-                      }
-                    }}
-                    disabled={isImporting}
-                    className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-base leading-none">
-                      refresh
-                    </span>
-                    Réimporter
-                  </button>
-                  <button
-                    onClick={() => enrichMutation.mutate(c.id)}
-                    disabled={isEnriching || isImporting}
-                    className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-base leading-none">
-                      description
-                    </span>
-                    {isEnriching ? "Enrichissement..." : "Enrichir PDF"}
-                  </button>
-                  <button
-                    onClick={() => {
-                      if (
-                        confirm(`Supprimer "${c.name}" ?`)
-                      ) {
-                        deleteMutation.mutate(c.id);
-                      }
-                    }}
-                    className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
-                  >
-                    <span className="material-symbols-outlined text-base leading-none">
-                      delete
-                    </span>
-                    Supprimer
-                  </button>
-                </div>
+                {/* Right: action buttons (admin only) */}
+                {isAdmin && (
+                  <div className="flex gap-2 ml-4 shrink-0">
+                    <button
+                      onClick={() => importMutation.mutate(c.id)}
+                      disabled={isImporting}
+                      className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">
+                        download
+                      </span>
+                      {isImporting ? "Importation..." : "Importer"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (
+                          confirm(`Réimporter ${c.name} ? Les données existantes seront remplacées.`)
+                        ) {
+                          reimportMutation.mutate(c.id);
+                        }
+                      }}
+                      disabled={isImporting}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">
+                        refresh
+                      </span>
+                      Réimporter
+                    </button>
+                    <button
+                      onClick={() => enrichMutation.mutate(c.id)}
+                      disabled={isEnriching || isImporting}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">
+                        description
+                      </span>
+                      {isEnriching ? "Enrichissement..." : "Enrichir PDF"}
+                    </button>
+                    <button
+                      onClick={() => {
+                        if (
+                          confirm(`Supprimer "${c.name}" ?`)
+                        ) {
+                          deleteMutation.mutate(c.id);
+                        }
+                      }}
+                      className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">
+                        delete
+                      </span>
+                      Supprimer
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* Inline import result notification */}

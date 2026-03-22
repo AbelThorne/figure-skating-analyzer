@@ -1,12 +1,17 @@
-import { Routes, Route, NavLink, useLocation } from "react-router-dom";
+import { Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
+import { useAuth } from "./auth/AuthContext";
+import { ProtectedRoute } from "./auth/ProtectedRoute";
 import HomePage from "./pages/HomePage";
 import CompetitionPage from "./pages/CompetitionPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
 import SkaterBrowserPage from "./pages/SkaterBrowserPage";
 import SkaterAnalyticsPage from "./pages/SkaterAnalyticsPage";
 import StatsPage from "./pages/StatsPage";
+import LoginPage from "./pages/LoginPage";
+import SetupPage from "./pages/SetupPage";
+import SettingsPage from "./pages/SettingsPage";
 
 const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
@@ -22,12 +27,14 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/patineurs") return "Patineurs";
   if (pathname.startsWith("/patineurs/")) return "Analyse patineur";
   if (pathname === "/stats") return "Statistiques";
+  if (pathname === "/settings") return "Paramètres";
   return "";
 }
 
-export default function App() {
+function AuthenticatedLayout() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
+  const { user, logout } = useAuth();
 
   const { data: config } = useQuery({
     queryKey: ["config"],
@@ -73,6 +80,21 @@ export default function App() {
               <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
             </NavLink>
           ))}
+
+          {/* Admin-only: settings */}
+          {user?.role === "admin" && (
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                isActive
+                  ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
+                  : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+              }
+            >
+              <span className="material-symbols-outlined text-xl">settings</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">PARAMÈTRES</span>
+            </NavLink>
+          )}
         </nav>
       </aside>
 
@@ -81,7 +103,19 @@ export default function App() {
         {/* Top bar */}
         <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex justify-between items-center px-8 py-4">
           <h1 className="font-headline font-bold text-on-surface text-xl">{pageTitle}</h1>
-          <div />
+          {/* User menu */}
+          <div className="flex items-center gap-3">
+            <span className="text-on-surface-variant text-xs">
+              {user?.display_name || user?.email}
+            </span>
+            <button
+              onClick={logout}
+              className="text-on-surface-variant hover:text-error transition-colors"
+              title="Déconnexion"
+            >
+              <span className="material-symbols-outlined text-xl">logout</span>
+            </button>
+          </div>
         </header>
 
         {/* Page content */}
@@ -93,9 +127,59 @@ export default function App() {
             <Route path="/patineurs" element={<SkaterBrowserPage />} />
             <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
             <Route path="/stats" element={<StatsPage />} />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute requiredRole="admin">
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
           </Routes>
         </main>
       </div>
     </div>
+  );
+}
+
+export default function App() {
+  const { data: config, isLoading } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
+  });
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-surface flex items-center justify-center">
+        <span className="material-symbols-outlined animate-spin text-primary text-3xl">
+          progress_activity
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/setup"
+        element={
+          config?.setup_required ? <SetupPage /> : <Navigate to="/" replace />
+        }
+      />
+      <Route
+        path="/*"
+        element={
+          config?.setup_required ? (
+            <Navigate to="/setup" replace />
+          ) : (
+            <ProtectedRoute>
+              <AuthenticatedLayout />
+            </ProtectedRoute>
+          )
+        }
+      />
+    </Routes>
   );
 }
