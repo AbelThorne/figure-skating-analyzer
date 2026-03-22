@@ -1,22 +1,82 @@
-import { useState, type FormEvent } from "react";
+import { useState, useEffect, useRef, useCallback, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../api/client";
 
+declare global {
+  interface Window {
+    google?: {
+      accounts: {
+        id: {
+          initialize: (config: Record<string, unknown>) => void;
+          renderButton: (el: HTMLElement, config: Record<string, unknown>) => void;
+        };
+      };
+    };
+  }
+}
+
 export default function LoginPage() {
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const googleBtnRef = useRef<HTMLDivElement>(null);
 
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
     staleTime: Infinity,
   });
+
+  const handleGoogleResponse = useCallback(
+    async (response: { credential: string }) => {
+      setError("");
+      setLoading(true);
+      try {
+        await loginWithGoogle(response.credential);
+        navigate("/", { replace: true });
+      } catch (err: any) {
+        setError(
+          err.message?.includes("403")
+            ? "Domaine non autorisé"
+            : "Erreur de connexion Google"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [loginWithGoogle, navigate]
+  );
+
+  useEffect(() => {
+    if (!config?.google_client_id || !googleBtnRef.current) return;
+    const tryInit = () => {
+      if (!window.google?.accounts?.id) return false;
+      window.google.accounts.id.initialize({
+        client_id: config.google_client_id,
+        callback: handleGoogleResponse,
+      });
+      window.google.accounts.id.renderButton(googleBtnRef.current!, {
+        theme: "outline",
+        size: "large",
+        width: "100%",
+        text: "signin_with",
+        locale: "fr",
+      });
+      return true;
+    };
+    if (!tryInit()) {
+      // GIS script may not be loaded yet — retry briefly
+      const interval = setInterval(() => {
+        if (tryInit()) clearInterval(interval);
+      }, 200);
+      return () => clearInterval(interval);
+    }
+  }, [config?.google_client_id, handleGoogleResponse]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -106,8 +166,9 @@ export default function LoginPage() {
 
           {/* Google OAuth — only if configured */}
           {config?.google_client_id && (
-            <div className="mt-4 pt-4 border-t border-outline-variant">
-              <div id="google-signin-btn" />
+            <div className="mt-4 pt-4 border-t border-outline-variant/30">
+              <p className="text-on-surface-variant text-xs text-center mb-3">ou</p>
+              <div ref={googleBtnRef} />
             </div>
           )}
         </div>
