@@ -168,7 +168,7 @@ export default function LoginPage() {
           {config?.google_client_id && (
             <div className="mt-4 pt-4 border-t border-outline-variant/30">
               <p className="text-on-surface-variant text-xs text-center mb-3">ou</p>
-              <div ref={googleBtnRef} />
+              <div ref={googleBtnRef} className="flex justify-center" />
             </div>
           )}
         </div>
