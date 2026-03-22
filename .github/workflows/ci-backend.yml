@@ -1,0 +1,39 @@
+name: Build & Push Backend
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+    tags:
+      - 'v*'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  REGISTRY: europe-west9-docker.pkg.dev
+  IMAGE: europe-west9-docker.pkg.dev/skating-analyzer/skating-analyzer/backend
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - id: auth
+        uses: google-github-actions/auth@v2
+        with:
+          workload_identity_provider: ${{ secrets.WIF_PROVIDER }}
+          service_account: ${{ secrets.WIF_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v2
+
+      - run: gcloud auth configure-docker ${{ env.REGISTRY }}
+
+      - name: Build and push
+        run: |
+          TAG="${{ github.ref_type == 'tag' && github.ref_name || github.sha }}"
+          docker build -f Dockerfile.backend -t ${{ env.IMAGE }}:${TAG} .
+          docker push ${{ env.IMAGE }}:${TAG}
