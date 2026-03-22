@@ -7,14 +7,14 @@ on:
       - 'frontend/**'
     tags:
       - 'v*'
+  workflow_dispatch:
 
 permissions:
   contents: read
   id-token: write
 
 env:
-  REGISTRY: europe-west9-docker.pkg.dev
-  IMAGE: europe-west9-docker.pkg.dev/skating-analyzer/skating-analyzer/frontend
+  IMAGE: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.GAR_REPO }}/frontend
 
 jobs:
   build:
@@ -30,7 +30,7 @@ jobs:
 
       - uses: google-github-actions/setup-gcloud@v2
 
-      - run: gcloud auth configure-docker ${{ env.REGISTRY }}
+      - run: gcloud auth configure-docker ${{ secrets.GAR_LOCATION }}-docker.pkg.dev
 
       - name: Build and push
         run: |
