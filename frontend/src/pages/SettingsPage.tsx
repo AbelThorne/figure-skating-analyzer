@@ -166,9 +166,7 @@ export default function SettingsPage() {
                 <button
                   onClick={() => toggleActive.mutate(u)}
                   className={`text-xs px-2 py-1 rounded-lg ${
-                    u.is_active
-                      ? "text-primary"
-                      : "text-error"
+                    u.is_active ? "text-primary" : "text-error"
                   }`}
                 >
                   {u.is_active ? "Actif" : "Désactivé"}
