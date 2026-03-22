@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, type UserRecord } from "../api/client";
+import yaml from "js-yaml";
+import { api, type UserRecord, type BulkImportResult } from "../api/client";
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -92,6 +93,57 @@ export default function SettingsPage() {
   const removeDomain = useMutation({
     mutationFn: (id: string) => api.domains.delete(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["domains"] }),
+  });
+
+  // --- Bulk import ---
+  interface Lot {
+    name: string;
+    urls: string[];
+    season?: string;
+    discipline?: string;
+  }
+  const [lots, setLots] = useState<Lot[]>([]);
+  const [lotResults, setLotResults] = useState<Record<string, BulkImportResult>>({});
+  const [importingLot, setImportingLot] = useState<string | null>(null);
+  const yamlRef = useRef<HTMLInputElement>(null);
+
+  const handleYamlUpload = (file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      try {
+        const parsed = yaml.load(e.target?.result as string) as Record<string, unknown>[];
+        const newLots: Lot[] = parsed.map((item: Record<string, unknown>) => ({
+          name: (item.name as string) || "Sans nom",
+          urls: (item.urls as string[]) || [],
+          season: item.season as string | undefined,
+          discipline: item.discipline as string | undefined,
+        }));
+        setLots(newLots);
+        setLotResults({});
+      } catch {
+        alert("Fichier YAML invalide");
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const bulkImportMutation = useMutation({
+    mutationFn: (params: { lot: Lot; enrich: boolean }) =>
+      api.competitions.bulkImport({
+        lot_name: params.lot.name,
+        urls: params.lot.urls,
+        enrich: params.enrich,
+        season: params.lot.season,
+        discipline: params.lot.discipline,
+      }),
+    onSuccess: (result) => {
+      setLotResults((prev) => ({ ...prev, [result.lot_name]: result }));
+      setImportingLot(null);
+      qc.invalidateQueries({ queryKey: ["competitions"] });
+    },
+    onError: () => {
+      setImportingLot(null);
+    },
   });
 
   const inputCls =
@@ -339,6 +391,153 @@ export default function SettingsPage() {
             Ajouter
           </button>
         </div>
+      </section>
+
+      {/* Bulk import */}
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <h2 className="font-headline font-bold text-on-surface text-lg mb-4">
+          Import par lots
+        </h2>
+        <p className="text-on-surface-variant text-xs mb-3">
+          Chargez un fichier YAML contenant des lots de compétitions à importer.
+          Format attendu :
+        </p>
+        <pre className="text-xs text-on-surface-variant bg-surface-container-low rounded-xl p-3 mb-4 font-mono overflow-x-auto">
+{`- name: "CSNPA Automne 2025"
+  season: "2025-2026"
+  urls:
+    - https://example.com/comp1/index.htm
+    - https://example.com/comp2/index.htm
+
+- name: "Coupes régionales 2026"
+  urls:
+    - https://example.com/comp3/index.htm`}
+        </pre>
+
+        <div className="mb-4">
+          <input
+            ref={yamlRef}
+            type="file"
+            accept=".yaml,.yml"
+            className="hidden"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              if (file) handleYamlUpload(file);
+            }}
+          />
+          <button
+            onClick={() => yamlRef.current?.click()}
+            className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-2"
+          >
+            <span className="material-symbols-outlined text-sm">upload_file</span>
+            Charger un fichier YAML
+          </button>
+        </div>
+
+        {lots.length > 0 && (
+          <div className="space-y-3">
+            {lots.map((lot) => {
+              const result = lotResults[lot.name];
+              const isImporting = importingLot === lot.name;
+
+              return (
+                <div
+                  key={lot.name}
+                  className="p-4 bg-surface-container-low rounded-xl"
+                >
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <span className="font-bold text-on-surface text-sm">
+                        {lot.name}
+                      </span>
+                      <span className="text-on-surface-variant text-xs ml-2">
+                        {lot.urls.length} compétition{lot.urls.length > 1 ? "s" : ""}
+                        {lot.season && ` · ${lot.season}`}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => {
+                          setImportingLot(lot.name);
+                          bulkImportMutation.mutate({ lot, enrich: false });
+                        }}
+                        disabled={isImporting}
+                        className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">download</span>
+                        {isImporting ? "Import..." : "Importer"}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setImportingLot(lot.name);
+                          bulkImportMutation.mutate({ lot, enrich: true });
+                        }}
+                        disabled={isImporting}
+                        className="px-3 py-1.5 bg-surface-container text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container-high transition-colors disabled:opacity-50 flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">description</span>
+                        {isImporting ? "Import..." : "Importer + PDF"}
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Result */}
+                  {result && (
+                    <div className="mt-3 pt-3 border-t border-outline-variant/30">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span
+                          className={`inline-block w-2 h-2 rounded-full ${
+                            result.failed === 0 ? "bg-primary" : "bg-error"
+                          }`}
+                        />
+                        <span className="text-xs font-medium text-on-surface">
+                          {result.succeeded}/{result.total} importées
+                          {result.failed > 0 && ` · ${result.failed} erreur(s)`}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        {result.results.map((r) => (
+                          <div
+                            key={r.url}
+                            className="flex items-center gap-2 text-xs"
+                          >
+                            <span
+                              className={`material-symbols-outlined text-sm ${
+                                r.status === "success"
+                                  ? "text-primary"
+                                  : "text-error"
+                              }`}
+                            >
+                              {r.status === "success"
+                                ? "check_circle"
+                                : "error"}
+                            </span>
+                            <span className="text-on-surface truncate">
+                              {r.name || r.url}
+                            </span>
+                            {r.import_result && (
+                              <span className="text-on-surface-variant shrink-0">
+                                {r.import_result.scores_imported} scores
+                                {r.enrich_result &&
+                                  "scores_enriched" in r.enrich_result &&
+                                  ` · ${r.enrich_result.scores_enriched} enrichis`}
+                              </span>
+                            )}
+                            {r.error && (
+                              <span className="text-error truncate">
+                                {r.error}
+                              </span>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );

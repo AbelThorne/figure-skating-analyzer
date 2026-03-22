@@ -290,6 +290,187 @@ async def enrich_competition(competition_id: int, session: AsyncSession, force: 
     }
 
 
+@post("/bulk-import")
+async def bulk_import(data: dict, session: AsyncSession) -> dict:
+    """Bulk import a lot of competitions: create, import scores, optionally enrich PDFs."""
+    import logging
+    logger = logging.getLogger(__name__)
+
+    urls: list[str] = data.get("urls", [])
+    lot_name: str = data.get("lot_name", "")
+    enrich: bool = data.get("enrich", False)
+    season: str = data.get("season", "")
+    discipline: str = data.get("discipline", "")
+
+    if not urls:
+        return {"lot_name": lot_name, "results": [], "total": 0, "succeeded": 0, "failed": 0}
+
+    results = []
+    succeeded = 0
+    failed = 0
+
+    for url in urls:
+        entry: dict = {"url": url, "status": "pending", "competition_id": None, "error": None, "import_result": None, "enrich_result": None}
+        try:
+            # Check if competition with this URL already exists
+            existing = await session.execute(
+                select(Competition).where(Competition.url == url)
+            )
+            comp = existing.scalar_one_or_none()
+            if not comp:
+                comp = Competition(
+                    name=url.rstrip("/").split("/")[-1],
+                    url=url,
+                    season=season or None,
+                    discipline=discipline or None,
+                )
+                session.add(comp)
+                await session.flush()
+                await session.refresh(comp)
+
+            entry["competition_id"] = comp.id
+
+            # Import
+            scraper = get_scraper(comp.url)
+            events, score_results, cat_results_data, comp_info = await scraper.scrape(comp.url)
+
+            if comp_info.name and (comp.name == comp.url or not comp.name or "/" in comp.name):
+                comp.name = comp_info.name
+            if comp_info.date and not comp.date:
+                comp.date = date_type.fromisoformat(comp_info.date)
+
+            imported = 0
+            skipped = 0
+            cat_imported = 0
+            errors = []
+
+            for r in score_results:
+                try:
+                    skater = await _get_or_create_skater(session, r.name, r.nationality, r.club)
+                    ex = await session.execute(
+                        select(Score).where(
+                            Score.competition_id == comp.id,
+                            Score.skater_id == skater.id,
+                            Score.category == r.category,
+                            Score.segment == r.segment,
+                        )
+                    )
+                    if ex.scalar_one_or_none():
+                        skipped += 1
+                        continue
+                    score = Score(
+                        competition_id=comp.id,
+                        skater_id=skater.id,
+                        segment=r.segment or "UNKNOWN",
+                        category=r.category,
+                        rank=r.rank,
+                        total_score=r.total_score,
+                        technical_score=r.technical_score,
+                        component_score=r.component_score,
+                        components=r.components,
+                        deductions=r.deductions,
+                        starting_number=r.starting_number,
+                        event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
+                    )
+                    session.add(score)
+                    imported += 1
+                except Exception as e:
+                    errors.append({"skater": r.name, "error": str(e)})
+
+            for cr in cat_results_data:
+                try:
+                    skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club)
+                    ex = await session.execute(
+                        select(CategoryResult).where(
+                            CategoryResult.competition_id == comp.id,
+                            CategoryResult.skater_id == skater.id,
+                            CategoryResult.category == cr.category,
+                        )
+                    )
+                    if ex.scalar_one_or_none():
+                        continue
+                    cat_result = CategoryResult(
+                        competition_id=comp.id,
+                        skater_id=skater.id,
+                        category=cr.category or "UNKNOWN",
+                        overall_rank=cr.overall_rank,
+                        combined_total=cr.combined_total,
+                        segment_count=cr.segment_count,
+                        sp_rank=cr.sp_rank,
+                        fs_rank=cr.fs_rank,
+                    )
+                    session.add(cat_result)
+                    cat_imported += 1
+                except Exception as e:
+                    errors.append({"skater": cr.name, "error": str(e)})
+
+            comp.last_import_log = {
+                "status": "success" if not errors else "partial",
+                "events_found": len(events),
+                "scores_imported": imported,
+                "scores_skipped": skipped,
+                "category_results_imported": cat_imported,
+                "errors": errors,
+            }
+            await session.commit()
+
+            entry["import_result"] = {
+                "scores_imported": imported,
+                "scores_skipped": skipped,
+                "errors_count": len(errors),
+            }
+            entry["name"] = comp.name
+
+            # Enrich with PDFs if requested
+            if enrich:
+                try:
+                    pdf_urls = [e.pdf_url for e in events if e.pdf_url]
+                    if pdf_urls:
+                        slug = url_to_slug(comp.url)
+                        pdf_paths = await download_pdfs(pdf_urls, slug)
+                        enriched = 0
+                        for pdf_path in pdf_paths:
+                            try:
+                                parsed = parse_elements(pdf_path)
+                                for pe in parsed:
+                                    result = await session.execute(
+                                        select(Score)
+                                        .join(Skater)
+                                        .where(Score.competition_id == comp.id, Skater.name == pe["skater_name"])
+                                    )
+                                    scores = result.scalars().all()
+                                    for s in scores:
+                                        if not s.elements:
+                                            s.elements = pe["elements"]
+                                            s.pdf_path = str(pdf_path)
+                                            enriched += 1
+                            except Exception as e:
+                                logger.warning("PDF parse error: %s", e)
+                        await session.commit()
+                        entry["enrich_result"] = {"scores_enriched": enriched, "pdfs_downloaded": len(pdf_paths)}
+                except Exception as e:
+                    logger.warning("Enrich failed for %s: %s", url, e)
+                    entry["enrich_result"] = {"error": str(e)}
+
+            entry["status"] = "success"
+            succeeded += 1
+        except Exception as e:
+            logger.exception("Bulk import failed for %s", url)
+            entry["status"] = "error"
+            entry["error"] = str(e)
+            failed += 1
+
+        results.append(entry)
+
+    return {
+        "lot_name": lot_name,
+        "results": results,
+        "total": len(urls),
+        "succeeded": succeeded,
+        "failed": failed,
+    }
+
+
 router = Router(
     path="/api/competitions",
     route_handlers=[
@@ -300,6 +481,7 @@ router = Router(
         import_competition,
         get_import_status,
         enrich_competition,
+        bulk_import,
     ],
     dependencies={"session": Provide(get_session)},
 )

@@ -274,6 +274,22 @@ export interface ConfigResponse {
   google_client_id?: string;
 }
 
+export interface BulkImportResult {
+  lot_name: string;
+  results: {
+    url: string;
+    name?: string;
+    status: string;
+    competition_id: number | null;
+    error: string | null;
+    import_result: { scores_imported: number; scores_skipped: number; errors_count: number } | null;
+    enrich_result: { scores_enriched: number; pdfs_downloaded: number; error?: string } | null;
+  }[];
+  total: number;
+  succeeded: number;
+  failed: number;
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -377,6 +393,11 @@ export const api = {
       request<EnrichResult>(`/competitions/${id}/enrich`, { method: "POST" }),
     importStatus: (id: number) =>
       request<ImportStatus>(`/competitions/${id}/import-status`),
+    bulkImport: (data: { lot_name: string; urls: string[]; enrich: boolean; season?: string; discipline?: string }) =>
+      request<BulkImportResult>("/competitions/bulk-import", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
   },
 
   skaters: {
