@@ -319,7 +319,7 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
             comp = existing.scalar_one_or_none()
             if not comp:
                 comp = Competition(
-                    name=url.rstrip("/").split("/")[-1],
+                    name=url,
                     url=url,
                     season=season or None,
                     discipline=discipline or None,
