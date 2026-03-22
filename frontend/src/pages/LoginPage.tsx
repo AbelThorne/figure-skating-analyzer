@@ -115,7 +115,7 @@ export default function LoginPage() {
             </span>
           )}
           <h1 className="font-headline font-bold text-on-surface text-xl mt-2">
-            {config?.club_name ?? "Analyse Patinage"}
+            {config?.club_name ?? "SkateLab"}
           </h1>
           <p className="text-on-surface-variant text-sm mt-1">
             Connectez-vous pour continuer

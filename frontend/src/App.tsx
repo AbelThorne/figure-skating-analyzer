@@ -56,7 +56,7 @@ function AuthenticatedLayout() {
           )}
           <div className="min-w-0">
             <span className="font-headline font-bold text-on-surface text-xs leading-tight block">
-              {config?.club_name ?? "Analyse Patinage"}
+              {config?.club_name ?? "SkateLab"}
             </span>
             <p className="text-[10px] uppercase tracking-widest text-on-surface-variant mt-0.5">
               Patinage artistique
