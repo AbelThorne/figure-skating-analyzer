@@ -41,5 +41,6 @@ jobs:
           else
             TAG="${BRANCH}-${SHORT_SHA}"
           fi
-          docker build -f Dockerfile.backend -t ${{ env.IMAGE }}:${TAG} .
+          docker build -f Dockerfile.backend -t ${{ env.IMAGE }}:${TAG} -t ${{ env.IMAGE }}:latest .
           docker push ${{ env.IMAGE }}:${TAG}
+          docker push ${{ env.IMAGE }}:latest
