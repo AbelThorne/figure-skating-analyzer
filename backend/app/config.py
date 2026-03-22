@@ -4,7 +4,7 @@ from pathlib import Path
 BASE_DIR = Path(__file__).parent.parent
 DATA_DIR = BASE_DIR / "data"
 PDF_DIR = Path(os.environ.get("PDF_DIR", str(DATA_DIR / "pdfs")))
-LOGOS_DIR = DATA_DIR / "logos"
+LOGOS_DIR = Path(os.environ.get("LOGOS_DIR", str(DATA_DIR / "logos")))
 
 DATABASE_URL = os.environ.get(
     "DATABASE_URL",

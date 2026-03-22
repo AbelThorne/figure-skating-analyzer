@@ -16,6 +16,7 @@ RUN mkdir -p /data/pdfs /data/logos
 
 ENV DATABASE_URL=sqlite+aiosqlite:////data/skating.db
 ENV PDF_DIR=/data/pdfs
+ENV LOGOS_DIR=/data/logos
 
 EXPOSE 8000
 
