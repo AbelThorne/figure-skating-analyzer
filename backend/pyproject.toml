@@ -15,6 +15,7 @@ dependencies = [
     "PyJWT>=2.8",
     "bcrypt>=4.0",
     "google-auth>=2.0",
+    "requests>=2.28",
 ]
 
 [project.optional-dependencies]
