@@ -34,6 +34,12 @@ jobs:
 
       - name: Build and push
         run: |
-          TAG="${{ github.ref_type == 'tag' && github.ref_name || github.sha }}"
+          BRANCH="${GITHUB_REF_NAME//\//-}"
+          SHORT_SHA="${GITHUB_SHA::7}"
+          if [[ "${{ github.ref_type }}" == "tag" ]]; then
+            TAG="${{ github.ref_name }}"
+          else
+            TAG="${BRANCH}-${SHORT_SHA}"
+          fi
           docker build -f Dockerfile.backend -t ${{ env.IMAGE }}:${TAG} .
           docker push ${{ env.IMAGE }}:${TAG}
