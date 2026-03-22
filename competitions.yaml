@@ -1,0 +1,13 @@
+- name: "CSNPA 2025-2026"
+  season: "2025-2026"
+  urls:
+    - http://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/CSNPA_AUTOMNE_2025/index.htm
+    - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_C7_NIMES_2026/index.htm
+    - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/SFC_SO_2026/index.htm
+
+- name: "Ligue Occitanie 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://ligue-occitanie-sg.com/Resultats/2025-2026/CSNPA-2025-TF-Nimes/index.htm
+    - https://ligue-occitanie-sg.com/Resultats/2025-2026/CSNPA-2026-CR-Castres/index.htm
+    - https://ligue-occitanie-sg.com/Resultats/2025-2026/CSNPA-2026-CR-Montpellier/index.htm
