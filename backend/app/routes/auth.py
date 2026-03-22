@@ -178,67 +178,75 @@ async def setup(data: dict, session: AsyncSession) -> Response:
 @post("/google")
 async def google_login(data: dict, session: AsyncSession) -> Response:
     """Google OAuth: verify ID token, match or create user."""
-    if not GOOGLE_CLIENT_ID:
-        return Response(
-            content={"detail": "Google OAuth not configured"},
-            status_code=400,
-        )
-
-    id_token_str = data.get("credential", "")
-    if not id_token_str:
-        return Response(content={"detail": "Missing credential"}, status_code=400)
-
-    from google.oauth2 import id_token as google_id_token
-    from google.auth.transport import requests as google_requests
+    import logging
+    logger = logging.getLogger(__name__)
 
     try:
-        idinfo = google_id_token.verify_oauth2_token(
-            id_token_str, google_requests.Request(), GOOGLE_CLIENT_ID
-        )
-    except Exception:
-        raise NotAuthorizedException("Invalid Google token")
-
-    email = idinfo.get("email", "").lower()
-    if not email:
-        raise NotAuthorizedException("No email in Google token")
-
-    result = await session.execute(select(User).where(User.email == email))
-    user = result.scalar_one_or_none()
-
-    if user:
-        if not user.is_active:
-            raise NotAuthorizedException("Account is disabled")
-        user.google_oauth_enabled = True
-        await session.commit()
-    else:
-        domain = email.split("@")[1] if "@" in email else ""
-        result = await session.execute(
-            select(AllowedDomain).where(AllowedDomain.domain == domain)
-        )
-        if result.scalar_one_or_none() is None:
+        if not GOOGLE_CLIENT_ID:
             return Response(
-                content={"detail": "Email domain not allowed"},
-                status_code=403,
+                content={"detail": "Google OAuth not configured"},
+                status_code=400,
             )
-        user = User(
-            email=email,
-            display_name=idinfo.get("name", email.split("@")[0]),
-            role="reader",
-            google_oauth_enabled=True,
+
+        id_token_str = data.get("credential", "")
+        if not id_token_str:
+            return Response(content={"detail": "Missing credential"}, status_code=400)
+
+        from google.oauth2 import id_token as google_id_token
+        from google.auth.transport import requests as google_requests
+
+        try:
+            idinfo = google_id_token.verify_oauth2_token(
+                id_token_str, google_requests.Request(), GOOGLE_CLIENT_ID
+            )
+        except Exception as e:
+            logger.exception("Google token verification failed")
+            raise NotAuthorizedException(f"Invalid Google token: {e}")
+
+        email = idinfo.get("email", "").lower()
+        if not email:
+            raise NotAuthorizedException("No email in Google token")
+
+        result = await session.execute(select(User).where(User.email == email))
+        user = result.scalar_one_or_none()
+
+        if user:
+            if not user.is_active:
+                raise NotAuthorizedException("Account is disabled")
+            user.google_oauth_enabled = True
+            await session.commit()
+        else:
+            domain = email.split("@")[1] if "@" in email else ""
+            result = await session.execute(
+                select(AllowedDomain).where(AllowedDomain.domain == domain)
+            )
+            if result.scalar_one_or_none() is None:
+                return Response(
+                    content={"detail": "Email domain not allowed"},
+                    status_code=403,
+                )
+            user = User(
+                email=email,
+                display_name=idinfo.get("name", email.split("@")[0]),
+                role="reader",
+                google_oauth_enabled=True,
+            )
+            session.add(user)
+            await session.commit()
+            await session.refresh(user)
+
+        access = create_access_token(user_id=user.id, role=user.role)
+        refresh = create_refresh_token(user_id=user.id, token_version=user.token_version)
+
+        response = Response(
+            content={"access_token": access, "user": _user_dict(user)},
+            status_code=200,
         )
-        session.add(user)
-        await session.commit()
-        await session.refresh(user)
-
-    access = create_access_token(user_id=user.id, role=user.role)
-    refresh = create_refresh_token(user_id=user.id, token_version=user.token_version)
-
-    response = Response(
-        content={"access_token": access, "user": _user_dict(user)},
-        status_code=200,
-    )
-    _set_refresh_cookie(response, refresh)
-    return response
+        _set_refresh_cookie(response, refresh)
+        return response
+    except Exception:
+        logger.exception("Google login endpoint failed")
+        raise
 
 
 router = Router(
