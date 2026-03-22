@@ -1,13 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type UserRecord } from "../api/client";
 
 export default function SettingsPage() {
   const qc = useQueryClient();
-  const { data: config } = useQuery({
+  const { data: config, dataUpdatedAt } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
   });
+  const logoSrc = config?.logo_url ? `${config.logo_url}?v=${dataUpdatedAt}` : "";
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: api.users.list,
@@ -36,6 +37,15 @@ export default function SettingsPage() {
       qc.invalidateQueries({ queryKey: ["config"] });
       setClubSaved(true);
       setTimeout(() => setClubSaved(false), 2000);
+    },
+  });
+
+  // --- Logo upload ---
+  const fileRef = useRef<HTMLInputElement>(null);
+  const uploadLogo = useMutation({
+    mutationFn: (file: File) => api.config.uploadLogo(file),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["config"] });
     },
   });
 
@@ -122,6 +132,48 @@ export default function SettingsPage() {
         >
           {clubSaved ? "Enregistré ✓" : "Enregistrer"}
         </button>
+
+        {/* Logo upload */}
+        <div className="mt-6 pt-5 border-t border-outline-variant/30">
+          <label className="block text-xs font-label font-medium text-on-surface-variant mb-2">
+            Logo du club
+          </label>
+          <div className="flex items-center gap-4">
+            {logoSrc ? (
+              <img
+                src={logoSrc}
+                alt="Logo"
+                className="w-12 h-12 object-contain rounded-lg bg-surface-container-low p-1"
+              />
+            ) : (
+              <div className="w-12 h-12 rounded-lg bg-surface-container-low flex items-center justify-center">
+                <span className="material-symbols-outlined text-on-surface-variant">image</span>
+              </div>
+            )}
+            <div>
+              <input
+                ref={fileRef}
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const file = e.target.files?.[0];
+                  if (file) uploadLogo.mutate(file);
+                }}
+              />
+              <button
+                onClick={() => fileRef.current?.click()}
+                disabled={uploadLogo.isPending}
+                className="px-3 py-1.5 bg-surface-container text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container-high transition-colors disabled:opacity-50"
+              >
+                {uploadLogo.isPending ? "Envoi..." : "Changer le logo"}
+              </button>
+              {uploadLogo.isError && (
+                <p className="text-error text-xs mt-1">{String(uploadLogo.error)}</p>
+              )}
+            </div>
+          </div>
+        </div>
       </section>
 
       {/* Users */}

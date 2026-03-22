@@ -36,11 +36,12 @@ function AuthenticatedLayout() {
   const pageTitle = getPageTitle(location.pathname);
   const { user, logout } = useAuth();
 
-  const { data: config } = useQuery({
+  const { data: config, dataUpdatedAt } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
     staleTime: Infinity,
   });
+  const logoSrc = config?.logo_url ? `${config.logo_url}?v=${dataUpdatedAt}` : "";
 
   return (
     <div className="flex min-h-screen">
@@ -48,8 +49,8 @@ function AuthenticatedLayout() {
       <aside className="w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col">
         {/* Club header */}
         <div className="px-6 py-5 flex items-center gap-3">
-          {config?.logo_url ? (
-            <img src={config.logo_url} alt="" className="w-10 h-10 object-contain" />
+          {logoSrc ? (
+            <img src={logoSrc} alt="" className="w-10 h-10 object-contain" />
           ) : (
             <span className="material-symbols-outlined text-primary text-2xl">sports_score</span>
           )}
@@ -80,42 +81,44 @@ function AuthenticatedLayout() {
               <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
             </NavLink>
           ))}
+        </nav>
 
-          {/* Admin-only: settings */}
+        {/* Bottom section: settings + user */}
+        <div className="mt-auto border-t border-outline-variant/30 px-2 py-3 space-y-1">
           {user?.role === "admin" && (
             <NavLink
               to="/settings"
               className={({ isActive }) =>
                 isActive
-                  ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
-                  : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+                  ? "bg-white text-primary shadow-sm rounded-xl px-4 py-2.5 font-bold flex items-center gap-3"
+                  : "text-on-surface-variant hover:bg-surface-container rounded-xl px-4 py-2.5 flex items-center gap-3 transition-colors"
               }
             >
               <span className="material-symbols-outlined text-xl">settings</span>
               <span className="text-[11px] font-bold uppercase tracking-wider">PARAMÈTRES</span>
             </NavLink>
           )}
-        </nav>
+          <div className="flex items-center gap-2 px-4 py-2">
+            <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
+            <span className="text-xs text-on-surface-variant truncate flex-1">
+              {user?.display_name || user?.email}
+            </span>
+            <button
+              onClick={logout}
+              className="text-on-surface-variant hover:text-error transition-colors shrink-0"
+              title="Déconnexion"
+            >
+              <span className="material-symbols-outlined text-lg">logout</span>
+            </button>
+          </div>
+        </div>
       </aside>
 
       {/* Main content */}
       <div className="ml-64 min-h-screen bg-surface flex-1">
         {/* Top bar */}
-        <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex justify-between items-center px-8 py-4">
+        <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex items-center px-8 py-4">
           <h1 className="font-headline font-bold text-on-surface text-xl">{pageTitle}</h1>
-          {/* User menu */}
-          <div className="flex items-center gap-3">
-            <span className="text-on-surface-variant text-xs">
-              {user?.display_name || user?.email}
-            </span>
-            <button
-              onClick={logout}
-              className="text-on-surface-variant hover:text-error transition-colors"
-              title="Déconnexion"
-            >
-              <span className="material-symbols-outlined text-xl">logout</span>
-            </button>
-          </div>
         </header>
 
         {/* Page content */}

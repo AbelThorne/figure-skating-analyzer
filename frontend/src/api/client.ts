@@ -284,6 +284,20 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
+    uploadLogo: async (file: File): Promise<{ logo_url: string }> => {
+      const form = new FormData();
+      form.append("data", file);
+      const headers: Record<string, string> = {};
+      if (_accessToken) headers["Authorization"] = `Bearer ${_accessToken}`;
+      const res = await fetch(`${BASE}/config/logo`, {
+        method: "POST",
+        headers,
+        body: form,
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+      return res.json();
+    },
   },
 
   auth: {

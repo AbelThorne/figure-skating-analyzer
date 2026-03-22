@@ -6,13 +6,15 @@ from litestar.exceptions import NotAuthorizedException, PermissionDeniedExceptio
 from app.auth.tokens import decode_token
 
 # Paths that skip JWT auth entirely
-_PUBLIC_PREFIXES = ("/api/auth/", "/api/config", "/api/health")
+_PUBLIC_PREFIXES = ("/api/auth/", "/api/health")
+# Exact paths (with or without trailing slash) that are public
+_PUBLIC_EXACT = ("/api/config", "/api/config/")
 
 
 async def auth_guard(request: Request) -> None:
     """Litestar before_request hook: validate JWT on non-public routes."""
     path: str = request.scope["path"]
-    if any(path.startswith(p) for p in _PUBLIC_PREFIXES):
+    if any(path.startswith(p) for p in _PUBLIC_PREFIXES) or path in _PUBLIC_EXACT:
         return
     auth_header = request.headers.get("authorization", "")
     if not auth_header.startswith("Bearer "):
