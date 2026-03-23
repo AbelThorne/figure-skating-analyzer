@@ -71,6 +71,28 @@ export default function CompetitionsPage() {
     },
   });
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<{
+    city: string;
+    country: string;
+    competition_type: string;
+    season: string;
+  }>({ city: "", country: "", competition_type: "", season: "" });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Record<string, string> }) =>
+      api.competitions.update(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["competitions"] });
+      setEditingId(null);
+    },
+  });
+
+  const confirmMutation = useMutation({
+    mutationFn: (id: number) => api.competitions.confirmMetadata(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["competitions"] }),
+  });
+
   // Maps competition_id → list of active job IDs
   const competitionJobs: Record<number, string[]> = {};
   for (const [jobId, job] of Object.entries(activeJobs)) {
@@ -421,6 +443,30 @@ export default function CompetitionsPage() {
                 {/* Right: action buttons (admin only) */}
                 {isAdmin && (
                   <div className="flex gap-2 ml-4 shrink-0">
+                    {!c.metadata_confirmed && (
+                      <button
+                        onClick={() => confirmMutation.mutate(c.id)}
+                        className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">check</span>
+                        Valider
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setEditingId(editingId === c.id ? null : c.id);
+                        setEditForm({
+                          city: c.city ?? "",
+                          country: c.country ?? "",
+                          competition_type: c.competition_type ?? "",
+                          season: c.season ?? "",
+                        });
+                      }}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">edit</span>
+                      Modifier
+                    </button>
                     <button
                       onClick={() => importMutation.mutate(c.id)}
                       disabled={isImporting}
@@ -483,6 +529,69 @@ export default function CompetitionsPage() {
                   </div>
                 )}
               </div>
+
+              {/* Inline metadata editor */}
+              {editingId === c.id && (
+                <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 mt-1 border-l-[3px] border-primary">
+                  <div className="flex gap-3 flex-wrap">
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Type</label>
+                      <select
+                        value={editForm.competition_type}
+                        onChange={(e) => setEditForm((f) => ({ ...f, competition_type: e.target.value }))}
+                        className={inputClass}
+                      >
+                        <option value="">—</option>
+                        {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
+                          <option key={code} value={code}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Ville</label>
+                      <input
+                        value={editForm.city}
+                        onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
+                        className={inputClass}
+                        placeholder="Ville"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Pays</label>
+                      <input
+                        value={editForm.country}
+                        onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
+                        className={inputClass}
+                        placeholder="Pays"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[120px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Saison</label>
+                      <input
+                        value={editForm.season}
+                        onChange={(e) => setEditForm((f) => ({ ...f, season: e.target.value }))}
+                        className={inputClass}
+                        placeholder="2025-2026"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-3 justify-end">
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-4 text-xs font-bold"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={() => updateMutation.mutate({ id: c.id, data: editForm })}
+                      disabled={updateMutation.isPending}
+                      className="bg-primary text-on-primary rounded-lg py-1.5 px-4 text-xs font-bold active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {updateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+                    </button>
+                  </div>
+                </div>
+              )}
 
               {/* Inline import result notification */}
               {result && !isDismissed && (
