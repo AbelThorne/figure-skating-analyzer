@@ -613,9 +613,9 @@ export default function SkaterAnalyticsPage() {
                 Aucune compétition enregistrée.
               </p>
             ) : (
-              <div className="overflow-auto">
+              <div className="overflow-x-auto overflow-y-auto max-h-[400px]">
                 <table className="w-full min-w-[560px] border-collapse">
-                  <thead>
+                  <thead className="sticky top-0 z-10">
                     <tr className="bg-surface-container-low">
                       {["Compétition", "Date", "Catégorie", "Rang", "TES", "PCS", "Total", ""].map(
                         (col, i) => (
