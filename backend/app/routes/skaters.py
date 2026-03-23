@@ -22,7 +22,7 @@ async def list_skaters(session: AsyncSession, club: Optional[str] = None) -> lis
     if club:
         stmt = stmt.where(func.lower(Skater.club) == club.lower())
     result = await session.execute(stmt)
-    skaters = sorted(result.scalars(), key=lambda s: s.name.split()[-1].upper() if s.name else "")
+    skaters = sorted(result.scalars(), key=lambda s: (s.last_name.upper(), s.first_name.upper()))
     return [_skater_to_dict(s) for s in skaters]
 
 
@@ -37,7 +37,8 @@ async def get_skater(skater_id: int, session: AsyncSession) -> dict:
 def _skater_to_dict(s: Skater) -> dict:
     return {
         "id": s.id,
-        "name": s.name,
+        "first_name": s.first_name,
+        "last_name": s.last_name,
         "nationality": s.nationality,
         "club": s.club,
         "birth_year": s.birth_year,
