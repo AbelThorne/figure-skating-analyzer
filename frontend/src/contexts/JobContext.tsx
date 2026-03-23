@@ -18,16 +18,24 @@ export interface Lot {
   discipline?: string;
 }
 
+export interface FailedJobError {
+  type: "import" | "reimport" | "enrich";
+  error: string;
+  timestamp: string;
+}
+
 interface JobContextValue {
   // Per-competition jobs (CompetitionsPage)
   activeJobs: Record<string, JobInfo>;
   trackJob: (job: JobInfo) => void;
   importResults: Record<number, ImportResult>;
   enrichResults: Record<number, EnrichResult>;
+  failedErrors: Record<number, FailedJobError>;
   dismissedResults: Set<number>;
   dismissedEnrich: Set<number>;
   dismissImportResult: (compId: number) => void;
   dismissEnrichResult: (compId: number) => void;
+  dismissFailedError: (compId: number) => void;
 
   // Bulk import (SettingsPage)
   lots: Lot[];
@@ -53,6 +61,7 @@ export function JobProvider({ children }: { children: ReactNode }) {
   const [activeJobs, setActiveJobs] = useState<Record<string, JobInfo>>({});
   const [importResults, setImportResults] = useState<Record<number, ImportResult>>({});
   const [enrichResults, setEnrichResults] = useState<Record<number, EnrichResult>>({});
+  const [failedErrors, setFailedErrors] = useState<Record<number, FailedJobError>>({});
   const [dismissedResults, setDismissedResults] = useState<Set<number>>(new Set());
   const [dismissedEnrich, setDismissedEnrich] = useState<Set<number>>(new Set());
 
@@ -117,6 +126,14 @@ export function JobProvider({ children }: { children: ReactNode }) {
     setDismissedEnrich((prev) => new Set(prev).add(compId));
   }, []);
 
+  const dismissFailedError = useCallback((compId: number) => {
+    setFailedErrors((prev) => {
+      const next = { ...prev };
+      delete next[compId];
+      return next;
+    });
+  }, []);
+
   // --- Unified polling for both activeJobs and bulkJobs ---
   const activeJobsRef = useRef(activeJobs);
   activeJobsRef.current = activeJobs;
@@ -138,6 +155,16 @@ export function JobProvider({ children }: { children: ReactNode }) {
           if (job.status === "completed" || job.status === "failed") {
             qc.invalidateQueries({ queryKey: ["competitions"] });
             qc.invalidateQueries({ queryKey: ["scores"] });
+            if (job.status === "failed" && job.error) {
+              setFailedErrors((prev) => ({
+                ...prev,
+                [job.competition_id]: {
+                  type: job.type,
+                  error: job.error!,
+                  timestamp: new Date().toISOString(),
+                },
+              }));
+            }
             if (job.status === "completed" && job.result) {
               if (job.type === "enrich") {
                 setEnrichResults((prev) => ({
@@ -231,10 +258,12 @@ export function JobProvider({ children }: { children: ReactNode }) {
         trackJob,
         importResults,
         enrichResults,
+        failedErrors,
         dismissedResults,
         dismissedEnrich,
         dismissImportResult,
         dismissEnrichResult,
+        dismissFailedError,
         lots,
         setLots,
         bulkJobs,

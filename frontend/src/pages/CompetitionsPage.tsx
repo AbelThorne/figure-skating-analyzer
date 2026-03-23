@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { api, Competition, CreateCompetitionPayload, JobInfo, COMPETITION_TYPES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useJobs } from "../contexts/JobContext";
+import ErrorDetailModal from "../components/ErrorDetailModal";
 
 const inputClass =
   "bg-surface-container rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary text-sm text-on-surface placeholder:text-on-surface-variant";
@@ -17,11 +18,15 @@ export default function CompetitionsPage() {
     trackJob,
     importResults,
     enrichResults,
+    failedErrors,
     dismissedResults,
     dismissedEnrich,
     dismissImportResult,
     dismissEnrichResult,
+    dismissFailedError,
   } = useJobs();
+
+  const [errorModalCompId, setErrorModalCompId] = useState<number | null>(null);
 
   const { data: competitions, isLoading, error } = useQuery({
     queryKey: ["competitions"],
@@ -310,6 +315,7 @@ export default function CompetitionsPage() {
           const isDismissed = dismissedResults.has(c.id);
           const enrichResult = enrichResults[c.id];
           const isEnrichDismissed = dismissedEnrich.has(c.id);
+          const failedError = failedErrors[c.id];
 
           return (
             <div key={c.id}>
@@ -516,6 +522,12 @@ export default function CompetitionsPage() {
                           Importé {result.scores_imported}/{result.scores_imported + result.errors.length} événements · {result.errors.length} erreur(s)
                         </p>
                         <button
+                          onClick={() => setErrorModalCompId(c.id)}
+                          className="text-xs text-error/70 hover:text-error underline underline-offset-2 transition-colors"
+                        >
+                          Voir les détails
+                        </button>
+                        <button
                           onClick={() =>
                             dismissImportResult(c.id)
                           }
@@ -527,13 +539,6 @@ export default function CompetitionsPage() {
                           </span>
                         </button>
                       </div>
-                      <ul className="mt-1 space-y-0.5">
-                        {result.errors.map((e, i) => (
-                          <li key={i} className="text-xs text-error/80">
-                            {e.skater} : {e.error}
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -568,6 +573,12 @@ export default function CompetitionsPage() {
                           {enrichResult.pdfs_downloaded} PDF téléchargés · {enrichResult.scores_enriched} scores enrichis · {enrichResult.errors.length} erreur(s)
                         </p>
                         <button
+                          onClick={() => setErrorModalCompId(c.id)}
+                          className="text-xs text-error/70 hover:text-error underline underline-offset-2 transition-colors"
+                        >
+                          Voir les détails
+                        </button>
+                        <button
                           onClick={() =>
                             dismissEnrichResult(c.id)
                           }
@@ -577,13 +588,6 @@ export default function CompetitionsPage() {
                           <span className="material-symbols-outlined text-sm leading-none">close</span>
                         </button>
                       </div>
-                      <ul className="mt-1 space-y-0.5">
-                        {enrichResult.errors.map((e, i) => (
-                          <li key={i} className="text-xs text-error/80">
-                            {e.file} : {e.error}
-                          </li>
-                        ))}
-                      </ul>
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
@@ -604,10 +608,55 @@ export default function CompetitionsPage() {
                   )}
                 </div>
               )}
+
+              {/* Inline failed job error notification */}
+              {failedError && (
+                <div className="px-5 pt-2">
+                  <div className="border-l-4 border-error pl-3 py-1">
+                    <div className="flex items-center gap-2">
+                      <span className="inline-block w-2 h-2 rounded-full bg-error shrink-0" />
+                      <p className="text-xs text-error font-medium">
+                        Échec de l'{failedError.type === "enrich" ? "enrichissement" : "importation"}
+                      </p>
+                      <button
+                        onClick={() => setErrorModalCompId(c.id)}
+                        className="text-xs text-error/70 hover:text-error underline underline-offset-2 transition-colors"
+                      >
+                        Voir les détails
+                      </button>
+                      <button
+                        onClick={() => dismissFailedError(c.id)}
+                        className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
+                        aria-label="Fermer"
+                      >
+                        <span className="material-symbols-outlined text-sm leading-none">close</span>
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
           );
         })}
       </div>
+
+      {/* Error detail modal */}
+      {errorModalCompId !== null && (() => {
+        const comp = competitions?.find((c) => c.id === errorModalCompId);
+        if (!comp) return null;
+        const modalImportResult = importResults[errorModalCompId];
+        const modalEnrichResult = enrichResults[errorModalCompId];
+        const modalFailedError = failedErrors[errorModalCompId];
+        return (
+          <ErrorDetailModal
+            competitionName={comp.name}
+            importResult={modalImportResult?.errors.length ? modalImportResult : undefined}
+            enrichResult={modalEnrichResult?.errors.length ? modalEnrichResult : undefined}
+            failedError={modalFailedError}
+            onClose={() => setErrorModalCompId(null)}
+          />
+        );
+      })()}
     </div>
   );
 }
