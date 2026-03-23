@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult, JobInfo } from "../api/client";
+import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult, JobInfo, COMPETITION_TYPES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 
 const inputClass =
@@ -24,6 +24,11 @@ export default function CompetitionsPage() {
     season: "",
     discipline: "",
   });
+
+  const [filterSeason, setFilterSeason] = useState<string>("all");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("date-desc");
+  const [showUnconfirmedOnly, setShowUnconfirmedOnly] = useState(false);
 
   const [importResults, setImportResults] = useState<Record<number, ImportResult>>({});
   const [enrichResults, setEnrichResults] = useState<Record<number, EnrichResult>>({});
@@ -76,6 +81,31 @@ export default function CompetitionsPage() {
       competitionJobs[job.competition_id].push(jobId);
     }
   }
+
+  const seasons = Array.from(
+    new Set(competitions?.map((c) => c.season).filter(Boolean) as string[])
+  ).sort().reverse();
+
+  const filteredCompetitions = (competitions ?? [])
+    .filter((c) => filterSeason === "all" || c.season === filterSeason)
+    .filter((c) => filterType === "all" || c.competition_type === filterType)
+    .filter((c) => !showUnconfirmedOnly || !c.metadata_confirmed)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "date-asc":
+          return (a.date ?? "").localeCompare(b.date ?? "");
+        case "date-desc":
+          return (b.date ?? "").localeCompare(a.date ?? "");
+        case "city-asc":
+          return (a.city ?? "").localeCompare(b.city ?? "");
+        case "city-desc":
+          return (b.city ?? "").localeCompare(a.city ?? "");
+        case "country-asc":
+          return (a.country ?? "").localeCompare(b.country ?? "");
+        default:
+          return (b.date ?? "").localeCompare(a.date ?? "");
+      }
+    });
 
   const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -257,6 +287,61 @@ export default function CompetitionsPage() {
         </form>
       )}
 
+      {/* Filter bar */}
+      {competitions && competitions.length > 0 && (
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm p-4 mb-4 flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Saison</span>
+            <select
+              value={filterSeason}
+              onChange={(e) => setFilterSeason(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Toutes</option>
+              {seasons.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Type</span>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Tous</option>
+              {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
+                <option key={code} value={code}>{label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Trier par</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="date-desc">Date ↓</option>
+              <option value="date-asc">Date ↑</option>
+              <option value="city-asc">Ville A→Z</option>
+              <option value="city-desc">Ville Z→A</option>
+              <option value="country-asc">Pays A→Z</option>
+            </select>
+          </div>
+          <label className="ml-auto flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showUnconfirmedOnly}
+              onChange={(e) => setShowUnconfirmedOnly(e.target.checked)}
+              className="accent-error"
+            />
+            À vérifier uniquement
+          </label>
+        </div>
+      )}
+
       {/* Loading / error states */}
       {isLoading && (
         <p className="text-sm text-on-surface-variant">Chargement...</p>
@@ -274,7 +359,7 @@ export default function CompetitionsPage() {
 
       {/* Competition list */}
       <div className="space-y-3">
-        {competitions?.map((c: Competition) => {
+        {filteredCompetitions.map((c: Competition) => {
           const compJobs = competitionJobs[c.id] || [];
           const activeJobTypes = compJobs.map((jid) => activeJobs[jid]?.type);
           const isImporting = activeJobTypes.includes("import") || activeJobTypes.includes("reimport");
@@ -297,7 +382,7 @@ export default function CompetitionsPage() {
               <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex items-center justify-between">
                 {/* Left: name + meta */}
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <Link
                       to={`/competitions/${c.id}`}
                       className="font-bold font-headline text-on-surface hover:text-primary transition-colors"
@@ -313,9 +398,23 @@ export default function CompetitionsPage() {
                     >
                       <span className="material-symbols-outlined text-[16px] leading-none">open_in_new</span>
                     </a>
+                    {c.competition_type && (
+                      <span className="bg-surface-container text-on-surface-variant text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                        {COMPETITION_TYPES[c.competition_type] ?? c.competition_type}
+                      </span>
+                    )}
+                    {!c.metadata_confirmed && (
+                      <span className="bg-error-container/50 text-on-error-container text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                        À vérifier
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-on-surface-variant mt-1">
-                    {[c.discipline, c.season, c.date].filter(Boolean).join(" · ")}
+                    {[
+                      c.city && c.country ? `${c.city}, ${c.country}` : c.city || c.country,
+                      c.date ? new Date(c.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null,
+                      c.season,
+                    ].filter(Boolean).join(" · ")}
                   </p>
                 </div>
 
