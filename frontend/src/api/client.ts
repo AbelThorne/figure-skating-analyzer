@@ -448,12 +448,25 @@ export const api = {
       return request<Skater[]>(`/skaters/${qs}`);
     },
     get: (id: number) => request<Skater>(`/skaters/${id}`),
-    scores: (id: number) => request<Score[]>(`/skaters/${id}/scores`),
-    categoryResults: (id: number) =>
-      request<CategoryResult[]>(`/skaters/${id}/category-results`),
-    elements: (id: number, elementType?: string) => {
-      const qs = elementType ? `?element_type=${encodeURIComponent(elementType)}` : "";
-      return request<Element[]>(`/skaters/${id}/elements${qs}`);
+    seasons: (id: number) => request<string[]>(`/skaters/${id}/seasons`),
+    scores: (id: number, season?: string) => {
+      const qs = new URLSearchParams();
+      if (season) qs.set("season", season);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<Score[]>(`/skaters/${id}/scores${query}`);
+    },
+    categoryResults: (id: number, season?: string) => {
+      const qs = new URLSearchParams();
+      if (season) qs.set("season", season);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<CategoryResult[]>(`/skaters/${id}/category-results${query}`);
+    },
+    elements: (id: number, opts?: { elementType?: string; season?: string }) => {
+      const qs = new URLSearchParams();
+      if (opts?.elementType) qs.set("element_type", opts.elementType);
+      if (opts?.season) qs.set("season", opts.season);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<Element[]>(`/skaters/${id}/elements${query}`);
     },
   },
 
