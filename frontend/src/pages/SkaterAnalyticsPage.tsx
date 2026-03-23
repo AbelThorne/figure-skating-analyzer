@@ -184,7 +184,8 @@ export default function SkaterAnalyticsPage() {
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
 
   // ── Progression chart mode ─────────────────────────────────────────────────
-  const [progressionMode, setProgressionMode] = useState<"result" | "segments">("result");
+  const [progressionMode, setProgressionMode] = useState<"result" | "segments" | "tes" | "pcs">("result");
+  const [pcsSegmentFilter, setPcsSegmentFilter] = useState<"sp" | "fs">("sp");
 
   // ── Derived: score progression (competition results) ───────────────────────
   // Use categoryResults as primary source; fall back to scores for competitions
@@ -237,6 +238,66 @@ export default function SkaterAnalyticsPage() {
       else if (seg === "FS" || seg === "FP" || seg === "LD") entry.fs = s.total_score ?? undefined;
     }
     return [...map.values()].sort((a, b) => (a.date > b.date ? 1 : -1));
+  })();
+
+  // ── Derived: TES progression (SP and FS technical_score) ──────────────────
+  const progressionDataTes = (() => {
+    const map = new Map<string, { date: string; label: string; sp?: number; fs?: number }>();
+    for (const s of (scores ?? []).filter((s) => s.technical_score != null)) {
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          date: s.competition_date ? s.competition_date.slice(0, 10) : (s.competition_name ?? "?"),
+          label: `${s.competition_name ?? ""} · ${s.category ?? ""}`,
+        });
+      }
+      const entry = map.get(key)!;
+      const seg = s.segment?.toUpperCase();
+      if (seg === "SP" || seg === "PH") entry.sp = s.technical_score ?? undefined;
+      else if (seg === "FS" || seg === "FP" || seg === "LD") entry.fs = s.technical_score ?? undefined;
+    }
+    return [...map.values()].sort((a, b) => (a.date > b.date ? 1 : -1));
+  })();
+
+  // ── Derived: PCS progression (per-component, filtered by segment) ───────
+  const PCS_COLORS = ["#2e6385", "#7cb9e8", "#e57373", "#81c784", "#ffb74d", "#ba68c8", "#4dd0e1", "#f06292"];
+
+  const pcsComponentNames = (() => {
+    const nameSet = new Set<string>();
+    for (const s of scores ?? []) {
+      if (!s.components) continue;
+      const seg = s.segment?.toUpperCase();
+      const matchesSp = seg === "SP" || seg === "PH";
+      const matchesFs = seg === "FS" || seg === "FP" || seg === "LD";
+      if ((pcsSegmentFilter === "sp" && matchesSp) || (pcsSegmentFilter === "fs" && matchesFs)) {
+        for (const name of Object.keys(s.components)) nameSet.add(name);
+      }
+    }
+    return [...nameSet].sort();
+  })();
+
+  const progressionDataPcs = (() => {
+    const map = new Map<string, { date: string; label: string; [comp: string]: string | number | undefined }>();
+    for (const s of scores ?? []) {
+      if (!s.components) continue;
+      const seg = s.segment?.toUpperCase();
+      const matchesSp = seg === "SP" || seg === "PH";
+      const matchesFs = seg === "FS" || seg === "FP" || seg === "LD";
+      if ((pcsSegmentFilter === "sp" && !matchesSp) || (pcsSegmentFilter === "fs" && !matchesFs)) continue;
+
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!map.has(key)) {
+        map.set(key, {
+          date: s.competition_date ? s.competition_date.slice(0, 10) : (s.competition_name ?? "?"),
+          label: `${s.competition_name ?? ""} · ${s.category ?? ""}`,
+        });
+      }
+      const entry = map.get(key)!;
+      for (const [name, value] of Object.entries(s.components)) {
+        entry[name] = value;
+      }
+    }
+    return [...map.values()].sort((a, b) => (String(a.date) > String(b.date) ? 1 : -1));
   })();
 
   // ── Derived: sorted competition history ────────────────────────────────────
@@ -451,27 +512,41 @@ export default function SkaterAnalyticsPage() {
               <h2 className="text-base font-extrabold font-headline text-on-surface">
                 Analyse longitudinale des scores
               </h2>
-              <div className="flex rounded-lg overflow-hidden border border-outline-variant text-xs font-bold">
-                <button
-                  onClick={() => setProgressionMode("result")}
-                  className={`px-3 py-1.5 transition-colors ${
-                    progressionMode === "result"
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface text-on-surface-variant hover:bg-surface-container"
-                  }`}
+              <div className="flex items-center gap-2">
+                {progressionMode === "pcs" && (
+                  <div className="flex rounded-lg overflow-hidden border border-outline-variant text-xs font-bold">
+                    <button
+                      onClick={() => setPcsSegmentFilter("sp")}
+                      className={`px-2.5 py-1 transition-colors ${
+                        pcsSegmentFilter === "sp"
+                          ? "bg-primary text-on-primary"
+                          : "bg-surface text-on-surface-variant hover:bg-surface-container"
+                      }`}
+                    >
+                      SP
+                    </button>
+                    <button
+                      onClick={() => setPcsSegmentFilter("fs")}
+                      className={`px-2.5 py-1 transition-colors ${
+                        pcsSegmentFilter === "fs"
+                          ? "bg-primary text-on-primary"
+                          : "bg-surface text-on-surface-variant hover:bg-surface-container"
+                      }`}
+                    >
+                      FS
+                    </button>
+                  </div>
+                )}
+                <select
+                  value={progressionMode}
+                  onChange={(e) => setProgressionMode(e.target.value as typeof progressionMode)}
+                  className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs font-bold text-on-surface focus:outline-none focus:ring-2 focus:ring-primary cursor-pointer"
                 >
-                  Résultat
-                </button>
-                <button
-                  onClick={() => setProgressionMode("segments")}
-                  className={`px-3 py-1.5 transition-colors ${
-                    progressionMode === "segments"
-                      ? "bg-primary text-on-primary"
-                      : "bg-surface text-on-surface-variant hover:bg-surface-container"
-                  }`}
-                >
-                  Segments
-                </button>
+                  <option value="result">Résultat</option>
+                  <option value="segments">Segments</option>
+                  <option value="tes">TES</option>
+                  <option value="pcs">PCS</option>
+                </select>
               </div>
             </div>
             {isLoading ? (
@@ -483,6 +558,14 @@ export default function SkaterAnalyticsPage() {
             ) : progressionMode === "segments" && progressionDataSegments.length === 0 ? (
               <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
                 Aucune donnée de segment disponible
+              </div>
+            ) : progressionMode === "tes" && progressionDataTes.length === 0 ? (
+              <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
+                Aucune donnée TES disponible
+              </div>
+            ) : progressionMode === "pcs" && progressionDataPcs.length === 0 ? (
+              <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
+                Aucune donnée PCS disponible
               </div>
             ) : progressionMode === "result" ? (
               <ResponsiveContainer width="100%" height={260}>
@@ -524,9 +607,58 @@ export default function SkaterAnalyticsPage() {
                   />
                 </LineChart>
               </ResponsiveContainer>
-            ) : (
+            ) : progressionMode === "pcs" ? (
               <ResponsiveContainer width="100%" height={260}>
-                <LineChart data={progressionDataSegments} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
+                <LineChart data={progressionDataPcs} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
+                  <CartesianGrid vertical={false} stroke="#e0e3e5" />
+                  <XAxis
+                    dataKey="date"
+                    tick={{ fontSize: 10, fontFamily: "Inter, sans-serif", fill: "#41484d" }}
+                    axisLine={false}
+                    tickLine={false}
+                  />
+                  <YAxis
+                    tick={{ fontSize: 10, fontFamily: "monospace", fill: "#41484d" }}
+                    axisLine={false}
+                    tickLine={false}
+                    domain={["auto", "auto"]}
+                  />
+                  <Tooltip
+                    formatter={(value: number) => value?.toFixed(2)}
+                    labelFormatter={(label, payload) =>
+                      payload?.[0]?.payload?.label ?? label
+                    }
+                    contentStyle={{
+                      fontSize: 11,
+                      fontFamily: "Inter, sans-serif",
+                      borderRadius: 12,
+                      border: "none",
+                      boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+                    }}
+                  />
+                  <Legend wrapperStyle={{ fontSize: 11 }} />
+                  {pcsComponentNames.map((name, i) => (
+                    <Line
+                      key={name}
+                      type="monotone"
+                      dataKey={name}
+                      name={name}
+                      stroke={PCS_COLORS[i % PCS_COLORS.length]}
+                      strokeWidth={2}
+                      dot={{ r: 3, fill: PCS_COLORS[i % PCS_COLORS.length], stroke: "#fff", strokeWidth: 1.5 }}
+                      activeDot={{ r: 5 }}
+                      connectNulls={false}
+                    />
+                  ))}
+                </LineChart>
+              </ResponsiveContainer>
+            ) : (
+              /* segments + tes share the same dual-line layout */
+              <ResponsiveContainer width="100%" height={260}>
+                <LineChart
+                  data={progressionMode === "tes" ? progressionDataTes : progressionDataSegments}
+                  margin={{ top: 4, right: 8, left: -16, bottom: 4 }}
+                >
                   <CartesianGrid vertical={false} stroke="#e0e3e5" />
                   <XAxis
                     dataKey="date"
