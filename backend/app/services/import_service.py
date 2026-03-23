@@ -13,18 +13,28 @@ from app.models.category_result import CategoryResult
 from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
 from app.services.parser import parse_elements, extract_segment_code
+from app.services.name_parser import parse_skater_name
 
 
 async def _get_or_create_skater(
     session: AsyncSession,
-    name: str,
+    raw_name: str,
     nationality: str | None,
     club: str | None,
 ) -> Skater:
-    stmt = select(Skater).where(Skater.name == name)
+    first_name, last_name = parse_skater_name(raw_name)
+    stmt = select(Skater).where(
+        Skater.first_name == first_name,
+        Skater.last_name == last_name,
+    )
     skater = (await session.execute(stmt)).scalar_one_or_none()
     if not skater:
-        skater = Skater(name=name, nationality=nationality, club=club)
+        skater = Skater(
+            first_name=first_name,
+            last_name=last_name,
+            nationality=nationality,
+            club=club,
+        )
         session.add(skater)
         await session.flush()
     else:
@@ -185,12 +195,14 @@ async def run_enrich(session: AsyncSession, competition_id: int, force: bool = F
                 skater_name = entry["skater_name"]
                 elements = entry["elements"]
                 seg_code = extract_segment_code(entry.get("category_segment"))
+                pdf_first, pdf_last = parse_skater_name(skater_name)
                 stmt = (
                     select(Score)
                     .join(Skater)
                     .where(
                         Score.competition_id == comp.id,
-                        Skater.name == skater_name,
+                        Skater.first_name == pdf_first,
+                        Skater.last_name == pdf_last,
                     )
                 )
                 if seg_code:
