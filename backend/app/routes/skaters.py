@@ -5,7 +5,7 @@ from typing import Optional
 from litestar import Router, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import func, select
+from sqlalchemy import func, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -169,8 +169,29 @@ async def get_skater_category_results(skater_id: int, session: AsyncSession, sea
     ]
 
 
+@get("/{skater_id:int}/seasons")
+async def get_skater_seasons(skater_id: int, session: AsyncSession) -> list[str]:
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        raise NotFoundException(f"Skater {skater_id} not found")
+
+    score_comp_ids = select(Score.competition_id).where(Score.skater_id == skater_id)
+    cat_comp_ids = select(CategoryResult.competition_id).where(CategoryResult.skater_id == skater_id)
+    all_comp_ids = union_all(score_comp_ids, cat_comp_ids).subquery()
+
+    stmt = (
+        select(Competition.season)
+        .join(all_comp_ids, Competition.id == all_comp_ids.c.competition_id)
+        .where(Competition.season.isnot(None))
+        .distinct()
+        .order_by(Competition.season.desc())
+    )
+    result = await session.execute(stmt)
+    return [row[0] for row in result.all()]
+
+
 router = Router(
     path="/api/skaters",
-    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results],
+    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results, get_skater_seasons],
     dependencies={"session": Provide(get_session)},
 )
