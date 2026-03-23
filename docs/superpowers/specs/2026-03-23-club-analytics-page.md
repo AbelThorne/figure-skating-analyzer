@@ -51,8 +51,6 @@ Rules:
   - `R3 A` → `R3 A`
   - `R3 B` → `R3 B`
   - `R3 C` → `R3 C`
-  - `Adulte Bronze` → `Adulte Bronze`
-  - `Adulte Argent` → `Adulte Argent`
   - `Adulte Bronze` → `Adulte Bronze` (age_group set to `Adulte`)
   - `Adulte Argent` → `Adulte Argent` (age_group set to `Adulte`)
   - `Adulte Or` → `Adulte Or` (age_group set to `Adulte`)
@@ -128,7 +126,12 @@ Response:
 ### UI
 
 - Table with columns: Skater (link to detail), Level/Age pill, First score, Last score, Delta (colored green/red), Sparkline (tiny inline line chart), Competitions count
-- Sorted by delta descending by default, column headers clickable to re-sort
+- Sorted by delta descending by default, secondary sort by `last_tss` descending. All skaters shown (including negative progression). Column headers clickable to re-sort.
+
+### Empty/edge states
+
+- No skaters with 2+ results: show "Aucun patineur n'a participé à au moins 2 compétitions cette saison."
+- Filters produce zero results: show "Aucun résultat pour les filtres sélectionnés."
 
 ## Section 2: Side-by-Side Comparison with Benchmarks
 
@@ -207,6 +210,10 @@ Query params:
 Logic:
 - Gather all elements from scores belonging to club skaters (matching filters)
 - Classify each element (jump, spin, step) — the detection logic currently lives client-side only (`SkaterAnalyticsPage.tsx` lines 23-43). It must be ported to Python in a new `backend/app/services/element_classifier.py` module. The frontend logic should also be extracted into a shared utility (`frontend/src/utils/elementClassifier.ts`) to avoid drift.
+- **Important**: The current frontend regexes have issues that must be fixed during the port:
+  - Jump pattern `/\d*(A|T|S|F|Lo|Lz|q)\b/i` is too broad (matches `FCSp`, `StSq`) and includes `q` which is a marker not a jump. Use `^[1-4]?(A|T|S|Lo|Lz|F)\b` anchored to start.
+  - Spin pattern `/Sp/i` should be tightened to `/Sp\d?$/` to match codes like `CCoSp4`, `FSSp3`.
+  - Step pattern `/St|ChSq/i` should be `^(StSq|ChSq)` to avoid partial matches.
 - For jumps: group by jump type, compute attempt count, positive/neutral/negative GOE percentages, avg GOE
 - For spins: group by element type, compute level distribution and avg GOE
 - For steps: same as spins
@@ -256,6 +263,11 @@ Two cards (side by side on desktop, stacked on mobile):
 - Stacked bar chart: each bar = element type, segments = levels 0-4
 - Color gradient from light (level 0) to saturated (level 4)
 - Average GOE shown as a secondary annotation
+
+### Empty/edge states
+
+- No enriched data at all: show the "Enrichir avec les PDF" prompt (same as skater detail page)
+- Filters produce zero elements: show "Aucun élément trouvé pour les filtres sélectionnés."
 
 ## Page Layout
 
