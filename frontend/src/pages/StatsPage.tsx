@@ -125,11 +125,14 @@ export default function StatsPage() {
     enabled: selectedSkaterIds.length > 2,
   });
 
-  const skaterResults = selectedSkaterIds.map((id, i) => ({
-    id,
-    color: SKATER_COLORS[i],
-    results: [skater0Query, skater1Query, skater2Query][i]?.data ?? [],
-  }));
+  const skaterResults = useMemo(() =>
+    selectedSkaterIds.map((id, i) => ({
+      id,
+      color: SKATER_COLORS[i],
+      results: [skater0Query, skater1Query, skater2Query][i]?.data ?? [],
+    })),
+    [selectedSkaterIds, skater0Query.data, skater1Query.data, skater2Query.data]
+  );
 
   // Determine benchmark params from first selected skater's results
   const firstSkaterResult = skaterResults[0]?.results[0];
@@ -224,7 +227,7 @@ export default function StatsPage() {
           value={selectedAgeGroup ?? ""}
           onChange={(e) => setSelectedAgeGroup(e.target.value || null)}
         >
-          <option value="">Toutes les categories</option>
+          <option value="">Toutes les catégories</option>
           {filterOptions.ageGroups.map((a) => (
             <option key={a} value={a}>{a}</option>
           ))}
@@ -251,8 +254,8 @@ export default function StatsPage() {
         ) : sortedRanking.length === 0 ? (
           <p className="text-on-surface-variant text-sm">
             {selectedLevel || selectedAgeGroup || selectedGender
-              ? "Aucun resultat pour les filtres selectionnes."
-              : "Aucun patineur n'a participe a au moins 2 competitions cette saison."}
+              ? "Aucun résultat pour les filtres sélectionnés."
+              : "Aucun patineur n'a participé à au moins 2 compétitions cette saison."}
           </p>
         ) : (
           <div className="overflow-x-auto">
@@ -261,7 +264,7 @@ export default function StatsPage() {
                 <tr className="bg-surface-container-low">
                   {[
                     { key: "skater_name" as SortKey, label: "Patineur", left: true },
-                    { key: null, label: "Niveau / Categorie", left: false },
+                    { key: null, label: "Niveau / Catégorie", left: false },
                     { key: null, label: "Premier", left: false },
                     { key: null, label: "Dernier", left: false },
                     { key: "tss_gain" as SortKey, label: "\u0394", left: false },
@@ -378,7 +381,7 @@ export default function StatsPage() {
             </select>
             {benchmark && benchmark.data_points > 0 && benchmark.data_points < 3 && (
               <span className="text-xs text-on-surface-variant italic">
-                Donnees insuffisantes pour le benchmark
+                Données insuffisantes pour le benchmark
               </span>
             )}
           </div>
@@ -386,7 +389,7 @@ export default function StatsPage() {
 
         {selectedSkaterIds.length === 0 ? (
           <div className="flex items-center justify-center h-[260px] text-on-surface-variant text-sm">
-            Selectionnez des patineurs pour comparer leur progression.
+            Sélectionnez des patineurs pour comparer leur progression.
           </div>
         ) : (
           <ResponsiveContainer width="100%" height={300}>
@@ -428,7 +431,7 @@ export default function StatsPage() {
                   <ReferenceLine
                     y={benchmark.median!}
                     stroke="#2e6385" strokeDasharray="4 4" strokeOpacity={0.5}
-                    label={{ value: "Mediane", position: "right", fontSize: 9, fill: "#41484d" }}
+                    label={{ value: "Médiane", position: "right", fontSize: 9, fill: "#41484d" }}
                   />
                 </>
               )}
@@ -457,7 +460,7 @@ export default function StatsPage() {
       {/* ── ELEMENT MASTERY SECTION ── */}
       <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
         <h2 className="text-base font-extrabold font-headline text-on-surface mb-4">
-          Maitrise des elements
+          Maîtrise des éléments
         </h2>
 
         {loadingMastery ? (
@@ -474,8 +477,8 @@ export default function StatsPage() {
                 </p>
                 <p className="text-xs text-on-surface-variant mt-1">
                   {mastery && mastery.jumps.length === 0 && (selectedLevel || selectedAgeGroup || selectedGender)
-                    ? "Aucun element trouve pour les filtres selectionnes."
-                    : "Importez les PDFs pour voir l'analyse d'elements detaillee."}
+                    ? "Aucun élément trouvé pour les filtres sélectionnés."
+                    : "Importez les PDFs pour voir l'analyse d'éléments détaillée."}
                 </p>
               </div>
             </div>
@@ -485,7 +488,7 @@ export default function StatsPage() {
             {/* Jump success rates */}
             <div>
               <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
-                Taux de reussite des sauts
+                Taux de réussite des sauts
               </h3>
               <ResponsiveContainer width="100%" height={Math.max(200, mastery!.jumps.length * 32)}>
                 <BarChart
