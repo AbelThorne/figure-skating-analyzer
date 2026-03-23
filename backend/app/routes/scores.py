@@ -60,6 +60,9 @@ def _score_to_dict(s: Score) -> dict:
         "deductions": s.deductions,
         "components": s.components,
         "elements": s.elements,
+        "skating_level": s.skating_level,
+        "age_group": s.age_group,
+        "gender": s.gender,
         "event_date": s.event_date.isoformat() if s.event_date else None,
     }
 
@@ -112,6 +115,9 @@ def _category_result_to_dict(cr: CategoryResult) -> dict:
         "segment_count": cr.segment_count,
         "sp_rank": cr.sp_rank,
         "fs_rank": cr.fs_rank,
+        "skating_level": cr.skating_level,
+        "age_group": cr.age_group,
+        "gender": cr.gender,
     }
 
 

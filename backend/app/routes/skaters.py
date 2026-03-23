@@ -128,6 +128,9 @@ async def get_skater_scores(skater_id: int, session: AsyncSession, season: Optio
             "deductions": s.deductions,
             "components": s.components,
             "elements": s.elements,
+            "skating_level": s.skating_level,
+            "age_group": s.age_group,
+            "gender": s.gender,
             "event_date": s.event_date.isoformat() if s.event_date else None,
         }
         for s in scores
@@ -164,6 +167,9 @@ async def get_skater_category_results(skater_id: int, session: AsyncSession, sea
             "segment_count": cr.segment_count,
             "sp_rank": cr.sp_rank,
             "fs_rank": cr.fs_rank,
+            "skating_level": cr.skating_level,
+            "age_group": cr.age_group,
+            "gender": cr.gender,
         }
         for cr in cat_results
     ]
