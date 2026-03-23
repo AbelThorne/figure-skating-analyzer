@@ -102,6 +102,8 @@ export default function StatsPage() {
   // ── Comparison section state ───────────────────────────────────────────────
   const [selectedSkaterIds, setSelectedSkaterIds] = useState<number[]>([]);
   const [levelOverride, setLevelOverride] = useState<string | null>(null);
+  const [ageGroupOverride, setAgeGroupOverride] = useState<string | null>(null);
+  const [genderOverride, setGenderOverride] = useState<string | null>(null);
 
   const { data: skaters = [] } = useQuery({
     queryKey: ["skaters", config?.club_short],
@@ -137,11 +139,11 @@ export default function StatsPage() {
     [selectedSkaterIds, skater0Query.data, skater1Query.data, skater2Query.data]
   );
 
-  // Determine benchmark params from first selected skater's results
+  // Determine benchmark params from overrides or first selected skater's results
   const firstSkaterResult = skaterResults[0]?.results[0];
   const benchmarkLevel = levelOverride ?? firstSkaterResult?.skating_level ?? null;
-  const benchmarkAgeGroup = firstSkaterResult?.age_group ?? null;
-  const benchmarkGender = firstSkaterResult?.gender ?? null;
+  const benchmarkAgeGroup = ageGroupOverride ?? firstSkaterResult?.age_group ?? null;
+  const benchmarkGender = genderOverride ?? firstSkaterResult?.gender ?? null;
 
   const { data: benchmark } = useQuery({
     queryKey: ["benchmarks", benchmarkLevel, benchmarkAgeGroup, benchmarkGender, season],
@@ -384,20 +386,44 @@ export default function StatsPage() {
           })}
         </div>
 
-        {/* Level override */}
+        {/* Benchmark overrides */}
         {selectedSkaterIds.length > 0 && (
-          <div className="flex items-center gap-3 mb-4">
-            <span className="text-xs text-on-surface-variant">Comparer au niveau :</span>
+          <div className="flex items-center gap-3 mb-4 flex-wrap">
+            <span className="text-xs text-on-surface-variant">Benchmark :</span>
             <select
               className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
               value={levelOverride ?? ""}
               onChange={(e) => setLevelOverride(e.target.value || null)}
             >
               <option value="">
-                {benchmarkLevel ?? "Auto"}
+                {firstSkaterResult?.skating_level ?? "Niveau"}
               </option>
               {filterOptions.levels.map((l) => (
                 <option key={l} value={l}>{l}</option>
+              ))}
+            </select>
+            <select
+              className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              value={ageGroupOverride ?? ""}
+              onChange={(e) => setAgeGroupOverride(e.target.value || null)}
+            >
+              <option value="">
+                {firstSkaterResult?.age_group ?? "Catégorie"}
+              </option>
+              {filterOptions.ageGroups.map((a) => (
+                <option key={a} value={a}>{a}</option>
+              ))}
+            </select>
+            <select
+              className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+              value={genderOverride ?? ""}
+              onChange={(e) => setGenderOverride(e.target.value || null)}
+            >
+              <option value="">
+                {firstSkaterResult?.gender ?? "Genre"}
+              </option>
+              {filterOptions.genders.map((g) => (
+                <option key={g} value={g}>{g}</option>
               ))}
             </select>
             {benchmark && benchmark.data_points > 0 && benchmark.data_points < 3 && (
