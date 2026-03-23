@@ -46,25 +46,18 @@ export default function StatsPage() {
 
   const season = selectedSeason ?? config?.current_season ?? undefined;
 
-  // ── Progression ranking ────────────────────────────────────────────────────
-  const { data: ranking = [], isLoading: loadingRanking } = useQuery({
-    queryKey: ["progression-ranking", season, selectedLevel, selectedAgeGroup, selectedGender],
-    queryFn: () =>
-      api.stats.progressionRanking({
-        season,
-        skating_level: selectedLevel ?? undefined,
-        age_group: selectedAgeGroup ?? undefined,
-        gender: selectedGender ?? undefined,
-      }),
-    placeholderData: keepPreviousData,
+  // ── Progression ranking (unfiltered — filters applied client-side) ────────
+  const { data: allRanking = [], isLoading: loadingRanking } = useQuery({
+    queryKey: ["progression-ranking", season],
+    queryFn: () => api.stats.progressionRanking({ season }),
   });
 
-  // ── Derive filter options from ranking data ────────────────────────────────
+  // ── Derive filter options from full (unfiltered) data ──────────────────────
   const filterOptions = useMemo(() => {
     const levels = new Set<string>();
     const ages = new Set<string>();
     const genders = new Set<string>();
-    for (const r of ranking) {
+    for (const r of allRanking) {
       if (r.skating_level) levels.add(r.skating_level);
       if (r.age_group) ages.add(r.age_group);
       if (r.gender) genders.add(r.gender);
@@ -74,7 +67,17 @@ export default function StatsPage() {
       ageGroups: [...ages].sort(),
       genders: [...genders].sort(),
     };
-  }, [ranking]);
+  }, [allRanking]);
+
+  // ── Apply filters client-side ──────────────────────────────────────────────
+  const ranking = useMemo(() => {
+    return allRanking.filter((r) => {
+      if (selectedLevel && r.skating_level !== selectedLevel) return false;
+      if (selectedAgeGroup && r.age_group !== selectedAgeGroup) return false;
+      if (selectedGender && r.gender !== selectedGender) return false;
+      return true;
+    });
+  }, [allRanking, selectedLevel, selectedAgeGroup, selectedGender]);
 
   // ── Sorted ranking ─────────────────────────────────────────────────────────
   const sortedRanking = useMemo(() => {
