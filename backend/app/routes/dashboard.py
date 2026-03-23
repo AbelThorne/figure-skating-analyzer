@@ -109,7 +109,7 @@ async def get_dashboard(
     medal_rows = medals_result.scalars().all()
     medals = [
         {
-            "skater_name": cr.skater.name if cr.skater else None,
+            "skater_name": cr.skater.display_name if cr.skater else None,
             "rank": cr.overall_rank,
             "competition_name": cr.competition.name if cr.competition else None,
             "category": cr.category,
@@ -141,7 +141,7 @@ async def get_dashboard(
     top_scores = [
         {
             "skater_id": cr.skater_id,
-            "skater_name": cr.skater.name if cr.skater else None,
+            "skater_name": cr.skater.display_name if cr.skater else None,
             "tss": cr.combined_total,
             "competition_name": cr.competition.name if cr.competition else None,
             "competition_date": (
@@ -185,7 +185,7 @@ async def get_dashboard(
         if sid not in skater_tss:
             skater_tss[sid] = {
                 "skater_id": sid,
-                "skater_name": cr.skater.name if cr.skater else None,
+                "skater_name": cr.skater.display_name if cr.skater else None,
                 "first_tss": total,
                 "last_tss": total,
             }
