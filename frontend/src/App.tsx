@@ -3,6 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
 import { useAuth } from "./auth/AuthContext";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
+import { JobProvider } from "./contexts/JobContext";
 import HomePage from "./pages/HomePage";
 import CompetitionPage from "./pages/CompetitionPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
@@ -44,6 +45,7 @@ function AuthenticatedLayout() {
   const logoSrc = config?.logo_url ? `${config.logo_url}?v=${dataUpdatedAt}` : "";
 
   return (
+    <JobProvider>
     <div className="flex min-h-screen">
       {/* Sidebar */}
       <aside className="w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col">
@@ -142,6 +144,7 @@ function AuthenticatedLayout() {
         </main>
       </div>
     </div>
+    </JobProvider>
   );
 }
 
