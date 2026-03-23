@@ -6,10 +6,13 @@ from litestar.config.cors import CORSConfig
 from litestar.static_files import StaticFilesConfig
 
 from app.config import ALLOWED_ORIGINS, LOGOS_DIR
-from app.database import init_db
+from app.database import init_db, async_session_factory
 from app.auth.guards import auth_guard
+from app.services.job_queue import job_queue
+from app.services.import_service import run_import, run_enrich
 from app.routes.auth import router as auth_router
 from app.routes.competitions import router as competitions_router
+from app.routes.jobs import router as jobs_router
 from app.routes.skaters import router as skaters_router
 from app.routes.scores import router as scores_router
 from app.routes.dashboard import router as dashboard_router
@@ -21,7 +24,24 @@ from app.routes.domains import router as domains_router
 @asynccontextmanager
 async def lifespan(_: Litestar) -> AsyncGenerator[None, None]:
     await init_db()
-    yield
+
+    async def _handle_job(job: dict) -> dict:
+        async with async_session_factory() as session:
+            if job["type"] == "import":
+                return await run_import(session, job["competition_id"], force=False)
+            elif job["type"] == "reimport":
+                return await run_import(session, job["competition_id"], force=True)
+            elif job["type"] == "enrich":
+                return await run_enrich(session, job["competition_id"], force=False)
+            else:
+                raise ValueError(f"Unknown job type: {job['type']}")
+
+    job_queue.set_handler(_handle_job)
+    await job_queue.start_worker()
+    try:
+        yield
+    finally:
+        await job_queue.stop_worker()
 
 
 cors_config = CORSConfig(
@@ -48,6 +68,7 @@ app = Litestar(
         dashboard_router,
         users_router,
         domains_router,
+        jobs_router,
     ],
     cors_config=cors_config,
     lifespan=[lifespan],

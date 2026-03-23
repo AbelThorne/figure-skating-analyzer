@@ -1,21 +1,13 @@
 from __future__ import annotations
 
-from datetime import date as date_type
-
 from litestar import Router, get, post, delete
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import select, delete as sa_delete
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_session
 from app.models.competition import Competition
-from app.models.skater import Skater
-from app.models.score import Score
-from app.models.category_result import CategoryResult
-from app.services.scraper_factory import get_scraper
-from app.services.downloader import download_pdfs, url_to_slug
-from app.services.parser import parse_elements, extract_segment_code
 
 
 # --- DTOs ---
@@ -71,150 +63,15 @@ async def delete_competition(competition_id: int, session: AsyncSession) -> None
     await session.commit()
 
 
-async def _get_or_create_skater(
-    session: AsyncSession,
-    name: str,
-    nationality: str | None,
-    club: str | None,
-) -> Skater:
-    """Get an existing skater by name or create a new one."""
-    stmt = select(Skater).where(Skater.name == name)
-    skater = (await session.execute(stmt)).scalar_one_or_none()
-    if not skater:
-        skater = Skater(name=name, nationality=nationality, club=club)
-        session.add(skater)
-        await session.flush()
-    else:
-        if not skater.nationality and nationality:
-            skater.nationality = nationality
-        if not skater.club and club:
-            skater.club = club
-    return skater
-
-
 @post("/{competition_id:int}/import")
 async def import_competition(competition_id: int, session: AsyncSession, force: bool = False) -> dict:
-    """Import competition results from website HTML (SEG + CAT pages)."""
+    """Submit an import job to the queue. Returns immediately with job info."""
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
-
-    if force:
-        await session.execute(
-            sa_delete(Score).where(Score.competition_id == competition_id)
-        )
-        await session.execute(
-            sa_delete(CategoryResult).where(CategoryResult.competition_id == competition_id)
-        )
-        await session.flush()
-
-    scraper = get_scraper(comp.url)
-    events, results, cat_results, comp_info = await scraper.scrape(comp.url)
-
-    # Update competition name and date from scraped metadata
-    if comp_info.name and (comp.name == comp.url or not comp.name or comp.name == "index.htm"):
-        comp.name = comp_info.name
-    if comp_info.date and not comp.date:
-        comp.date = date_type.fromisoformat(comp_info.date)
-
-    imported = 0
-    skipped = 0
-    cat_imported = 0
-    cat_skipped = 0
-    errors = []
-
-    # --- Import segment scores ---
-    for r in results:
-        try:
-            skater = await _get_or_create_skater(session, r.name, r.nationality, r.club)
-
-            # Check for existing score (idempotency)
-            existing = await session.execute(
-                select(Score).where(
-                    Score.competition_id == comp.id,
-                    Score.skater_id == skater.id,
-                    Score.category == r.category,
-                    Score.segment == r.segment,
-                )
-            )
-            if existing.scalar_one_or_none():
-                skipped += 1
-                continue
-
-            score = Score(
-                competition_id=comp.id,
-                skater_id=skater.id,
-                segment=r.segment or "UNKNOWN",
-                category=r.category,
-                rank=r.rank,
-                total_score=r.total_score,
-                technical_score=r.technical_score,
-                component_score=r.component_score,
-                components=r.components,
-                deductions=r.deductions,
-                starting_number=r.starting_number,
-                event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
-            )
-            session.add(score)
-            imported += 1
-        except Exception as e:
-            errors.append({"skater": r.name, "error": str(e)})
-
-    # --- Import category results (overall standings) ---
-    for cr in cat_results:
-        try:
-            skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club)
-
-            # Check for existing category result (idempotency)
-            existing = await session.execute(
-                select(CategoryResult).where(
-                    CategoryResult.competition_id == comp.id,
-                    CategoryResult.skater_id == skater.id,
-                    CategoryResult.category == cr.category,
-                )
-            )
-            if existing.scalar_one_or_none():
-                cat_skipped += 1
-                continue
-
-            cat_result = CategoryResult(
-                competition_id=comp.id,
-                skater_id=skater.id,
-                category=cr.category or "UNKNOWN",
-                overall_rank=cr.overall_rank,
-                combined_total=cr.combined_total,
-                segment_count=cr.segment_count,
-                sp_rank=cr.sp_rank,
-                fs_rank=cr.fs_rank,
-            )
-            session.add(cat_result)
-            cat_imported += 1
-        except Exception as e:
-            errors.append({"skater": cr.name, "error": str(e)})
-
-    status = "success" if not errors else "partial"
-    import_log = {
-        "status": status,
-        "events_found": len(events),
-        "scores_imported": imported,
-        "scores_skipped": skipped,
-        "category_results_imported": cat_imported,
-        "category_results_skipped": cat_skipped,
-        "errors": errors,
-    }
-    comp.last_import_log = import_log
-    await session.commit()
-
-    return {
-        "competition_id": competition_id,
-        "status": status,
-        "events_found": len(events),
-        "scores_imported": imported,
-        "scores_skipped": skipped,
-        "category_results_imported": cat_imported,
-        "category_results_skipped": cat_skipped,
-        "errors": errors,
-    }
+    from app.services.job_queue import job_queue
+    job_type = "reimport" if force else "import"
+    return job_queue.create_job(job_type, competition_id)
 
 
 @get("/{competition_id:int}/import-status")
@@ -229,254 +86,49 @@ async def get_import_status(competition_id: int, session: AsyncSession) -> dict:
 
 
 @post("/{competition_id:int}/enrich")
-async def enrich_competition(competition_id: int, session: AsyncSession, force: bool = False) -> dict:
-    """Enrich existing scores with element details from PDF score cards."""
+async def enrich_competition(competition_id: int, session: AsyncSession) -> dict:
+    """Submit an enrich job to the queue. Returns immediately with job info."""
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
-
-    # Discover PDF URLs from site
-    scraper = get_scraper(comp.url)
-    events, _, _, _ = await scraper.scrape(comp.url)
-    pdf_urls = [e.pdf_url for e in events if e.pdf_url]
-
-    if not pdf_urls:
-        return {"competition_id": competition_id, "pdfs_downloaded": 0, "scores_enriched": 0, "errors": []}
-
-    # Download PDFs
-    slug = url_to_slug(comp.url)
-    pdf_paths = await download_pdfs(pdf_urls, slug)
-
-    # Parse elements and match to scores
-    enriched = 0
-    unmatched = []
-    errors = []
-
-    for pdf_path in pdf_paths:
-        try:
-            parsed = parse_elements(pdf_path)
-            for entry in parsed:
-                skater_name = entry["skater_name"]
-                elements = entry["elements"]
-                seg_code = extract_segment_code(entry.get("category_segment"))
-
-                # Find matching scores for this skater in this competition
-                stmt = (
-                    select(Score)
-                    .join(Skater)
-                    .where(
-                        Score.competition_id == comp.id,
-                        Skater.name == skater_name,
-                    )
-                )
-                if seg_code:
-                    stmt = stmt.where(Score.segment == seg_code)
-                result = await session.execute(stmt)
-                scores = result.scalars().all()
-                if scores:
-                    for score in scores:
-                        if not score.elements or force:  # don't overwrite unless forced
-                            score.elements = elements
-                            score.pdf_path = str(pdf_path)
-                            enriched += 1
-                else:
-                    unmatched.append(skater_name)
-        except Exception as e:  # noqa: BLE001 — intentional: enrich is fault-tolerant per PDF
-            errors.append({"file": str(pdf_path), "error": str(e)})
-
-    await session.commit()
-    return {
-        "competition_id": competition_id,
-        "pdfs_downloaded": len(pdf_paths),
-        "scores_enriched": enriched,
-        "unmatched": unmatched,
-        "errors": errors,
-    }
+    from app.services.job_queue import job_queue
+    return job_queue.create_job("enrich", competition_id)
 
 
 @post("/bulk-import")
 async def bulk_import(data: dict, session: AsyncSession) -> dict:
-    """Bulk import a lot of competitions: create, import scores, optionally enrich PDFs."""
-    import logging
-    logger = logging.getLogger(__name__)
+    """Bulk import: create competitions and submit import jobs to the queue."""
+    from app.services.job_queue import job_queue
 
     urls: list[str] = data.get("urls", [])
-    lot_name: str = data.get("lot_name", "")
     enrich: bool = data.get("enrich", False)
     season: str = data.get("season", "")
     discipline: str = data.get("discipline", "")
 
-    if not urls:
-        return {"lot_name": lot_name, "results": [], "total": 0, "succeeded": 0, "failed": 0}
-
-    results = []
-    succeeded = 0
-    failed = 0
-
+    job_ids = []
     for url in urls:
-        entry: dict = {"url": url, "status": "pending", "competition_id": None, "error": None, "import_result": None, "enrich_result": None}
-        try:
-            # Check if competition with this URL already exists
-            existing = await session.execute(
-                select(Competition).where(Competition.url == url)
+        existing = await session.execute(
+            select(Competition).where(Competition.url == url)
+        )
+        comp = existing.scalar_one_or_none()
+        if not comp:
+            comp = Competition(
+                name=url, url=url,
+                season=season or None, discipline=discipline or None,
             )
-            comp = existing.scalar_one_or_none()
-            if not comp:
-                comp = Competition(
-                    name=url,
-                    url=url,
-                    season=season or None,
-                    discipline=discipline or None,
-                )
-                session.add(comp)
-                await session.flush()
-                await session.refresh(comp)
+            session.add(comp)
+            await session.flush()
+            await session.refresh(comp)
 
-            entry["competition_id"] = comp.id
+        job = job_queue.create_job("import", comp.id)
+        job_ids.append(job["id"])
 
-            # Import
-            scraper = get_scraper(comp.url)
-            events, score_results, cat_results_data, comp_info = await scraper.scrape(comp.url)
+        if enrich:
+            enrich_job = job_queue.create_job("enrich", comp.id)
+            job_ids.append(enrich_job["id"])
 
-            if comp_info.name and (comp.name == comp.url or not comp.name or "/" in comp.name):
-                comp.name = comp_info.name
-            if comp_info.date and not comp.date:
-                comp.date = date_type.fromisoformat(comp_info.date)
-
-            imported = 0
-            skipped = 0
-            cat_imported = 0
-            errors = []
-
-            for r in score_results:
-                try:
-                    skater = await _get_or_create_skater(session, r.name, r.nationality, r.club)
-                    ex = await session.execute(
-                        select(Score).where(
-                            Score.competition_id == comp.id,
-                            Score.skater_id == skater.id,
-                            Score.category == r.category,
-                            Score.segment == r.segment,
-                        )
-                    )
-                    if ex.scalar_one_or_none():
-                        skipped += 1
-                        continue
-                    score = Score(
-                        competition_id=comp.id,
-                        skater_id=skater.id,
-                        segment=r.segment or "UNKNOWN",
-                        category=r.category,
-                        rank=r.rank,
-                        total_score=r.total_score,
-                        technical_score=r.technical_score,
-                        component_score=r.component_score,
-                        components=r.components,
-                        deductions=r.deductions,
-                        starting_number=r.starting_number,
-                        event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
-                    )
-                    session.add(score)
-                    imported += 1
-                except Exception as e:
-                    errors.append({"skater": r.name, "error": str(e)})
-
-            for cr in cat_results_data:
-                try:
-                    skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club)
-                    ex = await session.execute(
-                        select(CategoryResult).where(
-                            CategoryResult.competition_id == comp.id,
-                            CategoryResult.skater_id == skater.id,
-                            CategoryResult.category == cr.category,
-                        )
-                    )
-                    if ex.scalar_one_or_none():
-                        continue
-                    cat_result = CategoryResult(
-                        competition_id=comp.id,
-                        skater_id=skater.id,
-                        category=cr.category or "UNKNOWN",
-                        overall_rank=cr.overall_rank,
-                        combined_total=cr.combined_total,
-                        segment_count=cr.segment_count,
-                        sp_rank=cr.sp_rank,
-                        fs_rank=cr.fs_rank,
-                    )
-                    session.add(cat_result)
-                    cat_imported += 1
-                except Exception as e:
-                    errors.append({"skater": cr.name, "error": str(e)})
-
-            comp.last_import_log = {
-                "status": "success" if not errors else "partial",
-                "events_found": len(events),
-                "scores_imported": imported,
-                "scores_skipped": skipped,
-                "category_results_imported": cat_imported,
-                "errors": errors,
-            }
-            await session.commit()
-
-            entry["import_result"] = {
-                "scores_imported": imported,
-                "scores_skipped": skipped,
-                "errors_count": len(errors),
-            }
-            entry["name"] = comp.name
-
-            # Enrich with PDFs if requested
-            if enrich:
-                try:
-                    pdf_urls = [e.pdf_url for e in events if e.pdf_url]
-                    if pdf_urls:
-                        slug = url_to_slug(comp.url)
-                        pdf_paths = await download_pdfs(pdf_urls, slug)
-                        enriched = 0
-                        for pdf_path in pdf_paths:
-                            try:
-                                parsed = parse_elements(pdf_path)
-                                for pe in parsed:
-                                    seg_code = extract_segment_code(pe.get("category_segment"))
-                                    stmt = (
-                                        select(Score)
-                                        .join(Skater)
-                                        .where(Score.competition_id == comp.id, Skater.name == pe["skater_name"])
-                                    )
-                                    if seg_code:
-                                        stmt = stmt.where(Score.segment == seg_code)
-                                    result = await session.execute(stmt)
-                                    scores = result.scalars().all()
-                                    for s in scores:
-                                        if not s.elements:
-                                            s.elements = pe["elements"]
-                                            s.pdf_path = str(pdf_path)
-                                            enriched += 1
-                            except Exception as e:
-                                logger.warning("PDF parse error: %s", e)
-                        await session.commit()
-                        entry["enrich_result"] = {"scores_enriched": enriched, "pdfs_downloaded": len(pdf_paths)}
-                except Exception as e:
-                    logger.warning("Enrich failed for %s: %s", url, e)
-                    entry["enrich_result"] = {"error": str(e)}
-
-            entry["status"] = "success"
-            succeeded += 1
-        except Exception as e:
-            logger.exception("Bulk import failed for %s", url)
-            entry["status"] = "error"
-            entry["error"] = str(e)
-            failed += 1
-
-        results.append(entry)
-
-    return {
-        "lot_name": lot_name,
-        "results": results,
-        "total": len(urls),
-        "succeeded": succeeded,
-        "failed": failed,
-    }
+    await session.commit()
+    return {"job_ids": job_ids, "total": len(job_ids)}
 
 
 router = Router(
