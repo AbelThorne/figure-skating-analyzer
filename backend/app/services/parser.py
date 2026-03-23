@@ -157,9 +157,10 @@ def _parse_element_row(line: str) -> dict | None:
     raw_name = tokens[1]
 
     # Skip info-column tokens between name and base value.
-    # These are: ISU standalone markers (<<, <, *, q, e, !, x) and the
-    # "F" info flag (fall on this element printed by FS Manager).
-    # We collect both: ISU markers into pre_base_markers, fall flag separately.
+    # These are: ISU standalone markers (<<, <, *, q, e, !, x), the
+    # "F" info flag (fall on this element printed by FS Manager), and
+    # comma-separated marker lists for combos (e.g. "q,q", "<,<").
+    # We collect ISU markers into pre_base_markers, fall flag separately.
     idx = 2
     pre_base_markers: list[str] = []
     has_fall = False
@@ -170,6 +171,14 @@ def _parse_element_row(line: str) -> dict | None:
             idx += 1
         elif tok == "F":
             has_fall = True
+            idx += 1
+        elif all(p in _STANDALONE_MARKERS | {"F", ""} for p in tok.split(",")):
+            # Comma-separated marker list (e.g. "q,q", "<,<", "e,!")
+            for p in tok.split(","):
+                if p == "F":
+                    has_fall = True
+                elif p in _STANDALONE_MARKERS:
+                    pre_base_markers.append(p)
             idx += 1
         else:
             break
