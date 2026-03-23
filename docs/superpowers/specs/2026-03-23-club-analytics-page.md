@@ -53,9 +53,12 @@ Rules:
   - `R3 C` → `R3 C`
   - `Adulte Bronze` → `Adulte Bronze`
   - `Adulte Argent` → `Adulte Argent`
-  - `Adulte Or` → `Adulte Or`
-  - If no level token found → `International`
+  - `Adulte Bronze` → `Adulte Bronze` (age_group set to `Adulte`)
+  - `Adulte Argent` → `Adulte Argent` (age_group set to `Adulte`)
+  - `Adulte Or` → `Adulte Or` (age_group set to `Adulte`)
+  - If no level token found → `None` (logged as a warning for debugging; likely International but could be a typo)
 - **Age group tokens** (after stripping `Serie X`):
+  - For `Adulte` levels → `Adulte`
   - `Jun-Sen` or `Junior-Senior` → `Junior-Senior`
   - `Min-Nov` or `Minime-Novice` → `Minime-Novice`
   - `Babies` → `Babies`
@@ -86,15 +89,17 @@ Show which club skaters improved the most over a season, as a sortable leaderboa
 
 Query params:
 - `season` (optional, defaults to current season)
-- `club` (optional, defaults to configured club)
+- `club` (optional, defaults to configured club — uses `club_short` from `AppSettings`)
 - `skating_level` (optional, filter)
 - `age_group` (optional, filter)
+- `gender` (optional, filter)
 
-Logic:
+Logic (progression ranking):
 - For each skater with 2+ `CategoryResult` rows in the season (matching filters), compute:
   - First and last `combined_total` (ordered by competition date)
   - Delta (gain/loss)
-  - All scores as a sparkline array
+  - All scores as a sparkline array with dates
+- Progression is computed **within the same `skating_level + age_group`** combination. If a skater changed level mid-season, they appear with their most recent level and the delta is computed from their first result at that level.
 - Return sorted by `tss_gain` descending
 
 Response:
@@ -105,11 +110,17 @@ Response:
     "skater_name": "Marie Dupont",
     "skating_level": "R2",
     "age_group": "Minime",
+    "gender": "Femme",
     "first_tss": 32.5,
     "last_tss": 41.2,
     "tss_gain": 8.7,
     "competitions_count": 4,
-    "sparkline": [32.5, 35.1, 38.0, 41.2]
+    "sparkline": [
+      { "date": "2025-10-15", "value": 32.5 },
+      { "date": "2025-11-20", "value": 35.1 },
+      { "date": "2026-01-18", "value": 38.0 },
+      { "date": "2026-03-02", "value": 41.2 }
+    ]
   }
 ]
 ```
@@ -132,10 +143,11 @@ Overlay 2-3 skaters' score progression curves on one chart, with a benchmark ban
 Query params:
 - `skating_level` (required)
 - `age_group` (required)
+- `gender` (required)
 - `season` (optional)
 
 Logic:
-- Gather all `CategoryResult.combined_total` values matching the level + age group (and season if provided)
+- Gather all `CategoryResult.combined_total` values matching the level + age group + gender (and season if provided)
 - Compute min, max, median, p25, p75
 
 Response:
@@ -143,6 +155,7 @@ Response:
 {
   "skating_level": "R2",
   "age_group": "Minime",
+  "gender": "Femme",
   "data_points": 45,
   "min": 18.5,
   "max": 52.3,
@@ -152,18 +165,27 @@ Response:
 }
 ```
 
+**Skater score data**: The frontend fetches each selected skater's score progression using the existing `api.skaters.categoryResults(id, season)` endpoint — no new batch endpoint needed (max 3 calls).
+
 ### UI
 
 - **Skater multi-select** (max 3): filtered to club skaters by default, toggle to show all. Each skater gets a distinct color.
 - **Chart** (Recharts `ComposedChart`):
-  - `Area` for p25–p75 (primary shaded band)
-  - Lighter `Area` for min–max (outer band)
-  - Dashed `Line` for median
+  - Benchmark rendered as **flat horizontal bands** spanning the full chart width (the benchmark is an aggregate across all competitions, not per-date)
+  - `ReferenceArea` for p25–p75 (primary shaded band)
+  - Lighter `ReferenceArea` for min–max (outer band)
+  - Dashed `ReferenceLine` for median
   - `Line` per selected skater (distinct colors, labeled in legend)
   - X-axis: competition dates, Y-axis: combined total
-  - Tooltip showing all values at a given point
+  - Tooltip showing skater values at a given date point, plus the benchmark range
 - **Level override dropdown**: optional, to answer "how would my R2 skater compare against R1 field?"
-- Benchmark adapts to the first selected skater's level + age group. If skaters span different categories, a note explains which benchmark is shown.
+- Benchmark adapts to the first selected skater's `skating_level + age_group + gender`. If skaters span different categories, a note explains which benchmark is shown.
+
+### Empty/edge states
+
+- No skaters selected: show placeholder message "Sélectionnez des patineurs pour comparer leur progression."
+- Selected skater has no data in the season: omit from chart, show a small note
+- Benchmark has < 3 data points: hide the benchmark bands, show note "Données insuffisantes pour le benchmark"
 
 ## Section 3: Element Mastery Tracker
 
@@ -176,14 +198,15 @@ Club-wide view of element execution quality: jump success rates and spin/step le
 **Endpoint**: `GET /api/stats/element-mastery`
 
 Query params:
-- `club` (optional, defaults to configured club)
+- `club` (optional, defaults to configured club — uses `club_short` from `AppSettings`)
 - `season` (optional)
 - `skating_level` (optional, filter)
 - `age_group` (optional, filter)
+- `gender` (optional, filter)
 
 Logic:
 - Gather all elements from scores belonging to club skaters (matching filters)
-- Classify each element (jump, spin, step) using the same detection logic as `SkaterAnalyticsPage`
+- Classify each element (jump, spin, step) — the detection logic currently lives client-side only (`SkaterAnalyticsPage.tsx` lines 23-43). It must be ported to Python in a new `backend/app/services/element_classifier.py` module. The frontend logic should also be extracted into a shared utility (`frontend/src/utils/elementClassifier.ts`) to avoid drift.
 - For jumps: group by jump type, compute attempt count, positive/neutral/negative GOE percentages, avg GOE
 - For spins: group by element type, compute level distribution and avg GOE
 - For steps: same as spins
@@ -241,7 +264,7 @@ Two cards (side by side on desktop, stacked on mobile):
 | Vue club                                     |
 | Analyse collective des patineurs du club     |
 |                                              |
-| [Season v]  [Level v]  [Age group v]         |
+| [Season v] [Level v] [Age group v] [Gender v] |
 +---------------------------------------------+
 | PROGRESSION                                  |
 | +------------------------------------------+|
@@ -261,13 +284,14 @@ Two cards (side by side on desktop, stacked on mobile):
 +---------------------------------------------+
 ```
 
-**Shared filters** at the top (season, skating level, age group) apply to all three sections. The comparison section has its own additional skater multi-select and level override.
+**Shared filters** at the top (season, skating level, age group, gender) apply to all three sections. The comparison section has its own additional skater multi-select and level override.
 
 ## Navigation
 
 - Tab label: `CLUB` (was `STATISTIQUES`)
 - Icon: `bar_chart` (unchanged)
 - Route: `/stats` (unchanged)
+- Page title in `App.tsx`: update from `"Statistiques"` to `"Club"`
 
 ## Design System
 
@@ -281,6 +305,10 @@ Follows Kinetic Lens:
 ## Adulte Categories
 
 `Adulte Bronze`, `Adulte Argent`, and `Adulte Or` are treated as their own track. They appear in level/age filters alongside competitive levels but are kept separate — no cross-comparison between Adulte and competitive categories in benchmarks.
+
+## TypeScript Types
+
+Add `skating_level`, `age_group`, and `gender` to the `Score` and `CategoryResult` interfaces in `frontend/src/api/client.ts`. Add new API functions for the three new endpoints under an `api.stats` namespace.
 
 ## Data Dependencies
 
