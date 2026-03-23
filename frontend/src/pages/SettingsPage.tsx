@@ -1,7 +1,8 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import yaml from "js-yaml";
-import { api, type UserRecord, type JobInfo } from "../api/client";
+import { api, type UserRecord } from "../api/client";
+import { useJobs, type Lot } from "../contexts/JobContext";
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -18,6 +19,9 @@ export default function SettingsPage() {
     queryKey: ["domains"],
     queryFn: api.domains.list,
   });
+
+  // --- Job context for bulk import ---
+  const { lots, setLots, bulkJobs, lotJobIds, trackBulkJobs, clearBulk } = useJobs();
 
   // --- Club settings ---
   const [clubName, setClubName] = useState("");
@@ -96,16 +100,6 @@ export default function SettingsPage() {
   });
 
   // --- Bulk import ---
-  interface Lot {
-    name: string;
-    urls: string[];
-    season?: string;
-    discipline?: string;
-  }
-  const [lots, setLots] = useState<Lot[]>([]);
-  const [bulkJobs, setBulkJobs] = useState<Record<string, JobInfo>>({});
-  // Track which lot names have active jobs
-  const [lotJobIds, setLotJobIds] = useState<Record<string, string[]>>({});
   const yamlRef = useRef<HTMLInputElement>(null);
 
   const handleYamlUpload = (file: File) => {
@@ -119,9 +113,8 @@ export default function SettingsPage() {
           season: item.season as string | undefined,
           discipline: item.discipline as string | undefined,
         }));
+        clearBulk();
         setLots(newLots);
-        setBulkJobs({});
-        setLotJobIds({});
       } catch {
         alert("Fichier YAML invalide");
       }
@@ -139,72 +132,9 @@ export default function SettingsPage() {
         discipline: params.lot.discipline,
       }),
     onSuccess: (result, variables) => {
-      // Store job IDs for this lot and seed them as queued
-      setLotJobIds((prev) => ({ ...prev, [variables.lot.name]: result.job_ids }));
-      const newJobs: Record<string, JobInfo> = {};
-      for (const jid of result.job_ids) {
-        newJobs[jid] = { id: jid, type: "import", competition_id: 0, status: "queued", result: null, error: null, created_at: "" };
-      }
-      setBulkJobs((prev) => ({ ...prev, ...newJobs }));
+      trackBulkJobs(variables.lot.name, result.job_ids);
     },
   });
-
-  // Poll bulk jobs
-  const bulkPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const bulkJobsRef = useRef(bulkJobs);
-  bulkJobsRef.current = bulkJobs;
-
-  const pollBulkJobs = useCallback(async () => {
-    const current = bulkJobsRef.current;
-    const activeIds = Object.entries(current)
-      .filter(([, j]) => j.status === "queued" || j.status === "running")
-      .map(([id]) => id);
-
-    if (activeIds.length === 0) return;
-
-    const updates: Record<string, JobInfo> = {};
-    let anyChanged = false;
-    for (const jobId of activeIds) {
-      try {
-        const job = await api.jobs.get(jobId);
-        updates[jobId] = job;
-        if (job.status !== current[jobId]?.status) anyChanged = true;
-        if (job.status === "completed" || job.status === "failed") {
-          anyChanged = true;
-          qc.invalidateQueries({ queryKey: ["competitions"] });
-          qc.invalidateQueries({ queryKey: ["scores"] });
-        }
-      } catch {
-        updates[jobId] = { ...current[jobId], status: "failed", error: "Perdu le contact" };
-        anyChanged = true;
-      }
-    }
-    if (anyChanged) {
-      setBulkJobs((prev) => ({ ...prev, ...updates }));
-    }
-  }, [qc]);
-
-  useEffect(() => {
-    const hasActive = Object.values(bulkJobs).some(
-      (j) => j.status === "queued" || j.status === "running"
-    );
-    if (!hasActive) {
-      if (bulkPollRef.current) {
-        clearInterval(bulkPollRef.current);
-        bulkPollRef.current = null;
-      }
-      return;
-    }
-    if (!bulkPollRef.current) {
-      bulkPollRef.current = setInterval(pollBulkJobs, 2000);
-    }
-    return () => {
-      if (bulkPollRef.current) {
-        clearInterval(bulkPollRef.current);
-        bulkPollRef.current = null;
-      }
-    };
-  }, [bulkJobs, pollBulkJobs]);
 
   // Helper: submit all lots
   const importAllLots = (enrich: boolean) => {

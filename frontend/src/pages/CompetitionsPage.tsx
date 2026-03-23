@@ -1,8 +1,9 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult, JobInfo, COMPETITION_TYPES } from "../api/client";
+import { api, Competition, CreateCompetitionPayload, JobInfo, COMPETITION_TYPES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
+import { useJobs } from "../contexts/JobContext";
 
 const inputClass =
   "bg-surface-container rounded-lg px-4 py-3 w-full focus:outline-none focus:ring-2 focus:ring-primary text-sm text-on-surface placeholder:text-on-surface-variant";
@@ -11,6 +12,16 @@ export default function CompetitionsPage() {
   const qc = useQueryClient();
   const { user } = useAuth();
   const isAdmin = user?.role === "admin";
+  const {
+    activeJobs,
+    trackJob,
+    importResults,
+    enrichResults,
+    dismissedResults,
+    dismissedEnrich,
+    dismissImportResult,
+    dismissEnrichResult,
+  } = useJobs();
 
   const { data: competitions, isLoading, error } = useQuery({
     queryKey: ["competitions"],
@@ -30,12 +41,6 @@ export default function CompetitionsPage() {
   const [sortBy, setSortBy] = useState<string>("date-desc");
   const [showUnconfirmedOnly, setShowUnconfirmedOnly] = useState(false);
 
-  const [importResults, setImportResults] = useState<Record<number, ImportResult>>({});
-  const [enrichResults, setEnrichResults] = useState<Record<number, EnrichResult>>({});
-  const [activeJobs, setActiveJobs] = useState<Record<string, JobInfo>>({});
-  const [dismissedResults, setDismissedResults] = useState<Set<number>>(new Set());
-  const [dismissedEnrich, setDismissedEnrich] = useState<Set<number>>(new Set());
-
   const createMutation = useMutation({
     mutationFn: api.competitions.create,
     onSuccess: () => {
@@ -52,23 +57,17 @@ export default function CompetitionsPage() {
 
   const importMutation = useMutation({
     mutationFn: (id: number) => api.competitions.import(id),
-    onSuccess: (job: JobInfo) => {
-      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
-    },
+    onSuccess: (job: JobInfo) => trackJob(job),
   });
 
   const reimportMutation = useMutation({
     mutationFn: (id: number) => api.competitions.reimport(id),
-    onSuccess: (job: JobInfo) => {
-      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
-    },
+    onSuccess: (job: JobInfo) => trackJob(job),
   });
 
   const enrichMutation = useMutation({
     mutationFn: (id: number) => api.competitions.enrich(id),
-    onSuccess: (job: JobInfo) => {
-      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
-    },
+    onSuccess: (job: JobInfo) => trackJob(job),
   });
 
   const [editingId, setEditingId] = useState<number | null>(null);
@@ -128,93 +127,6 @@ export default function CompetitionsPage() {
           return (b.date ?? "").localeCompare(a.date ?? "");
       }
     });
-
-  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  // Stable reference to activeJobs for the polling callback
-  const activeJobsRef = useRef(activeJobs);
-  activeJobsRef.current = activeJobs;
-
-  const pollJobs = useCallback(async () => {
-    const current = activeJobsRef.current;
-    const activeJobIds = Object.entries(current)
-      .filter(([, j]) => j.status === "queued" || j.status === "running")
-      .map(([id]) => id);
-
-    if (activeJobIds.length === 0) return;
-
-    const updates: Record<string, JobInfo> = {};
-    let anyChanged = false;
-
-    for (const jobId of activeJobIds) {
-      try {
-        const job = await api.jobs.get(jobId);
-        updates[jobId] = job;
-        if (job.status !== current[jobId]?.status) {
-          anyChanged = true;
-        }
-        if (job.status === "completed" || job.status === "failed") {
-          anyChanged = true;
-          qc.invalidateQueries({ queryKey: ["competitions"] });
-          qc.invalidateQueries({ queryKey: ["scores"] });
-          if (job.status === "completed" && job.result) {
-            if (job.type === "enrich") {
-              setEnrichResults((prev) => ({
-                ...prev,
-                [job.competition_id]: job.result as EnrichResult,
-              }));
-              setDismissedEnrich((prev) => {
-                const next = new Set(prev);
-                next.delete(job.competition_id);
-                return next;
-              });
-            } else {
-              setImportResults((prev) => ({
-                ...prev,
-                [job.competition_id]: job.result as ImportResult,
-              }));
-              setDismissedResults((prev) => {
-                const next = new Set(prev);
-                next.delete(job.competition_id);
-                return next;
-              });
-            }
-          }
-        }
-      } catch {
-        updates[jobId] = { ...current[jobId], status: "failed", error: "Lost contact with job" };
-        anyChanged = true;
-      }
-    }
-    if (anyChanged) {
-      setActiveJobs((prev) => ({ ...prev, ...updates }));
-    }
-  }, [qc]);
-
-  useEffect(() => {
-    const hasActiveJobs = Object.values(activeJobs).some(
-      (j) => j.status === "queued" || j.status === "running"
-    );
-
-    if (!hasActiveJobs) {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-      return;
-    }
-
-    if (!pollIntervalRef.current) {
-      pollIntervalRef.current = setInterval(pollJobs, 2000);
-    }
-
-    return () => {
-      if (pollIntervalRef.current) {
-        clearInterval(pollIntervalRef.current);
-        pollIntervalRef.current = null;
-      }
-    };
-  }, [activeJobs, pollJobs]);
 
   return (
     <div>
@@ -605,7 +517,7 @@ export default function CompetitionsPage() {
                         </p>
                         <button
                           onClick={() =>
-                            setDismissedResults((prev) => new Set(prev).add(c.id))
+                            dismissImportResult(c.id)
                           }
                           className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
                           aria-label="Fermer"
@@ -631,7 +543,7 @@ export default function CompetitionsPage() {
                       </p>
                       <button
                         onClick={() =>
-                          setDismissedResults((prev) => new Set(prev).add(c.id))
+                          dismissImportResult(c.id)
                         }
                         className="text-on-surface-variant hover:text-on-surface transition-colors"
                         aria-label="Fermer"
@@ -657,7 +569,7 @@ export default function CompetitionsPage() {
                         </p>
                         <button
                           onClick={() =>
-                            setDismissedEnrich((prev) => new Set(prev).add(c.id))
+                            dismissEnrichResult(c.id)
                           }
                           className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
                           aria-label="Fermer"
@@ -681,7 +593,7 @@ export default function CompetitionsPage() {
                       </p>
                       <button
                         onClick={() =>
-                          setDismissedEnrich((prev) => new Set(prev).add(c.id))
+                          dismissEnrichResult(c.id)
                         }
                         className="text-on-surface-variant hover:text-on-surface transition-colors"
                         aria-label="Fermer"
