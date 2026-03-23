@@ -139,6 +139,9 @@ export interface Score {
   deductions: number | null;
   components: Record<string, number> | null;
   elements: ScoreElement[] | null;
+  skating_level: string | null;
+  age_group: string | null;
+  gender: string | null;
 }
 
 export interface CategoryResult {
@@ -157,6 +160,9 @@ export interface CategoryResult {
   segment_count: number;
   sp_rank: number | null;
   fs_rank: number | null;
+  skating_level: string | null;
+  age_group: string | null;
+  gender: string | null;
 }
 
 export interface Skater {
@@ -311,6 +317,53 @@ export interface JobInfo {
   result: ImportResult | EnrichResult | null;
   error: string | null;
   created_at: string;
+}
+
+export interface ProgressionRankingEntry {
+  skater_id: number;
+  skater_name: string;
+  skating_level: string | null;
+  age_group: string | null;
+  gender: string | null;
+  first_tss: number;
+  last_tss: number;
+  tss_gain: number;
+  competitions_count: number;
+  sparkline: { date: string | null; value: number }[];
+}
+
+export interface BenchmarkData {
+  skating_level: string;
+  age_group: string;
+  gender: string;
+  data_points: number;
+  min: number | null;
+  max: number | null;
+  median: number | null;
+  p25: number | null;
+  p75: number | null;
+}
+
+export interface JumpMastery {
+  jump_type: string;
+  attempts: number;
+  positive_goe_pct: number;
+  negative_goe_pct: number;
+  neutral_goe_pct: number;
+  avg_goe: number;
+}
+
+export interface LevelMastery {
+  element_type: string;
+  attempts: number;
+  level_distribution: Record<string, number>;
+  avg_goe: number;
+}
+
+export interface ElementMasteryData {
+  jumps: JumpMastery[];
+  spins: LevelMastery[];
+  steps: LevelMastery[];
 }
 
 // --- API Functions ---
@@ -504,6 +557,55 @@ export const api = {
     get: (season?: string) => {
       const qs = season ? `?season=${encodeURIComponent(season)}` : "";
       return request<Dashboard>(`/dashboard/${qs}`);
+    },
+  },
+
+  stats: {
+    progressionRanking: (params?: {
+      season?: string;
+      club?: string;
+      skating_level?: string;
+      age_group?: string;
+      gender?: string;
+    }) => {
+      const qs = new URLSearchParams();
+      if (params?.season) qs.set("season", params.season);
+      if (params?.club) qs.set("club", params.club);
+      if (params?.skating_level) qs.set("skating_level", params.skating_level);
+      if (params?.age_group) qs.set("age_group", params.age_group);
+      if (params?.gender) qs.set("gender", params.gender);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<ProgressionRankingEntry[]>(`/stats/progression-ranking${query}`);
+    },
+    benchmarks: (params: {
+      skating_level: string;
+      age_group: string;
+      gender: string;
+      season?: string;
+    }) => {
+      const qs = new URLSearchParams({
+        skating_level: params.skating_level,
+        age_group: params.age_group,
+        gender: params.gender,
+      });
+      if (params.season) qs.set("season", params.season);
+      return request<BenchmarkData>(`/stats/benchmarks?${qs}`);
+    },
+    elementMastery: (params?: {
+      season?: string;
+      club?: string;
+      skating_level?: string;
+      age_group?: string;
+      gender?: string;
+    }) => {
+      const qs = new URLSearchParams();
+      if (params?.season) qs.set("season", params.season);
+      if (params?.club) qs.set("club", params.club);
+      if (params?.skating_level) qs.set("skating_level", params.skating_level);
+      if (params?.age_group) qs.set("age_group", params.age_group);
+      if (params?.gender) qs.set("gender", params.gender);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<ElementMasteryData>(`/stats/element-mastery${query}`);
     },
   },
 };
