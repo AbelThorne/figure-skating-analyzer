@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   LineChart,
   Line,
@@ -173,25 +173,34 @@ function HeroStatBox({ label, value }: { label: string; value: string }) {
 export default function SkaterAnalyticsPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
+  const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
   const { data: skater, isLoading: loadingSkater } = useQuery({
     queryKey: ["skater", skaterId],
     queryFn: () => api.skaters.get(skaterId),
   });
 
+  const { data: seasons } = useQuery({
+    queryKey: ["skater-seasons", skaterId],
+    queryFn: () => api.skaters.seasons(skaterId),
+  });
+
   const { data: scores, isLoading: loadingScores } = useQuery({
-    queryKey: ["skater-scores", skaterId],
-    queryFn: () => api.skaters.scores(skaterId),
+    queryKey: ["skater-scores", skaterId, selectedSeason],
+    queryFn: () => api.skaters.scores(skaterId, selectedSeason ?? undefined),
+    placeholderData: keepPreviousData,
   });
 
   const { data: elements, isLoading: loadingElements } = useQuery({
-    queryKey: ["skater-elements", skaterId],
-    queryFn: () => api.skaters.elements(skaterId),
+    queryKey: ["skater-elements", skaterId, selectedSeason],
+    queryFn: () => api.skaters.elements(skaterId, { season: selectedSeason ?? undefined }),
+    placeholderData: keepPreviousData,
   });
 
   const { data: categoryResults, isLoading: loadingCatResults } = useQuery({
-    queryKey: ["skater-category-results", skaterId],
-    queryFn: () => api.skaters.categoryResults(skaterId),
+    queryKey: ["skater-category-results", skaterId, selectedSeason],
+    queryFn: () => api.skaters.categoryResults(skaterId, selectedSeason ?? undefined),
+    placeholderData: keepPreviousData,
   });
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
@@ -429,7 +438,19 @@ export default function SkaterAnalyticsPage() {
               </p>
             </div>
           </div>
-          <div className="flex gap-3 shrink-0">
+          <div className="flex gap-3 shrink-0 items-center">
+            {seasons && seasons.length > 0 && (
+              <select
+                value={selectedSeason ?? ""}
+                onChange={(e) => setSelectedSeason(e.target.value || null)}
+                className="bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/30"
+              >
+                <option value="" className="text-on-surface bg-surface">Toutes les saisons</option>
+                {seasons.map((s) => (
+                  <option key={s} value={s} className="text-on-surface bg-surface">{s}</option>
+                ))}
+              </select>
+            )}
             <HeroStatBox
               label="Meilleur score"
               value={bestTss != null ? bestTss.toFixed(2) : "—"}
