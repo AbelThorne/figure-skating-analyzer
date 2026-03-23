@@ -6,7 +6,7 @@ Used for enrichment — the main scores come from HTML scraping.
 Each element dict contains:
     number      int             Element order in the program (1–12)
     name        str             Clean element code (all markers stripped)
-    markers     list[str]       ISU markers present: "<", "<<", "q", "e", "!", "*", "x", "F"
+    markers     list[str]       ISU markers present: "<", "<<", "q", "e", "!", "*", "x", "b", "F"
     base_value  float           Base value (already ×1.10 when "x" marker present)
     judge_goe   list[int]       Per-judge GOE scores (−5 to +5), length 3–9
     goe         float           Panel GOE (trimmed mean of judge GOEs)
@@ -22,7 +22,7 @@ from pathlib import Path
 import pdfplumber
 
 # ISU marker tokens that may appear standalone in the token stream
-_STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x"}
+_STANDALONE_MARKERS = {"<<", "<", "q", "e", "!", "*", "x", "b"}
 
 
 # ---------------------------------------------------------------------------
@@ -38,7 +38,7 @@ def _strip_trailing_markers(part: str) -> tuple[str, list[str]]:
     markers: list[str] = []
     while True:
         changed = False
-        for marker in ("<<", "<", "q", "e", "!", "*", "x"):
+        for marker in ("<<", "<", "q", "e", "!", "*", "x", "b"):
             if part.endswith(marker):
                 markers.insert(0, marker)
                 part = part[: -len(marker)]
@@ -60,6 +60,7 @@ def _extract_markers(raw_name: str) -> tuple[str, list[str]]:
         !    Unclear/warning edge
         *    Nullified element (over program limit, BV=0 GOE=0)
         x    Second-half bonus (BV already ×1.10 in base_value)
+        b    Bonus element (extra Bonus column value in protocol)
 
     For non-combo elements the marker list is flat:
         "3Lz<"      -> ("3Lz",      ["<"])
@@ -198,16 +199,26 @@ def _parse_element_row(line: str) -> dict | None:
         inline_markers.append(tokens[idx])
         idx += 1
 
-    # Remaining tokens: GOE  J1 J2 ... Jn  ScoreOfPanel
-    # Real PDF column order: BaseValue GOE J1..Jn ScoreOfPanel
-    # Layout: remaining[0]=goe, remaining[1:-1]=judges, remaining[-1]=score
+    # Remaining tokens: GOE  J1 J2 ... Jn  [BonusValue]  ScoreOfPanel
+    # When a bonus marker "b" is present, a Bonus column value (e.g. 1.00)
+    # appears between the last judge score and the Score of Panel.
+    # Detect via standalone "b" in info column, or "b" suffix on the element
+    # name (e.g. "2Ab") or on any combo part (e.g. "3Sb+2Lo").
+    has_bonus = "b" in pre_base_markers or any(
+        part.endswith("b") and len(part) > 1
+        for part in raw_name.split("+")
+    )
+
     remaining = tokens[idx:]
-    if len(remaining) < 5:  # goe + at least 3 judges + score
+    # tail_count = 1 (score) or 2 (bonus + score)
+    tail_count = 2 if has_bonus else 1
+    min_tokens = 1 + 3 + tail_count  # goe + 3 judges + tail
+    if len(remaining) < min_tokens:
         return None
 
     try:
         goe = float(remaining[0])
-        judge_tokens = remaining[1:-1]
+        judge_tokens = remaining[1:-tail_count]
         score = float(remaining[-1])
     except ValueError:
         return None

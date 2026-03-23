@@ -96,6 +96,23 @@ class TestExtractMarkers:
         assert name == "3F+2T"
         assert markers == ["!", "+"]
 
+    def test_bonus_marker(self):
+        name, markers = _extract_markers("2Ab")
+        assert name == "2A"
+        assert markers == ["b"]
+
+    def test_bonus_on_combo_first_jump(self):
+        # "3Sb+2Lo" → bonus on first jump (3S)
+        name, markers = _extract_markers("3Sb+2Lo")
+        assert name == "3S+2Lo"
+        assert markers == ["b", "+"]
+
+    def test_bonus_on_combo_with_other_marker(self):
+        # "3Sb+1Eu+2S" → bonus on first jump only
+        name, markers = _extract_markers("3Sb+1Eu+2S")
+        assert name == "3S+1Eu+2S"
+        assert markers == ["b", "+", "+"]
+
     def test_spin_no_markers(self):
         name, markers = _extract_markers("CSSp4")
         assert name == "CSSp4"
@@ -239,6 +256,54 @@ class TestParseElementRow:
         assert result["name"] == "3F+2T"
         assert result["markers"] == ["!", "+"]
         assert result["goe"] == pytest.approx(0.00)
+
+    def test_bonus_element_with_standalone_b(self):
+        # "2Ab b 3.30 -0.66 -2 -2 -1 -2 -2 1.00 3.64"
+        # b in name + standalone b in info + bonus value 1.00 after judges
+        line = "2 2Ab b 3.30 -0.66 -2 -2 -1 -2 -2 1.00 3.64"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "2A"
+        assert "b" in result["markers"]
+        assert result["base_value"] == pytest.approx(3.30)
+        assert result["goe"] == pytest.approx(-0.66)
+        assert result["judge_goe"] == [-2, -2, -1, -2, -2]
+        assert result["score"] == pytest.approx(3.64)
+
+    def test_bonus_combo_with_standalone_b(self):
+        # "3Sb+2Lo b 6.00 -1.15 -2 -2 -2 -4 -4 1.00 5.85"
+        line = "2 3Sb+2Lo b 6.00 -1.15 -2 -2 -2 -4 -4 1.00 5.85"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "3S+2Lo"
+        assert "b" in result["markers"]
+        assert result["base_value"] == pytest.approx(6.00)
+        assert result["goe"] == pytest.approx(-1.15)
+        assert result["judge_goe"] == [-2, -2, -2, -4, -4]
+        assert result["score"] == pytest.approx(5.85)
+
+    def test_bonus_with_x_marker(self):
+        # "2Ab b 3.30 x 0.22 2 1 1 0 -1 1.00 4.52"
+        line = "4 2Ab b 3.30 x 0.22 2 1 1 0 -1 1.00 4.52"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "2A"
+        assert "b" in result["markers"]
+        assert "x" in result["markers"]
+        assert result["base_value"] == pytest.approx(3.30)
+        assert result["goe"] == pytest.approx(0.22)
+        assert result["judge_goe"] == [2, 1, 1, 0, -1]
+        assert result["score"] == pytest.approx(4.52)
+
+    def test_no_bonus_column_unchanged(self):
+        # Existing non-bonus elements must still work (no bonus column value)
+        line = "1 2F+2Lo 3.50 0.18 2 1 1 1 1 3.68"
+        result = _parse_element_row(line)
+        assert result is not None
+        assert result["name"] == "2F+2Lo"
+        assert result["base_value"] == pytest.approx(3.50)
+        assert result["goe"] == pytest.approx(0.18)
+        assert result["score"] == pytest.approx(3.68)
 
     def test_non_element_header_returns_none(self):
         assert _parse_element_row("# Executed Elements") is None
