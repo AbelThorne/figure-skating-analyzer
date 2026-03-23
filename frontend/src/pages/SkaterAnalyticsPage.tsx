@@ -390,7 +390,7 @@ export default function SkaterAnalyticsPage() {
       {modalScore && (
         <ScoreCardModal
           score={modalScore}
-          skaterName={skater?.name ?? ""}
+          skaterName={skater ? `${skater.first_name} ${skater.last_name}` : ""}
           onClose={() => setModalScore(null)}
         />
       )}
@@ -413,11 +413,11 @@ export default function SkaterAnalyticsPage() {
         <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant py-8 px-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
           <div className="flex items-center gap-5 flex-1 min-w-0">
             <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl font-extrabold font-headline text-white ring-2 ring-white/30 shrink-0">
-              {skater?.name?.[0]?.toUpperCase() ?? "?"}
+              {skater?.last_name?.[0]?.toUpperCase() ?? "?"}
             </div>
             <div className="min-w-0">
               <h1 className="text-3xl font-extrabold font-headline text-white leading-tight truncate">
-                {skater?.name ?? "—"}
+                {skater ? `${skater.first_name} ${skater.last_name}` : "—"}
               </h1>
               <p className="text-sm text-white/70 mt-1">
                 {[skater?.club, skater?.nationality].filter(Boolean).join(" · ")}

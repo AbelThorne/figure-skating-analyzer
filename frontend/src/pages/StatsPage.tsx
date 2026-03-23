@@ -140,7 +140,7 @@ export default function StatsPage() {
             <option value="">Sélectionner un patineur…</option>
             {skaters.map((s: Skater) => (
               <option key={s.id} value={s.id}>
-                {s.name}{s.club ? ` · ${s.club}` : ""}
+                {s.first_name} {s.last_name}{s.club ? ` · ${s.club}` : ""}
               </option>
             ))}
           </select>

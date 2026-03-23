@@ -22,7 +22,7 @@ export default function SkaterBrowserPage() {
   });
 
   const filtered = skaters.filter((s: Skater) =>
-    s.name.toLowerCase().includes(search.toLowerCase().trim())
+    `${s.first_name} ${s.last_name}`.toLowerCase().includes(search.toLowerCase().trim())
   );
 
   return (
@@ -110,13 +110,13 @@ export default function SkaterBrowserPage() {
                     <div className="flex items-center gap-3">
                       {/* Avatar */}
                       <div className="bg-primary-container text-on-primary-container w-9 h-9 rounded-full flex items-center justify-center text-sm font-bold font-body shrink-0">
-                        {s.name.charAt(0).toUpperCase()}
+                        {s.last_name.charAt(0).toUpperCase()}
                       </div>
                       <Link
                         to={`/patineurs/${s.id}/analyse`}
                         className="font-medium font-body text-on-surface hover:text-primary transition-colors"
                       >
-                        {s.name}
+                        {s.first_name} {s.last_name}
                       </Link>
                     </div>
                   </td>

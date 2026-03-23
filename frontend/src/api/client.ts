@@ -124,7 +124,8 @@ export interface Score {
   competition_name: string | null;
   competition_date: string | null;
   skater_id: number;
-  skater_name: string | null;
+  skater_first_name: string | null;
+  skater_last_name: string | null;
   skater_nationality: string | null;
   skater_club: string | null;
   segment: string;
@@ -145,7 +146,8 @@ export interface CategoryResult {
   competition_name: string | null;
   competition_date: string | null;
   skater_id: number;
-  skater_name: string | null;
+  skater_first_name: string | null;
+  skater_last_name: string | null;
   skater_nationality: string | null;
   skater_club: string | null;
   category: string;
@@ -158,7 +160,8 @@ export interface CategoryResult {
 
 export interface Skater {
   id: number;
-  name: string;
+  first_name: string;
+  last_name: string;
   nationality: string | null;
   club: string | null;
   birth_year: number | null;

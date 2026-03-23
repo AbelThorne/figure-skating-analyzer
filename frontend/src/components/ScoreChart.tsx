@@ -18,7 +18,7 @@ export default function ScoreChart({ scores }: Props) {
   if (scores.length === 0) return null;
 
   const data = scores.map((s) => ({
-    name: s.skater_name ?? `#${s.rank}`,
+    name: s.skater_first_name ? `${s.skater_first_name} ${s.skater_last_name}` : `#${s.rank}`,
     TES: s.technical_score ?? 0,
     PCS: s.component_score ?? 0,
     Ded: s.deductions ? -s.deductions : 0,
