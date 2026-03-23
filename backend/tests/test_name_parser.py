@@ -23,6 +23,12 @@ from app.services.name_parser import parse_skater_name
         # Edge cases
         ("STELLATO-DUDEK Deanna", "Deanna", "STELLATO-DUDEK"),
         ("Mathys BUE-HUBERT", "Mathys", "BUE-HUBERT"),
+        # Pair / ice dance teams (ISU format: LASTNAME Firstname / LASTNAME Firstname)
+        ("FOURNIER BEAUDRY Laurence / CIZERON Guillaume", "", "Laurence FOURNIER BEAUDRY / Guillaume CIZERON"),
+        ("CHOCK Madison / BATES Evan", "", "Madison CHOCK / Evan BATES"),
+        ("STELLATO-DUDEK Deanna / DESCHAMPS Maxime", "", "Deanna STELLATO-DUDEK / Maxime DESCHAMPS"),
+        # Pair / ice dance teams (FS Manager format: Firstname LASTNAME / Firstname LASTNAME)
+        ("Laurence FOURNIER BEAUDRY / Guillaume CIZERON", "", "Laurence FOURNIER BEAUDRY / Guillaume CIZERON"),
     ],
 )
 def test_parse_skater_name(raw, expected_first, expected_last):

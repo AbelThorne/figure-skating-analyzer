@@ -26,6 +26,11 @@ def _is_uppercase_word(word: str) -> bool:
 def parse_skater_name(raw: str) -> tuple[str, str]:
     """Parse a raw skater name into (first_name, last_name).
 
+    For pair/ice dance teams (names separated by " / "), each partner is
+    parsed individually and the result is formatted as
+    ``"Firstname1 LASTNAME1 / Firstname2 LASTNAME2"`` in last_name with
+    an empty first_name, so that ``display_name`` shows the full team name.
+
     Returns:
         A tuple of (first_name, last_name). first_name may be empty
         if only a family name is present.
@@ -33,6 +38,18 @@ def parse_skater_name(raw: str) -> tuple[str, str]:
     raw = " ".join(raw.split())  # normalize whitespace
     if not raw:
         return ("", "")
+
+    # Pair / ice dance: "LASTNAME1 Firstname1 / LASTNAME2 Firstname2"
+    if " / " in raw:
+        partners = raw.split(" / ")
+        formatted = []
+        for partner in partners:
+            first, last = parse_skater_name(partner.strip())
+            if first:
+                formatted.append(f"{first} {last}")
+            else:
+                formatted.append(last)
+        return ("", " / ".join(formatted))
 
     words = raw.split()
 
