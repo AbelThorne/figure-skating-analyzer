@@ -90,17 +90,22 @@ async def get_skater_elements(
 
 
 @get("/{skater_id:int}/scores")
-async def get_skater_scores(skater_id: int, session: AsyncSession) -> list[dict]:
+async def get_skater_scores(skater_id: int, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
 
-    result = await session.execute(
+    stmt = (
         select(Score)
         .where(Score.skater_id == skater_id)
+        .join(Score.competition)
         .options(selectinload(Score.competition))
         .order_by(Score.id)
     )
+    if season:
+        stmt = stmt.where(Competition.season == season)
+
+    result = await session.execute(stmt)
     scores = result.scalars().all()
     return [
         {
