@@ -1,7 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult } from "../api/client";
+import { api, Competition, CreateCompetitionPayload, ImportResult, EnrichResult, JobInfo } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 
 const inputClass =
@@ -27,8 +27,7 @@ export default function CompetitionsPage() {
 
   const [importResults, setImportResults] = useState<Record<number, ImportResult>>({});
   const [enrichResults, setEnrichResults] = useState<Record<number, EnrichResult>>({});
-  const [importingId, setImportingId] = useState<number | null>(null);
-  const [enrichingId, setEnrichingId] = useState<number | null>(null);
+  const [activeJobs, setActiveJobs] = useState<Record<string, JobInfo>>({});
   const [dismissedResults, setDismissedResults] = useState<Set<number>>(new Set());
   const [dismissedEnrich, setDismissedEnrich] = useState<Set<number>>(new Set());
 
@@ -47,66 +46,123 @@ export default function CompetitionsPage() {
   });
 
   const importMutation = useMutation({
-    mutationFn: (id: number) => {
-      setImportingId(id);
-      return api.competitions.import(id);
-    },
-    onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: ["competitions"] });
-      qc.invalidateQueries({ queryKey: ["scores"] });
-      setImportResults((prev) => ({ ...prev, [result.competition_id]: result }));
-      setDismissedResults((prev) => {
-        const next = new Set(prev);
-        next.delete(result.competition_id);
-        return next;
-      });
-      setImportingId(null);
-    },
-    onError: () => {
-      setImportingId(null);
+    mutationFn: (id: number) => api.competitions.import(id),
+    onSuccess: (job: JobInfo) => {
+      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
     },
   });
 
   const reimportMutation = useMutation({
-    mutationFn: (id: number) => {
-      setImportingId(id);
-      return api.competitions.reimport(id);
-    },
-    onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: ["competitions"] });
-      qc.invalidateQueries({ queryKey: ["scores"] });
-      setImportResults((prev) => ({ ...prev, [result.competition_id]: result }));
-      setDismissedResults((prev) => {
-        const next = new Set(prev);
-        next.delete(result.competition_id);
-        return next;
-      });
-      setImportingId(null);
-    },
-    onError: () => {
-      setImportingId(null);
+    mutationFn: (id: number) => api.competitions.reimport(id),
+    onSuccess: (job: JobInfo) => {
+      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
     },
   });
 
   const enrichMutation = useMutation({
-    mutationFn: (id: number) => {
-      setEnrichingId(id);
-      return api.competitions.enrich(id);
-    },
-    onSuccess: (result) => {
-      qc.invalidateQueries({ queryKey: ["scores"] });
-      setEnrichResults((prev) => ({ ...prev, [result.competition_id]: result }));
-      setDismissedEnrich((prev) => {
-        const next = new Set(prev);
-        next.delete(result.competition_id);
-        return next;
-      });
-      setEnrichingId(null);
-    },
-    onError: () => {
-      setEnrichingId(null);
+    mutationFn: (id: number) => api.competitions.enrich(id),
+    onSuccess: (job: JobInfo) => {
+      setActiveJobs((prev) => ({ ...prev, [job.id]: job }));
     },
   });
+
+  // Maps competition_id → list of active job IDs
+  const competitionJobs: Record<number, string[]> = {};
+  for (const [jobId, job] of Object.entries(activeJobs)) {
+    if (job.status === "queued" || job.status === "running") {
+      if (!competitionJobs[job.competition_id]) {
+        competitionJobs[job.competition_id] = [];
+      }
+      competitionJobs[job.competition_id].push(jobId);
+    }
+  }
+
+  const pollIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Stable reference to activeJobs for the polling callback
+  const activeJobsRef = useRef(activeJobs);
+  activeJobsRef.current = activeJobs;
+
+  const pollJobs = useCallback(async () => {
+    const current = activeJobsRef.current;
+    const activeJobIds = Object.entries(current)
+      .filter(([, j]) => j.status === "queued" || j.status === "running")
+      .map(([id]) => id);
+
+    if (activeJobIds.length === 0) return;
+
+    const updates: Record<string, JobInfo> = {};
+    let anyChanged = false;
+
+    for (const jobId of activeJobIds) {
+      try {
+        const job = await api.jobs.get(jobId);
+        updates[jobId] = job;
+        if (job.status !== current[jobId]?.status) {
+          anyChanged = true;
+        }
+        if (job.status === "completed" || job.status === "failed") {
+          anyChanged = true;
+          qc.invalidateQueries({ queryKey: ["competitions"] });
+          qc.invalidateQueries({ queryKey: ["scores"] });
+          if (job.status === "completed" && job.result) {
+            if (job.type === "enrich") {
+              setEnrichResults((prev) => ({
+                ...prev,
+                [job.competition_id]: job.result as EnrichResult,
+              }));
+              setDismissedEnrich((prev) => {
+                const next = new Set(prev);
+                next.delete(job.competition_id);
+                return next;
+              });
+            } else {
+              setImportResults((prev) => ({
+                ...prev,
+                [job.competition_id]: job.result as ImportResult,
+              }));
+              setDismissedResults((prev) => {
+                const next = new Set(prev);
+                next.delete(job.competition_id);
+                return next;
+              });
+            }
+          }
+        }
+      } catch {
+        updates[jobId] = { ...current[jobId], status: "failed", error: "Lost contact with job" };
+        anyChanged = true;
+      }
+    }
+    if (anyChanged) {
+      setActiveJobs((prev) => ({ ...prev, ...updates }));
+    }
+  }, [qc]);
+
+  useEffect(() => {
+    const hasActiveJobs = Object.values(activeJobs).some(
+      (j) => j.status === "queued" || j.status === "running"
+    );
+
+    if (!hasActiveJobs) {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+      return;
+    }
+
+    if (!pollIntervalRef.current) {
+      pollIntervalRef.current = setInterval(pollJobs, 2000);
+    }
+
+    return () => {
+      if (pollIntervalRef.current) {
+        clearInterval(pollIntervalRef.current);
+        pollIntervalRef.current = null;
+      }
+    };
+  }, [activeJobs, pollJobs]);
 
   return (
     <div>
@@ -219,8 +275,18 @@ export default function CompetitionsPage() {
       {/* Competition list */}
       <div className="space-y-3">
         {competitions?.map((c: Competition) => {
-          const isImporting = importingId === c.id;
-          const isEnriching = enrichingId === c.id;
+          const compJobs = competitionJobs[c.id] || [];
+          const activeJobTypes = compJobs.map((jid) => activeJobs[jid]?.type);
+          const isImporting = activeJobTypes.includes("import") || activeJobTypes.includes("reimport");
+          const isEnriching = activeJobTypes.includes("enrich");
+
+          const importJobStatus = compJobs
+            .map((jid) => activeJobs[jid])
+            .find((j) => j?.type === "import" || j?.type === "reimport")?.status;
+          const enrichJobStatus = compJobs
+            .map((jid) => activeJobs[jid])
+            .find((j) => j?.type === "enrich")?.status;
+
           const result = importResults[c.id];
           const isDismissed = dismissedResults.has(c.id);
           const enrichResult = enrichResults[c.id];
@@ -264,7 +330,11 @@ export default function CompetitionsPage() {
                       <span className="material-symbols-outlined text-base leading-none">
                         download
                       </span>
-                      {isImporting ? "Importation..." : "Importer"}
+                      {importJobStatus === "queued"
+                        ? "En file d'attente"
+                        : importJobStatus === "running"
+                          ? "Importation..."
+                          : "Importer"}
                     </button>
                     <button
                       onClick={() => {
@@ -284,13 +354,17 @@ export default function CompetitionsPage() {
                     </button>
                     <button
                       onClick={() => enrichMutation.mutate(c.id)}
-                      disabled={isEnriching || isImporting}
+                      disabled={isEnriching}
                       className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
                     >
                       <span className="material-symbols-outlined text-base leading-none">
                         description
                       </span>
-                      {isEnriching ? "Enrichissement..." : "Enrichir PDF"}
+                      {enrichJobStatus === "queued"
+                        ? "En file d'attente"
+                        : enrichJobStatus === "running"
+                          ? "Enrichissement..."
+                          : "Enrichir PDF"}
                     </button>
                     <button
                       onClick={() => {
