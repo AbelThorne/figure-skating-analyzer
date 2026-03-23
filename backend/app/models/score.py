@@ -29,6 +29,9 @@ class Score(Base):
     event_date: Mapped[Optional[date]] = mapped_column(Date, nullable=True)
     pdf_path: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
     raw_data: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    skating_level: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    age_group: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
 
     competition: Mapped["Competition"] = relationship(  # noqa: F821
         "Competition", back_populates="scores"

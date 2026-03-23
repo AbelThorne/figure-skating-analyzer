@@ -31,6 +31,7 @@ async def init_db() -> None:
         await conn.run_sync(Base.metadata.create_all)
         await _migrate_add_columns(conn)
 
+    await _backfill_categories()
     await _bootstrap()
 
 
@@ -38,6 +39,12 @@ async def _migrate_add_columns(conn) -> None:
     """Add columns that may be missing in existing SQLite databases."""
     _MIGRATIONS = [
         ("competitions", "rink", "VARCHAR(255)"),
+        ("scores", "skating_level", "VARCHAR(20)"),
+        ("scores", "age_group", "VARCHAR(30)"),
+        ("scores", "gender", "VARCHAR(10)"),
+        ("category_results", "skating_level", "VARCHAR(20)"),
+        ("category_results", "age_group", "VARCHAR(30)"),
+        ("category_results", "gender", "VARCHAR(10)"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
@@ -45,6 +52,40 @@ async def _migrate_add_columns(conn) -> None:
             logger.info("Added column %s.%s", table, column)
         except Exception:
             pass  # Column already exists
+
+
+async def _backfill_categories() -> None:
+    """Parse category field for existing rows that lack structured fields."""
+    from app.models.score import Score
+    from app.models.category_result import CategoryResult
+    from app.services.category_parser import parse_category
+
+    async with async_session_factory() as session:
+        result = await session.execute(
+            select(Score).where(Score.skating_level.is_(None), Score.category.isnot(None))
+        )
+        scores = result.scalars().all()
+        for score in scores:
+            parsed = parse_category(score.category)
+            score.skating_level = parsed["skating_level"]
+            score.age_group = parsed["age_group"]
+            score.gender = parsed["gender"]
+
+        result = await session.execute(
+            select(CategoryResult).where(
+                CategoryResult.skating_level.is_(None), CategoryResult.category.isnot(None)
+            )
+        )
+        cat_results = result.scalars().all()
+        for cr in cat_results:
+            parsed = parse_category(cr.category)
+            cr.skating_level = parsed["skating_level"]
+            cr.age_group = parsed["age_group"]
+            cr.gender = parsed["gender"]
+
+        if scores or cat_results:
+            await session.commit()
+            logger.info("Backfilled categories: %d scores, %d category_results", len(scores), len(cat_results))
 
 
 async def _bootstrap() -> None:

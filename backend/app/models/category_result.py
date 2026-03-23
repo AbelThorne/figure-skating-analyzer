@@ -35,6 +35,9 @@ class CategoryResult(Base):
     # Per-segment ranks (nullable — only present for multi-segment categories)
     sp_rank: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     fs_rank: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
+    skating_level: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
+    age_group: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
+    gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
 
     competition: Mapped["Competition"] = relationship(  # noqa: F821
         "Competition", back_populates="category_results"

@@ -14,6 +14,7 @@ from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
 from app.services.parser import parse_elements, extract_segment_code
 from app.services.name_parser import parse_skater_name
+from app.services.category_parser import parse_category
 
 
 async def _get_or_create_skater(
@@ -122,6 +123,10 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                 starting_number=r.starting_number,
                 event_date=date_type.fromisoformat(r.event_date) if r.event_date else None,
             )
+            parsed = parse_category(r.category)
+            score.skating_level = parsed["skating_level"]
+            score.age_group = parsed["age_group"]
+            score.gender = parsed["gender"]
             session.add(score)
             imported += 1
         except Exception as e:
@@ -150,6 +155,10 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                 sp_rank=cr.sp_rank,
                 fs_rank=cr.fs_rank,
             )
+            parsed = parse_category(cr.category)
+            cat_result.skating_level = parsed["skating_level"]
+            cat_result.age_group = parsed["age_group"]
+            cat_result.gender = parsed["gender"]
             session.add(cat_result)
             cat_imported += 1
         except Exception as e:
