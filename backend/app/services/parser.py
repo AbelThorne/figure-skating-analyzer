@@ -325,3 +325,22 @@ def _extract_category_segment(text: str) -> str | None:
         if re.search(r"\b(FREE SKATING|SHORT PROGRAM|RHYTHM DANCE|FREE DANCE)\b", line, re.IGNORECASE):
             return line
     return None
+
+
+_SEGMENT_CODE_MAP = {
+    "free skating": "FS",
+    "short program": "SP",
+    "rhythm dance": "RD",
+    "free dance": "FD",
+}
+
+
+def extract_segment_code(category_segment: str | None) -> str | None:
+    """Extract a short segment code (SP, FS, …) from a category/segment line."""
+    if not category_segment:
+        return None
+    low = category_segment.lower()
+    for pattern, code in _SEGMENT_CODE_MAP.items():
+        if pattern in low:
+            return code
+    return None

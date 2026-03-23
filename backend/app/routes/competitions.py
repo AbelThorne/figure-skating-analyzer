@@ -15,7 +15,7 @@ from app.models.score import Score
 from app.models.category_result import CategoryResult
 from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
-from app.services.parser import parse_elements
+from app.services.parser import parse_elements, extract_segment_code
 
 
 # --- DTOs ---
@@ -258,9 +258,10 @@ async def enrich_competition(competition_id: int, session: AsyncSession, force: 
             for entry in parsed:
                 skater_name = entry["skater_name"]
                 elements = entry["elements"]
+                seg_code = extract_segment_code(entry.get("category_segment"))
 
-                # Find all matching scores for this skater in this competition
-                result = await session.execute(
+                # Find matching scores for this skater in this competition
+                stmt = (
                     select(Score)
                     .join(Skater)
                     .where(
@@ -268,6 +269,9 @@ async def enrich_competition(competition_id: int, session: AsyncSession, force: 
                         Skater.name == skater_name,
                     )
                 )
+                if seg_code:
+                    stmt = stmt.where(Score.segment == seg_code)
+                result = await session.execute(stmt)
                 scores = result.scalars().all()
                 if scores:
                     for score in scores:
@@ -433,11 +437,15 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
                             try:
                                 parsed = parse_elements(pdf_path)
                                 for pe in parsed:
-                                    result = await session.execute(
+                                    seg_code = extract_segment_code(pe.get("category_segment"))
+                                    stmt = (
                                         select(Score)
                                         .join(Skater)
                                         .where(Score.competition_id == comp.id, Skater.name == pe["skater_name"])
                                     )
+                                    if seg_code:
+                                        stmt = stmt.where(Score.segment == seg_code)
+                                    result = await session.execute(stmt)
                                     scores = result.scalars().all()
                                     for s in scores:
                                         if not s.elements:
