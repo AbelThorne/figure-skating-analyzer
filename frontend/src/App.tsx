@@ -18,7 +18,7 @@ const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
   { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
   { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
-  { to: "/stats", label: "STATISTIQUES", icon: "bar_chart", end: false },
+  { to: "/stats", label: "CLUB", icon: "bar_chart", end: false },
 ];
 
 function getPageTitle(pathname: string): string {
@@ -27,7 +27,7 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/competitions/")) return "Détail compétition";
   if (pathname === "/patineurs") return "Patineurs";
   if (pathname.startsWith("/patineurs/")) return "Analyse patineur";
-  if (pathname === "/stats") return "Statistiques";
+  if (pathname === "/stats") return "Club";
   if (pathname === "/settings") return "Paramètres";
   return "";
 }
