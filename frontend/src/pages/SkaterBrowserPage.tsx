@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, Skater } from "../api/client";
+import { countryFlag } from "../utils/countryFlags";
 
 export default function SkaterBrowserPage() {
   const [showAll, setShowAll] = useState(false);
@@ -124,7 +125,9 @@ export default function SkaterBrowserPage() {
                     {s.club ?? "—"}
                   </td>
                   <td className="px-6 py-4 font-mono text-sm text-on-surface-variant">
-                    {s.nationality ?? "—"}
+                    {s.nationality ? (
+                      <span>{countryFlag(s.nationality) ?? ""} {s.nationality}</span>
+                    ) : "—"}
                   </td>
                 </tr>
               ))}

@@ -17,6 +17,7 @@ import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
 import ScoreCardModal from "../components/ScoreCardModal";
+import { countryFlag } from "../utils/countryFlags";
 
 // ─── Jump detection ───────────────────────────────────────────────────────────
 const JUMP_PATTERN = /\d*(A|T|S|F|Lo|Lz|q)\b/i;
@@ -420,7 +421,10 @@ export default function SkaterAnalyticsPage() {
                 {skater ? `${skater.first_name} ${skater.last_name}` : "—"}
               </h1>
               <p className="text-sm text-white/70 mt-1">
-                {[skater?.club, skater?.nationality].filter(Boolean).join(" · ")}
+                {[
+                  skater?.club,
+                  skater?.nationality ? `${countryFlag(skater.nationality) ?? ""} ${skater.nationality}` : null,
+                ].filter(Boolean).join(" · ")}
                 {skater?.birth_year ? ` · ${skater.birth_year}` : ""}
               </p>
             </div>
