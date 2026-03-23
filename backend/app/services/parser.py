@@ -223,11 +223,10 @@ def _parse_element_row(line: str) -> dict | None:
         return None
 
     clean_name, name_markers = _extract_markers(raw_name)
-    # If name_markers is positional (contains "+" sentinels), use it as-is —
-    # the inline standalone tokens are redundant duplicates of what's already
-    # embedded in the element code. Merging/deduplicating would corrupt the
-    # positional structure (e.g. turn ["e", "+", "+"] into ["e", "+"]).
-    if "+" in name_markers:
+    # For combo elements (name contains "+"), name_markers is positional —
+    # one entry per jump, with "+" as sentinel for unmarked positions.
+    # Use as-is; the inline standalone tokens are redundant duplicates.
+    if "+" in raw_name and name_markers:
         markers = name_markers
     else:
         # Flat format: merge name-embedded markers with standalone inline markers,
