@@ -275,19 +275,8 @@ export interface ConfigResponse {
 }
 
 export interface BulkImportResult {
-  lot_name: string;
-  results: {
-    url: string;
-    name?: string;
-    status: string;
-    competition_id: number | null;
-    error: string | null;
-    import_result: { scores_imported: number; scores_skipped: number; errors_count: number } | null;
-    enrich_result: { scores_enriched: number; pdfs_downloaded: number; error?: string } | null;
-  }[];
+  job_ids: string[];
   total: number;
-  succeeded: number;
-  failed: number;
 }
 
 export interface JobInfo {

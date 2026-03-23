@@ -1,7 +1,7 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import yaml from "js-yaml";
-import { api, type UserRecord, type BulkImportResult } from "../api/client";
+import { api, type UserRecord, type JobInfo } from "../api/client";
 
 export default function SettingsPage() {
   const qc = useQueryClient();
@@ -103,8 +103,9 @@ export default function SettingsPage() {
     discipline?: string;
   }
   const [lots, setLots] = useState<Lot[]>([]);
-  const [lotResults, setLotResults] = useState<Record<string, BulkImportResult>>({});
-  const [importingLot, setImportingLot] = useState<string | null>(null);
+  const [bulkJobs, setBulkJobs] = useState<Record<string, JobInfo>>({});
+  // Track which lot names have active jobs
+  const [lotJobIds, setLotJobIds] = useState<Record<string, string[]>>({});
   const yamlRef = useRef<HTMLInputElement>(null);
 
   const handleYamlUpload = (file: File) => {
@@ -119,7 +120,8 @@ export default function SettingsPage() {
           discipline: item.discipline as string | undefined,
         }));
         setLots(newLots);
-        setLotResults({});
+        setBulkJobs({});
+        setLotJobIds({});
       } catch {
         alert("Fichier YAML invalide");
       }
@@ -136,15 +138,80 @@ export default function SettingsPage() {
         season: params.lot.season,
         discipline: params.lot.discipline,
       }),
-    onSuccess: (result) => {
-      setLotResults((prev) => ({ ...prev, [result.lot_name]: result }));
-      setImportingLot(null);
-      qc.invalidateQueries({ queryKey: ["competitions"] });
-    },
-    onError: () => {
-      setImportingLot(null);
+    onSuccess: (result, variables) => {
+      // Store job IDs for this lot and seed them as queued
+      setLotJobIds((prev) => ({ ...prev, [variables.lot.name]: result.job_ids }));
+      const newJobs: Record<string, JobInfo> = {};
+      for (const jid of result.job_ids) {
+        newJobs[jid] = { id: jid, type: "import", competition_id: 0, status: "queued", result: null, error: null, created_at: "" };
+      }
+      setBulkJobs((prev) => ({ ...prev, ...newJobs }));
     },
   });
+
+  // Poll bulk jobs
+  const bulkPollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+  const bulkJobsRef = useRef(bulkJobs);
+  bulkJobsRef.current = bulkJobs;
+
+  const pollBulkJobs = useCallback(async () => {
+    const current = bulkJobsRef.current;
+    const activeIds = Object.entries(current)
+      .filter(([, j]) => j.status === "queued" || j.status === "running")
+      .map(([id]) => id);
+
+    if (activeIds.length === 0) return;
+
+    const updates: Record<string, JobInfo> = {};
+    let anyChanged = false;
+    for (const jobId of activeIds) {
+      try {
+        const job = await api.jobs.get(jobId);
+        updates[jobId] = job;
+        if (job.status !== current[jobId]?.status) anyChanged = true;
+        if (job.status === "completed" || job.status === "failed") {
+          anyChanged = true;
+          qc.invalidateQueries({ queryKey: ["competitions"] });
+          qc.invalidateQueries({ queryKey: ["scores"] });
+        }
+      } catch {
+        updates[jobId] = { ...current[jobId], status: "failed", error: "Perdu le contact" };
+        anyChanged = true;
+      }
+    }
+    if (anyChanged) {
+      setBulkJobs((prev) => ({ ...prev, ...updates }));
+    }
+  }, [qc]);
+
+  useEffect(() => {
+    const hasActive = Object.values(bulkJobs).some(
+      (j) => j.status === "queued" || j.status === "running"
+    );
+    if (!hasActive) {
+      if (bulkPollRef.current) {
+        clearInterval(bulkPollRef.current);
+        bulkPollRef.current = null;
+      }
+      return;
+    }
+    if (!bulkPollRef.current) {
+      bulkPollRef.current = setInterval(pollBulkJobs, 2000);
+    }
+    return () => {
+      if (bulkPollRef.current) {
+        clearInterval(bulkPollRef.current);
+        bulkPollRef.current = null;
+      }
+    };
+  }, [bulkJobs, pollBulkJobs]);
+
+  // Helper: submit all lots
+  const importAllLots = (enrich: boolean) => {
+    for (const lot of lots) {
+      bulkImportMutation.mutate({ lot, enrich });
+    }
+  };
 
   const inputCls =
     "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
@@ -436,9 +503,32 @@ export default function SettingsPage() {
 
         {lots.length > 0 && (
           <div className="space-y-3">
+            {/* Global actions */}
+            <div className="flex gap-2 mb-2">
+              <button
+                onClick={() => importAllLots(false)}
+                disabled={bulkImportMutation.isPending}
+                className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">download</span>
+                Tout importer
+              </button>
+              <button
+                onClick={() => importAllLots(true)}
+                disabled={bulkImportMutation.isPending}
+                className="px-4 py-2 bg-surface-container text-on-surface-variant rounded-xl text-sm font-bold hover:bg-surface-container-high transition-colors disabled:opacity-50 flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-sm">description</span>
+                Tout importer + PDF
+              </button>
+            </div>
+
             {lots.map((lot) => {
-              const result = lotResults[lot.name];
-              const isImporting = importingLot === lot.name;
+              const jobIds = lotJobIds[lot.name] || [];
+              const jobs = jobIds.map((jid) => bulkJobs[jid]).filter(Boolean);
+              const hasActiveJobs = jobs.some((j) => j.status === "queued" || j.status === "running");
+              const completedJobs = jobs.filter((j) => j.status === "completed" || j.status === "failed");
+              const failedJobs = jobs.filter((j) => j.status === "failed");
 
               return (
                 <div
@@ -457,79 +547,44 @@ export default function SettingsPage() {
                     </div>
                     <div className="flex gap-2">
                       <button
-                        onClick={() => {
-                          setImportingLot(lot.name);
-                          bulkImportMutation.mutate({ lot, enrich: false });
-                        }}
-                        disabled={isImporting}
+                        onClick={() => bulkImportMutation.mutate({ lot, enrich: false })}
+                        disabled={hasActiveJobs}
                         className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-1"
                       >
                         <span className="material-symbols-outlined text-sm">download</span>
-                        {isImporting ? "Import..." : "Importer"}
+                        {hasActiveJobs ? "En cours..." : "Importer"}
                       </button>
                       <button
-                        onClick={() => {
-                          setImportingLot(lot.name);
-                          bulkImportMutation.mutate({ lot, enrich: true });
-                        }}
-                        disabled={isImporting}
+                        onClick={() => bulkImportMutation.mutate({ lot, enrich: true })}
+                        disabled={hasActiveJobs}
                         className="px-3 py-1.5 bg-surface-container text-on-surface-variant rounded-xl text-xs font-bold hover:bg-surface-container-high transition-colors disabled:opacity-50 flex items-center gap-1"
                       >
                         <span className="material-symbols-outlined text-sm">description</span>
-                        {isImporting ? "Import..." : "Importer + PDF"}
+                        {hasActiveJobs ? "En cours..." : "Importer + PDF"}
                       </button>
                     </div>
                   </div>
 
-                  {/* Result */}
-                  {result && (
+                  {/* Progress / Result */}
+                  {jobs.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-outline-variant/30">
-                      <div className="flex items-center gap-2 mb-2">
+                      <div className="flex items-center gap-2">
                         <span
                           className={`inline-block w-2 h-2 rounded-full ${
-                            result.failed === 0 ? "bg-primary" : "bg-error"
+                            hasActiveJobs
+                              ? "bg-on-surface-variant animate-pulse"
+                              : failedJobs.length > 0
+                                ? "bg-error"
+                                : "bg-primary"
                           }`}
                         />
                         <span className="text-xs font-medium text-on-surface">
-                          {result.succeeded}/{result.total} importées
-                          {result.failed > 0 && ` · ${result.failed} erreur(s)`}
+                          {hasActiveJobs
+                            ? `${completedJobs.length}/${jobs.length} tâches terminées`
+                            : failedJobs.length > 0
+                              ? `${completedJobs.length - failedJobs.length}/${jobs.length} réussies · ${failedJobs.length} erreur(s)`
+                              : `${completedJobs.length}/${jobs.length} tâches terminées`}
                         </span>
-                      </div>
-                      <div className="space-y-1">
-                        {result.results.map((r) => (
-                          <div
-                            key={r.url}
-                            className="flex items-center gap-2 text-xs"
-                          >
-                            <span
-                              className={`material-symbols-outlined text-sm ${
-                                r.status === "success"
-                                  ? "text-primary"
-                                  : "text-error"
-                              }`}
-                            >
-                              {r.status === "success"
-                                ? "check_circle"
-                                : "error"}
-                            </span>
-                            <span className="text-on-surface truncate">
-                              {r.name || r.url}
-                            </span>
-                            {r.import_result && (
-                              <span className="text-on-surface-variant shrink-0">
-                                {r.import_result.scores_imported} scores
-                                {r.enrich_result &&
-                                  "scores_enriched" in r.enrich_result &&
-                                  ` · ${r.enrich_result.scores_enriched} enrichis`}
-                              </span>
-                            )}
-                            {r.error && (
-                              <span className="text-error truncate">
-                                {r.error}
-                              </span>
-                            )}
-                          </div>
-                        ))}
                       </div>
                     </div>
                   )}
