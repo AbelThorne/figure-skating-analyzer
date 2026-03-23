@@ -290,6 +290,16 @@ export interface BulkImportResult {
   failed: number;
 }
 
+export interface JobInfo {
+  id: string;
+  type: "import" | "reimport" | "enrich";
+  competition_id: number;
+  status: "queued" | "running" | "completed" | "failed";
+  result: ImportResult | EnrichResult | null;
+  error: string | null;
+  created_at: string;
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -386,11 +396,11 @@ export const api = {
     delete: (id: number) =>
       request<void>(`/competitions/${id}`, { method: "DELETE" }),
     import: (id: number) =>
-      request<ImportResult>(`/competitions/${id}/import`, { method: "POST" }),
+      request<JobInfo>(`/competitions/${id}/import`, { method: "POST" }),
     reimport: (id: number) =>
-      request<ImportResult>(`/competitions/${id}/import?force=true`, { method: "POST" }),
+      request<JobInfo>(`/competitions/${id}/import?force=true`, { method: "POST" }),
     enrich: (id: number) =>
-      request<EnrichResult>(`/competitions/${id}/enrich`, { method: "POST" }),
+      request<JobInfo>(`/competitions/${id}/enrich`, { method: "POST" }),
     importStatus: (id: number) =>
       request<ImportStatus>(`/competitions/${id}/import-status`),
     bulkImport: (data: { lot_name: string; urls: string[]; enrich: boolean; season?: string; discipline?: string }) =>
@@ -398,6 +408,11 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
+  },
+
+  jobs: {
+    list: () => request<JobInfo[]>("/jobs/"),
+    get: (id: string) => request<JobInfo>(`/jobs/${id}`),
   },
 
   skaters: {
