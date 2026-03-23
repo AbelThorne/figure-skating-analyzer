@@ -18,6 +18,7 @@ class Competition(Base):
     discipline: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     city: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
     country: Mapped[Optional[str]] = mapped_column(String(100), nullable=True)
+    rink: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     competition_type: Mapped[Optional[str]] = mapped_column(String(50), nullable=True)
     metadata_confirmed: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     last_import_log: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)

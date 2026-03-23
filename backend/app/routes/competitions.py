@@ -23,6 +23,7 @@ def competition_to_dict(c: Competition) -> dict:
         "discipline": c.discipline,
         "city": c.city,
         "country": c.country,
+        "rink": c.rink,
         "competition_type": c.competition_type,
         "metadata_confirmed": c.metadata_confirmed,
     }
@@ -133,7 +134,7 @@ async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
     require_admin(request)
     import httpx
     from app.services.competition_metadata import detect_metadata
-    from datetime import date as date_type  # noqa: F401
+    from app.services.scraper_factory import get_scraper
 
     result_stmt = select(Competition).where(Competition.metadata_confirmed == False)  # noqa: E712
     comps = (await session.execute(result_stmt)).scalars().all()
@@ -149,7 +150,13 @@ async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
                 if resp.status_code != 200:
                     continue
                 html = resp.text
-                meta = detect_metadata(comp.url, html)
+                scraper = get_scraper(comp.url)
+                comp_info = scraper.parse_competition_info(html)
+                meta = detect_metadata(
+                    comp.url, html,
+                    scraped_city=comp_info.city,
+                    scraped_country=comp_info.country,
+                )
                 if meta["competition_type"] and not comp.competition_type:
                     comp.competition_type = meta["competition_type"]
                 if meta["city"] and not comp.city:
@@ -158,6 +165,8 @@ async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
                     comp.country = meta["country"]
                 if meta["season"] and not comp.season:
                     comp.season = meta["season"]
+                if comp_info.rink and not comp.rink:
+                    comp.rink = comp_info.rink
                 updated += 1
             except Exception:
                 continue

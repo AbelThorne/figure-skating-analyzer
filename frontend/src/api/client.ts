@@ -79,6 +79,7 @@ export interface Competition {
   discipline: string | null;
   city: string | null;
   country: string | null;
+  rink: string | null;
   competition_type: string | null;
   metadata_confirmed: boolean;
 }

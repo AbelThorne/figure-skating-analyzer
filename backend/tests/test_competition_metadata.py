@@ -129,6 +129,32 @@ class TestSeasonDetection:
         assert result["season"] == "2025-2026"
 
 
+class TestScrapedCityCountryOverride:
+    def test_scraped_city_takes_priority(self):
+        result = detect_metadata(
+            "https://example.com/TDF_Colmar_2025/index.htm",
+            "<html><title>Test</title></html>",
+            scraped_city="Strasbourg",
+        )
+        assert result["city"] == "Strasbourg"
+
+    def test_scraped_country_mapped(self):
+        result = detect_metadata(
+            "https://example.com/event/index.htm",
+            "<html><title>Test</title></html>",
+            scraped_country="FRA",
+        )
+        assert result["country"] == "France"
+
+    def test_scraped_country_unknown_code_kept(self):
+        result = detect_metadata(
+            "https://example.com/event/index.htm",
+            "<html><title>Test</title></html>",
+            scraped_country="XYZ",
+        )
+        assert result["country"] == "XYZ"
+
+
 class TestCityDetection:
     def test_city_from_tdf_url(self):
         result = detect_metadata("https://example.com/TDF_Colmar_2025/index.htm", "<html><title>Test</title></html>")

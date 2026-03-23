@@ -30,16 +30,20 @@ _TYPE_RULES: list[tuple[str, list[str], list[str]]] = [
 _ISU_DOMAINS = ("results.isu.org", "isuresults.com", "www.isuresults.com")
 
 
-def detect_metadata(url: str, html: str) -> dict:
+def detect_metadata(url: str, html: str, *, scraped_city: str | None = None, scraped_country: str | None = None) -> dict:
     """Detect competition type, city, country, and season from URL + HTML.
 
     Returns dict with keys: competition_type, city, country, season.
     Values are None when not detectable.
+
+    ``scraped_city`` and ``scraped_country`` are values already extracted from
+    the FS Manager HTML banner (caption3 row).  When provided they take
+    priority over URL/title heuristics.
     """
     comp_type = _detect_type(url, html)
     season = _detect_season(url, html)
-    city = _detect_city(url, html)
-    country = _detect_country(url)
+    city = scraped_city or _detect_city(url, html)
+    country = _map_country_code(scraped_country) if scraped_country else _detect_country(url)
     return {
         "competition_type": comp_type,
         "city": city,
@@ -179,6 +183,35 @@ def _clean_city_name(raw: str) -> str:
         words = part.strip().split()
         cleaned_parts.append(" ".join(w.capitalize() for w in words))
     return "-".join(p for p in cleaned_parts if p)
+
+
+_IOC_TO_COUNTRY: dict[str, str] = {
+    "FRA": "France",
+    "GER": "Germany",
+    "ITA": "Italy",
+    "ESP": "Spain",
+    "GBR": "United Kingdom",
+    "USA": "United States",
+    "CAN": "Canada",
+    "JPN": "Japan",
+    "KOR": "South Korea",
+    "CHN": "China",
+    "RUS": "Russia",
+    "SUI": "Switzerland",
+    "AUT": "Austria",
+    "BEL": "Belgium",
+    "NED": "Netherlands",
+    "SWE": "Sweden",
+    "FIN": "Finland",
+    "NOR": "Norway",
+    "CZE": "Czech Republic",
+    "POL": "Poland",
+}
+
+
+def _map_country_code(code: str) -> str:
+    """Map a 3-letter IOC country code to a full country name."""
+    return _IOC_TO_COUNTRY.get(code.upper(), code)
 
 
 def _detect_country(url: str) -> str | None:

@@ -1,6 +1,10 @@
-from sqlalchemy import select
+import logging
+
+from sqlalchemy import select, text
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import DeclarativeBase
+
+logger = logging.getLogger(__name__)
 
 from app.config import (
     DATABASE_URL,
@@ -25,8 +29,22 @@ async def init_db() -> None:
 
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
+        await _migrate_add_columns(conn)
 
     await _bootstrap()
+
+
+async def _migrate_add_columns(conn) -> None:
+    """Add columns that may be missing in existing SQLite databases."""
+    _MIGRATIONS = [
+        ("competitions", "rink", "VARCHAR(255)"),
+    ]
+    for table, column, col_type in _MIGRATIONS:
+        try:
+            await conn.execute(text(f"ALTER TABLE {table} ADD COLUMN {column} {col_type}"))
+            logger.info("Added column %s.%s", table, column)
+        except Exception:
+            pass  # Column already exists
 
 
 async def _bootstrap() -> None:

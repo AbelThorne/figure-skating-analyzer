@@ -70,7 +70,11 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
 
     # Detect metadata from URL + HTML content
     from app.services.competition_metadata import detect_metadata
-    meta = detect_metadata(comp.url, index_html)
+    meta = detect_metadata(
+        comp.url, index_html,
+        scraped_city=comp_info.city,
+        scraped_country=comp_info.country,
+    )
     if not comp.metadata_confirmed:
         # Overwrite all detectable fields when metadata is not yet confirmed
         if meta["competition_type"]:
@@ -81,6 +85,8 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             comp.country = meta["country"]
         if meta["season"]:
             comp.season = meta["season"]
+        if comp_info.rink:
+            comp.rink = comp_info.rink
 
     imported = 0
     skipped = 0

@@ -5,6 +5,55 @@ from app.services.site_scraper import FSManagerScraper
 FIXTURES = Path(__file__).parent / "fixtures"
 
 
+def test_parse_competition_info_extracts_city_country_rink():
+    html = """<html>
+    <head><title>CSNPA Coupe d'Automne 2025</title></head>
+    <body>
+    <table class="MainTab">
+    <tr><td><img src="evt_header.jpg"></td></tr>
+    <tr><td>
+        <table width="100%" cellspacing="1" align="center">
+            <tr>
+                <td class="caption3" width="50%">TOULOUSE / FRA</td>
+                <td class="caption3" width="50%">Alex JANY</td>
+            </tr>
+        </table>
+    </td></tr>
+    <tr class="caption3"><td>04.10.2025 - 05.10.2025</td></tr>
+    </table>
+    </body></html>"""
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.name == "CSNPA Coupe d'Automne 2025"
+    assert info.date == "2025-10-04"
+    assert info.city == "Toulouse"
+    assert info.country == "FRA"
+    assert info.rink == "Alex JANY"
+
+
+def test_parse_competition_info_city_without_country():
+    html = """<html><head><title>Test</title></head><body>
+    <table><tr>
+        <td class="caption3">Nimes</td>
+        <td class="caption3">Patinoire de Nimes</td>
+    </tr></table>
+    </body></html>"""
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.city == "Nimes"
+    assert info.country is None
+    assert info.rink == "Patinoire de Nimes"
+
+
+def test_parse_competition_info_no_caption():
+    html = "<html><head><title>Test</title></head><body></body></html>"
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.city is None
+    assert info.country is None
+    assert info.rink is None
+
+
 def test_parse_index_finds_events():
     html = (FIXTURES / "index_sample.html").read_text()
     scraper = FSManagerScraper()
