@@ -18,29 +18,7 @@ import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
 import ScoreCardModal from "../components/ScoreCardModal";
 import { countryFlag } from "../utils/countryFlags";
-
-// ─── Jump detection ───────────────────────────────────────────────────────────
-const JUMP_PATTERN = /\d*(A|T|S|F|Lo|Lz|q)\b/i;
-function isJumpElement(name: string) {
-  return JUMP_PATTERN.test(name);
-}
-
-// ─── Spin detection ───────────────────────────────────────────────────────────
-function isSpinElement(name: string) {
-  return /Sp/i.test(name);
-}
-/** Extract spin/step level: digit at end = that digit, B suffix = 0.5, otherwise 0 */
-function elementLevel(name: string): number {
-  const digitMatch = name.match(/(\d)$/);
-  if (digitMatch) return parseInt(digitMatch[1], 10);
-  if (/B$/i.test(name)) return 0.5;
-  return 0;
-}
-
-// ─── Step / choreo detection ──────────────────────────────────────────────────
-function isStepElement(name: string) {
-  return /St|ChSq/i.test(name);
-}
+import { isJumpElement, isSpinElement, isStepElement, elementLevel } from "../utils/elementClassifier";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function avg(arr: number[]) {
