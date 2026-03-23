@@ -77,7 +77,27 @@ export interface Competition {
   date: string | null;
   season: string | null;
   discipline: string | null;
+  city: string | null;
+  country: string | null;
+  competition_type: string | null;
+  metadata_confirmed: boolean;
 }
+
+export const COMPETITION_TYPES: Record<string, string> = {
+  cr: "Compétition Régionale",
+  tf: "Trophée Fédéral",
+  tdf: "Tournoi de France",
+  masters: "Masters",
+  nationales_autres: "Nationales Autres",
+  championnats_france: "Championnats de France",
+  france_clubs: "France Clubs",
+  grand_prix: "Grand Prix",
+  championnats_europe: "Championnats d'Europe",
+  championnats_monde: "Championnats du Monde",
+  championnats_monde_junior: "Championnats du Monde Junior",
+  jeux_olympiques: "Jeux Olympiques",
+  autre: "Autre",
+};
 
 export interface CreateCompetitionPayload {
   name: string;
@@ -397,6 +417,15 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
+    update: (id: number, data: Partial<Pick<Competition, "city" | "country" | "competition_type" | "season">>) =>
+      request<Competition>(`/competitions/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    confirmMetadata: (id: number) =>
+      request<Competition>(`/competitions/${id}/confirm-metadata`, { method: "POST" }),
+    backfillMetadata: () =>
+      request<{ status: string; competitions_updated: number }>("/competitions/backfill-metadata", { method: "POST" }),
   },
 
   jobs: {
