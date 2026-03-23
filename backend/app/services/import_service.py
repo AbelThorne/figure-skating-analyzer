@@ -151,7 +151,7 @@ async def run_enrich(session: AsyncSession, competition_id: int, force: bool = F
         raise ValueError(f"Competition {competition_id} not found")
 
     scraper = get_scraper(comp.url)
-    events, _, _, _ = await scraper.scrape(comp.url)
+    events, _, _, _, _ = await scraper.scrape(comp.url)
     pdf_urls = [e.pdf_url for e in events if e.pdf_url]
 
     if not pdf_urls:
