@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-from litestar import Router, get, post, delete
+from litestar import Router, get, post, delete, patch, Request
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.guards import require_admin
 from app.database import get_session
 from app.models.competition import Competition
 
@@ -20,6 +21,10 @@ def competition_to_dict(c: Competition) -> dict:
         "date": c.date.isoformat() if c.date else None,
         "season": c.season,
         "discipline": c.discipline,
+        "city": c.city,
+        "country": c.country,
+        "competition_type": c.competition_type,
+        "metadata_confirmed": c.metadata_confirmed,
     }
 
 
@@ -49,6 +54,21 @@ async def create_competition(data: dict, session: AsyncSession) -> dict:
         discipline=data.get("discipline"),
     )
     session.add(comp)
+    await session.commit()
+    await session.refresh(comp)
+    return competition_to_dict(comp)
+
+
+@patch("/{competition_id:int}")
+async def update_competition(competition_id: int, data: dict, request: Request, session: AsyncSession) -> dict:
+    require_admin(request)
+    comp = await session.get(Competition, competition_id)
+    if not comp:
+        raise NotFoundException(f"Competition {competition_id} not found")
+    for field in ("city", "country", "competition_type", "season"):
+        if field in data:
+            setattr(comp, field, data[field])
+    comp.metadata_confirmed = True
     await session.commit()
     await session.refresh(comp)
     return competition_to_dict(comp)
@@ -95,6 +115,57 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
     return job_queue.create_job("enrich", competition_id)
 
 
+@post("/{competition_id:int}/confirm-metadata")
+async def confirm_metadata(competition_id: int, request: Request, session: AsyncSession) -> dict:
+    require_admin(request)
+    comp = await session.get(Competition, competition_id)
+    if not comp:
+        raise NotFoundException(f"Competition {competition_id} not found")
+    comp.metadata_confirmed = True
+    await session.commit()
+    await session.refresh(comp)
+    return competition_to_dict(comp)
+
+
+@post("/backfill-metadata")
+async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
+    """Re-fetch index pages and detect metadata for all unconfirmed competitions."""
+    require_admin(request)
+    import httpx
+    from app.services.competition_metadata import detect_metadata
+    from datetime import date as date_type  # noqa: F401
+
+    result_stmt = select(Competition).where(Competition.metadata_confirmed == False)  # noqa: E712
+    comps = (await session.execute(result_stmt)).scalars().all()
+    updated = 0
+
+    async with httpx.AsyncClient(
+        timeout=30.0,
+        headers={"User-Agent": "Mozilla/5.0 (compatible; skating-analyzer/1.0)"},
+    ) as client:
+        for comp in comps:
+            try:
+                resp = await client.get(comp.url)
+                if resp.status_code != 200:
+                    continue
+                html = resp.text
+                meta = detect_metadata(comp.url, html)
+                if meta["competition_type"] and not comp.competition_type:
+                    comp.competition_type = meta["competition_type"]
+                if meta["city"] and not comp.city:
+                    comp.city = meta["city"]
+                if meta["country"] and not comp.country:
+                    comp.country = meta["country"]
+                if meta["season"] and not comp.season:
+                    comp.season = meta["season"]
+                updated += 1
+            except Exception:
+                continue
+
+    await session.commit()
+    return {"status": "ok", "competitions_updated": updated}
+
+
 @post("/bulk-import")
 async def bulk_import(data: dict, session: AsyncSession) -> dict:
     """Bulk import: create competitions and submit import jobs to the queue."""
@@ -137,10 +208,13 @@ router = Router(
         list_competitions,
         get_competition,
         create_competition,
+        update_competition,
         delete_competition,
         import_competition,
         get_import_status,
         enrich_competition,
+        confirm_metadata,
+        backfill_metadata,
         bulk_import,
     ],
     dependencies={"session": Provide(get_session)},

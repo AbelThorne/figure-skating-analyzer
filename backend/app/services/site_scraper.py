@@ -497,11 +497,11 @@ class FSManagerScraper:
             segment_count=segment_count,
         )
 
-    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult], ScrapedCompetitionInfo]:
+    async def scrape(self, url: str) -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult], ScrapedCompetitionInfo, str]:
         """Full scrape: fetch index, discover events, fetch all SEG and CAT pages.
 
         Returns:
-            A tuple of (events, segment_results, category_results, competition_info).
+            A tuple of (events, segment_results, category_results, competition_info, index_html).
         """
         async with httpx.AsyncClient(
             timeout=30.0,
@@ -509,7 +509,7 @@ class FSManagerScraper:
         ) as client:
             index_html = await _fetch(url, client)
             if not index_html:
-                return [], [], [], ScrapedCompetitionInfo()
+                return [], [], [], ScrapedCompetitionInfo(), ""
 
             comp_info = self.parse_competition_info(index_html)
             events, categories = self.parse_index(index_html, url)
@@ -542,7 +542,7 @@ class FSManagerScraper:
                 cat_results = self.parse_cat_page(cat_html, cat.category, segment_count)
                 all_cat_results.extend(cat_results)
 
-            return events, all_results, all_cat_results, comp_info
+            return events, all_results, all_cat_results, comp_info, index_html
 
 
 # ---------------------------------------------------------------------------

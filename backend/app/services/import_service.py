@@ -51,12 +51,26 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
         await session.flush()
 
     scraper = get_scraper(comp.url)
-    events, results, cat_results, comp_info = await scraper.scrape(comp.url)
+    events, results, cat_results, comp_info, index_html = await scraper.scrape(comp.url)
 
     if comp_info.name and (comp.name == comp.url or not comp.name or comp.name == "index.htm"):
         comp.name = comp_info.name
     if comp_info.date and not comp.date:
         comp.date = date_type.fromisoformat(comp_info.date)
+
+    # Detect metadata from URL + HTML content
+    from app.services.competition_metadata import detect_metadata
+    meta = detect_metadata(comp.url, index_html)
+    if not comp.metadata_confirmed:
+        # Overwrite all detectable fields when metadata is not yet confirmed
+        if meta["competition_type"]:
+            comp.competition_type = meta["competition_type"]
+        if meta["city"]:
+            comp.city = meta["city"]
+        if meta["country"]:
+            comp.country = meta["country"]
+        if meta["season"]:
+            comp.season = meta["season"]
 
     imported = 0
     skipped = 0
@@ -151,7 +165,7 @@ async def run_enrich(session: AsyncSession, competition_id: int, force: bool = F
         raise ValueError(f"Competition {competition_id} not found")
 
     scraper = get_scraper(comp.url)
-    events, _, _, _ = await scraper.scrape(comp.url)
+    events, _, _, _, _ = await scraper.scrape(comp.url)
     pdf_urls = [e.pdf_url for e in events if e.pdf_url]
 
     if not pdf_urls:

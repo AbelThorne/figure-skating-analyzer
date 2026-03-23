@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, JobInfo } from "../api/client";
+import { api, Competition, CreateCompetitionPayload, JobInfo, COMPETITION_TYPES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useJobs } from "../contexts/JobContext";
 
@@ -36,6 +36,11 @@ export default function CompetitionsPage() {
     discipline: "",
   });
 
+  const [filterSeason, setFilterSeason] = useState<string>("all");
+  const [filterType, setFilterType] = useState<string>("all");
+  const [sortBy, setSortBy] = useState<string>("date-desc");
+  const [showUnconfirmedOnly, setShowUnconfirmedOnly] = useState(false);
+
   const createMutation = useMutation({
     mutationFn: api.competitions.create,
     onSuccess: () => {
@@ -65,6 +70,28 @@ export default function CompetitionsPage() {
     onSuccess: (job: JobInfo) => trackJob(job),
   });
 
+  const [editingId, setEditingId] = useState<number | null>(null);
+  const [editForm, setEditForm] = useState<{
+    city: string;
+    country: string;
+    competition_type: string;
+    season: string;
+  }>({ city: "", country: "", competition_type: "", season: "" });
+
+  const updateMutation = useMutation({
+    mutationFn: ({ id, data }: { id: number; data: Record<string, string> }) =>
+      api.competitions.update(id, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["competitions"] });
+      setEditingId(null);
+    },
+  });
+
+  const confirmMutation = useMutation({
+    mutationFn: (id: number) => api.competitions.confirmMetadata(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["competitions"] }),
+  });
+
   // Maps competition_id → list of active job IDs
   const competitionJobs: Record<number, string[]> = {};
   for (const [jobId, job] of Object.entries(activeJobs)) {
@@ -75,6 +102,31 @@ export default function CompetitionsPage() {
       competitionJobs[job.competition_id].push(jobId);
     }
   }
+
+  const seasons = Array.from(
+    new Set(competitions?.map((c) => c.season).filter(Boolean) as string[])
+  ).sort().reverse();
+
+  const filteredCompetitions = (competitions ?? [])
+    .filter((c) => filterSeason === "all" || c.season === filterSeason)
+    .filter((c) => filterType === "all" || c.competition_type === filterType)
+    .filter((c) => !showUnconfirmedOnly || !c.metadata_confirmed)
+    .sort((a, b) => {
+      switch (sortBy) {
+        case "date-asc":
+          return (a.date ?? "").localeCompare(b.date ?? "");
+        case "date-desc":
+          return (b.date ?? "").localeCompare(a.date ?? "");
+        case "city-asc":
+          return (a.city ?? "").localeCompare(b.city ?? "");
+        case "city-desc":
+          return (b.city ?? "").localeCompare(a.city ?? "");
+        case "country-asc":
+          return (a.country ?? "").localeCompare(b.country ?? "");
+        default:
+          return (b.date ?? "").localeCompare(a.date ?? "");
+      }
+    });
 
   return (
     <div>
@@ -169,6 +221,61 @@ export default function CompetitionsPage() {
         </form>
       )}
 
+      {/* Filter bar */}
+      {competitions && competitions.length > 0 && (
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm p-4 mb-4 flex items-center gap-4 flex-wrap">
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Saison</span>
+            <select
+              value={filterSeason}
+              onChange={(e) => setFilterSeason(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Toutes</option>
+              {seasons.map((s) => (
+                <option key={s} value={s}>{s}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Type</span>
+            <select
+              value={filterType}
+              onChange={(e) => setFilterType(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Tous</option>
+              {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
+                <option key={code} value={code}>{label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Trier par</span>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="date-desc">Date ↓</option>
+              <option value="date-asc">Date ↑</option>
+              <option value="city-asc">Ville A→Z</option>
+              <option value="city-desc">Ville Z→A</option>
+              <option value="country-asc">Pays A→Z</option>
+            </select>
+          </div>
+          <label className="ml-auto flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showUnconfirmedOnly}
+              onChange={(e) => setShowUnconfirmedOnly(e.target.checked)}
+              className="accent-error"
+            />
+            À vérifier uniquement
+          </label>
+        </div>
+      )}
+
       {/* Loading / error states */}
       {isLoading && (
         <p className="text-sm text-on-surface-variant">Chargement...</p>
@@ -186,7 +293,7 @@ export default function CompetitionsPage() {
 
       {/* Competition list */}
       <div className="space-y-3">
-        {competitions?.map((c: Competition) => {
+        {filteredCompetitions.map((c: Competition) => {
           const compJobs = competitionJobs[c.id] || [];
           const activeJobTypes = compJobs.map((jid) => activeJobs[jid]?.type);
           const isImporting = activeJobTypes.includes("import") || activeJobTypes.includes("reimport");
@@ -209,7 +316,7 @@ export default function CompetitionsPage() {
               <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex items-center justify-between">
                 {/* Left: name + meta */}
                 <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1.5 flex-wrap">
                     <Link
                       to={`/competitions/${c.id}`}
                       className="font-bold font-headline text-on-surface hover:text-primary transition-colors"
@@ -225,15 +332,53 @@ export default function CompetitionsPage() {
                     >
                       <span className="material-symbols-outlined text-[16px] leading-none">open_in_new</span>
                     </a>
+                    {c.competition_type && (
+                      <span className="bg-surface-container text-on-surface-variant text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                        {COMPETITION_TYPES[c.competition_type] ?? c.competition_type}
+                      </span>
+                    )}
+                    {!c.metadata_confirmed && (
+                      <span className="bg-error-container/50 text-on-error-container text-[10px] font-semibold px-2 py-0.5 rounded-full">
+                        À vérifier
+                      </span>
+                    )}
                   </div>
                   <p className="text-xs text-on-surface-variant mt-1">
-                    {[c.discipline, c.season, c.date].filter(Boolean).join(" · ")}
+                    {[
+                      c.city && c.country ? `${c.city}, ${c.country}` : c.city || c.country,
+                      c.date ? new Date(c.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null,
+                      c.season,
+                    ].filter(Boolean).join(" · ")}
                   </p>
                 </div>
 
                 {/* Right: action buttons (admin only) */}
                 {isAdmin && (
                   <div className="flex gap-2 ml-4 shrink-0">
+                    {!c.metadata_confirmed && (
+                      <button
+                        onClick={() => confirmMutation.mutate(c.id)}
+                        className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">check</span>
+                        Valider
+                      </button>
+                    )}
+                    <button
+                      onClick={() => {
+                        setEditingId(editingId === c.id ? null : c.id);
+                        setEditForm({
+                          city: c.city ?? "",
+                          country: c.country ?? "",
+                          competition_type: c.competition_type ?? "",
+                          season: c.season ?? "",
+                        });
+                      }}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">edit</span>
+                      Modifier
+                    </button>
                     <button
                       onClick={() => importMutation.mutate(c.id)}
                       disabled={isImporting}
@@ -297,6 +442,69 @@ export default function CompetitionsPage() {
                 )}
               </div>
 
+              {/* Inline metadata editor */}
+              {editingId === c.id && (
+                <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 mt-1 border-l-[3px] border-primary">
+                  <div className="flex gap-3 flex-wrap">
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Type</label>
+                      <select
+                        value={editForm.competition_type}
+                        onChange={(e) => setEditForm((f) => ({ ...f, competition_type: e.target.value }))}
+                        className={inputClass}
+                      >
+                        <option value="">—</option>
+                        {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
+                          <option key={code} value={code}>{label}</option>
+                        ))}
+                      </select>
+                    </div>
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Ville</label>
+                      <input
+                        value={editForm.city}
+                        onChange={(e) => setEditForm((f) => ({ ...f, city: e.target.value }))}
+                        className={inputClass}
+                        placeholder="Ville"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Pays</label>
+                      <input
+                        value={editForm.country}
+                        onChange={(e) => setEditForm((f) => ({ ...f, country: e.target.value }))}
+                        className={inputClass}
+                        placeholder="Pays"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-[120px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Saison</label>
+                      <input
+                        value={editForm.season}
+                        onChange={(e) => setEditForm((f) => ({ ...f, season: e.target.value }))}
+                        className={inputClass}
+                        placeholder="2025-2026"
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-2 mt-3 justify-end">
+                    <button
+                      onClick={() => setEditingId(null)}
+                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-4 text-xs font-bold"
+                    >
+                      Annuler
+                    </button>
+                    <button
+                      onClick={() => updateMutation.mutate({ id: c.id, data: editForm })}
+                      disabled={updateMutation.isPending}
+                      className="bg-primary text-on-primary rounded-lg py-1.5 px-4 text-xs font-bold active:scale-95 transition-all disabled:opacity-50"
+                    >
+                      {updateMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+                    </button>
+                  </div>
+                </div>
+              )}
+
               {/* Inline import result notification */}
               {result && !isDismissed && (
                 <div className="px-5 pt-2">
@@ -308,7 +516,9 @@ export default function CompetitionsPage() {
                           Importé {result.scores_imported}/{result.scores_imported + result.errors.length} événements · {result.errors.length} erreur(s)
                         </p>
                         <button
-                          onClick={() => dismissImportResult(c.id)}
+                          onClick={() =>
+                            dismissImportResult(c.id)
+                          }
                           className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
                           aria-label="Fermer"
                         >
@@ -332,7 +542,9 @@ export default function CompetitionsPage() {
                         {result.events_found} événements · {result.scores_imported} scores importés · {result.scores_skipped} ignorés
                       </p>
                       <button
-                        onClick={() => dismissImportResult(c.id)}
+                        onClick={() =>
+                          dismissImportResult(c.id)
+                        }
                         className="text-on-surface-variant hover:text-on-surface transition-colors"
                         aria-label="Fermer"
                       >
@@ -356,7 +568,9 @@ export default function CompetitionsPage() {
                           {enrichResult.pdfs_downloaded} PDF téléchargés · {enrichResult.scores_enriched} scores enrichis · {enrichResult.errors.length} erreur(s)
                         </p>
                         <button
-                          onClick={() => dismissEnrichResult(c.id)}
+                          onClick={() =>
+                            dismissEnrichResult(c.id)
+                          }
                           className="text-on-surface-variant hover:text-on-surface transition-colors ml-auto"
                           aria-label="Fermer"
                         >
@@ -378,7 +592,9 @@ export default function CompetitionsPage() {
                         {enrichResult.pdfs_downloaded} PDF téléchargés · {enrichResult.scores_enriched} scores enrichis
                       </p>
                       <button
-                        onClick={() => dismissEnrichResult(c.id)}
+                        onClick={() =>
+                          dismissEnrichResult(c.id)
+                        }
                         className="text-on-surface-variant hover:text-on-surface transition-colors"
                         aria-label="Fermer"
                       >
