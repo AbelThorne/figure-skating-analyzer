@@ -135,18 +135,22 @@ async def get_skater_scores(skater_id: int, session: AsyncSession, season: Optio
 
 
 @get("/{skater_id:int}/category-results")
-async def get_skater_category_results(skater_id: int, session: AsyncSession) -> list[dict]:
+async def get_skater_category_results(skater_id: int, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
 
-    result = await session.execute(
+    stmt = (
         select(CategoryResult)
         .where(CategoryResult.skater_id == skater_id)
         .options(selectinload(CategoryResult.competition))
         .join(CategoryResult.competition)
         .order_by(Competition.date.desc())
     )
+    if season:
+        stmt = stmt.where(Competition.season == season)
+
+    result = await session.execute(stmt)
     cat_results = result.scalars().all()
     return [
         {
