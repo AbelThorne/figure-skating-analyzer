@@ -213,6 +213,18 @@ export default function SettingsPage() {
     }
   };
 
+  // --- Database reset ---
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
+  const [resetConfirmText, setResetConfirmText] = useState("");
+  const resetMutation = useMutation({
+    mutationFn: () => api.admin.resetDatabase(),
+    onSuccess: () => {
+      setShowResetConfirm(false);
+      setResetConfirmText("");
+      qc.invalidateQueries();
+    },
+  });
+
   const inputCls =
     "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
@@ -591,6 +603,77 @@ export default function SettingsPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+      </section>
+
+      {/* Danger zone */}
+      <section className="rounded-2xl p-6 shadow-arctic border-2 border-error/30 bg-error-container/10">
+        <h2 className="font-headline font-bold text-error text-lg mb-2">
+          Zone de danger
+        </h2>
+        <p className="text-on-surface-variant text-xs mb-4">
+          Ces actions sont irréversibles. Toutes les données seront supprimées.
+        </p>
+        <button
+          onClick={() => setShowResetConfirm(true)}
+          className="px-4 py-2 bg-error text-on-error rounded-xl text-sm font-bold hover:bg-error/90 transition-colors flex items-center gap-2"
+        >
+          <span className="material-symbols-outlined text-sm">delete_forever</span>
+          Réinitialiser la base de données
+        </button>
+
+        {/* Reset confirmation dialog */}
+        {showResetConfirm && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-scrim/60">
+            <div className="bg-surface-container-lowest rounded-2xl shadow-xl p-6 max-w-md w-full mx-4 border-2 border-error/30">
+              <div className="flex items-center gap-3 mb-4">
+                <span className="material-symbols-outlined text-error text-3xl">warning</span>
+                <h3 className="font-headline font-bold text-error text-lg">
+                  Confirmer la réinitialisation
+                </h3>
+              </div>
+              <p className="text-on-surface text-sm mb-2">
+                Cette action va <strong>supprimer définitivement</strong> toutes
+                les compétitions, scores, patineurs et résultats de la base de données.
+              </p>
+              <p className="text-on-surface-variant text-xs mb-4">
+                Les paramètres du club et les utilisateurs seront recréés depuis
+                les variables d'environnement.
+              </p>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">
+                Tapez <span className="font-mono font-bold text-error">SUPPRIMER</span> pour confirmer
+              </label>
+              <input
+                value={resetConfirmText}
+                onChange={(e) => setResetConfirmText(e.target.value)}
+                className="w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-error mb-4 font-mono"
+                placeholder="SUPPRIMER"
+                autoFocus
+              />
+              <div className="flex gap-2 justify-end">
+                <button
+                  onClick={() => {
+                    setShowResetConfirm(false);
+                    setResetConfirmText("");
+                  }}
+                  className="px-4 py-2 text-on-surface-variant text-sm rounded-xl hover:bg-surface-container transition-colors"
+                >
+                  Annuler
+                </button>
+                <button
+                  onClick={() => resetMutation.mutate()}
+                  disabled={resetConfirmText !== "SUPPRIMER" || resetMutation.isPending}
+                  className="px-4 py-2 bg-error text-on-error rounded-xl text-sm font-bold disabled:opacity-30 hover:bg-error/90 transition-colors flex items-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-sm">delete_forever</span>
+                  {resetMutation.isPending ? "Suppression..." : "Réinitialiser"}
+                </button>
+              </div>
+              {resetMutation.isError && (
+                <p className="text-error text-xs mt-3">{String(resetMutation.error)}</p>
+              )}
+            </div>
           </div>
         )}
       </section>

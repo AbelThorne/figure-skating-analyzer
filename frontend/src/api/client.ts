@@ -404,6 +404,11 @@ export const api = {
     get: (id: string) => request<JobInfo>(`/jobs/${id}`),
   },
 
+  admin: {
+    resetDatabase: () =>
+      request<{ status: string; message: string }>("/admin/reset-database", { method: "POST" }),
+  },
+
   skaters: {
     list: (club?: string) => {
       const qs = club ? `?club=${encodeURIComponent(club)}` : "";
