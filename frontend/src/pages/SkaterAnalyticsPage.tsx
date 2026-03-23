@@ -720,12 +720,17 @@ export default function SkaterAnalyticsPage() {
                               ) : (
                                 <>
                                   <td className="px-3 py-2 text-sm text-on-surface">
-                                    <Link
-                                      to={`/competitions/${s.competition_id}`}
-                                      className="text-primary hover:underline font-medium"
-                                    >
-                                      {s.competition_name ?? `#${s.competition_id}`}
-                                    </Link>
+                                    <div className="flex items-center gap-1.5">
+                                      <span className="material-symbols-outlined text-sm leading-none invisible">
+                                        chevron_right
+                                      </span>
+                                      <Link
+                                        to={`/competitions/${s.competition_id}`}
+                                        className="text-primary hover:underline font-medium"
+                                      >
+                                        {s.competition_name ?? `#${s.competition_id}`}
+                                      </Link>
+                                    </div>
                                   </td>
                                   <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
                                     {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
