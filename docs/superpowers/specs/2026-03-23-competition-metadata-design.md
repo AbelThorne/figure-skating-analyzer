@@ -15,8 +15,8 @@ Automatically extract competition metadata (type, city, country, season) during 
 | `tf` | Trophée Fédéral | `/TF-/`, title contains "Trophée Fédéral" |
 | `tdf` | Tournoi de France | `/TDF_/`, `/TDF[_-]/`, title contains "Tournoi de France" |
 | `masters` | Masters | `/MASTERS/`, title contains "Masters" |
-| `nationales_autres` | Nationales Autres | Ouverture, TMNCA, and other CSNPA national events not in other categories |
-| `championnats_france` | Championnats de France | `/FFSG_ELITES/`, `/FRANCE_JUNIOR/`, `/FRANCE_NOVICE/`, `/france_minime/`, `/France_3_/`, `/cdf_adultes/`, title contains "Championnat" |
+| `nationales_autres` | Nationales Autres | `/Ouverture/`, `/ouverture/`, `/tmnca/i`, `/TMNCA/`, title contains "Ouverture" or "Nouveaux Champions"; catch-all for CSNPA-hosted national events not matching other national types |
+| `championnats_france` | Championnats de France | `/FFSG_ELITES/`, `/FRANCE_JUNIOR/`, `/FRANCE_NOVICE/`, `/france_minime/`, `/France_3_/`, `/cdf_adultes/`, `/JUNIORS_/`, title contains "Championnat" |
 | `france_clubs` | France Clubs | `/SFC_/`, `/Sel_Fr_Clubs/`, `/FC_/`, `/franceclubs_/`, title contains "France Club" |
 | `grand_prix` | Grand Prix | `/gpfra/`, `/gpf\d/`, title contains "Grand Prix" |
 | `championnats_europe` | Championnats d'Europe | `/ec\d{4}/`, title contains "European" |
@@ -52,17 +52,19 @@ Returns `{competition_type, city, country, season}`.
 
 ### Integration with Import
 
-At the end of `run_import`, after scraping, call `detect_metadata(comp.url, index_html)`. Fill empty fields only, set `metadata_confirmed=False`. The index HTML is already fetched during scraping — pass it through rather than re-fetching.
+Modify `FSManagerScraper.scrape()` to also return the index HTML string alongside the existing 4-tuple. Updated signature: `scrape() -> tuple[list[ScrapedEvent], list[ScrapedResult], list[ScrapedCategoryResult], ScrapedCompetitionInfo, str]`. Update `BaseScraper` accordingly.
+
+In `run_import`, after scraping, call `detect_metadata(comp.url, index_html)`. Fill empty fields only, set `metadata_confirmed=False`.
+
+### Re-import Behavior
+
+When `force=True` re-import runs, `detect_metadata` runs again but does NOT overwrite fields if `metadata_confirmed=True` (admin has already validated). If `metadata_confirmed=False`, fields are re-detected and overwritten.
 
 ## API Changes
 
 ### Modified: `GET /api/competitions/`
 
-New optional query params:
-- `season` — filter by season (e.g. `2025-2026`)
-- `type` — filter by competition_type code
-- `sort` — `date` (default), `city`, `country`
-- `order` — `desc` (default), `asc`
+No server-side filtering params. All filtering and sorting is done client-side (dataset is small — typically <200 competitions).
 
 ### Modified: `competition_to_dict`
 
@@ -70,11 +72,11 @@ Add `city`, `country`, `competition_type`, `metadata_confirmed` to response.
 
 ### New: `PATCH /api/competitions/{id}`
 
-Admin-only. Accepts partial update of `city`, `country`, `competition_type`, `season`. Automatically sets `metadata_confirmed=True` on save.
+Admin-only (same auth guard as existing admin routes). Accepts partial update of `city`, `country`, `competition_type`, `season`. Automatically sets `metadata_confirmed=True` on save.
 
 ### New: `POST /api/competitions/{id}/confirm-metadata`
 
-Admin-only. Sets `metadata_confirmed=True` without changing any fields (the "Valider" button).
+Admin-only. Sets `metadata_confirmed=True` without changing any fields (the "Valider" button). Separate from PATCH to keep the "Valider" action a single click without sending a payload.
 
 ## Frontend Changes
 
@@ -105,8 +107,12 @@ Add to `client.ts`:
 - Type dropdown, city input, country input, season input
 - "Enregistrer" saves + confirms, "Annuler" collapses
 
-Filtering and sorting are done client-side (dataset is small enough). Server-side params exist as fallback but frontend handles it.
+All filtering and sorting is client-side.
 
 ## Migration
 
-Alembic migration adding the 4 new columns. Existing competitions get `metadata_confirmed=False`, `country="France"`, others `NULL`. A one-time backfill can run `detect_metadata` on existing competitions during migration or as a management command.
+Since the project uses SQLite without Alembic, add columns directly via SQLAlchemy model changes. On startup, existing competitions get `metadata_confirmed=False`, `country=NULL`, others `NULL`.
+
+### Backfill
+
+A new admin endpoint `POST /api/competitions/backfill-metadata` re-fetches the index page for each competition where `metadata_confirmed=False` and runs `detect_metadata`. This is a one-time operation after deploying this feature and is triggered manually by the admin.
