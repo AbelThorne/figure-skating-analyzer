@@ -3,10 +3,10 @@ import { Link } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
   ComposedChart, Line, XAxis, YAxis, CartesianGrid, Tooltip,
-  Legend, ResponsiveContainer, ReferenceArea, ReferenceLine,
+  ResponsiveContainer, ReferenceArea, ReferenceLine,
   BarChart, Bar,
 } from "recharts";
-import { api, ProgressionRankingEntry, Skater, CategoryResult, BenchmarkData } from "../api/client";
+import { api, Skater } from "../api/client";
 
 // ─── Sparkline component ─────────────────────────────────────────────────────
 function Sparkline({ data }: { data: { value: number }[] }) {
@@ -151,6 +151,24 @@ export default function StatsPage() {
       }),
     enabled: !!benchmarkLevel && !!benchmarkAgeGroup && !!benchmarkGender,
   });
+
+  // Compute Y-axis domain that includes both skater data and benchmark range
+  const comparisonYDomain = useMemo((): [number, number] | [string, string] => {
+    const allValues: number[] = [];
+    for (const { results } of skaterResults) {
+      for (const r of results) {
+        if (r.combined_total != null) allValues.push(r.combined_total);
+      }
+    }
+    if (benchmark && benchmark.data_points >= 3 && benchmark.min != null && benchmark.max != null) {
+      allValues.push(benchmark.min, benchmark.max);
+    }
+    if (allValues.length === 0) return ["auto", "auto"];
+    const min = Math.min(...allValues);
+    const max = Math.max(...allValues);
+    const padding = (max - min) * 0.05 || 1;
+    return [Math.floor(min - padding), Math.ceil(max + padding)];
+  }, [skaterResults, benchmark]);
 
   // Build chart data: merge all skaters' results onto a common date axis
   const comparisonData = useMemo(() => {
@@ -392,6 +410,7 @@ export default function StatsPage() {
             Sélectionnez des patineurs pour comparer leur progression.
           </div>
         ) : (
+          <>
           <ResponsiveContainer width="100%" height={300}>
             <ComposedChart data={comparisonData} margin={{ top: 4, right: 8, left: -16, bottom: 4 }}>
               <CartesianGrid vertical={false} stroke="#e0e3e5" />
@@ -405,16 +424,31 @@ export default function StatsPage() {
                 tick={{ fontSize: 10, fontFamily: "monospace", fill: "#41484d" }}
                 axisLine={false}
                 tickLine={false}
-                domain={["auto", "auto"]}
+                domain={comparisonYDomain}
               />
               <Tooltip
-                contentStyle={{
-                  fontSize: 11, fontFamily: "Inter, sans-serif",
-                  borderRadius: 12, border: "none",
-                  boxShadow: "0 1px 4px rgba(0,0,0,0.12)",
+                content={({ active, payload, label }) => {
+                  if (!active || !payload?.length) return null;
+                  return (
+                    <div className="bg-white rounded-xl shadow-md px-3 py-2 text-xs" style={{ fontFamily: "Inter, sans-serif" }}>
+                      <p className="font-bold text-on-surface mb-1">{label}</p>
+                      {payload.map((entry: any) => (
+                        <p key={entry.dataKey} style={{ color: entry.color }}>
+                          {entry.name} : <span className="font-mono">{entry.value?.toFixed(2)}</span>
+                        </p>
+                      ))}
+                      {benchmark && benchmark.data_points >= 3 && (
+                        <div className="mt-1.5 pt-1.5 border-t border-outline-variant/30 text-on-surface-variant">
+                          <p>Benchmark ({benchmark.data_points} résultats)</p>
+                          <p className="font-mono">Médiane : {benchmark.median?.toFixed(2)}</p>
+                          <p className="font-mono">P25–P75 : {benchmark.p25?.toFixed(2)}–{benchmark.p75?.toFixed(2)}</p>
+                          <p className="font-mono">Min–Max : {benchmark.min?.toFixed(2)}–{benchmark.max?.toFixed(2)}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
                 }}
               />
-              <Legend wrapperStyle={{ fontSize: 11 }} />
 
               {/* Benchmark bands */}
               {benchmark && benchmark.data_points >= 3 && benchmark.min != null && benchmark.max != null && (
@@ -422,16 +456,14 @@ export default function StatsPage() {
                   <ReferenceArea
                     y1={benchmark.min} y2={benchmark.max}
                     fill="#2e6385" fillOpacity={0.04}
-                    label={{ value: "", position: "right" }}
                   />
                   <ReferenceArea
                     y1={benchmark.p25!} y2={benchmark.p75!}
-                    fill="#2e6385" fillOpacity={0.08}
+                    fill="#2e6385" fillOpacity={0.1}
                   />
                   <ReferenceLine
                     y={benchmark.median!}
-                    stroke="#2e6385" strokeDasharray="4 4" strokeOpacity={0.5}
-                    label={{ value: "Médiane", position: "right", fontSize: 9, fill: "#41484d" }}
+                    stroke="#2e6385" strokeDasharray="4 4" strokeOpacity={0.6}
                   />
                 </>
               )}
@@ -454,6 +486,35 @@ export default function StatsPage() {
               })}
             </ComposedChart>
           </ResponsiveContainer>
+          {/* Inline legend */}
+          <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mt-2 text-[10px] text-on-surface-variant">
+            {skaterResults.map(({ id, color }) => {
+              const skater = skaters.find((s: Skater) => s.id === id);
+              return (
+                <span key={id} className="flex items-center gap-1">
+                  <span className="inline-block w-3 h-0.5 rounded" style={{ backgroundColor: color }} />
+                  {skater ? `${skater.first_name} ${skater.last_name}` : `#${id}`}
+                </span>
+              );
+            })}
+            {benchmark && benchmark.data_points >= 3 && (
+              <>
+                <span className="flex items-center gap-1">
+                  <span className="inline-block w-3 h-2 rounded-sm" style={{ backgroundColor: "rgba(46,99,133,0.1)" }} />
+                  P25–P75
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="inline-block w-3 h-2 rounded-sm" style={{ backgroundColor: "rgba(46,99,133,0.04)" }} />
+                  Min–Max
+                </span>
+                <span className="flex items-center gap-1">
+                  <span className="inline-block w-3 h-0 border-t border-dashed" style={{ borderColor: "#2e6385" }} />
+                  Médiane
+                </span>
+              </>
+            )}
+          </div>
+          </>
         )}
       </div>
 
