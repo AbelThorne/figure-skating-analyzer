@@ -296,17 +296,27 @@ export default function SkaterAnalyticsPage() {
     });
   })();
 
-  // ── Derived: best TSS (prefer combined result; fall back to best segment) ──
+  // ── Derived: best TSS (max across category results + scores without a result) ──
   const bestTss = (() => {
-    const bestResult = (categoryResults ?? []).reduce<number | null>((best, r) => {
-      if (r.combined_total == null) return best;
-      return best == null || r.combined_total > best ? r.combined_total : best;
-    }, null);
-    if (bestResult != null) return bestResult;
-    return (scores ?? []).reduce<number | null>((best, s) => {
-      if (s.total_score == null) return best;
-      return best == null || s.total_score > best ? s.total_score : best;
-    }, null);
+    const catKeys = new Set<string>();
+    let best: number | null = null;
+
+    for (const r of categoryResults ?? []) {
+      if (r.combined_total == null) continue;
+      catKeys.add(`${r.competition_id}__${r.category ?? ""}`);
+      if (best == null || r.combined_total > best) best = r.combined_total;
+    }
+
+    // Also consider scores from competitions missing a category result
+    for (const s of scores ?? []) {
+      if (s.total_score == null) continue;
+      const key = `${s.competition_id}__${s.category ?? ""}`;
+      if (!catKeys.has(key)) {
+        if (best == null || s.total_score > best) best = s.total_score;
+      }
+    }
+
+    return best;
   })();
 
   // ── Derived: element KPIs ──────────────────────────────────────────────────
