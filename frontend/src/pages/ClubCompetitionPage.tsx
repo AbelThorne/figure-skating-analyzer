@@ -176,14 +176,14 @@ export default function ClubCompetitionPage() {
             </div>
 
             {/* Medals */}
-            <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+            <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex flex-col">
               <h2 className="font-headline font-bold text-on-surface text-sm mb-4">
                 Podiums du club
               </h2>
               {analysis.medals.length === 0 ? (
                 <p className="text-xs text-on-surface-variant">Aucun podium</p>
               ) : (
-                <div className="flex flex-col gap-2">
+                <div className="flex flex-col gap-2 overflow-y-auto max-h-64">
                   {analysis.medals.map((m, i) => {
                     const bg = m.rank === 1 ? "bg-[#fff8e1]" : m.rank === 2 ? "bg-[#f5f5f5]" : "bg-[#fdf0ef]";
                     const icon = m.rank === 1 ? "🥇" : m.rank === 2 ? "🥈" : "🥉";
