@@ -238,14 +238,13 @@ export default function HomePage() {
               </option>
             ))}
           </select>
-          <a
-            href={`/api/reports/club/pdf?season=${season}`}
-            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors"
-            download
+          <button
+            onClick={() => window.open(`/api/reports/club/pdf?season=${season}`, "_blank")}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
             Rapport de saison
-          </a>
+          </button>
         </div>
       </div>
 

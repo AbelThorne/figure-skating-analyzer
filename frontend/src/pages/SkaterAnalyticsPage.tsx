@@ -491,14 +491,13 @@ export default function SkaterAnalyticsPage() {
               </select>
             )}
             {selectedSeason && (
-              <a
-                href={`/api/reports/skater/${skaterId}/pdf?season=${selectedSeason}`}
-                className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline hover:bg-white/25 transition-colors"
-                download
+              <button
+                onClick={() => window.open(`/api/reports/skater/${skaterId}/pdf?season=${selectedSeason}`, "_blank")}
+                className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline hover:bg-white/25 transition-colors cursor-pointer"
               >
                 <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
                 Exporter le bilan
-              </a>
+              </button>
             )}
             <HeroStatBox
               label="Meilleur score"
