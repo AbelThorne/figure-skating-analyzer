@@ -269,7 +269,7 @@ export default function CompetitionsPage() {
               <option value="country-asc">Pays A→Z</option>
             </select>
           </div>
-          <label className="ml-auto flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer sm:ml-auto">
             <input
               type="checkbox"
               checked={showUnconfirmedOnly}
@@ -319,7 +319,7 @@ export default function CompetitionsPage() {
 
           return (
             <div key={c.id}>
-              <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex items-center justify-between">
+              <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 {/* Left: name + meta */}
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
@@ -360,7 +360,7 @@ export default function CompetitionsPage() {
 
                 {/* Right: action buttons (admin only) */}
                 {isAdmin && (
-                  <div className="flex gap-2 ml-4 shrink-0">
+                  <div className="flex flex-wrap gap-2 shrink-0">
                     {!c.metadata_confirmed && (
                       <button
                         onClick={() => confirmMutation.mutate(c.id)}

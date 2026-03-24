@@ -41,7 +41,7 @@ export default function SkaterBrowserPage() {
       </div>
 
       {/* Controls row */}
-      <div className="flex items-center gap-3 flex-wrap">
+      <div className="flex flex-col sm:flex-row sm:items-center gap-3">
         {/* Search input */}
         <div className="relative">
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
@@ -52,7 +52,7 @@ export default function SkaterBrowserPage() {
             placeholder="Rechercher un patineur…"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="bg-surface-container-high rounded-full py-2 pl-10 pr-4 text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary w-64"
+            className="bg-surface-container-high rounded-full py-2 pl-10 pr-4 text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary w-full sm:w-64"
           />
         </div>
 
@@ -70,7 +70,7 @@ export default function SkaterBrowserPage() {
       </div>
 
       {/* Skater table */}
-      <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
+      <div className="bg-surface-container-lowest rounded-xl shadow-sm overflow-x-auto">
         {isLoading ? (
           <div className="px-6 py-10 text-sm font-body text-on-surface-variant text-center">
             Chargement…
