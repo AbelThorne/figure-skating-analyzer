@@ -11,6 +11,7 @@ import CompetitionsPage from "./pages/CompetitionsPage";
 import SkaterBrowserPage from "./pages/SkaterBrowserPage";
 import SkaterAnalyticsPage from "./pages/SkaterAnalyticsPage";
 import StatsPage from "./pages/StatsPage";
+import ClubCompetitionPage from "./pages/ClubCompetitionPage";
 import LoginPage from "./pages/LoginPage";
 import SetupPage from "./pages/SetupPage";
 import SettingsPage from "./pages/SettingsPage";
@@ -19,7 +20,7 @@ const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
   { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
   { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
-  { to: "/stats", label: "CLUB", icon: "bar_chart", end: false },
+  { to: "/club", label: "CLUB", icon: "bar_chart", end: false },
 ];
 
 function getPageTitle(pathname: string): string {
@@ -28,6 +29,7 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/competitions/")) return "Détail compétition";
   if (pathname === "/patineurs") return "Patineurs";
   if (pathname.startsWith("/patineurs/")) return "Analyse patineur";
+  if (pathname.startsWith("/club")) return "Club";
   if (pathname === "/stats") return "Club";
   if (pathname === "/settings") return "Paramètres";
   return "";
@@ -154,7 +156,10 @@ function AuthenticatedLayout() {
             <Route path="/competitions" element={<CompetitionsPage />} />
             <Route path="/patineurs" element={<SkaterBrowserPage />} />
             <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
-            <Route path="/stats" element={<StatsPage />} />
+            <Route path="/club/saison" element={<StatsPage />} />
+            <Route path="/club/competition" element={<ClubCompetitionPage />} />
+            <Route path="/club" element={<Navigate to="/club/saison" replace />} />
+            <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
             <Route
               path="/settings"
               element={

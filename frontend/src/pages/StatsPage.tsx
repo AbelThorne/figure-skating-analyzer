@@ -7,6 +7,7 @@ import {
   BarChart, Bar,
 } from "recharts";
 import { api, Skater } from "../api/client";
+import ClubTabBar from "../components/ClubTabBar";
 
 // ─── Sparkline component ─────────────────────────────────────────────────────
 function Sparkline({ data }: { data: { value: number }[] }) {
@@ -254,6 +255,7 @@ export default function StatsPage() {
 
   return (
     <div className="p-6 space-y-6 font-body">
+      <ClubTabBar />
       {/* Page header */}
       <div>
         <h1 className="font-headline text-2xl font-bold text-on-surface">Vue club</h1>
