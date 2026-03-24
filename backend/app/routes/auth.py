@@ -34,6 +34,8 @@ def _user_dict(user: User) -> dict:
         "email": user.email,
         "display_name": user.display_name,
         "role": user.role,
+        "must_change_password": user.must_change_password,
+        "has_password": user.password_hash is not None,
     }
 
 
@@ -249,8 +251,69 @@ async def google_login(data: dict, session: AsyncSession) -> Response:
         raise
 
 
+@post("/change-password")
+async def change_password(data: dict, request: Request, session: AsyncSession) -> Response:
+    # Manually validate JWT since /api/auth/* is public
+    auth_header = request.headers.get("authorization", "")
+    if not auth_header.startswith("Bearer "):
+        raise NotAuthorizedException("Missing or invalid Authorization header")
+
+    token = auth_header[7:]
+    try:
+        payload = decode_token(token)
+    except Exception:
+        raise NotAuthorizedException("Invalid or expired token")
+
+    if payload.get("type") != "access":
+        raise NotAuthorizedException("Invalid token type")
+
+    user_id = payload["sub"]
+
+    result = await session.execute(select(User).where(User.id == user_id))
+    user = result.scalar_one_or_none()
+    if not user:
+        raise NotAuthorizedException("User not found")
+
+    if not user.password_hash:
+        return Response(
+            content={"detail": "OAuth-only account cannot change password"},
+            status_code=400,
+        )
+
+    current_password = data.get("current_password", "")
+    new_password = data.get("new_password", "")
+
+    if not verify_password(current_password, user.password_hash):
+        return Response(
+            content={"detail": "Current password is incorrect"},
+            status_code=401,
+        )
+
+    if len(new_password) < 8:
+        return Response(
+            content={"detail": "Password must be at least 8 characters"},
+            status_code=400,
+        )
+
+    user.password_hash = hash_password(new_password)
+    user.must_change_password = False
+    user.token_version += 1
+    await session.commit()
+    await session.refresh(user)
+
+    access = create_access_token(user_id=user.id, role=user.role)
+    refresh = create_refresh_token(user_id=user.id, token_version=user.token_version)
+
+    response = Response(
+        content={"access_token": access, "user": _user_dict(user)},
+        status_code=200,
+    )
+    _set_refresh_cookie(response, refresh)
+    return response
+
+
 router = Router(
     path="/api/auth",
-    route_handlers=[login, refresh, logout, setup, google_login],
+    route_handlers=[login, refresh, logout, setup, google_login, change_password],
     dependencies={"session": Provide(get_session)},
 )
