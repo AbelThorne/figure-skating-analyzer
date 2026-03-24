@@ -118,3 +118,29 @@ async def test_change_password_unauthenticated(client: AsyncClient):
         json={"current_password": "old", "new_password": "newpass1234"},
     )
     assert resp.status_code == 401
+
+
+@pytest.mark.asyncio
+async def test_create_user_with_must_change_password(client: AsyncClient, admin_token: str):
+    resp = await client.post(
+        "/api/users/",
+        json={
+            "email": "newuser@test.com",
+            "display_name": "New User",
+            "role": "reader",
+            "password": "temppass123",
+            "must_change_password": True,
+        },
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 201
+    data = resp.json()
+    assert data["email"] == "newuser@test.com"
+
+    # Login as new user — must_change_password should be true
+    login_resp = await client.post(
+        "/api/auth/login",
+        json={"email": "newuser@test.com", "password": "temppass123"},
+    )
+    assert login_resp.status_code == 200
+    assert login_resp.json()["user"]["must_change_password"] is True

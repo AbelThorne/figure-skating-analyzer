@@ -44,11 +44,15 @@ async def create_user(data: dict, request: Request, session: AsyncSession) -> Re
     if not email or not display_name:
         return Response(content={"detail": "email and display_name required"}, status_code=400)
 
+    # must_change_password only applies if a password is provided
+    must_change = data.get("must_change_password", False) and password
+
     user = User(
         email=email,
         display_name=display_name,
         role=role,
         password_hash=hash_password(password) if password else None,
+        must_change_password=bool(must_change),
     )
     session.add(user)
     await session.commit()
