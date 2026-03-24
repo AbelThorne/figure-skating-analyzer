@@ -68,6 +68,40 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return res.json();
 }
 
+export async function downloadPdf(path: string, filename?: string): Promise<void> {
+  const headers: Record<string, string> = {};
+  if (_accessToken) {
+    headers["Authorization"] = `Bearer ${_accessToken}`;
+  }
+
+  let res = await fetch(`${BASE}${path}`, { headers, credentials: "include" });
+
+  if (res.status === 401 && _accessToken) {
+    if (!_refreshPromise) _refreshPromise = _tryRefresh();
+    const newToken = await _refreshPromise;
+    _refreshPromise = null;
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(`${BASE}${path}`, { headers, credentials: "include" });
+    }
+  }
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`${res.status}: ${text}`);
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename || res.headers.get("content-disposition")?.match(/filename="?(.+?)"?$/)?.[1] || "rapport.pdf";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 // --- Types ---
 
 export interface Competition {
