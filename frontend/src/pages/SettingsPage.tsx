@@ -165,7 +165,7 @@ export default function SettingsPage() {
         <h2 className="font-headline font-bold text-on-surface text-lg mb-4">
           Paramètres du club
         </h2>
-        <div className="grid grid-cols-2 gap-4 max-w-lg">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
           <div>
             <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
               Nom du club
@@ -477,7 +477,7 @@ export default function SettingsPage() {
                   key={lot.name}
                   className="p-4 bg-surface-container-low rounded-xl"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                     <div>
                       <span className="font-bold text-on-surface text-sm">
                         {lot.name}
@@ -487,7 +487,7 @@ export default function SettingsPage() {
                         {lot.season && ` · ${lot.season}`}
                       </span>
                     </div>
-                    <div className="flex gap-2">
+                    <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => bulkImportMutation.mutate({ lot, enrich: false })}
                         disabled={hasActiveJobs}

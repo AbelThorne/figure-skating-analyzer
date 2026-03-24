@@ -72,8 +72,8 @@ export default function ErrorDetailModal({
               <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
                 Erreurs d'importation ({importErrors.length})
               </h3>
-              <div className="bg-error-container/20 rounded-xl overflow-hidden">
-                <table className="w-full text-xs">
+              <div className="bg-error-container/20 rounded-xl overflow-x-auto">
+                <table className="w-full min-w-[400px] text-xs">
                   <thead>
                     <tr className="text-left text-on-surface-variant">
                       <th className="px-4 py-2 font-semibold">Patineur</th>
@@ -106,8 +106,8 @@ export default function ErrorDetailModal({
               <h3 className="text-xs font-semibold uppercase tracking-wider text-on-surface-variant mb-2">
                 Erreurs d'enrichissement ({enrichErrors.length})
               </h3>
-              <div className="bg-error-container/20 rounded-xl overflow-hidden">
-                <table className="w-full text-xs">
+              <div className="bg-error-container/20 rounded-xl overflow-x-auto">
+                <table className="w-full min-w-[400px] text-xs">
                   <thead>
                     <tr className="text-left text-on-surface-variant">
                       <th className="px-4 py-2 font-semibold">Fichier</th>

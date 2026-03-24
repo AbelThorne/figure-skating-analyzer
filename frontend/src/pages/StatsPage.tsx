@@ -388,7 +388,7 @@ export default function StatsPage() {
 
         {/* Benchmark overrides */}
         {selectedSkaterIds.length > 0 && (
-          <div className="flex items-center gap-3 mb-4 flex-wrap">
+          <div className="flex flex-wrap items-center gap-3 mb-4">
             <span className="text-xs text-on-surface-variant">Benchmark :</span>
             <select
               className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"

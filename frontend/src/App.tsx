@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
@@ -36,6 +37,7 @@ function AuthenticatedLayout() {
   const location = useLocation();
   const pageTitle = getPageTitle(location.pathname);
   const { user, logout } = useAuth();
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const { data: config, dataUpdatedAt } = useQuery({
     queryKey: ["config"],
@@ -44,11 +46,23 @@ function AuthenticatedLayout() {
   });
   const logoSrc = config?.logo_url ? `${config.logo_url}?v=${dataUpdatedAt}` : "";
 
+  function closeSidebar() {
+    setSidebarOpen(false);
+  }
+
   return (
     <JobProvider>
     <div className="flex min-h-screen">
+      {/* Mobile overlay backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-scrim/50 z-30 lg:hidden"
+          onClick={closeSidebar}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col">
+      <aside className={`w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col z-40 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         {/* Club header */}
         <div className="px-6 py-5 flex items-center gap-3">
           {logoSrc ? (
@@ -73,6 +87,7 @@ function AuthenticatedLayout() {
               key={to}
               to={to}
               end={end}
+              onClick={closeSidebar}
               className={({ isActive }) =>
                 isActive
                   ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
@@ -90,6 +105,7 @@ function AuthenticatedLayout() {
           {user?.role === "admin" && (
             <NavLink
               to="/settings"
+              onClick={closeSidebar}
               className={({ isActive }) =>
                 isActive
                   ? "bg-white text-primary shadow-sm rounded-xl px-4 py-2.5 font-bold flex items-center gap-3"
@@ -117,14 +133,21 @@ function AuthenticatedLayout() {
       </aside>
 
       {/* Main content */}
-      <div className="ml-64 min-h-screen bg-surface flex-1">
+      <div className="lg:ml-64 min-h-screen bg-surface flex-1 min-w-0">
         {/* Top bar */}
-        <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex items-center px-8 py-4">
-          <h1 className="font-headline font-bold text-on-surface text-xl">{pageTitle}</h1>
+        <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex items-center gap-3 px-4 lg:px-8 py-4">
+          <button
+            className="lg:hidden text-on-surface-variant hover:text-on-surface transition-colors shrink-0"
+            onClick={() => setSidebarOpen(true)}
+            aria-label="Ouvrir le menu"
+          >
+            <span className="material-symbols-outlined text-2xl">menu</span>
+          </button>
+          <h1 className="font-headline font-bold text-on-surface text-xl truncate">{pageTitle}</h1>
         </header>
 
         {/* Page content */}
-        <main className="p-8 max-w-7xl mx-auto">
+        <main className="p-4 lg:p-8 max-w-7xl mx-auto">
           <Routes>
             <Route path="/" element={<HomePage />} />
             <Route path="/competitions/:id" element={<CompetitionPage />} />

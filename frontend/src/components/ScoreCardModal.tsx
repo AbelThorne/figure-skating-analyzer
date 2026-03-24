@@ -136,13 +136,13 @@ export default function ScoreCardModal({ score, skaterName, onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant rounded-t-2xl px-6 py-5 flex items-start justify-between gap-4 shrink-0">
-          <div>
-            <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-0.5">
+        <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant rounded-t-2xl px-4 sm:px-6 py-5 flex items-start justify-between gap-3 shrink-0">
+          <div className="min-w-0 flex-1">
+            <p className="text-white/70 text-xs font-bold uppercase tracking-widest mb-0.5 truncate">
               {score.competition_name ?? "—"}
               {score.competition_date ? ` · ${score.competition_date.slice(0, 10)}` : ""}
             </p>
-            <h2 className="text-xl font-extrabold font-headline text-white leading-tight">
+            <h2 className="text-lg sm:text-xl font-extrabold font-headline text-white leading-tight">
               {skaterName}
             </h2>
             <p className="text-white/80 text-sm mt-0.5">
@@ -151,8 +151,8 @@ export default function ScoreCardModal({ score, skaterName, onClose }: Props) {
               {score.rank != null ? ` · Rang ${score.rank}` : ""}
             </p>
           </div>
-          {/* Score summary */}
-          <div className="flex gap-3 shrink-0">
+          {/* Score summary — hidden on small screens (visible in breakdown table below) */}
+          <div className="hidden sm:flex gap-3 shrink-0">
             {[
               { label: "TES", value: fmt(score.technical_score) },
               { label: "PCS", value: fmt(score.component_score) },
@@ -166,7 +166,7 @@ export default function ScoreCardModal({ score, skaterName, onClose }: Props) {
           </div>
           <button
             onClick={onClose}
-            className="shrink-0 text-white/70 hover:text-white transition-colors ml-2 mt-0.5"
+            className="shrink-0 text-white/70 hover:text-white transition-colors mt-0.5"
             aria-label="Fermer"
           >
             <span className="material-symbols-outlined text-2xl">close</span>

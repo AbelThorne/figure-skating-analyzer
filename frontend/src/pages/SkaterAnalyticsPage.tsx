@@ -477,7 +477,7 @@ export default function SkaterAnalyticsPage() {
               </p>
             </div>
           </div>
-          <div className="flex gap-3 shrink-0 items-center">
+          <div className="flex flex-wrap gap-3 shrink-0 items-center">
             {seasons && seasons.length > 0 && (
               <select
                 value={selectedSeason ?? ""}
@@ -508,7 +508,7 @@ export default function SkaterAnalyticsPage() {
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Score progression chart */}
           <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6">
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex flex-wrap items-center justify-between gap-2 mb-4">
               <h2 className="text-base font-extrabold font-headline text-on-surface">
                 Analyse longitudinale des scores
               </h2>
