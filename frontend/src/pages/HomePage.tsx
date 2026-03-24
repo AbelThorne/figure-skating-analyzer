@@ -226,17 +226,27 @@ export default function HomePage() {
             Vue d'ensemble de la saison {season}
           </p>
         </div>
-        <select
-          value={season}
-          onChange={(e) => setSeason(e.target.value)}
-          className="bg-transparent border-0 text-sm font-medium text-on-surface-variant focus:ring-0 focus:outline-none cursor-pointer"
-        >
-          {SEASONS.map((s) => (
-            <option key={s} value={s}>
-              {s}
-            </option>
-          ))}
-        </select>
+        <div className="flex items-center gap-3">
+          <select
+            value={season}
+            onChange={(e) => setSeason(e.target.value)}
+            className="bg-transparent border-0 text-sm font-medium text-on-surface-variant focus:ring-0 focus:outline-none cursor-pointer"
+          >
+            {SEASONS.map((s) => (
+              <option key={s} value={s}>
+                {s}
+              </option>
+            ))}
+          </select>
+          <a
+            href={`/api/reports/club/pdf?season=${season}`}
+            className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors"
+            download
+          >
+            <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+            Rapport de saison
+          </a>
+        </div>
       </div>
 
       {isLoading && <LoadingSkeleton />}
