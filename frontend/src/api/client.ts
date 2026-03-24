@@ -367,6 +367,80 @@ export interface ElementMasteryData {
   steps: LevelMastery[];
 }
 
+// --- Competition Club Analysis ---
+
+export interface ClubChallengeEntry {
+  club: string;
+  total_points: number;
+  podium_points: number;
+  rank: number;
+  is_my_club: boolean;
+}
+
+export interface CategoryBreakdownClub {
+  club: string;
+  points: number;
+  podium_points: number;
+}
+
+export interface CategoryBreakdownSkater {
+  skater_name: string;
+  rank: number;
+  base_points: number;
+  podium_points: number;
+  total_points: number;
+}
+
+export interface CategoryBreakdown {
+  category: string;
+  clubs: CategoryBreakdownClub[];
+  club_skaters: CategoryBreakdownSkater[];
+}
+
+export interface MedalEntry {
+  skater_id: number;
+  skater_name: string;
+  category: string;
+  rank: 1 | 2 | 3;
+  combined_total: number;
+}
+
+export interface CategoryCoverageEntry {
+  category: string;
+  club_skaters: number;
+  total_skaters: number;
+}
+
+export interface ClubSkaterResult {
+  skater_id: number;
+  skater_name: string;
+  category: string;
+  overall_rank: number | null;
+  total_skaters: number;
+  combined_total: number | null;
+  is_pb: boolean;
+  medal: 1 | 2 | 3 | null;
+}
+
+export interface CompetitionClubAnalysis {
+  competition: { id: number; name: string; date: string; season: string };
+  club_name: string;
+  kpis: {
+    skaters_entered: number;
+    total_medals: number;
+    personal_bests: number;
+    categories_entered: number;
+    categories_total: number;
+  };
+  club_challenge: {
+    ranking: ClubChallengeEntry[];
+    category_breakdown: CategoryBreakdown[];
+  };
+  medals: MedalEntry[];
+  categories: CategoryCoverageEntry[];
+  results: ClubSkaterResult[];
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -453,7 +527,13 @@ export const api = {
   },
 
   competitions: {
-    list: () => request<Competition[]>("/competitions/"),
+    list: (params?: { club?: string; season?: string }) => {
+      const qs = new URLSearchParams();
+      if (params?.club) qs.set("club", params.club);
+      if (params?.season) qs.set("season", params.season);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<Competition[]>(`/competitions/${query}`);
+    },
     seasons: () => request<string[]>("/competitions/seasons"),
     get: (id: number) => request<Competition>(`/competitions/${id}`),
     create: (data: CreateCompetitionPayload) =>
@@ -608,6 +688,13 @@ export const api = {
       if (params?.gender) qs.set("gender", params.gender);
       const query = qs.toString() ? `?${qs}` : "";
       return request<ElementMasteryData>(`/stats/element-mastery${query}`);
+    },
+    competitionClubAnalysis: (params: { competition_id: number; club?: string }) => {
+      const qs = new URLSearchParams();
+      qs.set("competition_id", String(params.competition_id));
+      if (params.club) qs.set("club", params.club);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<CompetitionClubAnalysis>(`/stats/competition-club-analysis${query}`);
     },
   },
 };
