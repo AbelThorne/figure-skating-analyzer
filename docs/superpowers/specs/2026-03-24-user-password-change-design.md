@@ -11,6 +11,9 @@ Add the ability for any authenticated user to change their own password, and for
 Add field to `backend/app/models/user.py`:
 - `must_change_password: bool = False` — column default `False`
 
+Add migration entry in `backend/app/database.py` `_MIGRATIONS`:
+- `("users", "must_change_password", "BOOLEAN DEFAULT 0")`
+
 ### New Endpoint: `POST /api/auth/change-password`
 
 Accessible to any authenticated user (no admin requirement).
@@ -44,7 +47,8 @@ Accessible to any authenticated user (no admin requirement).
     "email": "...",
     "display_name": "...",
     "role": "admin",
-    "must_change_password": true
+    "must_change_password": true,
+    "has_password": true
   }
 }
 ```
@@ -65,6 +69,7 @@ export interface AuthUser {
   display_name: string;
   role: "admin" | "reader";
   must_change_password: boolean;
+  has_password: boolean;
 }
 ```
 
@@ -79,33 +84,34 @@ New page `frontend/src/pages/ProfilePage.tsx`, accessible to all authenticated u
 
 **Content:**
 - Heading: "Mon compte"
-- Form with three fields: Mot de passe actuel, Nouveau mot de passe, Confirmer le nouveau mot de passe
+- If user is OAuth-only (no password_hash): show message "Vous utilisez Google pour vous connecter. La modification du mot de passe n'est pas disponible." and no form.
+- Otherwise: form with three fields — Mot de passe actuel, Nouveau mot de passe, Confirmer le nouveau mot de passe
 - Submit button: "Changer le mot de passe"
 - Client-side validation: new password fields must match, min 8 characters
-- On success: toast/message "Mot de passe modifie avec succes"
+- On success: message "Mot de passe modifie avec succes", call `setAccessToken()` with the returned token and update user in AuthContext
 - On error (wrong current password): inline error message
 
 ### Navigation
 
-In the sidebar (`App.tsx`), the user name/email at the bottom becomes a link to `/profil`. No new entry in the main nav list.
+In the sidebar (`App.tsx`), the user name/email at the bottom becomes a link to `/profil`. No new entry in the main nav list. Add `<Route path="/profil" element={<ProfilePage />} />` to the Routes in `AuthenticatedLayout`. Add `/profil` → "Mon compte" to `getPageTitle()`.
 
 ### Forced Password Change Modal
 
-**Trigger:** After login (in `AuthContext` or `AuthenticatedLayout`), if `user.must_change_password === true`, show a modal.
+**Trigger:** In `AuthenticatedLayout`, if `user.must_change_password === true` and not dismissed this session, show a modal.
 
-**Modal content:** Same form as the profile page (current password, new password, confirm).
+**Modal content:** Same form as the profile page (current password, new password, confirm). If OAuth-only user, show info message and close button only.
 
 **Behavior:**
 - Dismissable — user can close the modal without changing
-- If dismissed, a warning badge (orange dot or icon) appears next to the user name in the sidebar as a persistent reminder
-- The badge disappears once the password is changed (either via modal or profile page)
-- The modal does not reappear after dismissal within the same session
+- Dismissal state stored in `sessionStorage` (key: `password_change_dismissed`) — modal won't reappear in the same session
+- If dismissed, an orange warning dot (`bg-orange-500 w-2 h-2 rounded-full`) appears next to the user name in the sidebar
+- The dot disappears once the password is changed (either via modal or profile page) — i.e. when `user.must_change_password` becomes `false`
 
 ### Admin: User Creation Checkbox
 
 In `SettingsPage.tsx`, in the "create user" form:
 - Add a checkbox "Forcer le changement au prochain login" below the password field
-- Only visible when the password field is not empty
+- Reactively visible only when the password field has a value
 - Sends `must_change_password: true` in the creation payload
 
 ## UI Text (French)
@@ -130,6 +136,7 @@ In `SettingsPage.tsx`, in the "create user" form:
 | Action | File |
 |--------|------|
 | Modify | `backend/app/models/user.py` |
+| Modify | `backend/app/database.py` |
 | Modify | `backend/app/routes/auth.py` |
 | Modify | `backend/app/routes/users.py` |
 | Create | `backend/tests/test_change_password.py` |
