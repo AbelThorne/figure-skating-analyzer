@@ -61,6 +61,7 @@ export default function SettingsPage() {
     display_name: "",
     role: "reader",
     password: "",
+    must_change_password: false,
   });
 
   const createUser = useMutation({
@@ -68,7 +69,7 @@ export default function SettingsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["users"] });
       setShowAddUser(false);
-      setNewUser({ email: "", display_name: "", role: "reader", password: "" });
+      setNewUser({ email: "", display_name: "", role: "reader", password: "", must_change_password: false });
     },
   });
 
@@ -338,6 +339,19 @@ export default function SettingsPage() {
               }
               className={inputCls}
             />
+            {newUser.password && (
+              <label className="flex items-center gap-2 text-xs text-on-surface-variant">
+                <input
+                  type="checkbox"
+                  checked={newUser.must_change_password}
+                  onChange={(e) =>
+                    setNewUser((u) => ({ ...u, must_change_password: e.target.checked }))
+                  }
+                  className="rounded"
+                />
+                Forcer le changement au prochain login
+              </label>
+            )}
             <div className="flex gap-2">
               <button
                 onClick={() => createUser.mutate()}
