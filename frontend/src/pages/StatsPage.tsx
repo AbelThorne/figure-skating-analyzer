@@ -362,7 +362,7 @@ export default function StatsPage() {
                   >
                     <td className="px-3 py-2 text-sm">
                       <Link
-                        to={`/patineurs/${entry.skater_id}`}
+                        to={`/patineurs/${entry.skater_id}/analyse`}
                         className="text-primary hover:underline font-medium"
                       >
                         {entry.skater_name}
