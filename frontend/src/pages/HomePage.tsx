@@ -239,7 +239,7 @@ export default function HomePage() {
             ))}
           </select>
           <button
-            onClick={() => downloadPdf(`/reports/club/pdf?season=${season}`)}
+            onClick={() => downloadPdf(`/reports/club/pdf?season=${season}`).catch((e) => alert(`Erreur : ${e.message}`))}
             className="flex items-center gap-1.5 px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors cursor-pointer"
           >
             <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
