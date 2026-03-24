@@ -5,6 +5,7 @@ import { api } from "./api/client";
 import { useAuth } from "./auth/AuthContext";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { JobProvider } from "./contexts/JobContext";
+import ForcePasswordModal from "./components/ForcePasswordModal";
 import HomePage from "./pages/HomePage";
 import CompetitionPage from "./pages/CompetitionPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
@@ -42,6 +43,17 @@ function AuthenticatedLayout() {
   const pageTitle = getPageTitle(location.pathname);
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [passwordModalDismissed, setPasswordModalDismissed] = useState(
+    () => sessionStorage.getItem("password_change_dismissed") === "true"
+  );
+
+  const showPasswordModal =
+    user?.must_change_password === true && !passwordModalDismissed;
+
+  function dismissPasswordModal() {
+    sessionStorage.setItem("password_change_dismissed", "true");
+    setPasswordModalDismissed(true);
+  }
 
   const { data: config, dataUpdatedAt } = useQuery({
     queryKey: ["config"],
@@ -129,6 +141,9 @@ function AuthenticatedLayout() {
             >
               {user?.display_name || user?.email}
             </Link>
+            {user?.must_change_password && (
+              <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" title="Changement de mot de passe requis" />
+            )}
             <button
               onClick={logout}
               className="text-on-surface-variant hover:text-error transition-colors shrink-0"
@@ -179,6 +194,9 @@ function AuthenticatedLayout() {
         </main>
       </div>
     </div>
+      {showPasswordModal && (
+        <ForcePasswordModal onClose={dismissPasswordModal} />
+      )}
     </JobProvider>
   );
 }
