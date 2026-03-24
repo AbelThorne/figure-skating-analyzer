@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Routes, Route, NavLink, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, NavLink, Link, useLocation, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
 import { useAuth } from "./auth/AuthContext";
@@ -15,6 +15,7 @@ import ClubCompetitionPage from "./pages/ClubCompetitionPage";
 import LoginPage from "./pages/LoginPage";
 import SetupPage from "./pages/SetupPage";
 import SettingsPage from "./pages/SettingsPage";
+import ProfilePage from "./pages/ProfilePage";
 
 const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
@@ -32,6 +33,7 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/club")) return "Club";
   if (pathname === "/stats") return "Club";
   if (pathname === "/settings") return "Paramètres";
+  if (pathname === "/profil") return "Mon compte";
   return "";
 }
 
@@ -120,9 +122,13 @@ function AuthenticatedLayout() {
           )}
           <div className="flex items-center gap-2 px-4 py-2">
             <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
-            <span className="text-xs text-on-surface-variant truncate flex-1">
+            <Link
+              to="/profil"
+              onClick={closeSidebar}
+              className="text-xs text-on-surface-variant hover:text-on-surface truncate flex-1 transition-colors"
+            >
               {user?.display_name || user?.email}
-            </span>
+            </Link>
             <button
               onClick={logout}
               className="text-on-surface-variant hover:text-error transition-colors shrink-0"
@@ -168,6 +174,7 @@ function AuthenticatedLayout() {
                 </ProtectedRoute>
               }
             />
+            <Route path="/profil" element={<ProfilePage />} />
           </Routes>
         </main>
       </div>
