@@ -30,7 +30,7 @@ export default function CompetitionsPage() {
 
   const { data: competitions, isLoading, error } = useQuery({
     queryKey: ["competitions"],
-    queryFn: api.competitions.list,
+    queryFn: () => api.competitions.list(),
   });
 
   const [showForm, setShowForm] = useState(false);
