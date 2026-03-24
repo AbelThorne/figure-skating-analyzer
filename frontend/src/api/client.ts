@@ -274,6 +274,8 @@ export interface AuthUser {
   email: string;
   display_name: string;
   role: "admin" | "reader";
+  must_change_password: boolean;
+  has_password: boolean;
 }
 
 export interface LoginResponse {
@@ -491,6 +493,11 @@ export const api = {
       request<LoginResponse>("/auth/setup", {
         method: "POST",
         body: JSON.stringify(data),
+      }),
+    changePassword: (currentPassword: string, newPassword: string) =>
+      request<LoginResponse>("/auth/change-password", {
+        method: "POST",
+        body: JSON.stringify({ current_password: currentPassword, new_password: newPassword }),
       }),
   },
 
