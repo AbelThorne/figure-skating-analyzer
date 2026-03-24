@@ -84,7 +84,7 @@ export default function StatsPage() {
     });
   }, [allRanking, selectedLevel, selectedAgeGroup, selectedGender]);
 
-  // ── Sorted ranking ─────────────────────────────────────────────────────────
+  // ── Sorted ranking (deduplicated per skater — keep best-ranked entry) ─────
   const sortedRanking = useMemo(() => {
     const sorted = [...ranking].sort((a, b) => {
       let cmp = 0;
@@ -93,7 +93,12 @@ export default function StatsPage() {
       if (cmp === 0) cmp = (b.last_tss ?? 0) - (a.last_tss ?? 0); // tie-break
       return sortAsc ? cmp : -cmp;
     });
-    return sorted;
+    const seen = new Set<number>();
+    return sorted.filter((entry) => {
+      if (seen.has(entry.skater_id)) return false;
+      seen.add(entry.skater_id);
+      return true;
+    });
   }, [ranking, sortKey, sortAsc]);
 
   function toggleSort(key: SortKey) {
