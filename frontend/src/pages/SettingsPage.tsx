@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import yaml from "js-yaml";
-import { api, type UserRecord } from "../api/client";
+import { api, type UserRecord, type ImportResult } from "../api/client";
 import { useJobs, type Lot } from "../contexts/JobContext";
 
 export default function SettingsPage() {
@@ -471,6 +471,11 @@ export default function SettingsPage() {
               const hasActiveJobs = jobs.some((j) => j.status === "queued" || j.status === "running");
               const completedJobs = jobs.filter((j) => j.status === "completed" || j.status === "failed");
               const failedJobs = jobs.filter((j) => j.status === "failed");
+              const partialJobs = jobs.filter((j) => {
+                if (j.status !== "completed" || !j.result) return false;
+                const r = j.result as ImportResult;
+                return r.errors && r.errors.length > 0;
+              });
 
               return (
                 <div
@@ -524,10 +529,59 @@ export default function SettingsPage() {
                           {hasActiveJobs
                             ? `${completedJobs.length}/${jobs.length} tâches terminées`
                             : failedJobs.length > 0
-                              ? `${completedJobs.length - failedJobs.length}/${jobs.length} réussies · ${failedJobs.length} erreur(s)`
-                              : `${completedJobs.length}/${jobs.length} tâches terminées`}
+                              ? `${completedJobs.length - failedJobs.length}/${jobs.length} réussies · ${failedJobs.length} échec(s)${partialJobs.length > 0 ? ` · ${partialJobs.length} avec avertissements` : ""}`
+                              : partialJobs.length > 0
+                                ? `${completedJobs.length}/${jobs.length} réussies · ${partialJobs.length} avec avertissements`
+                                : `${completedJobs.length}/${jobs.length} tâches terminées`}
                         </span>
                       </div>
+
+                      {/* Error details for failed jobs */}
+                      {failedJobs.length > 0 && !hasActiveJobs && (
+                        <div className="mt-2 space-y-1">
+                          {failedJobs.map((j) => (
+                            <div
+                              key={j.id}
+                              className="bg-error-container/20 rounded-lg p-3"
+                            >
+                              <p className="text-xs font-medium text-on-surface mb-1">
+                                {lot.urls[jobIds.indexOf(j.id)] || `Tâche ${j.id.slice(0, 8)}`}
+                              </p>
+                              <pre className="text-xs text-error/80 font-mono whitespace-pre-wrap break-all">
+                                {j.error || "Erreur inconnue"}
+                              </pre>
+                            </div>
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Partial errors from completed jobs */}
+                      {partialJobs.length > 0 && !hasActiveJobs && (
+                        <div className="mt-2 space-y-1">
+                          {partialJobs.map((j) => {
+                            const r = j.result as ImportResult;
+                            return (
+                              <div
+                                key={j.id}
+                                className="bg-surface-container rounded-lg p-3"
+                              >
+                                <p className="text-xs font-medium text-on-surface mb-1">
+                                  {lot.urls[jobIds.indexOf(j.id)] || `Tâche ${j.id.slice(0, 8)}`}
+                                  <span className="text-on-surface-variant ml-1">
+                                    — {r.errors.length} erreur(s) partielle(s)
+                                  </span>
+                                </p>
+                                {r.errors.map((e, i) => (
+                                  <p key={i} className="text-xs text-error/80 ml-2">
+                                    <span className="font-medium text-on-surface">{e.skater}</span>{" "}
+                                    {e.error}
+                                  </p>
+                                ))}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      )}
                     </div>
                   )}
                 </div>
