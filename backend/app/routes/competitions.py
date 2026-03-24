@@ -3,7 +3,7 @@ from __future__ import annotations
 from litestar import Router, get, post, delete, patch, Request
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import select
+from sqlalchemy import select, distinct
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.guards import require_admin
@@ -211,10 +211,21 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
     return {"job_ids": job_ids, "total": len(job_ids)}
 
 
+@get("/seasons")
+async def list_seasons(session: AsyncSession) -> list[str]:
+    result = await session.execute(
+        select(distinct(Competition.season))
+        .where(Competition.season.isnot(None))
+        .order_by(Competition.season.desc())
+    )
+    return [row[0] for row in result]
+
+
 router = Router(
     path="/api/competitions",
     route_handlers=[
         list_competitions,
+        list_seasons,
         get_competition,
         create_competition,
         update_competition,

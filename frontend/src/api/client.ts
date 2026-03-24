@@ -454,6 +454,7 @@ export const api = {
 
   competitions: {
     list: () => request<Competition[]>("/competitions/"),
+    seasons: () => request<string[]>("/competitions/seasons"),
     get: (id: number) => request<Competition>(`/competitions/${id}`),
     create: (data: CreateCompetitionPayload) =>
       request<Competition>("/competitions/", {

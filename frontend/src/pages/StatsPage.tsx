@@ -44,6 +44,11 @@ export default function StatsPage() {
     staleTime: Infinity,
   });
 
+  const { data: availableSeasons = [] } = useQuery({
+    queryKey: ["competition-seasons"],
+    queryFn: api.competitions.seasons,
+  });
+
   const season = selectedSeason ?? config?.current_season ?? undefined;
 
   // ── Progression ranking (unfiltered — filters applied client-side) ────────
@@ -111,17 +116,22 @@ export default function StatsPage() {
     enabled: !!config?.club_short,
   });
 
-  // Filter skaters to only those matching current global filters (via ranking data)
+  // Skater IDs present in the season (from allRanking, regardless of level/age/gender filters)
+  const seasonSkaterIds = useMemo(() => {
+    return new Set(allRanking.map((r) => r.skater_id));
+  }, [allRanking]);
+
+  // Further restrict to current level/age/gender filters via filtered ranking
   const filteredSkaterIds = useMemo(() => {
-    const ids = new Set(ranking.map((r) => r.skater_id));
-    return ids;
+    return new Set(ranking.map((r) => r.skater_id));
   }, [ranking]);
 
   const filteredSkaters = useMemo(() => {
-    // If no filters active, show all skaters; otherwise show only matching ones
-    if (!selectedLevel && !selectedAgeGroup && !selectedGender) return skaters;
-    return skaters.filter((s: Skater) => filteredSkaterIds.has(s.id));
-  }, [skaters, filteredSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
+    const activeFilters = selectedLevel || selectedAgeGroup || selectedGender;
+    return skaters.filter((s: Skater) =>
+      activeFilters ? filteredSkaterIds.has(s.id) : seasonSkaterIds.has(s.id)
+    );
+  }, [skaters, seasonSkaterIds, filteredSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
 
   const SKATER_COLORS = ["#2e6385", "#7cb9e8", "#e8a87c"];
 
@@ -203,15 +213,16 @@ export default function StatsPage() {
       .map(([date, values]) => ({ date, ...values }));
   }, [skaterResults]);
 
-  // Clear selected skaters that are no longer in filtered list when filters change
+  // Clear selected skaters that are no longer in the available list when filters/season change
   useEffect(() => {
-    if (selectedLevel || selectedAgeGroup || selectedGender) {
-      setSelectedSkaterIds((prev) => {
-        const next = prev.filter((id) => filteredSkaterIds.has(id));
-        return next.length === prev.length ? prev : next;
-      });
-    }
-  }, [filteredSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
+    const allowed = (selectedLevel || selectedAgeGroup || selectedGender)
+      ? filteredSkaterIds
+      : seasonSkaterIds;
+    setSelectedSkaterIds((prev) => {
+      const next = prev.filter((id) => allowed.has(id));
+      return next.length === prev.length ? prev : next;
+    });
+  }, [filteredSkaterIds, seasonSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
 
   function toggleSkater(id: number) {
     setSelectedSkaterIds((prev) => {
@@ -248,15 +259,18 @@ export default function StatsPage() {
 
       {/* Shared filters */}
       <div className="flex flex-wrap gap-3">
-        {config?.current_season && (
-          <select
-            className="bg-surface-container-high rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
-            value={selectedSeason ?? ""}
-            onChange={(e) => setSelectedSeason(e.target.value || null)}
-          >
-            <option value="">Saison en cours</option>
-          </select>
-        )}
+        <select
+          className="bg-surface-container-high rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+          value={selectedSeason ?? ""}
+          onChange={(e) => setSelectedSeason(e.target.value || null)}
+        >
+          <option value="">{config?.current_season ? `${config.current_season} (en cours)` : "Saison en cours"}</option>
+          {availableSeasons
+            .filter((s) => s !== config?.current_season)
+            .map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+        </select>
         <select
           className="bg-surface-container-high rounded-lg px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
           value={selectedLevel ?? ""}
