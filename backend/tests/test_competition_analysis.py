@@ -57,6 +57,35 @@ def test_fifteen_skaters_beyond_tenth():
         assert compute_club_challenge_points(rank, 15) == {"base": 1, "podium": 0, "total": 1}
 
 
+@pytest.mark.asyncio
+async def test_null_rank_skipped(db_session: AsyncSession):
+    """Skaters with overall_rank=None (withdrawn/disqualified) should not crash."""
+    comp = Competition(name="Comp", url="http://test/comp", date=date(2025, 11, 1), season="2025-2026")
+    db_session.add(comp)
+    await db_session.flush()
+
+    s1 = Skater(first_name="A", last_name="B", club="TC")
+    s2 = Skater(first_name="C", last_name="D", club="TC")
+    db_session.add_all([s1, s2])
+    await db_session.flush()
+
+    db_session.add(CategoryResult(
+        competition_id=comp.id, skater_id=s1.id,
+        category="R2 Minime Femme", overall_rank=1, combined_total=30.0,
+        segment_count=1,
+    ))
+    db_session.add(CategoryResult(
+        competition_id=comp.id, skater_id=s2.id,
+        category="R2 Minime Femme", overall_rank=None, combined_total=None,
+        segment_count=1,
+    ))
+    await db_session.commit()
+
+    result = await compute_competition_club_analysis(db_session, comp.id, "TC")
+    assert result["kpis"]["skaters_entered"] == 2
+    assert len(result["results"]) == 2
+
+
 @pytest_asyncio.fixture
 async def seed_club_analysis(db_session: AsyncSession):
     """Seed data for competition club analysis.

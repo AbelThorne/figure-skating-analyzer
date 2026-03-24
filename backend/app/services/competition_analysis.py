@@ -64,6 +64,8 @@ async def compute_competition_club_analysis(
         club_skaters_detail = []
 
         for cr in cat_results:
+            if cr.overall_rank is None:
+                continue
             skater_club = (cr.skater.club or "").upper()
             pts = compute_club_challenge_points(cr.overall_rank, n)
             cat_clubs[skater_club]["points"] += pts["total"]
