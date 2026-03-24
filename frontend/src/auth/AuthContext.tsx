@@ -21,6 +21,7 @@ interface AuthState {
     club_name: string;
     club_short: string;
   }) => Promise<void>;
+  updateUser: (user: AuthUser) => void;
 }
 
 const AuthContext = createContext<AuthState | null>(null);
@@ -80,9 +81,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     []
   );
 
+  const updateUser = useCallback((u: AuthUser) => {
+    setUser(u);
+  }, []);
+
   return (
     <AuthContext.Provider
-      value={{ user, loading, login, loginWithGoogle, logout, setup }}
+      value={{ user, loading, login, loginWithGoogle, logout, setup, updateUser }}
     >
       {children}
     </AuthContext.Provider>
