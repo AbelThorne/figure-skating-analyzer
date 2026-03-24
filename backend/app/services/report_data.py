@@ -13,6 +13,7 @@ from app.models.score import Score
 from app.models.skater import Skater
 from app.models.category_result import CategoryResult
 from app.models.app_settings import AppSettings
+from app.config import CLUB_NAME, CLUB_SHORT
 
 
 @dataclass
@@ -148,10 +149,11 @@ async def get_club_report_data(
     session: AsyncSession,
 ) -> ClubReportData:
     settings = (await session.execute(select(AppSettings))).scalar_one_or_none()
-    club_name = settings.club_name if settings else "Club"
+    club_name = CLUB_NAME or (settings.club_name if settings else "Club")
+    club_short = CLUB_SHORT or club_name
     club_logo = settings.logo_path if settings else None
 
-    club_skaters_stmt = select(Skater).where(func.lower(Skater.club) == club_name.lower())
+    club_skaters_stmt = select(Skater).where(func.lower(Skater.club) == club_short.lower())
     club_skaters = (await session.execute(club_skaters_stmt)).scalars().all()
     club_skater_ids = [s.id for s in club_skaters]
 

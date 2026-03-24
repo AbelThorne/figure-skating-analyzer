@@ -36,12 +36,22 @@ Key constraints for every agent working on the frontend:
 - ✅ Competition page with score table + TES/PCS bar chart
 - ✅ Skater stats page with line chart (TSS/TES/PCS over time)
 - ✅ Skater DB with name/club/nationality
-
-> **Note:** The current HomePage is a plain competition list. It will be replaced by a club dashboard (see Phase 1.0).
+- ✅ Club dashboard (HomePage) with KPI cards, medals, top scores, most improved, recent competitions
+- ✅ Element data API + Skater analytics page (GOE charts, PCS radar, element difficulty, judge panel)
+- ✅ Club skater browser with category filters and search
+- ✅ Import status & error feedback (inline results, partial success, ErrorDetailModal)
+- ✅ Pluggable scraper architecture (BaseScraper, FSManagerScraper, scraper factory)
+- ✅ Re-import & merge support with force option
+- ✅ Docker Compose deployment (backend + frontend + SQLite volume)
+- ✅ Authentication (JWT + Google OAuth, user management, role-based guards)
+- ✅ Club configuration & first-run setup (AppSettings, SetupPage, SettingsPage)
+- ✅ Competition metadata enrichment (season/discipline/city/country auto-detection)
+- ✅ Bulk import via YAML lots (SettingsPage)
+- ✅ Season detection & filtering (auto-detect on import, `/competitions/seasons` endpoint)
 
 ---
 
-## Phase 1 — Analytics & Dashboard (Priority 1)
+## Phase 1 — Analytics & Dashboard ✅ COMPLETE
 
 ### 1.0 Club Dashboard (Home Page)
 
@@ -146,7 +156,7 @@ Add a new page `/skaters/:id/analytics` (or tab on skater page).
 
 ---
 
-## Phase 2 — Import Robustness & Multi-Source Support
+## Phase 2 — Import Robustness & Multi-Source Support ✅ COMPLETE
 
 **Goal:** Make imports more reliable and extensible for Swiss Timing and ISU formats.
 
@@ -186,7 +196,7 @@ Allow coaches to re-import a competition after adding new events or correcting d
 
 ---
 
-## Phase 3 — Self-Hosted Deployment & Club Management
+## Phase 3 — Self-Hosted Deployment & Club Management ✅ COMPLETE
 
 **Goal:** Make the app runnable by a club on a shared server with minimal ops overhead.
 
@@ -275,31 +285,35 @@ A club-wide PDF report containing:
 - Season selector
 - Triggers PDF download
 
-### 4.3 Season Detection
+### 4.3 Season Detection ✅ COMPLETE
 
-- Auto-detect season from competition date (Jul–Jun cycle, e.g. "2025-2026")
-- Competition model already has `season` field — ensure it's populated on import
-- Add `GET /api/seasons` endpoint listing all seasons with competition counts
+- ✅ Auto-detect season from competition date (Jul–Jun cycle) — implemented in `competition_metadata.py`
+- ✅ Competition model `season` field populated on import
+- ✅ `GET /api/competitions/seasons` endpoint returns all seasons
+- ✅ `GET /api/skaters/{id}/seasons` returns per-skater seasons
+- ✅ Frontend season selectors on StatsPage, ClubCompetitionPage, SkaterAnalyticsPage
 
 ---
 
 ## Implementation Order
 
-| Phase | Step | Effort |
-|-------|------|--------|
-| 1 | Club dashboard (home page rewrite + API) | Medium |
-| 1 | Element data API endpoints | Small |
-| 1 | Skater analytics page + GOE/PCS charts | Medium |
-| 1 | Club browser navigation | Small |
-| 2 | Import status & error feedback | Small |
-| 2 | Scraper factory architecture | Medium |
-| 2 | Re-import UI | Small |
-| 3 | Club config & first-run setup screen | Small |
-| 3 | Docker Compose deployment | Small |
-| 3 | Basic auth | Small |
-| 4 | Season & club report JSON APIs | Medium |
-| 4 | PDF generation (reportlab/weasyprint) | Medium |
-| 4 | Export buttons in frontend | Small |
+| Phase | Step | Status | Effort |
+|-------|------|--------|--------|
+| 1 | Club dashboard (home page rewrite + API) | ✅ Done | Medium |
+| 1 | Element data API endpoints | ✅ Done | Small |
+| 1 | Skater analytics page + GOE/PCS charts | ✅ Done | Medium |
+| 1 | Club browser navigation | ✅ Done | Small |
+| 2 | Import status & error feedback | ✅ Done | Small |
+| 2 | Scraper factory architecture | ✅ Done | Medium |
+| 2 | Re-import UI | ✅ Done | Small |
+| 3 | Club config & first-run setup screen | ✅ Done | Small |
+| 3 | Docker Compose deployment | ✅ Done | Small |
+| 3 | Auth (JWT + Google OAuth + user mgmt) | ✅ Done | Medium |
+| 3 | Competition metadata enrichment | ✅ Done | Small |
+| 4 | Season detection & filtering | ✅ Done | Small |
+| 4 | Skater & club report JSON APIs | ⏳ TODO | Medium |
+| 4 | PDF generation (reportlab/weasyprint) | ⏳ TODO | Medium |
+| 4 | Export buttons in frontend | ⏳ TODO | Small |
 
 ---
 
