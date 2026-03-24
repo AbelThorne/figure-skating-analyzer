@@ -164,20 +164,6 @@ function RecentCompetitionsPanel({ competitions }: { competitions: DashboardRece
   );
 }
 
-function ExportCard() {
-  return (
-    <div className="bg-slate-900 rounded-xl p-5 text-on-primary relative overflow-hidden group mt-4">
-      <span className="material-symbols-outlined absolute -right-4 -bottom-4 text-7xl opacity-5 select-none">
-        download
-      </span>
-      <div className="font-bold font-headline text-white">Rapport de saison</div>
-      <div className="text-xs text-white/60 mt-1">Exporter le rapport complet du club</div>
-      <button className="mt-4 w-8 h-8 rounded-full bg-white text-slate-900 flex items-center justify-center transition-transform group-hover:scale-110">
-        <span className="material-symbols-outlined text-base">arrow_forward</span>
-      </button>
-    </div>
-  );
-}
 
 function LoadingSkeleton() {
   return (
@@ -289,7 +275,6 @@ export default function HomePage() {
             <div className="lg:col-span-1">
               <MedalsPanel medals={dashboard.medals} />
               <RecentCompetitionsPanel competitions={dashboard.recent_competitions} />
-              <ExportCard />
             </div>
           </div>
         </>
