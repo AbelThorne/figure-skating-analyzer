@@ -31,7 +31,7 @@ Four metric cards in a horizontal grid:
 |-----|-------------|
 | Patineurs engagés | Count of club skaters in this competition |
 | Médailles | Count of rank 1-3 finishes by club skaters |
-| Records personnels | Count of skaters who beat their prior best score |
+| Records personnels | Count of skaters who beat their prior best score (excludes first-time competitors — no previous result means no PB) |
 | Catégories couvertes | `N / M` — categories with club skaters / total categories |
 
 ### 4. Two-Column Section
@@ -102,7 +102,6 @@ interface CompetitionClubAnalysis {
   };
 
   medals: MedalEntry[];
-  personal_bests_list: PBEntry[];
   categories: CategoryCoverageEntry[];
   results: ClubSkaterResult[];
 }
@@ -133,15 +132,6 @@ interface MedalEntry {
   category: string;
   rank: 1 | 2 | 3;
   combined_total: number;
-}
-
-interface PBEntry {
-  skater_id: number;
-  skater_name: string;
-  category: string;
-  current_score: number;
-  previous_best: number;
-  improvement: number;
 }
 
 interface CategoryCoverageEntry {
@@ -176,7 +166,7 @@ Service class computing the full analysis:
 
 1. **Load data** — single query joining `CategoryResult` → `Skater` for the competition
 2. **Club challenge** — group by (category, club), rank within category, apply point formula, aggregate
-3. **PB detection** — for each club skater, query their best `combined_total` from prior competitions (same category, earlier date). Flag as PB if current > previous best or if first competition
+3. **PB detection** — for each club skater, query their best `combined_total` from prior competitions (same category, earlier date). Flag as PB if current > previous best. First-time competitors (no prior result) are not counted as PBs
 4. **Medals** — filter category results where `overall_rank <= 3` and skater belongs to club
 5. **Category coverage** — group by category, count club vs total
 6. **Detailed results** — all club skater results enriched with PB and medal flags
