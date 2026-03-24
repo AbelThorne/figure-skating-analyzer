@@ -5,7 +5,7 @@ from litestar import Litestar, get
 from litestar.config.cors import CORSConfig
 from litestar.static_files import StaticFilesConfig
 
-from app.config import ALLOWED_ORIGINS, LOGOS_DIR
+from app.config import ALLOWED_ORIGINS, LOGOS_DIR, PDF_DIR
 from app.database import init_db, async_session_factory
 from app.auth.guards import auth_guard
 from app.services.job_queue import job_queue
@@ -81,6 +81,10 @@ app = Litestar(
         StaticFilesConfig(
             directories=[str(LOGOS_DIR)],
             path="/api/logos",
+        ),
+        StaticFilesConfig(
+            directories=[str(PDF_DIR)],
+            path="/api/pdfs",
         ),
     ],
 )

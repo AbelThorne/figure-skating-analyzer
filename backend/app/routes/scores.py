@@ -10,6 +10,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.config import PDF_DIR
 from app.database import get_session
 from app.models.score import Score
 from app.models.category_result import CategoryResult
@@ -64,7 +65,20 @@ def _score_to_dict(s: Score) -> dict:
         "age_group": s.age_group,
         "gender": s.gender,
         "event_date": s.event_date.isoformat() if s.event_date else None,
+        "pdf_url": _pdf_serving_url(s.pdf_path),
     }
+
+
+def _pdf_serving_url(pdf_path: str | None) -> str | None:
+    """Convert an absolute pdf_path to a /api/pdfs/... serving URL."""
+    if not pdf_path:
+        return None
+    from pathlib import Path
+    try:
+        rel = Path(pdf_path).relative_to(PDF_DIR)
+        return f"/api/pdfs/{rel}"
+    except ValueError:
+        return None
 
 
 @get("/{score_id:int}/elements")

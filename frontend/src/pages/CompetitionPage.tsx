@@ -238,7 +238,20 @@ export default function CompetitionPage() {
         <span className="material-symbols-outlined text-base">arrow_back</span>{" "}
         Retour
       </Link>
-      <h1 className="text-2xl font-bold mt-2">{competition.name}</h1>
+      <h1 className="text-2xl font-bold mt-2 flex items-center gap-2">
+        {competition.name}
+        {competition.url && (
+          <a
+            href={competition.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-on-surface-variant hover:text-primary transition-colors"
+            title="Ouvrir les résultats"
+          >
+            <span className="material-symbols-outlined text-xl">open_in_new</span>
+          </a>
+        )}
+      </h1>
       <div className="text-sm text-gray-500 mb-4">
         {[competition.discipline, competition.season, competition.date]
           .filter(Boolean)

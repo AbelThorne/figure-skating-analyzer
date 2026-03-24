@@ -314,6 +314,21 @@ export default function ScoreCardModal({ score, skaterName, onClose }: Props) {
                 ))}
             </div>
           )}
+
+          {/* Link to original PDF */}
+          {score.pdf_url && (
+            <div className="pt-2">
+              <a
+                href={score.pdf_url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-primary transition-colors"
+              >
+                <span className="material-symbols-outlined text-sm">picture_as_pdf</span>
+                Voir le protocole original
+              </a>
+            </div>
+          )}
         </div>
       </div>
     </div>

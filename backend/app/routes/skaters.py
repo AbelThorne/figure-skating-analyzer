@@ -9,6 +9,7 @@ from sqlalchemy import func, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.config import PDF_DIR
 from app.database import get_session
 from app.models.skater import Skater
 from app.models.score import Score
@@ -132,9 +133,22 @@ async def get_skater_scores(skater_id: int, session: AsyncSession, season: Optio
             "age_group": s.age_group,
             "gender": s.gender,
             "event_date": s.event_date.isoformat() if s.event_date else None,
+            "pdf_url": _pdf_serving_url(s.pdf_path),
         }
         for s in scores
     ]
+
+
+def _pdf_serving_url(pdf_path: str | None) -> str | None:
+    """Convert an absolute pdf_path to a /api/pdfs/... serving URL."""
+    if not pdf_path:
+        return None
+    from pathlib import Path
+    try:
+        rel = Path(pdf_path).relative_to(PDF_DIR)
+        return f"/api/pdfs/{rel}"
+    except ValueError:
+        return None
 
 
 @get("/{skater_id:int}/category-results")

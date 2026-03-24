@@ -142,6 +142,7 @@ export interface Score {
   skating_level: string | null;
   age_group: string | null;
   gender: string | null;
+  pdf_url: string | null;
 }
 
 export interface CategoryResult {
