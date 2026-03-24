@@ -319,7 +319,7 @@ export default function StatsPage() {
           <p className="text-on-surface-variant text-sm">
             {selectedLevel || selectedAgeGroup || selectedGender
               ? "Aucun résultat pour les filtres sélectionnés."
-              : "Aucun patineur n'a participé à au moins 2 compétitions cette saison."}
+              : "Aucun patineur n'a participé à une compétition cette saison."}
           </p>
         ) : (
           <div className="overflow-x-auto">

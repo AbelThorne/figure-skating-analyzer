@@ -42,8 +42,14 @@ class TestParseLevel:
     def test_adulte_argent(self):
         assert parse_category("Adulte Argent Homme")["skating_level"] == "Adulte Argent"
 
+    def test_adulte_acier(self):
+        assert parse_category("Adulte Acier Femme")["skating_level"] == "Adulte Acier"
+
     def test_adulte_or(self):
         assert parse_category("Adulte Or Femme")["skating_level"] == "Adulte Or"
+
+    def test_adulte_master(self):
+        assert parse_category("Adulte Master Homme")["skating_level"] == "Adulte Master"
 
     def test_no_level_returns_none(self):
         assert parse_category("Novice Femme")["skating_level"] is None
@@ -85,6 +91,12 @@ class TestParseAgeGroup:
 
     def test_adulte_or_age_group(self):
         assert parse_category("Adulte Or Homme")["age_group"] == "Adulte"
+
+    def test_adulte_acier_age_group(self):
+        assert parse_category("Adulte Acier Femme")["age_group"] == "Adulte"
+
+    def test_adulte_master_age_group(self):
+        assert parse_category("Adulte Master Homme")["age_group"] == "Adulte"
 
 
 class TestParseGender:

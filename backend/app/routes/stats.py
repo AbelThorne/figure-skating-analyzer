@@ -76,8 +76,6 @@ async def progression_ranking(
 
     ranking = []
     for (skater_id, level, age), entries in groups.items():
-        if len(entries) < 2:
-            continue
         first = entries[0]
         last = entries[-1]
         skater = first.skater
@@ -89,7 +87,7 @@ async def progression_ranking(
             "gender": first.gender,
             "first_tss": first.combined_total,
             "last_tss": last.combined_total,
-            "tss_gain": round(last.combined_total - first.combined_total, 2),
+            "tss_gain": round(last.combined_total - first.combined_total, 2) if len(entries) >= 2 else 0.0,
             "competitions_count": len(entries),
             "sparkline": [
                 {

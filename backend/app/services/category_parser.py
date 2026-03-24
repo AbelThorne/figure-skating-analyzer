@@ -6,9 +6,11 @@ import re
 logger = logging.getLogger(__name__)
 
 _LEVEL_RULES: list[tuple[re.Pattern, str]] = [
+    (re.compile(r"\bAdulte\s+Acier\b", re.IGNORECASE), "Adulte Acier"),
     (re.compile(r"\bAdulte\s+Bronze\b", re.IGNORECASE), "Adulte Bronze"),
     (re.compile(r"\bAdulte\s+Argent\b", re.IGNORECASE), "Adulte Argent"),
     (re.compile(r"\bAdulte\s+Or\b", re.IGNORECASE), "Adulte Or"),
+    (re.compile(r"\bAdulte\s+Master\b", re.IGNORECASE), "Adulte Master"),
     (re.compile(r"\bR3\s+A\b", re.IGNORECASE), "R3 A"),
     (re.compile(r"\bR3\s+B\b", re.IGNORECASE), "R3 B"),
     (re.compile(r"\bR3\s+C\b", re.IGNORECASE), "R3 C"),
