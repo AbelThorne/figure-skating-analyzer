@@ -62,6 +62,7 @@ Les endpoints suivants ajoutent le guard `require_skater_access` :
 
 - Retourne la liste des patineurs liés à l'utilisateur connecté
 - Réponse : `Array<{ id: string, first_name: string, last_name: string, club: string }>`
+- Pour les rôles `admin` et `reader` : retourne un tableau vide (pas de 403)
 - Utilisé par le frontend pour la navigation et la page de sélection fratrie
 
 ### Endpoints restreints pour le rôle `skater`
@@ -141,7 +142,7 @@ Page minimaliste affichant les patineurs liés :
 Modification du formulaire existant dans la page Settings :
 
 - Quand le rôle `skater` est sélectionné dans le sélecteur de rôle, un nouveau champ apparaît : **"Patineurs associés"**
-- Ce champ est un autocomplete multi-sélection qui recherche parmi les patineurs existants (par nom/prénom)
+- Ce champ est un autocomplete multi-sélection qui recherche parmi les patineurs existants (par nom/prénom) via `GET /api/skaters?search=...` (endpoint existant, doit supporter le filtrage par nom)
 - Pour les rôles `admin` et `reader`, ce champ est masqué
 
 ### Endpoints utilisateurs
