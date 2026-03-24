@@ -148,6 +148,31 @@ async def test_change_password_increments_token_version(client: AsyncClient, adm
 
 
 @pytest.mark.asyncio
+async def test_change_password_oauth_only_user(client: AsyncClient, db_session: AsyncSession):
+    from app.auth.tokens import create_access_token
+
+    oauth_user = User(
+        email="oauth@test.com",
+        display_name="OAuth User",
+        role="reader",
+        password_hash=None,
+        google_oauth_enabled=True,
+    )
+    db_session.add(oauth_user)
+    await db_session.commit()
+    await db_session.refresh(oauth_user)
+
+    token = create_access_token(user_id=oauth_user.id, role=oauth_user.role)
+    resp = await client.post(
+        "/api/auth/change-password",
+        json={"current_password": "anything", "new_password": "newpass1234"},
+        headers={"Authorization": f"Bearer {token}"},
+    )
+    assert resp.status_code == 400
+    assert "OAuth" in resp.json()["detail"]
+
+
+@pytest.mark.asyncio
 async def test_change_password_unauthenticated(client: AsyncClient):
     resp = await client.post(
         "/api/auth/change-password",
