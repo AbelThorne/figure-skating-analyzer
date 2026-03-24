@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<style>
+  @page {
+    size: A4 portrait;
+    margin: 20mm 15mm 20mm 15mm;
+    @bottom-right {
+      content: "Page " counter(page) " / " counter(pages);
+      font-size: 8pt;
+      color: #49454f;
+    }
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    font-size: 10pt;
+    color: #191c1e;
+    line-height: 1.4;
+  }
+  h1, h2, h3 {
+    font-family: Manrope, Inter, sans-serif;
+    color: #2e6385;
+  }
+  h1 { font-size: 18pt; margin-bottom: 4pt; }
+  h2 { font-size: 13pt; margin-top: 16pt; margin-bottom: 6pt; }
+  h3 { font-size: 11pt; margin-top: 12pt; margin-bottom: 4pt; }
+  .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12pt;
+    padding-bottom: 8pt;
+    border-bottom: 2pt solid #2e6385;
+  }
+  .header-logo { height: 40pt; }
+  .header-meta { text-align: right; font-size: 8pt; color: #49454f; }
+  .subtitle { font-size: 10pt; color: #49454f; margin-bottom: 2pt; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 4pt;
+    font-size: 9pt;
+  }
+  th {
+    background-color: #e8f0f6;
+    color: #2e6385;
+    text-align: left;
+    padding: 4pt 6pt;
+    font-weight: 700;
+    font-size: 8pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+  }
+  td {
+    padding: 4pt 6pt;
+    border-bottom: 0.5pt solid #e0e0e0;
+  }
+  tr:nth-child(even) td { background-color: #f8fafb; }
+  .num { text-align: right; font-family: "SF Mono", "Fira Code", monospace; }
+  .kpi-row {
+    display: flex;
+    gap: 12pt;
+    margin: 8pt 0 12pt 0;
+  }
+  .kpi-box {
+    flex: 1;
+    background: #e8f0f6;
+    border-radius: 6pt;
+    padding: 8pt 10pt;
+    text-align: center;
+  }
+  .kpi-value {
+    font-size: 18pt;
+    font-weight: 800;
+    font-family: Manrope, sans-serif;
+    color: #2e6385;
+  }
+  .kpi-label {
+    font-size: 7pt;
+    text-transform: uppercase;
+    letter-spacing: 0.3pt;
+    color: #49454f;
+    margin-top: 2pt;
+  }
+  .medal-1 { color: #b8860b; font-weight: 700; }
+  .medal-2 { color: #808080; font-weight: 700; }
+  .medal-3 { color: #cd7f32; font-weight: 700; }
+  .section { page-break-inside: avoid; }
+  .improvement-positive { color: #2e6385; font-weight: 700; }
+  .improvement-negative { color: #ba1a1a; font-weight: 700; }
+</style>
+</head>
+<body>
+{% block content %}{% endblock %}
+</body>
+</html>

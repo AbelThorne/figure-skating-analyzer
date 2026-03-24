@@ -1,0 +1,122 @@
+{% extends "reports/base.html" %}
+{% block content %}
+<div class="header">
+  <div>
+    <h1>{{ data.club_name }}</h1>
+    <p class="subtitle">Rapport de saison {{ data.season }}</p>
+  </div>
+  <div class="header-meta">
+    {% if logo_base64 %}
+    <img src="data:image/png;base64,{{ logo_base64 }}" class="header-logo" alt="Logo">
+    {% endif %}
+    <div>Généré le {{ data.generated_at }}</div>
+  </div>
+</div>
+
+<div class="kpi-row">
+  <div class="kpi-box">
+    <div class="kpi-value">{{ data.stats.active_skaters }}</div>
+    <div class="kpi-label">Patineurs actifs</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-value">{{ data.stats.competitions_tracked }}</div>
+    <div class="kpi-label">Compétitions</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-value">{{ data.stats.total_programs }}</div>
+    <div class="kpi-label">Programmes</div>
+  </div>
+  <div class="kpi-box">
+    <div class="kpi-value">{{ data.stats.total_podiums }}</div>
+    <div class="kpi-label">Podiums</div>
+  </div>
+</div>
+
+{% if data.skaters_summary %}
+<div class="section">
+  <h2>Tableau des patineurs</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Nom</th>
+        <th>Catégorie</th>
+        <th class="num">Comp.</th>
+        <th class="num">Meilleur TSS</th>
+        <th class="num">Meilleur TES</th>
+        <th class="num">Meilleur PCS</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for s in data.skaters_summary %}
+      <tr>
+        <td>{{ s.name }}</td>
+        <td>{{ s.category or "—" }}</td>
+        <td class="num">{{ s.competitions_entered }}</td>
+        <td class="num">{{ "%.2f"|format(s.best_tss) if s.best_tss else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(s.best_tes) if s.best_tes else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(s.best_pcs) if s.best_pcs else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if data.medals %}
+<div class="section">
+  <h2>Podiums et médailles</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Patineur</th>
+        <th>Compétition</th>
+        <th>Date</th>
+        <th>Catégorie</th>
+        <th class="num">Rang</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in data.medals %}
+      <tr>
+        <td>{{ m.skater_name }}</td>
+        <td>{{ m.competition_name }}</td>
+        <td>{{ m.competition_date.strftime("%d/%m/%Y") if m.competition_date else "—" }}</td>
+        <td>{{ m.category }}</td>
+        <td class="num medal-{{ m.rank }}">#{{ m.rank }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if data.most_improved %}
+<div class="section">
+  <h2>Progression</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Patineur</th>
+        <th>Catégorie</th>
+        <th class="num">Premier TSS</th>
+        <th class="num">Dernier TSS</th>
+        <th class="num">Progression</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for m in data.most_improved %}
+      <tr>
+        <td>{{ m.name }}</td>
+        <td>{{ m.category or "—" }}</td>
+        <td class="num">{{ "%.2f"|format(m.first_tss) }}</td>
+        <td class="num">{{ "%.2f"|format(m.last_tss) }}</td>
+        <td class="num {{ 'improvement-positive' if m.delta >= 0 else 'improvement-negative' }}">
+          {{ "%+.2f"|format(m.delta) }}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+{% endblock %}

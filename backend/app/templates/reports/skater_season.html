@@ -1,0 +1,126 @@
+{% extends "reports/base.html" %}
+{% block content %}
+<div class="header">
+  <div>
+    <h1>{{ data.skater_name }}</h1>
+    <p class="subtitle">
+      {% if data.club %}{{ data.club }} · {% endif %}Saison {{ data.season }}
+    </p>
+  </div>
+  <div class="header-meta">
+    {% if logo_base64 %}
+    <img src="data:image/png;base64,{{ logo_base64 }}" class="header-logo" alt="Logo">
+    {% endif %}
+    <div>Généré le {{ data.generated_at }}</div>
+  </div>
+</div>
+
+{% if data.personal_bests %}
+<div class="section">
+  <h2>Records personnels</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Segment</th>
+        <th class="num">TSS</th>
+        <th class="num">TES</th>
+        <th class="num">PCS</th>
+        <th>Compétition</th>
+        <th>Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for seg, pb in data.personal_bests.items() %}
+      <tr>
+        <td>{{ seg }}</td>
+        <td class="num">{{ "%.2f"|format(pb.tss) if pb.tss is not none else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(pb.tes) if pb.tes is not none else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(pb.pcs) if pb.pcs is not none else "—" }}</td>
+        <td>{{ pb.competition }}</td>
+        <td>{{ pb.date.strftime("%d/%m/%Y") if pb.date else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if data.results %}
+<div class="section">
+  <h2>Résultats de la saison</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Compétition</th>
+        <th>Catégorie</th>
+        <th>Segment</th>
+        <th class="num">Rang</th>
+        <th class="num">TSS</th>
+        <th class="num">TES</th>
+        <th class="num">PCS</th>
+        <th class="num">Déd.</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for r in data.results %}
+      <tr>
+        <td>{{ r.competition_date.strftime("%d/%m/%Y") if r.competition_date else "—" }}</td>
+        <td>{{ r.competition_name }}</td>
+        <td>{{ r.category or "—" }}</td>
+        <td>{{ r.segment }}</td>
+        <td class="num">{{ r.rank or "—" }}</td>
+        <td class="num">{{ "%.2f"|format(r.tss) if r.tss is not none else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(r.tes) if r.tes is not none else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(r.pcs) if r.pcs is not none else "—" }}</td>
+        <td class="num">{{ "%.2f"|format(r.deductions) if r.deductions is not none else "—" }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endif %}
+
+{% if data.element_summary %}
+<div class="section">
+  <h2>Analyse des éléments</h2>
+  <p class="subtitle">{{ data.element_summary.total_elements_tracked }} éléments analysés</p>
+
+  {% if data.element_summary.most_attempted %}
+  <h3>Éléments les plus travaillés</h3>
+  <table>
+    <thead>
+      <tr><th>Élément</th><th class="num">Tentatives</th><th class="num">GOE moyen</th></tr>
+    </thead>
+    <tbody>
+      {% for el in data.element_summary.most_attempted %}
+      <tr>
+        <td>{{ el.name }}</td>
+        <td class="num">{{ el.attempts }}</td>
+        <td class="num">{{ "%+.2f"|format(el.avg_goe) }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+
+  {% if data.element_summary.best_goe %}
+  <h3>Meilleurs GOE (min. 2 tentatives)</h3>
+  <table>
+    <thead>
+      <tr><th>Élément</th><th class="num">GOE moyen</th><th class="num">Tentatives</th></tr>
+    </thead>
+    <tbody>
+      {% for el in data.element_summary.best_goe %}
+      <tr>
+        <td>{{ el.name }}</td>
+        <td class="num">{{ "%+.2f"|format(el.avg_goe) }}</td>
+        <td class="num">{{ el.attempts }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% endif %}
+</div>
+{% endif %}
+{% endblock %}
