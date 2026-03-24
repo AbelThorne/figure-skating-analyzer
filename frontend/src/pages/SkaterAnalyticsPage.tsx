@@ -459,16 +459,16 @@ export default function SkaterAnalyticsPage() {
       {isLoading ? (
         <Skeleton className="mx-6 h-36 rounded-2xl" />
       ) : (
-        <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant py-8 px-8 flex flex-col sm:flex-row items-start sm:items-center gap-6">
-          <div className="flex items-center gap-5 flex-1 min-w-0">
-            <div className="w-16 h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl font-extrabold font-headline text-white ring-2 ring-white/30 shrink-0">
+        <div className="bg-gradient-to-r from-primary to-on-primary-fixed-variant py-6 px-4 sm:py-8 sm:px-8 flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-6">
+          <div className="flex items-center gap-4 w-full min-w-0 sm:flex-1">
+            <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-white/20 backdrop-blur-sm flex items-center justify-center text-2xl font-extrabold font-headline text-white ring-2 ring-white/30 shrink-0">
               {skater?.last_name?.[0]?.toUpperCase() ?? "?"}
             </div>
-            <div className="min-w-0">
-              <h1 className="text-3xl font-extrabold font-headline text-white leading-tight truncate">
+            <div className="min-w-0 overflow-hidden">
+              <h1 className="text-2xl sm:text-3xl font-extrabold font-headline text-white leading-tight truncate">
                 {skater ? `${skater.first_name} ${skater.last_name}` : "—"}
               </h1>
-              <p className="text-sm text-white/70 mt-1">
+              <p className="text-sm text-white/70 mt-1 truncate">
                 {[
                   skater?.club,
                   skater?.nationality ? `${countryFlag(skater.nationality) ?? ""} ${skater.nationality}` : null,
@@ -727,13 +727,13 @@ export default function SkaterAnalyticsPage() {
                 <table className="w-full min-w-[560px] border-collapse">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-surface-container-low">
-                      {["Compétition", "Date", "Catégorie", "Rang", "TES", "PCS", "Total", ""].map(
+                      {["", "Compétition", "Catégorie", "Rang", "Total", "TES", "PCS", "Date"].map(
                         (col, i) => (
                           <th
                             key={col || `col-${i}`}
                             className={`text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-3 py-2.5 ${
-                              i === 0 ? "text-left rounded-tl-xl" : "text-right"
-                            } ${i === 7 ? "rounded-tr-xl" : ""}`}
+                              i <= 1 ? "text-left" : "text-right"
+                            } ${i === 0 ? "rounded-tl-xl" : ""} ${i === 7 ? "rounded-tr-xl" : ""}`}
                           >
                             {col}
                           </th>
@@ -759,6 +759,9 @@ export default function SkaterAnalyticsPage() {
                               }
                               onClick={() => toggleCollapsed(row.key)}
                             >
+                              {/* col 0: button (empty for overall row) */}
+                              <td className="px-3 py-2" />
+                              {/* col 1: competition name */}
                               <td className="px-3 py-2 text-sm text-on-surface">
                                 <div className="flex items-center gap-1.5">
                                   <span className="material-symbols-outlined text-sm text-on-surface-variant leading-none">
@@ -773,12 +776,11 @@ export default function SkaterAnalyticsPage() {
                                   </Link>
                                 </div>
                               </td>
-                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
-                                {row.competitionDate ? row.competitionDate.slice(0, 10) : "—"}
-                              </td>
+                              {/* col 2: category */}
                               <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
                                 {row.category ?? "—"}
                               </td>
+                              {/* col 3: rank */}
                               <td className="px-3 py-2 text-right">
                                 {row.catResult.overall_rank != null ? (
                                   row.catResult.overall_rank <= 3 ? (
@@ -794,16 +796,18 @@ export default function SkaterAnalyticsPage() {
                                   <span className="text-on-surface-variant text-sm">—</span>
                                 )}
                               </td>
-                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">
-                                —
-                              </td>
-                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">
-                                —
-                              </td>
+                              {/* col 4: total */}
                               <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
                                 {row.catResult.combined_total?.toFixed(2) ?? "—"}
                               </td>
-                              <td className="px-3 py-2" />
+                              {/* col 5: TES (n/a for overall) */}
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">—</td>
+                              {/* col 6: PCS (n/a for overall) */}
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant">—</td>
+                              {/* col 7: date */}
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
+                                {row.competitionDate ? row.competitionDate.slice(0, 10) : "—"}
+                              </td>
                             </tr>
                           ) : null}
 
@@ -817,39 +821,47 @@ export default function SkaterAnalyticsPage() {
                                   : "bg-surface-container-low/30"
                               }
                             >
+                              {/* col 0: score card button */}
+                              <td className="px-3 py-2 text-left">
+                                {s.elements && s.elements.length > 0 && (
+                                  <button
+                                    onClick={() => setModalScore(s)}
+                                    className="inline-flex items-center gap-0.5 text-primary hover:text-primary/80 transition-colors text-[10px] font-bold uppercase tracking-wider"
+                                    title="Voir le détail"
+                                  >
+                                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
+                                  </button>
+                                )}
+                              </td>
                               {isMultiSegment ? (
                                 <>
+                                  {/* col 1: segment label */}
                                   <td className="px-3 py-2 text-sm text-on-surface-variant pl-6">
                                     <span className="text-xs text-on-surface-variant/60">
                                       {s.segment}
                                     </span>
                                   </td>
-                                  <td className="px-3 py-2" />
+                                  {/* col 2: category (empty) */}
                                   <td className="px-3 py-2" />
                                 </>
                               ) : (
                                 <>
+                                  {/* col 1: competition name */}
                                   <td className="px-3 py-2 text-sm text-on-surface">
-                                    <div className="flex items-center gap-1.5">
-                                      <span className="material-symbols-outlined text-sm leading-none invisible">
-                                        chevron_right
-                                      </span>
-                                      <Link
-                                        to={`/competitions/${s.competition_id}`}
-                                        className="text-primary hover:underline font-medium"
-                                      >
-                                        {s.competition_name ?? `#${s.competition_id}`}
-                                      </Link>
-                                    </div>
+                                    <Link
+                                      to={`/competitions/${s.competition_id}`}
+                                      className="text-primary hover:underline font-medium"
+                                    >
+                                      {s.competition_name ?? `#${s.competition_id}`}
+                                    </Link>
                                   </td>
-                                  <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
-                                    {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
-                                  </td>
+                                  {/* col 2: category */}
                                   <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
                                     {s.category ?? "—"}
                                   </td>
                                 </>
                               )}
+                              {/* col 3: rank */}
                               <td className="px-3 py-2 text-right">
                                 {s.rank != null ? (
                                   !isMultiSegment && s.rank <= 3 ? (
@@ -865,26 +877,26 @@ export default function SkaterAnalyticsPage() {
                                   <span className="text-on-surface-variant text-sm">—</span>
                                 )}
                               </td>
-                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
-                                {s.technical_score?.toFixed(2) ?? "—"}
-                              </td>
-                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
-                                {s.component_score?.toFixed(2) ?? "—"}
-                              </td>
+                              {/* col 4: total */}
                               <td className="px-3 py-2 text-right font-mono text-sm font-bold text-on-surface">
                                 {s.total_score?.toFixed(2) ?? "—"}
                               </td>
-                              <td className="px-3 py-2 text-right">
-                                {s.elements && s.elements.length > 0 && (
-                                  <button
-                                    onClick={() => setModalScore(s)}
-                                    className="inline-flex items-center gap-0.5 text-primary hover:text-primary/80 transition-colors text-[10px] font-bold uppercase tracking-wider"
-                                    title="Voir le détail"
-                                  >
-                                    <span className="material-symbols-outlined text-[14px]">open_in_new</span>
-                                  </button>
-                                )}
+                              {/* col 5: TES */}
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
+                                {s.technical_score?.toFixed(2) ?? "—"}
                               </td>
+                              {/* col 6: PCS */}
+                              <td className="px-3 py-2 text-right font-mono text-sm text-on-surface">
+                                {s.component_score?.toFixed(2) ?? "—"}
+                              </td>
+                              {/* col 7: date */}
+                              {isMultiSegment ? (
+                                <td className="px-3 py-2" />
+                              ) : (
+                                <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
+                                  {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
+                                </td>
+                              )}
                             </tr>
                           ))}
                         </React.Fragment>
