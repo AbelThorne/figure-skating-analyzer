@@ -17,6 +17,7 @@ from app.models.competition import Competition
 from app.models.score import Score
 from app.models.skater import Skater
 from app.services.element_classifier import classify_element, extract_jump_type, extract_level
+from app.services.competition_analysis import compute_competition_club_analysis
 
 
 async def _get_club_short(session: AsyncSession, club: Optional[str]) -> Optional[str]:
@@ -253,8 +254,20 @@ async def element_mastery(
     }
 
 
+@get("/competition-club-analysis")
+async def competition_club_analysis(
+    session: AsyncSession,
+    competition_id: int,
+    club: Optional[str] = None,
+) -> dict:
+    club_short = await _get_club_short(session, club)
+    if not club_short:
+        return {"error": "No club configured"}
+    return await compute_competition_club_analysis(session, competition_id, club_short)
+
+
 router = Router(
     path="/api/stats",
-    route_handlers=[progression_ranking, benchmarks, element_mastery],
+    route_handlers=[progression_ranking, benchmarks, element_mastery, competition_club_analysis],
     dependencies={"session": Provide(get_session)},
 )

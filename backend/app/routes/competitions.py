@@ -3,12 +3,14 @@ from __future__ import annotations
 from litestar import Router, get, post, delete, patch, Request
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
-from sqlalchemy import select, distinct
+from sqlalchemy import select, distinct, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.guards import require_admin
 from app.database import get_session
 from app.models.competition import Competition
+from app.models.category_result import CategoryResult
+from app.models.skater import Skater
 
 
 # --- DTOs ---
@@ -32,8 +34,23 @@ def competition_to_dict(c: Competition) -> dict:
 # --- Handlers ---
 
 @get("/")
-async def list_competitions(session: AsyncSession) -> list[dict]:
-    result = await session.execute(select(Competition).order_by(Competition.date.desc()))
+async def list_competitions(
+    session: AsyncSession,
+    club: str | None = None,
+    season: str | None = None,
+) -> list[dict]:
+    stmt = select(Competition).order_by(Competition.date.desc())
+    if season:
+        stmt = stmt.where(Competition.season == season)
+    if club:
+        stmt = (
+            stmt
+            .join(CategoryResult, CategoryResult.competition_id == Competition.id)
+            .join(Skater, Skater.id == CategoryResult.skater_id)
+            .where(func.upper(Skater.club) == club.upper())
+            .distinct()
+        )
+    result = await session.execute(stmt)
     return [competition_to_dict(c) for c in result.scalars()]
 
 

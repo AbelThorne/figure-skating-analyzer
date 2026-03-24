@@ -3,6 +3,7 @@
 import pytest
 import pytest_asyncio
 from datetime import date
+from httpx import AsyncClient
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.competition import Competition
@@ -151,3 +152,31 @@ async def test_competition_club_analysis(db_session: AsyncSession, seed_club_ana
     jean_result = next(r for r in result["results"] if r["skater_name"] == "Jean Martin")
     assert jean_result["is_pb"] is False
     assert jean_result["medal"] == 2
+
+
+@pytest.mark.asyncio
+async def test_competition_club_analysis_endpoint(client: AsyncClient, admin_token: str, seed_club_analysis):
+    comp_a = seed_club_analysis["comp_a"]
+    resp = await client.get(
+        f"/api/stats/competition-club-analysis?competition_id={comp_a.id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["club_name"] == "TC"
+    assert data["kpis"]["skaters_entered"] == 3
+    assert len(data["club_challenge"]["ranking"]) == 2
+
+
+@pytest.mark.asyncio
+async def test_competitions_filter_by_club(client: AsyncClient, admin_token: str, seed_club_analysis):
+    resp = await client.get(
+        "/api/competitions/?club=TC",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    # Only Comp A and Comp Prior have TC skaters
+    names = {c["name"] for c in data}
+    assert "Comp A" in names
+    assert "Comp Prior" in names
