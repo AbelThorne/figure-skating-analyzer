@@ -11,6 +11,7 @@ from app.database import get_session
 from app.models.competition import Competition
 from app.models.category_result import CategoryResult
 from app.models.skater import Skater
+from app.models.app_settings import AppSettings
 
 
 # --- DTOs ---
@@ -38,16 +39,24 @@ async def list_competitions(
     session: AsyncSession,
     club: str | None = None,
     season: str | None = None,
+    my_club: bool = False,
 ) -> list[dict]:
+    effective_club = club
+    if my_club and not club:
+        settings_result = await session.execute(select(AppSettings).limit(1))
+        settings = settings_result.scalar_one_or_none()
+        if settings:
+            effective_club = settings.club_short
+
     stmt = select(Competition).order_by(Competition.date.desc())
     if season:
         stmt = stmt.where(Competition.season == season)
-    if club:
+    if effective_club:
         stmt = (
             stmt
             .join(CategoryResult, CategoryResult.competition_id == Competition.id)
             .join(Skater, Skater.id == CategoryResult.skater_id)
-            .where(func.upper(Skater.club) == club.upper())
+            .where(func.upper(Skater.club) == effective_club.upper())
             .distinct()
         )
     result = await session.execute(stmt)

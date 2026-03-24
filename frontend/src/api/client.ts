@@ -527,10 +527,11 @@ export const api = {
   },
 
   competitions: {
-    list: (params?: { club?: string; season?: string }) => {
+    list: (params?: { club?: string; season?: string; my_club?: boolean }) => {
       const qs = new URLSearchParams();
       if (params?.club) qs.set("club", params.club);
       if (params?.season) qs.set("season", params.season);
+      if (params?.my_club) qs.set("my_club", "true");
       const query = qs.toString() ? `?${qs}` : "";
       return request<Competition[]>(`/competitions/${query}`);
     },

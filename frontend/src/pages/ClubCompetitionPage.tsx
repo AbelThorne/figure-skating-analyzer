@@ -18,7 +18,7 @@ export default function ClubCompetitionPage() {
 
   const { data: competitions = [] } = useQuery({
     queryKey: ["club-competitions", season],
-    queryFn: () => api.competitions.list({ season }),
+    queryFn: () => api.competitions.list({ season, my_club: true }),
     enabled: !!season,
   });
 

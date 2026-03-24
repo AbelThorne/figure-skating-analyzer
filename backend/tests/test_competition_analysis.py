@@ -180,3 +180,16 @@ async def test_competitions_filter_by_club(client: AsyncClient, admin_token: str
     names = {c["name"] for c in data}
     assert "Comp A" in names
     assert "Comp Prior" in names
+
+
+@pytest.mark.asyncio
+async def test_competitions_filter_my_club(client: AsyncClient, admin_token: str, seed_club_analysis):
+    resp = await client.get(
+        "/api/competitions/?my_club=true",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    names = {c["name"] for c in data}
+    assert "Comp A" in names
+    assert "Comp Prior" in names
