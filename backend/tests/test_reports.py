@@ -1,5 +1,7 @@
 import pytest
+import sys
 from datetime import date
+from unittest.mock import MagicMock, patch
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.competition import Competition
@@ -8,6 +10,23 @@ from app.models.score import Score
 from app.models.category_result import CategoryResult
 from app.models.app_settings import AppSettings
 from app.services.report_data import get_skater_report_data, get_club_report_data
+
+
+@pytest.fixture(autouse=True)
+def mock_weasyprint():
+    """Mock weasyprint to avoid system library dependencies in tests."""
+    mock_wp = MagicMock()
+    mock_html = MagicMock()
+    mock_html.write_pdf.return_value = b"%PDF-1.4 fake pdf content"
+    mock_wp.HTML.return_value = mock_html
+
+    # Inject mock into sys.modules before any imports happen
+    sys.modules['weasyprint'] = mock_wp
+    yield mock_wp
+
+    # Clean up
+    if 'weasyprint' in sys.modules:
+        del sys.modules['weasyprint']
 
 
 async def _seed_skater_data(session: AsyncSession):
@@ -134,3 +153,43 @@ async def test_club_report_data(db_session: AsyncSession):
     assert len(data.most_improved) >= 1
     assert data.most_improved[0]["name"] == "Alice DUPONT"
     assert data.most_improved[0]["delta"] == 8.0
+
+
+@pytest.mark.asyncio
+async def test_skater_pdf_endpoint(client, admin_token, db_session):
+    skater = await _seed_skater_data(db_session)
+    resp = await client.get(
+        f"/api/reports/skater/{skater.id}/pdf?season=2025-2026",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/pdf"
+    assert resp.content[:5] == b"%PDF-"
+
+
+@pytest.mark.asyncio
+async def test_skater_pdf_no_data(client, admin_token, db_session):
+    skater = await _seed_skater_data(db_session)
+    resp = await client.get(
+        f"/api/reports/skater/{skater.id}/pdf?season=2030-2031",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 404
+
+
+@pytest.mark.asyncio
+async def test_club_pdf_endpoint(client, admin_token, db_session):
+    await _seed_club_data(db_session)
+    resp = await client.get(
+        "/api/reports/club/pdf?season=2025-2026",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    assert resp.headers["content-type"] == "application/pdf"
+    assert resp.content[:5] == b"%PDF-"
+
+
+@pytest.mark.asyncio
+async def test_report_requires_auth(client):
+    resp = await client.get("/api/reports/club/pdf?season=2025-2026")
+    assert resp.status_code == 401
