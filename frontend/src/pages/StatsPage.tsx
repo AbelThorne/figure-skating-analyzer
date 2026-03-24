@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useQuery, keepPreviousData } from "@tanstack/react-query";
 import {
@@ -111,6 +111,18 @@ export default function StatsPage() {
     enabled: !!config?.club_short,
   });
 
+  // Filter skaters to only those matching current global filters (via ranking data)
+  const filteredSkaterIds = useMemo(() => {
+    const ids = new Set(ranking.map((r) => r.skater_id));
+    return ids;
+  }, [ranking]);
+
+  const filteredSkaters = useMemo(() => {
+    // If no filters active, show all skaters; otherwise show only matching ones
+    if (!selectedLevel && !selectedAgeGroup && !selectedGender) return skaters;
+    return skaters.filter((s: Skater) => filteredSkaterIds.has(s.id));
+  }, [skaters, filteredSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
+
   const SKATER_COLORS = ["#2e6385", "#7cb9e8", "#e8a87c"];
 
   // Fetch category results for each selected skater (max 3, fixed-length hook calls)
@@ -190,6 +202,16 @@ export default function StatsPage() {
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, values]) => ({ date, ...values }));
   }, [skaterResults]);
+
+  // Clear selected skaters that are no longer in filtered list when filters change
+  useEffect(() => {
+    if (selectedLevel || selectedAgeGroup || selectedGender) {
+      setSelectedSkaterIds((prev) => {
+        const next = prev.filter((id) => filteredSkaterIds.has(id));
+        return next.length === prev.length ? prev : next;
+      });
+    }
+  }, [filteredSkaterIds, selectedLevel, selectedAgeGroup, selectedGender]);
 
   function toggleSkater(id: number) {
     setSelectedSkaterIds((prev) => {
@@ -363,27 +385,50 @@ export default function StatsPage() {
           Comparaison
         </h2>
 
-        {/* Skater selector as pills */}
-        <div className="flex flex-wrap gap-2 mb-4">
-          {skaters.map((s: Skater) => {
-            const selected = selectedSkaterIds.includes(s.id);
-            const idx = selectedSkaterIds.indexOf(s.id);
+        {/* Skater selector: dropdown + selected chips */}
+        <div className="flex flex-wrap items-center gap-2 mb-4">
+          {selectedSkaterIds.map((id, idx) => {
+            const skater = skaters.find((s: Skater) => s.id === id);
+            if (!skater) return null;
             return (
-              <button
-                key={s.id}
-                onClick={() => toggleSkater(s.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-bold transition-colors ${
-                  selected
-                    ? "text-white"
-                    : "bg-surface-container-high text-on-surface-variant hover:bg-surface-container"
-                }`}
-                style={selected ? { backgroundColor: SKATER_COLORS[idx] } : {}}
-                disabled={!selected && selectedSkaterIds.length >= 3}
+              <span
+                key={id}
+                className="inline-flex items-center gap-1 pl-2.5 pr-1 py-1 rounded-full text-xs font-bold text-white"
+                style={{ backgroundColor: SKATER_COLORS[idx] }}
               >
-                {s.first_name} {s.last_name}
-              </button>
+                {skater.first_name} {skater.last_name}
+                <button
+                  onClick={() => toggleSkater(id)}
+                  className="rounded-full hover:bg-white/20 p-0.5 transition-colors"
+                >
+                  <span className="material-symbols-outlined text-[14px]">close</span>
+                </button>
+              </span>
             );
           })}
+          {selectedSkaterIds.length < 3 && (
+            <select
+              className="bg-surface-container-high rounded-lg px-3 py-1.5 text-xs text-on-surface-variant focus:outline-none focus:ring-2 focus:ring-primary"
+              value=""
+              onChange={(e) => {
+                if (e.target.value) toggleSkater(Number(e.target.value));
+              }}
+            >
+              <option value="">
+                {filteredSkaters.length === 0
+                  ? "Aucun patineur"
+                  : `+ Ajouter un patineur (${filteredSkaters.length - selectedSkaterIds.length})`}
+              </option>
+              {filteredSkaters
+                .filter((s: Skater) => !selectedSkaterIds.includes(s.id))
+                .sort((a: Skater, b: Skater) => a.last_name.localeCompare(b.last_name))
+                .map((s: Skater) => (
+                  <option key={s.id} value={s.id}>
+                    {s.last_name} {s.first_name}
+                  </option>
+                ))}
+            </select>
+          )}
         </div>
 
         {/* Benchmark overrides */}
