@@ -17,6 +17,7 @@ import LoginPage from "./pages/LoginPage";
 import SetupPage from "./pages/SetupPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
+import MySkatersPage from "./pages/MySkatersPage";
 
 const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
@@ -34,8 +35,53 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/club")) return "Club";
   if (pathname === "/stats") return "Club";
   if (pathname === "/settings") return "Paramètres";
+  if (pathname === "/mes-patineurs") return "Mes patineurs";
   if (pathname === "/profil") return "Mon compte";
   return "";
+}
+
+function SkaterNav({ closeSidebar }: { closeSidebar: () => void }) {
+  const { data: skaters } = useQuery({
+    queryKey: ["me", "skaters"],
+    queryFn: api.me.skaters,
+  });
+
+  const label = skaters && skaters.length === 1 ? "MON PATINEUR" : "MES PATINEURS";
+  const to = skaters && skaters.length === 1
+    ? `/patineurs/${skaters[0].id}/analyse`
+    : "/mes-patineurs";
+
+  return (
+    <nav className="flex-1 py-2">
+      <NavLink
+        to={to}
+        onClick={closeSidebar}
+        className={({ isActive }) =>
+          isActive
+            ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
+            : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+        }
+      >
+        <span className="material-symbols-outlined text-xl">ice_skating</span>
+        <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+      </NavLink>
+    </nav>
+  );
+}
+
+function SkaterRedirect() {
+  const { data: skaters, isLoading } = useQuery({
+    queryKey: ["me", "skaters"],
+    queryFn: api.me.skaters,
+  });
+
+  if (isLoading) return null;
+
+  const target = skaters && skaters.length === 1
+    ? `/patineurs/${skaters[0].id}/analyse`
+    : "/mes-patineurs";
+
+  return <Navigate to={target} replace />;
 }
 
 function AuthenticatedLayout() {
@@ -97,24 +143,28 @@ function AuthenticatedLayout() {
         </div>
 
         {/* Nav links */}
-        <nav className="flex-1 py-2">
-          {navLinks.map(({ to, label, icon, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              onClick={closeSidebar}
-              className={({ isActive }) =>
-                isActive
-                  ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
-                  : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
-              }
-            >
-              <span className="material-symbols-outlined text-xl">{icon}</span>
-              <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
-            </NavLink>
-          ))}
-        </nav>
+        {user?.role === "skater" ? (
+          <SkaterNav closeSidebar={closeSidebar} />
+        ) : (
+          <nav className="flex-1 py-2">
+            {navLinks.map(({ to, label, icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                onClick={closeSidebar}
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
+                    : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+                }
+              >
+                <span className="material-symbols-outlined text-xl">{icon}</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+              </NavLink>
+            ))}
+          </nav>
+        )}
 
         {/* Bottom section: settings + user */}
         <div className="mt-auto border-t border-outline-variant/30 px-2 py-3 space-y-1">
@@ -172,24 +222,35 @@ function AuthenticatedLayout() {
         {/* Page content */}
         <main className="p-4 lg:p-8 max-w-7xl mx-auto">
           <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/competitions/:id" element={<CompetitionPage />} />
-            <Route path="/competitions" element={<CompetitionsPage />} />
-            <Route path="/patineurs" element={<SkaterBrowserPage />} />
-            <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
-            <Route path="/club/saison" element={<StatsPage />} />
-            <Route path="/club/competition" element={<ClubCompetitionPage />} />
-            <Route path="/club" element={<Navigate to="/club/saison" replace />} />
-            <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute requiredRole="admin">
-                  <SettingsPage />
-                </ProtectedRoute>
-              }
-            />
-            <Route path="/profil" element={<ProfilePage />} />
+            {user?.role === "skater" ? (
+              <>
+                <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
+                <Route path="/mes-patineurs" element={<MySkatersPage />} />
+                <Route path="/profil" element={<ProfilePage />} />
+                <Route path="*" element={<SkaterRedirect />} />
+              </>
+            ) : (
+              <>
+                <Route path="/" element={<HomePage />} />
+                <Route path="/competitions/:id" element={<CompetitionPage />} />
+                <Route path="/competitions" element={<CompetitionsPage />} />
+                <Route path="/patineurs" element={<SkaterBrowserPage />} />
+                <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
+                <Route path="/club/saison" element={<StatsPage />} />
+                <Route path="/club/competition" element={<ClubCompetitionPage />} />
+                <Route path="/club" element={<Navigate to="/club/saison" replace />} />
+                <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
+                <Route
+                  path="/settings"
+                  element={
+                    <ProtectedRoute requiredRole="admin">
+                      <SettingsPage />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route path="/profil" element={<ProfilePage />} />
+              </>
+            )}
           </Routes>
         </main>
       </div>
