@@ -18,7 +18,7 @@ export default function SkaterBrowserPage() {
 
   const { data: skaters = [], isLoading } = useQuery({
     queryKey: ["skaters", showAll ? null : clubShort],
-    queryFn: () => api.skaters.list(showAll ? undefined : clubShort),
+    queryFn: () => api.skaters.list(showAll ? undefined : { club: clubShort }),
     enabled: showAll || !!clubShort,
   });
 

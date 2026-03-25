@@ -307,7 +307,7 @@ export interface AuthUser {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader";
+  role: "admin" | "reader" | "skater";
   must_change_password: boolean;
   has_password: boolean;
 }
@@ -321,9 +321,17 @@ export interface UserRecord {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader";
+  role: "admin" | "reader" | "skater";
   is_active: boolean;
   google_oauth_enabled: boolean;
+  skater_ids: number[];
+}
+
+export interface MySkater {
+  id: number;
+  first_name: string;
+  last_name: string;
+  club: string;
 }
 
 export interface AllowedDomainRecord {
@@ -535,6 +543,10 @@ export const api = {
       }),
   },
 
+  me: {
+    skaters: (): Promise<MySkater[]> => request<MySkater[]>("/me/skaters"),
+  },
+
   users: {
     list: () => request<UserRecord[]>("/users/"),
     create: (data: {
@@ -620,9 +632,12 @@ export const api = {
   },
 
   skaters: {
-    list: (club?: string) => {
-      const qs = club ? `?club=${encodeURIComponent(club)}` : "";
-      return request<Skater[]>(`/skaters/${qs}`);
+    list: (params?: { club?: string; search?: string }) => {
+      const qs = new URLSearchParams();
+      if (params?.club) qs.set("club", params.club);
+      if (params?.search) qs.set("search", params.search);
+      const query = qs.toString() ? `?${qs}` : "";
+      return request<Skater[]>(`/skaters/${query}`);
     },
     get: (id: number) => request<Skater>(`/skaters/${id}`),
     seasons: (id: number) => request<string[]>(`/skaters/${id}/seasons`),

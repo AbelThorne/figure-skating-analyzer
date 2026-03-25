@@ -118,7 +118,7 @@ export default function StatsPage() {
 
   const { data: skaters = [] } = useQuery({
     queryKey: ["skaters", config?.club_short],
-    queryFn: () => api.skaters.list(config?.club_short),
+    queryFn: () => api.skaters.list(config?.club_short ? { club: config.club_short } : undefined),
     enabled: !!config?.club_short,
   });
 
