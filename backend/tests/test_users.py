@@ -59,6 +59,87 @@ async def test_delete_last_admin_prevented(client, admin_token, admin_user):
 
 
 @pytest.mark.asyncio
+async def test_create_skater_user_with_skater_ids(client, admin_token, db_session):
+    from app.models.skater import Skater
+
+    skater = Skater(first_name="Luna", last_name="Star", club="TestClub")
+    db_session.add(skater)
+    await db_session.commit()
+    await db_session.refresh(skater)
+
+    resp = await client.post(
+        "/api/users/",
+        json={
+            "email": "parent@test.com",
+            "display_name": "Parent Luna",
+            "role": "skater",
+            "password": "password123",
+            "skater_ids": [skater.id],
+        },
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 201
+    assert resp.json()["role"] == "skater"
+    assert resp.json()["skater_ids"] == [skater.id]
+
+
+@pytest.mark.asyncio
+async def test_list_users_includes_skater_ids(client, admin_token, db_session):
+    from app.models.skater import Skater
+    from app.models.user import User
+    from app.models.user_skater import UserSkater
+    from app.auth.passwords import hash_password
+
+    skater = Skater(first_name="Max", last_name="Power", club="TestClub")
+    db_session.add(skater)
+    await db_session.flush()
+    user = User(email="skateparent@test.com", display_name="SP", role="skater", password_hash=hash_password("pass12345"))
+    db_session.add(user)
+    await db_session.flush()
+    db_session.add(UserSkater(user_id=user.id, skater_id=skater.id))
+    await db_session.commit()
+
+    resp = await client.get(
+        "/api/users/",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    skater_user = next(u for u in resp.json() if u["email"] == "skateparent@test.com")
+    assert skater_user["skater_ids"] == [skater.id]
+
+
+@pytest.mark.asyncio
+async def test_update_role_from_skater_clears_links(client, admin_token, db_session):
+    from app.models.skater import Skater
+    from app.models.user import User
+    from app.models.user_skater import UserSkater
+    from app.auth.passwords import hash_password
+    from sqlalchemy import select
+
+    skater = Skater(first_name="Zoe", last_name="Clear", club="TestClub")
+    db_session.add(skater)
+    await db_session.flush()
+    user = User(email="toclear@test.com", display_name="TC", role="skater", password_hash=hash_password("pass12345"))
+    db_session.add(user)
+    await db_session.flush()
+    db_session.add(UserSkater(user_id=user.id, skater_id=skater.id))
+    await db_session.commit()
+
+    resp = await client.patch(
+        f"/api/users/{user.id}",
+        json={"role": "reader"},
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["role"] == "reader"
+
+    result = await db_session.execute(
+        select(UserSkater).where(UserSkater.user_id == user.id)
+    )
+    assert result.scalars().all() == []
+
+
+@pytest.mark.asyncio
 async def test_create_skater_user_with_linked_skaters(db_session):
     """Verify user_skaters association works at model level."""
     from app.models.user import User

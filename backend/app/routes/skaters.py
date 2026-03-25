@@ -19,11 +19,16 @@ from app.models.category_result import CategoryResult
 
 
 @get("/")
-async def list_skaters(request: Request, session: AsyncSession, club: Optional[str] = None) -> list[dict]:
+async def list_skaters(request: Request, session: AsyncSession, club: Optional[str] = None, search: Optional[str] = None) -> list[dict]:
     reject_skater_role(request)
     stmt = select(Skater)
     if club:
         stmt = stmt.where(func.lower(Skater.club) == club.lower())
+    if search:
+        pattern = f"%{search}%"
+        stmt = stmt.where(
+            (Skater.first_name.ilike(pattern)) | (Skater.last_name.ilike(pattern))
+        )
     result = await session.execute(stmt)
     skaters = sorted(result.scalars(), key=lambda s: (s.last_name.upper(), s.first_name.upper()))
     return [_skater_to_dict(s) for s in skaters]
