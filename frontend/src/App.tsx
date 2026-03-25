@@ -19,6 +19,7 @@ import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import MySkatersPage from "./pages/MySkatersPage";
 import TrainingPage from "./pages/TrainingPage";
+import SkaterTrainingPage from "./pages/SkaterTrainingPage";
 
 const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
@@ -245,6 +246,7 @@ function AuthenticatedLayout() {
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/entrainement" element={<TrainingPage />} />
+                <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
                 <Route
                   path="/settings"
                   element={
