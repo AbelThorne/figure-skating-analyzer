@@ -2,13 +2,14 @@ from __future__ import annotations
 
 from typing import Optional
 
-from litestar import Router, get
+from litestar import Request, Router, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
 from sqlalchemy import func, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.auth.guards import reject_skater_role, require_skater_access
 from app.config import PDF_DIR
 from app.database import get_session
 from app.models.skater import Skater
@@ -18,7 +19,8 @@ from app.models.category_result import CategoryResult
 
 
 @get("/")
-async def list_skaters(session: AsyncSession, club: Optional[str] = None) -> list[dict]:
+async def list_skaters(request: Request, session: AsyncSession, club: Optional[str] = None) -> list[dict]:
+    reject_skater_role(request)
     stmt = select(Skater)
     if club:
         stmt = stmt.where(func.lower(Skater.club) == club.lower())
@@ -28,7 +30,8 @@ async def list_skaters(session: AsyncSession, club: Optional[str] = None) -> lis
 
 
 @get("/{skater_id:int}")
-async def get_skater(skater_id: int, session: AsyncSession) -> dict:
+async def get_skater(skater_id: int, request: Request, session: AsyncSession) -> dict:
+    await require_skater_access(request, skater_id, session)
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
@@ -49,10 +52,12 @@ def _skater_to_dict(s: Skater) -> dict:
 @get("/{skater_id:int}/elements")
 async def get_skater_elements(
     skater_id: int,
+    request: Request,
     session: AsyncSession,
     element_type: Optional[str] = None,
     season: Optional[str] = None,
 ) -> list[dict]:
+    await require_skater_access(request, skater_id, session)
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
@@ -96,7 +101,8 @@ async def get_skater_elements(
 
 
 @get("/{skater_id:int}/scores")
-async def get_skater_scores(skater_id: int, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
+async def get_skater_scores(skater_id: int, request: Request, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
+    await require_skater_access(request, skater_id, session)
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
@@ -152,7 +158,8 @@ def _pdf_serving_url(pdf_path: str | None) -> str | None:
 
 
 @get("/{skater_id:int}/category-results")
-async def get_skater_category_results(skater_id: int, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
+async def get_skater_category_results(skater_id: int, request: Request, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
+    await require_skater_access(request, skater_id, session)
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")
@@ -190,7 +197,8 @@ async def get_skater_category_results(skater_id: int, session: AsyncSession, sea
 
 
 @get("/{skater_id:int}/seasons")
-async def get_skater_seasons(skater_id: int, session: AsyncSession) -> list[str]:
+async def get_skater_seasons(skater_id: int, request: Request, session: AsyncSession) -> list[str]:
+    await require_skater_access(request, skater_id, session)
     skater = await session.get(Skater, skater_id)
     if not skater:
         raise NotFoundException(f"Skater {skater_id} not found")

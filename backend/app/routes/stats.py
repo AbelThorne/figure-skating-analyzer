@@ -4,12 +4,13 @@ import statistics
 from collections import defaultdict
 from typing import Optional
 
-from litestar import Router, get
+from litestar import Request, Router, get
 from litestar.di import Provide
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.auth.guards import reject_skater_role
 from app.database import get_session
 from app.models.app_settings import AppSettings
 from app.models.category_result import CategoryResult
@@ -36,6 +37,7 @@ async def _get_current_season(session: AsyncSession) -> Optional[str]:
 
 @get("/progression-ranking")
 async def progression_ranking(
+    request: Request,
     session: AsyncSession,
     season: Optional[str] = None,
     club: Optional[str] = None,
@@ -43,6 +45,7 @@ async def progression_ranking(
     age_group: Optional[str] = None,
     gender: Optional[str] = None,
 ) -> list[dict]:
+    reject_skater_role(request)
     club_short = await _get_club_short(session, club)
     if not season:
         season = await _get_current_season(session)
@@ -105,12 +108,14 @@ async def progression_ranking(
 
 @get("/benchmarks")
 async def benchmarks(
+    request: Request,
     session: AsyncSession,
     skating_level: str,
     age_group: str,
     gender: str,
     season: Optional[str] = None,
 ) -> dict:
+    reject_skater_role(request)
     stmt = (
         select(CategoryResult.combined_total)
         .join(CategoryResult.competition)
@@ -152,6 +157,7 @@ async def benchmarks(
 
 @get("/element-mastery")
 async def element_mastery(
+    request: Request,
     session: AsyncSession,
     season: Optional[str] = None,
     club: Optional[str] = None,
@@ -159,6 +165,7 @@ async def element_mastery(
     age_group: Optional[str] = None,
     gender: Optional[str] = None,
 ) -> dict:
+    reject_skater_role(request)
     club_short = await _get_club_short(session, club)
     if not season:
         season = await _get_current_season(session)
@@ -256,10 +263,12 @@ async def element_mastery(
 
 @get("/competition-club-analysis")
 async def competition_club_analysis(
+    request: Request,
     session: AsyncSession,
     competition_id: int,
     club: Optional[str] = None,
 ) -> dict:
+    reject_skater_role(request)
     club_short = await _get_club_short(session, club)
     if not club_short:
         return {"error": "No club configured"}

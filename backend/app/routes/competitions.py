@@ -6,7 +6,7 @@ from litestar.exceptions import NotFoundException
 from sqlalchemy import select, distinct, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.guards import require_admin
+from app.auth.guards import reject_skater_role, require_admin
 from app.database import get_session
 from app.models.competition import Competition
 from app.models.category_result import CategoryResult
@@ -36,11 +36,13 @@ def competition_to_dict(c: Competition) -> dict:
 
 @get("/")
 async def list_competitions(
+    request: Request,
     session: AsyncSession,
     club: str | None = None,
     season: str | None = None,
     my_club: bool = False,
 ) -> list[dict]:
+    reject_skater_role(request)
     effective_club = club
     if my_club and not club:
         settings_result = await session.execute(select(AppSettings).limit(1))
@@ -64,7 +66,8 @@ async def list_competitions(
 
 
 @get("/{competition_id:int}")
-async def get_competition(competition_id: int, session: AsyncSession) -> dict:
+async def get_competition(competition_id: int, request: Request, session: AsyncSession) -> dict:
+    reject_skater_role(request)
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")

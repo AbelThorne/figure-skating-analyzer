@@ -9,14 +9,15 @@ from litestar.params import Body
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.auth.guards import require_admin
+from app.auth.guards import reject_skater_role, require_admin
 from app.config import LOGOS_DIR, GOOGLE_CLIENT_ID
 from app.database import get_session
 from app.models.app_settings import AppSettings
 
 
 @get("/")
-async def get_config(session: AsyncSession) -> dict:
+async def get_config(request: Request, session: AsyncSession) -> dict:
+    reject_skater_role(request)
     result = await session.execute(select(AppSettings).limit(1))
     settings = result.scalar_one_or_none()
 

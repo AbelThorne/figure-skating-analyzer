@@ -2,12 +2,13 @@ from __future__ import annotations
 
 from typing import Optional
 
-from litestar import Router, get
+from litestar import Request, Router, get
 from litestar.di import Provide
 from sqlalchemy import func, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
+from app.auth.guards import reject_skater_role
 from app.config import CLUB_NAME, CLUB_SHORT
 from app.database import get_session
 from app.models.competition import Competition
@@ -18,9 +19,11 @@ from app.models.category_result import CategoryResult
 
 @get("/")
 async def get_dashboard(
+    request: Request,
     session: AsyncSession,
     season: Optional[str] = None,
 ) -> dict:
+    reject_skater_role(request)
     club_name = CLUB_SHORT
 
     # Build a base subquery: scores joined with skaters (and competitions for season filter)

@@ -107,3 +107,41 @@ async def reader_token(reader_user) -> str:
 
     user, _ = reader_user
     return create_access_token(user_id=user.id, role=user.role)
+
+
+@pytest_asyncio.fixture
+async def skater_user_with_skater(db_session: AsyncSession):
+    """Create a skater user linked to a test skater."""
+    from app.models.user import User
+    from app.models.skater import Skater
+    from app.models.user_skater import UserSkater
+
+    skater = Skater(first_name="Alice", last_name="Dupont", club="TestClub")
+    db_session.add(skater)
+    await db_session.flush()
+
+    password = "skaterpass1"
+    user = User(
+        email="skater@test.com",
+        password_hash=hash_password(password),
+        display_name="Skater Parent",
+        role="skater",
+    )
+    db_session.add(user)
+    await db_session.flush()
+
+    link = UserSkater(user_id=user.id, skater_id=skater.id)
+    db_session.add(link)
+    await db_session.commit()
+    await db_session.refresh(user)
+    await db_session.refresh(skater)
+    return user, password, skater
+
+
+@pytest_asyncio.fixture
+async def skater_token(skater_user_with_skater) -> str:
+    """Return a valid access token for the skater user."""
+    from app.auth.tokens import create_access_token
+
+    user, _, _ = skater_user_with_skater
+    return create_access_token(user_id=user.id, role=user.role)

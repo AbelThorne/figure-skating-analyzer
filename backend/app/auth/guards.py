@@ -2,6 +2,7 @@ from __future__ import annotations
 
 from litestar import Request
 from litestar.exceptions import NotAuthorizedException, PermissionDeniedException
+from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.auth.tokens import decode_token
 
@@ -38,3 +39,28 @@ def require_admin(request: Request) -> None:
     """Reusable helper to check admin role. Raises 403 if not admin."""
     if request.scope.get("state", {}).get("user_role") != "admin":
         raise PermissionDeniedException("Admin role required")
+
+
+def reject_skater_role(request: Request) -> None:
+    """Block access for skater role. Raises 403."""
+    if request.scope.get("state", {}).get("user_role") == "skater":
+        raise PermissionDeniedException("Skater role cannot access this resource")
+
+
+async def require_skater_access(request: Request, skater_id: int, session: AsyncSession) -> None:
+    """For skater role, verify the user has access to this specific skater."""
+    state = request.scope.get("state", {})
+    if state.get("user_role") != "skater":
+        return  # admin and reader pass through
+
+    from app.models.user_skater import UserSkater
+    from sqlalchemy import select
+
+    result = await session.execute(
+        select(UserSkater).where(
+            UserSkater.user_id == state["user_id"],
+            UserSkater.skater_id == skater_id,
+        )
+    )
+    if not result.scalar_one_or_none():
+        raise PermissionDeniedException("You do not have access to this skater")

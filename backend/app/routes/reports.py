@@ -3,13 +3,14 @@ from __future__ import annotations
 import base64
 from pathlib import Path
 
-from litestar import Router, get
+from litestar import Request, Router, get
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
 from litestar.response import Response
 from sqlalchemy.ext.asyncio import AsyncSession
 from jinja2 import Environment, FileSystemLoader
 
+from app.auth.guards import reject_skater_role, require_skater_access
 from app.database import get_session
 from app.services.report_data import get_skater_report_data, get_club_report_data
 
@@ -30,8 +31,10 @@ def _load_logo_base64(logo_path: str | None) -> str | None:
 async def skater_report_pdf(
     skater_id: int,
     season: str,
+    request: Request,
     session: AsyncSession,
 ) -> Response:
+    await require_skater_access(request, skater_id, session)
     import weasyprint
 
     data = await get_skater_report_data(skater_id, season, session)
@@ -56,8 +59,10 @@ async def skater_report_pdf(
 @get("/club/pdf")
 async def club_report_pdf(
     season: str,
+    request: Request,
     session: AsyncSession,
 ) -> Response:
+    reject_skater_role(request)
     import weasyprint
 
     data = await get_club_report_data(season, session)
