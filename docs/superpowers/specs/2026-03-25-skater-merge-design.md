@@ -41,9 +41,10 @@ An admin "merge skaters" feature with two parts:
 1. Reassign `Score` records: `UPDATE scores SET skater_id = target_id WHERE skater_id = source_id`. Handle unique constraint conflicts (same competition + skater + category + segment) by deleting the source's duplicate score.
 2. Reassign `CategoryResult` records: same approach — reassign, delete on conflict (same competition + skater + category).
 3. Reassign `UserSkater` links: reassign to target, skip/delete duplicates (same user + skater).
-4. Fill blank metadata on target from source: for each of `club`, `nationality`, `birth_year`, if target's value is NULL and source's is not, copy source's value to target.
-5. Create a `SkaterAlias` with the source's `(first_name, last_name)` pointing to `target_id`.
-6. Delete the source skater.
+4. **Flush the session** (`await session.flush()`) — the `Score` and `CategoryResult` FKs do not have `ON DELETE CASCADE`, so all reassignments must be committed before deleting the source skater.
+5. Fill blank metadata on target from source: for each of `club`, `nationality`, `birth_year`, if target's value is NULL and source's is not, copy source's value to target.
+6. Create a `SkaterAlias` with the source's `(first_name, last_name)` pointing to `target_id`. If an alias with that `(first_name, last_name)` already exists for a different skater, the merge should fail with an error.
+7. Delete the source skater.
 
 **Response:**
 ```json
@@ -60,7 +61,7 @@ An admin "merge skaters" feature with two parts:
 
 ### Import pipeline change
 
-In `_get_or_create_skater` (import_service.py), after the existing lookup by `(first_name, last_name)` returns `None` and before creating a new skater, check `SkaterAlias`:
+In `_get_or_create_skater` (import_service.py), after the existing lookup by `(first_name, last_name)` returns `None` (and after the existing pairs migration block) but before creating a new skater, check `SkaterAlias`:
 
 ```python
 if not skater:
@@ -72,6 +73,18 @@ if not skater:
     if alias:
         skater = await session.get(Skater, alias.skater_id)
 ```
+
+### Orphan cleanup change
+
+The orphan cleanup at the end of `run_import` must also exclude skaters that are alias targets. Add to the orphan query:
+
+```python
+~exists(select(SkaterAlias.id).where(SkaterAlias.skater_id == Skater.id))
+```
+
+### Enrich pipeline note
+
+`run_enrich` matches PDF skater names against `Score` joined with `Skater` by `first_name`/`last_name`. After a merge, the source skater is deleted and its name is stored as an alias. Since enrich always runs after import, and import resolves aliases, the scores will already be linked to the target skater. No change needed in `run_enrich` — the PDF name lookup will match the target skater's name (or the score will have been created under the target via alias resolution during import).
 
 ## Frontend (Settings page)
 
