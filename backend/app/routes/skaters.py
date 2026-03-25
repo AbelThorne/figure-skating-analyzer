@@ -2,14 +2,16 @@ from __future__ import annotations
 
 from typing import Optional
 
-from litestar import Request, Router, get
+from litestar import Request, Router, get, post
 from litestar.di import Provide
-from litestar.exceptions import NotFoundException
+from litestar.exceptions import ClientException, NotFoundException
 from sqlalchemy import func, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
-from app.auth.guards import reject_skater_role, require_skater_access
+from app.auth.guards import reject_skater_role, require_admin, require_skater_access
+from app.models.user_skater import UserSkater
+from app.models.skater_alias import SkaterAlias
 from app.config import PDF_DIR
 from app.database import get_session
 from app.models.skater import Skater
@@ -223,8 +225,122 @@ async def get_skater_seasons(skater_id: int, request: Request, session: AsyncSes
     return [row[0] for row in result.all()]
 
 
+@post("/merge", status_code=200)
+async def merge_skaters(request: Request, session: AsyncSession, data: dict) -> dict:
+    require_admin(request)
+
+    target_id = data.get("target_id")
+    source_ids = data.get("source_ids", [])
+
+    if not source_ids:
+        raise ClientException(detail="source_ids must not be empty", status_code=400)
+    if target_id in source_ids:
+        raise ClientException(detail="target_id must not be in source_ids", status_code=400)
+
+    target = await session.get(Skater, target_id)
+    if not target:
+        raise NotFoundException(detail=f"Target skater {target_id} not found")
+
+    sources = []
+    for sid in source_ids:
+        s = await session.get(Skater, sid)
+        if not s:
+            raise NotFoundException(detail=f"Source skater {sid} not found")
+        sources.append(s)
+
+    aliases_created = 0
+    for source in sources:
+        # 1. Reassign scores (delete on conflict)
+        source_scores = (await session.execute(
+            select(Score).where(Score.skater_id == source.id)
+        )).scalars().all()
+        for score in source_scores:
+            existing = (await session.execute(
+                select(Score).where(
+                    Score.skater_id == target.id,
+                    Score.competition_id == score.competition_id,
+                    Score.category == score.category,
+                    Score.segment == score.segment,
+                )
+            )).scalar_one_or_none()
+            if existing:
+                await session.delete(score)
+            else:
+                score.skater_id = target.id
+
+        # 2. Reassign category results (delete on conflict)
+        source_crs = (await session.execute(
+            select(CategoryResult).where(CategoryResult.skater_id == source.id)
+        )).scalars().all()
+        for cr in source_crs:
+            existing = (await session.execute(
+                select(CategoryResult).where(
+                    CategoryResult.skater_id == target.id,
+                    CategoryResult.competition_id == cr.competition_id,
+                    CategoryResult.category == cr.category,
+                )
+            )).scalar_one_or_none()
+            if existing:
+                await session.delete(cr)
+            else:
+                cr.skater_id = target.id
+
+        # 3. Reassign user_skater links (delete on conflict)
+        source_links = (await session.execute(
+            select(UserSkater).where(UserSkater.skater_id == source.id)
+        )).scalars().all()
+        for link in source_links:
+            existing = (await session.execute(
+                select(UserSkater).where(
+                    UserSkater.user_id == link.user_id,
+                    UserSkater.skater_id == target.id,
+                )
+            )).scalar_one_or_none()
+            if existing:
+                await session.delete(link)
+            else:
+                link.skater_id = target.id
+
+        # 4. Flush before deleting source (no CASCADE on Score/CategoryResult FKs)
+        await session.flush()
+
+        # 5. Fill blank metadata
+        if not target.nationality and source.nationality:
+            target.nationality = source.nationality
+        if not target.club and source.club:
+            target.club = source.club
+        if not target.birth_year and source.birth_year:
+            target.birth_year = source.birth_year
+
+        # 6. Create alias
+        existing_alias = (await session.execute(
+            select(SkaterAlias).where(
+                SkaterAlias.first_name == source.first_name,
+                SkaterAlias.last_name == source.last_name,
+            )
+        )).scalar_one_or_none()
+        if existing_alias and existing_alias.skater_id != target.id:
+            raise ClientException(
+                detail=f"Alias conflict: {source.first_name} {source.last_name} is already an alias for skater {existing_alias.skater_id}",
+                status_code=400,
+            )
+        if not existing_alias:
+            session.add(SkaterAlias(
+                first_name=source.first_name,
+                last_name=source.last_name,
+                skater_id=target.id,
+            ))
+            aliases_created += 1
+
+        # 7. Delete source
+        await session.delete(source)
+
+    await session.commit()
+    return {"merged": len(sources), "aliases_created": aliases_created}
+
+
 router = Router(
     path="/api/skaters",
-    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results, get_skater_seasons],
+    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results, get_skater_seasons, merge_skaters],
     dependencies={"session": Provide(get_session)},
 )
