@@ -18,12 +18,14 @@ import SetupPage from "./pages/SetupPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
 import MySkatersPage from "./pages/MySkatersPage";
+import TrainingPage from "./pages/TrainingPage";
 
 const navLinks = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
   { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
   { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
   { to: "/club", label: "CLUB", icon: "bar_chart", end: false },
+  { to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: false },
 ];
 
 function getPageTitle(pathname: string): string {
@@ -37,6 +39,8 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/settings") return "Paramètres";
   if (pathname === "/mes-patineurs") return "Mes patineurs";
   if (pathname === "/profil") return "Mon compte";
+  if (pathname === "/entrainement") return "Suivi entraînement";
+  if (pathname.startsWith("/entrainement/")) return "Suivi entraînement";
   return "";
 }
 
@@ -240,6 +244,7 @@ function AuthenticatedLayout() {
                 <Route path="/club/competition" element={<ClubCompetitionPage />} />
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
+                <Route path="/entrainement" element={<TrainingPage />} />
                 <Route
                   path="/settings"
                   element={
