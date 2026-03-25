@@ -11,12 +11,13 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { api, downloadPdf, Element, Score, CategoryResult } from "../api/client";
+import { api, downloadPdf, Element, Score, CategoryResult, TimelineEntry, WeeklyReview, TrainingIncident } from "../api/client";
 import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
 import ScoreCardModal from "../components/ScoreCardModal";
+import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 import { countryFlag } from "../utils/countryFlags";
 import { isJumpElement, isSpinElement, isStepElement, elementLevel } from "../utils/elementClassifier";
 import { useAuth } from "../auth/AuthContext";
@@ -154,6 +155,9 @@ export default function SkaterAnalyticsPage() {
   const skaterId = Number(id);
   const { user } = useAuth();
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
+  const [analyticsTab, setAnalyticsTab] = useState<"competitions" | "training">(
+    user?.role === "skater" ? "training" : "competitions"
+  );
 
   const { data: skater, isLoading: loadingSkater } = useQuery({
     queryKey: ["skater", skaterId],
@@ -181,6 +185,24 @@ export default function SkaterAnalyticsPage() {
     queryKey: ["skater-category-results", skaterId, selectedSeason],
     queryFn: () => api.skaters.categoryResults(skaterId, selectedSeason ?? undefined),
     placeholderData: keepPreviousData,
+  });
+
+  const { data: timeline } = useQuery({
+    queryKey: ["training", "timeline", skaterId],
+    queryFn: () => api.training.timeline({ skater_id: skaterId }),
+    enabled: user?.role === "skater",
+  });
+
+  const { data: trainingReviews } = useQuery({
+    queryKey: ["training", "reviews", skaterId],
+    queryFn: () => api.training.reviews.list({ skater_id: skaterId }),
+    enabled: user?.role === "skater",
+  });
+
+  const { data: trainingIncidents } = useQuery({
+    queryKey: ["training", "incidents", skaterId],
+    queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
+    enabled: user?.role === "skater",
   });
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
@@ -513,8 +535,40 @@ export default function SkaterAnalyticsPage() {
         </div>
       )}
 
+      {/* Tab bar for skater role */}
+      {user?.role === "skater" && (
+        <div className="px-6 pt-4">
+          <div className="flex gap-1 bg-surface-container rounded-xl p-1 max-w-md">
+            <button
+              onClick={() => setAnalyticsTab("training")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                analyticsTab === "training"
+                  ? "bg-white text-primary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              <span className="material-symbols-outlined text-lg">fitness_center</span>
+              Entraînement
+            </button>
+            <button
+              onClick={() => setAnalyticsTab("competitions")}
+              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+                analyticsTab === "competitions"
+                  ? "bg-white text-primary shadow-sm"
+                  : "text-on-surface-variant hover:text-on-surface"
+              }`}
+            >
+              <span className="material-symbols-outlined text-lg">emoji_events</span>
+              Compétitions
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* ── Main content ── */}
-      <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+      {(analyticsTab === "competitions" || user?.role !== "skater") && (
+        <>
+          <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ────────── LEFT PANEL ────────── */}
         <div className="lg:col-span-2 flex flex-col gap-6">
           {/* Score progression chart */}
@@ -1062,6 +1116,89 @@ export default function SkaterAnalyticsPage() {
           )}
         </div>
       </div>
+        </>
+      )}
+
+      {/* ── Training content ── */}
+      {analyticsTab === "training" && user?.role === "skater" && (
+        <div className="p-6 space-y-6">
+          {/* Evolution chart */}
+          <TrainingEvolutionChart
+            reviews={trainingReviews ?? []}
+            incidents={trainingIncidents ?? []}
+          />
+
+          {/* Timeline */}
+          <div className="space-y-3">
+            <h4 className="font-headline font-bold text-on-surface text-sm">Historique</h4>
+            {(timeline ?? []).length === 0 ? (
+              <p className="text-sm text-on-surface-variant text-center py-10">Aucune donnée d'entraînement disponible</p>
+            ) : (
+              timeline?.map((entry) => {
+                if (entry.type === "review") {
+                  const r = entry as WeeklyReview & { type: "review" };
+                  return (
+                    <div key={`review-${r.id}`} className="bg-surface-container-low rounded-2xl p-5 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h4 className="font-headline font-bold text-on-surface text-sm">
+                          Semaine du {new Date(r.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                        </h4>
+                        <span className="font-mono text-xs text-on-surface-variant">{r.attendance}</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-4">
+                        {(["engagement", "progression", "attitude"] as const).map((field) => (
+                          <div key={field}>
+                            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 capitalize">{field}</p>
+                            <div className="flex gap-0.5">
+                              {Array.from({ length: 5 }, (_, i) => (
+                                <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < r[field] ? "bg-primary" : "bg-surface-container"}`} />
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      {r.strengths && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Points forts</p>
+                          <p className="text-sm text-on-surface">{r.strengths}</p>
+                        </div>
+                      )}
+                      {r.improvements && (
+                        <div>
+                          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Axes d'amélioration</p>
+                          <p className="text-sm text-on-surface">{r.improvements}</p>
+                        </div>
+                      )}
+                    </div>
+                  );
+                } else {
+                  const i = entry as TrainingIncident & { type: "incident" };
+                  const typeMap: Record<string, { label: string; color: string; icon: string }> = {
+                    injury: { label: "Blessure", color: "text-error", icon: "healing" },
+                    behavior: { label: "Comportement", color: "text-orange-600", icon: "report" },
+                    other: { label: "Autre", color: "text-on-surface-variant", icon: "info" },
+                  };
+                  const meta = typeMap[i.incident_type] ?? typeMap.other;
+                  return (
+                    <div key={`incident-${i.id}`} className="bg-surface-container-low rounded-2xl p-5 space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-2">
+                          <span className={`material-symbols-outlined text-lg ${meta.color}`}>{meta.icon}</span>
+                          <span className={`text-sm font-bold ${meta.color}`}>{meta.label}</span>
+                        </div>
+                        <span className="text-xs text-on-surface-variant">
+                          {new Date(i.date).toLocaleDateString("fr-FR")}
+                        </span>
+                      </div>
+                      <p className="text-sm text-on-surface">{i.description}</p>
+                    </div>
+                  );
+                }
+              })
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
