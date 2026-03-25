@@ -129,6 +129,27 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
 
     week_start = _snap_to_monday(date.fromisoformat(data["week_start"]))
 
+    # Upsert: if a review already exists for this skater+week, update it
+    existing = (await session.execute(
+        select(WeeklyReview).where(
+            WeeklyReview.skater_id == data["skater_id"],
+            WeeklyReview.week_start == week_start,
+        )
+    )).scalar_one_or_none()
+
+    if existing:
+        existing.coach_id = state["user_id"]
+        existing.attendance = data.get("attendance", "")
+        existing.engagement = data["engagement"]
+        existing.progression = data["progression"]
+        existing.attitude = data["attitude"]
+        existing.strengths = data.get("strengths", "")
+        existing.improvements = data.get("improvements", "")
+        existing.visible_to_skater = data.get("visible_to_skater", True)
+        await session.commit()
+        await session.refresh(existing)
+        return _review_to_dict(existing)
+
     review = WeeklyReview(
         skater_id=data["skater_id"],
         coach_id=state["user_id"],
