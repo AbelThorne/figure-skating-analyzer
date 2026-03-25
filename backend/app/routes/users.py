@@ -170,6 +170,13 @@ async def delete_user(
                 status_code=400,
             )
 
+    # Explicitly delete UserSkater links (SQLite FK cascade unreliable)
+    existing_links = await session.execute(
+        select(UserSkater).where(UserSkater.user_id == user_id)
+    )
+    for link in existing_links.scalars().all():
+        await session.delete(link)
+
     await session.delete(user)
     await session.commit()
     return Response(content=None, status_code=204)
