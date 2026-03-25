@@ -10,6 +10,7 @@ from app.models.competition import Competition
 from app.models.skater import Skater
 from app.models.score import Score
 from app.models.category_result import CategoryResult
+from app.models.skater_alias import SkaterAlias
 from app.services.scraper_factory import get_scraper
 from app.services.downloader import download_pdfs, url_to_slug
 from app.services.parser import parse_elements, extract_segment_code
@@ -52,6 +53,16 @@ async def _get_or_create_skater(
                 old_skater.last_name = last_name
                 skater = old_skater
                 break
+
+    # Check aliases (from merged skaters)
+    if not skater:
+        alias_stmt = select(SkaterAlias).where(
+            SkaterAlias.first_name == first_name,
+            SkaterAlias.last_name == last_name,
+        )
+        alias = (await session.execute(alias_stmt)).scalar_one_or_none()
+        if alias:
+            skater = await session.get(Skater, alias.skater_id)
 
     if not skater:
         skater = Skater(

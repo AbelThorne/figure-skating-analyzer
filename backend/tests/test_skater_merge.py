@@ -226,3 +226,21 @@ async def test_merge_skaters_reader_forbidden(client, db_session, reader_token):
         headers={"Authorization": f"Bearer {reader_token}"},
     )
     assert resp.status_code == 403
+
+
+@pytest.mark.asyncio
+async def test_get_or_create_skater_uses_alias(db_session):
+    """_get_or_create_skater should resolve aliases instead of creating new skaters."""
+    from app.services.import_service import _get_or_create_skater
+
+    target = Skater(first_name="Emma", last_name="MARTIN")
+    db_session.add(target)
+    await db_session.flush()
+
+    alias = SkaterAlias(first_name="Emma", last_name="DUPONT", skater_id=target.id)
+    db_session.add(alias)
+    await db_session.commit()
+
+    result = await _get_or_create_skater(db_session, "Emma DUPONT", None, None)
+    assert result.id == target.id
+    assert result.last_name == "MARTIN"
