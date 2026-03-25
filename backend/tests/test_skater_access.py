@@ -123,3 +123,28 @@ async def test_reader_can_list_all_skaters(client: AsyncClient, reader_token: st
         headers={"Authorization": f"Bearer {reader_token}"},
     )
     assert resp.status_code == 200
+
+
+@pytest.mark.asyncio
+async def test_me_skaters_returns_linked_skaters(client: AsyncClient, skater_token: str, skater_user_with_skater):
+    """GET /api/me/skaters returns linked skaters for skater role."""
+    resp = await client.get(
+        "/api/me/skaters",
+        headers={"Authorization": f"Bearer {skater_token}"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    assert len(data) == 1
+    assert data[0]["first_name"] == "Alice"
+    assert data[0]["last_name"] == "Dupont"
+
+
+@pytest.mark.asyncio
+async def test_me_skaters_returns_empty_for_admin(client: AsyncClient, admin_token: str):
+    """GET /api/me/skaters returns empty list for admin role."""
+    resp = await client.get(
+        "/api/me/skaters",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    assert resp.json() == []
