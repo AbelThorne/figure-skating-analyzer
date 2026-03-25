@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import yaml from "js-yaml";
-import { api, type UserRecord, type ImportResult } from "../api/client";
+import { api, type UserRecord, type ImportResult, type Skater } from "../api/client";
 import { useJobs, type Lot } from "../contexts/JobContext";
 
 const inputCls =
@@ -258,6 +258,42 @@ export default function SettingsPage() {
       setShowResetConfirm(false);
       setResetConfirmText("");
       qc.invalidateQueries();
+    },
+  });
+
+  // --- Skater merge ---
+  const [mergeSearch, setMergeSearch] = useState("");
+  const [debouncedMergeSearch, setDebouncedMergeSearch] = useState("");
+  const [mergeSelected, setMergeSelected] = useState<Skater[]>([]);
+  const [mergeTargetId, setMergeTargetId] = useState<number | null>(null);
+  const [showMergeConfirm, setShowMergeConfirm] = useState(false);
+  const [mergeSuccess, setMergeSuccess] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedMergeSearch(mergeSearch), 300);
+    return () => clearTimeout(timer);
+  }, [mergeSearch]);
+
+  const { data: mergeResults } = useQuery({
+    queryKey: ["skaters", "merge-search", debouncedMergeSearch],
+    queryFn: () => api.skaters.list({ search: debouncedMergeSearch }),
+    enabled: debouncedMergeSearch.length >= 2,
+  });
+
+  const mergeMutation = useMutation({
+    mutationFn: () => {
+      const sourceIds = mergeSelected
+        .filter((s) => s.id !== mergeTargetId)
+        .map((s) => s.id);
+      return api.skaters.merge(mergeTargetId!, sourceIds);
+    },
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["skaters"] });
+      setMergeSelected([]);
+      setMergeTargetId(null);
+      setShowMergeConfirm(false);
+      setMergeSuccess(`${data.merged} patineur(s) fusionné(s)`);
+      setTimeout(() => setMergeSuccess(""), 3000);
     },
   });
 
@@ -807,6 +843,149 @@ export default function SettingsPage() {
                 </div>
               );
             })}
+          </div>
+        )}
+      </section>
+
+      {/* Skater merge */}
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <h2 className="font-headline font-bold text-on-surface text-lg mb-2">
+          Fusionner des patineurs
+        </h2>
+        <p className="text-on-surface-variant text-xs mb-4">
+          Regroupez les scores de patineurs en doublon (nom différent, même personne).
+        </p>
+
+        {mergeSuccess && (
+          <div className="mb-4 px-4 py-2 bg-primary/10 text-primary text-sm rounded-xl font-medium">
+            {mergeSuccess}
+          </div>
+        )}
+
+        {/* Search */}
+        <div className="relative max-w-sm">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px] pointer-events-none">
+            search
+          </span>
+          <input
+            placeholder="Rechercher un patineur…"
+            value={mergeSearch}
+            onChange={(e) => setMergeSearch(e.target.value)}
+            className="w-full bg-surface-container-high rounded-full py-2 pl-10 pr-4 text-sm font-body text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        {/* Search results */}
+        {mergeResults && mergeSearch.length >= 2 && (
+          <div className="mt-2 bg-surface-container rounded-lg shadow-md max-h-40 overflow-y-auto max-w-sm">
+            {mergeResults
+              .filter((s) => !mergeSelected.some((sel) => sel.id === s.id))
+              .map((s) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => {
+                    const updated = [...mergeSelected, s];
+                    setMergeSelected(updated);
+                    if (!mergeTargetId) setMergeTargetId(s.id);
+                    setMergeSearch("");
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-surface-container-high transition-colors"
+                >
+                  {s.first_name} {s.last_name}
+                  {s.club && (
+                    <span className="text-on-surface-variant ml-2 text-xs">({s.club})</span>
+                  )}
+                </button>
+              ))}
+            {mergeResults.filter((s) => !mergeSelected.some((sel) => sel.id === s.id)).length === 0 && (
+              <p className="px-3 py-2 text-xs text-on-surface-variant">Aucun résultat</p>
+            )}
+          </div>
+        )}
+
+        {/* Selected skaters */}
+        {mergeSelected.length > 0 && (
+          <div className="mt-4 space-y-2">
+            <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+              Patineurs sélectionnés — choisissez le patineur principal
+            </label>
+            {mergeSelected.map((s) => (
+              <div
+                key={s.id}
+                className="flex items-center gap-3 p-2 bg-surface-container-low rounded-xl"
+              >
+                <input
+                  type="radio"
+                  name="merge-target"
+                  checked={mergeTargetId === s.id}
+                  onChange={() => setMergeTargetId(s.id)}
+                  className="accent-primary"
+                />
+                <span className="text-sm text-on-surface font-medium">
+                  {s.first_name} {s.last_name}
+                </span>
+                {s.club && (
+                  <span className="text-xs text-on-surface-variant">({s.club})</span>
+                )}
+                <button
+                  type="button"
+                  onClick={() => {
+                    const updated = mergeSelected.filter((sel) => sel.id !== s.id);
+                    setMergeSelected(updated);
+                    if (mergeTargetId === s.id) {
+                      setMergeTargetId(updated[0]?.id ?? null);
+                    }
+                  }}
+                  className="ml-auto text-on-surface-variant hover:text-error"
+                >
+                  <span className="material-symbols-outlined text-sm">close</span>
+                </button>
+              </div>
+            ))}
+
+            {mergeSelected.length >= 2 && (
+              <div className="mt-3">
+                {showMergeConfirm ? (
+                  <div className="p-3 bg-surface-container rounded-xl space-y-3">
+                    <p className="text-sm text-on-surface">
+                      Fusionner {mergeSelected.length} patineurs en{" "}
+                      <strong>
+                        {mergeSelected.find((s) => s.id === mergeTargetId)?.first_name}{" "}
+                        {mergeSelected.find((s) => s.id === mergeTargetId)?.last_name}
+                      </strong>{" "}
+                      ? Les scores seront regroupés.
+                    </p>
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => mergeMutation.mutate()}
+                        disabled={mergeMutation.isPending}
+                        className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                      >
+                        {mergeMutation.isPending ? "Fusion..." : "Confirmer"}
+                      </button>
+                      <button
+                        onClick={() => setShowMergeConfirm(false)}
+                        className="px-4 py-2 text-on-surface-variant text-sm"
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                    {mergeMutation.isError && (
+                      <p className="text-error text-xs">{String(mergeMutation.error)}</p>
+                    )}
+                  </div>
+                ) : (
+                  <button
+                    onClick={() => setShowMergeConfirm(true)}
+                    className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors flex items-center gap-2"
+                  >
+                    <span className="material-symbols-outlined text-sm">merge</span>
+                    Fusionner
+                  </button>
+                )}
+              </div>
+            )}
           </div>
         )}
       </section>
