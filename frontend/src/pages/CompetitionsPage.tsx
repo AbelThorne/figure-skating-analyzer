@@ -45,6 +45,8 @@ export default function CompetitionsPage() {
   const [filterType, setFilterType] = useState<string>("all");
   const [sortBy, setSortBy] = useState<string>("date-desc");
   const [showUnconfirmedOnly, setShowUnconfirmedOnly] = useState(false);
+  const [confirmingReimportId, setConfirmingReimportId] = useState<number | null>(null);
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
 
   const createMutation = useMutation({
     mutationFn: api.competitions.create,
@@ -399,22 +401,36 @@ export default function CompetitionsPage() {
                           ? "Importation..."
                           : "Importer"}
                     </button>
-                    <button
-                      onClick={() => {
-                        if (
-                          confirm(`Réimporter ${c.name} ? Les données existantes seront remplacées.`)
-                        ) {
-                          reimportMutation.mutate(c.id);
-                        }
-                      }}
-                      disabled={isImporting}
-                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">
-                        refresh
+                    {confirmingReimportId === c.id ? (
+                      <span className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            reimportMutation.mutate(c.id);
+                            setConfirmingReimportId(null);
+                          }}
+                          className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                        >
+                          Confirmer
+                        </button>
+                        <button
+                          onClick={() => setConfirmingReimportId(null)}
+                          className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
+                        >
+                          Annuler
+                        </button>
                       </span>
-                      Réimporter
-                    </button>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingReimportId(c.id)}
+                        disabled={isImporting}
+                        className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">
+                          refresh
+                        </span>
+                        Réimporter
+                      </button>
+                    )}
                     <button
                       onClick={() => enrichMutation.mutate(c.id)}
                       disabled={isEnriching}
@@ -429,21 +445,35 @@ export default function CompetitionsPage() {
                           ? "Enrichissement..."
                           : "Enrichir PDF"}
                     </button>
-                    <button
-                      onClick={() => {
-                        if (
-                          confirm(`Supprimer "${c.name}" ?`)
-                        ) {
-                          deleteMutation.mutate(c.id);
-                        }
-                      }}
-                      className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">
-                        delete
+                    {confirmingDeleteId === c.id ? (
+                      <span className="flex items-center gap-1">
+                        <button
+                          onClick={() => {
+                            deleteMutation.mutate(c.id);
+                            setConfirmingDeleteId(null);
+                          }}
+                          className="bg-error text-on-error rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                        >
+                          Confirmer
+                        </button>
+                        <button
+                          onClick={() => setConfirmingDeleteId(null)}
+                          className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
+                        >
+                          Annuler
+                        </button>
                       </span>
-                      Supprimer
-                    </button>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingDeleteId(c.id)}
+                        className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">
+                          delete
+                        </span>
+                        Supprimer
+                      </button>
+                    )}
                   </div>
                 )}
               </div>
