@@ -47,6 +47,13 @@ def reject_skater_role(request: Request) -> None:
         raise PermissionDeniedException("Skater role cannot access this resource")
 
 
+def require_coach_or_admin(request: Request) -> None:
+    """Allow only coach and admin roles. Raises 403 otherwise."""
+    role = request.scope.get("state", {}).get("user_role")
+    if role not in ("coach", "admin"):
+        raise PermissionDeniedException("Coach or admin role required")
+
+
 async def require_skater_access(request: Request, skater_id: int, session: AsyncSession) -> None:
     """For skater role, verify the user has access to this specific skater."""
     state = request.scope.get("state", {})

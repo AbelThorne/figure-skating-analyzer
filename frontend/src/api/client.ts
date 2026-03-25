@@ -307,7 +307,7 @@ export interface AuthUser {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader" | "skater";
+  role: "admin" | "reader" | "skater" | "coach";
   must_change_password: boolean;
   has_password: boolean;
 }
@@ -321,7 +321,7 @@ export interface UserRecord {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader" | "skater";
+  role: "admin" | "reader" | "skater" | "coach";
   is_active: boolean;
   google_oauth_enabled: boolean;
   skater_ids: number[];
