@@ -150,6 +150,29 @@ function AuthenticatedLayout() {
         {/* Nav links */}
         {user?.role === "skater" ? (
           <SkaterNav closeSidebar={closeSidebar} />
+        ) : user?.role === "coach" ? (
+          <nav className="flex-1 py-2">
+            {[
+              { to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: true },
+              { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
+              { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
+            ].map(({ to, label, icon, end }) => (
+              <NavLink
+                key={to}
+                to={to}
+                end={end}
+                onClick={closeSidebar}
+                className={({ isActive }) =>
+                  isActive
+                    ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
+                    : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+                }
+              >
+                <span className="material-symbols-outlined text-xl">{icon}</span>
+                <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+              </NavLink>
+            ))}
+          </nav>
         ) : (
           <nav className="flex-1 py-2">
             {navLinks.map(({ to, label, icon, end }) => (
@@ -233,6 +256,17 @@ function AuthenticatedLayout() {
                 <Route path="/mes-patineurs" element={<MySkatersPage />} />
                 <Route path="/profil" element={<ProfilePage />} />
                 <Route path="*" element={<SkaterRedirect />} />
+              </>
+            ) : user?.role === "coach" ? (
+              <>
+                <Route path="/entrainement" element={<TrainingPage />} />
+                <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
+                <Route path="/patineurs" element={<SkaterBrowserPage />} />
+                <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
+                <Route path="/competitions" element={<CompetitionsPage />} />
+                <Route path="/competitions/:id" element={<CompetitionPage />} />
+                <Route path="/profil" element={<ProfilePage />} />
+                <Route path="*" element={<Navigate to="/entrainement" replace />} />
               </>
             ) : (
               <>
