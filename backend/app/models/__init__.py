@@ -6,6 +6,7 @@ from app.models.user import User
 from app.models.user_skater import UserSkater
 from app.models.allowed_domain import AllowedDomain
 from app.models.app_settings import AppSettings
+from app.models.skater_alias import SkaterAlias
 
 __all__ = [
     "Competition",
@@ -16,4 +17,5 @@ __all__ = [
     "UserSkater",
     "AllowedDomain",
     "AppSettings",
+    "SkaterAlias",
 ]
