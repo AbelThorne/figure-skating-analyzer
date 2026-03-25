@@ -307,7 +307,7 @@ export interface AuthUser {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader" | "skater";
+  role: "admin" | "reader" | "skater" | "coach";
   must_change_password: boolean;
   has_password: boolean;
 }
@@ -321,7 +321,7 @@ export interface UserRecord {
   id: string;
   email: string;
   display_name: string;
-  role: "admin" | "reader" | "skater";
+  role: "admin" | "reader" | "skater" | "coach";
   is_active: boolean;
   google_oauth_enabled: boolean;
   skater_ids: number[];
@@ -388,6 +388,75 @@ export interface BenchmarkData {
   p25: number | null;
   p75: number | null;
 }
+
+// --- Training Tracking Types ---
+
+export interface WeeklyReview {
+  id: number;
+  skater_id: number;
+  coach_id: string;
+  week_start: string;
+  attendance: string;
+  engagement: number;
+  progression: number;
+  attitude: number;
+  strengths: string;
+  improvements: string;
+  visible_to_skater: boolean;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface CreateReviewPayload {
+  skater_id: number;
+  week_start: string;
+  attendance: string;
+  engagement: number;
+  progression: number;
+  attitude: number;
+  strengths: string;
+  improvements: string;
+  visible_to_skater: boolean;
+}
+
+export interface UpdateReviewPayload {
+  attendance?: string;
+  engagement?: number;
+  progression?: number;
+  attitude?: number;
+  strengths?: string;
+  improvements?: string;
+  visible_to_skater?: boolean;
+}
+
+export interface TrainingIncident {
+  id: number;
+  skater_id: number;
+  coach_id: string;
+  date: string;
+  incident_type: "injury" | "behavior" | "other";
+  description: string;
+  visible_to_skater: boolean;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface CreateIncidentPayload {
+  skater_id: number;
+  date: string;
+  incident_type: "injury" | "behavior" | "other";
+  description: string;
+  visible_to_skater: boolean;
+}
+
+export interface UpdateIncidentPayload {
+  date?: string;
+  incident_type?: "injury" | "behavior" | "other";
+  description?: string;
+  visible_to_skater?: boolean;
+}
+
+export type TimelineEntry = (WeeklyReview & { type: "review"; sort_date: string }) | (TrainingIncident & { type: "incident"; sort_date: string });
 
 export interface JumpMastery {
   jump_type: string;
@@ -757,6 +826,61 @@ export const api = {
       if (params.club) qs.set("club", params.club);
       const query = qs.toString() ? `?${qs}` : "";
       return request<CompetitionClubAnalysis>(`/stats/competition-club-analysis${query}`);
+    },
+  },
+
+  training: {
+    reviews: {
+      list: (params?: { skater_id?: number; from?: string; to?: string }) => {
+        const qs = new URLSearchParams();
+        if (params?.skater_id !== undefined) qs.set("skater_id", String(params.skater_id));
+        if (params?.from) qs.set("from_date", params.from);
+        if (params?.to) qs.set("to_date", params.to);
+        const query = qs.toString() ? `?${qs}` : "";
+        return request<WeeklyReview[]>(`/training/reviews${query}`);
+      },
+      get: (id: number) => request<WeeklyReview>(`/training/reviews/${id}`),
+      create: (data: CreateReviewPayload) =>
+        request<WeeklyReview>("/training/reviews", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: number, data: UpdateReviewPayload) =>
+        request<WeeklyReview>(`/training/reviews/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: number) =>
+        request<void>(`/training/reviews/${id}`, { method: "DELETE" }),
+    },
+    incidents: {
+      list: (params?: { skater_id?: number; from?: string; to?: string }) => {
+        const qs = new URLSearchParams();
+        if (params?.skater_id !== undefined) qs.set("skater_id", String(params.skater_id));
+        if (params?.from) qs.set("from_date", params.from);
+        if (params?.to) qs.set("to_date", params.to);
+        const query = qs.toString() ? `?${qs}` : "";
+        return request<TrainingIncident[]>(`/training/incidents${query}`);
+      },
+      get: (id: number) => request<TrainingIncident>(`/training/incidents/${id}`),
+      create: (data: CreateIncidentPayload) =>
+        request<TrainingIncident>("/training/incidents", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: number, data: UpdateIncidentPayload) =>
+        request<TrainingIncident>(`/training/incidents/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: number) =>
+        request<void>(`/training/incidents/${id}`, { method: "DELETE" }),
+    },
+    timeline: (params: { skater_id: number; from?: string; to?: string }) => {
+      const qs = new URLSearchParams({ skater_id: String(params.skater_id) });
+      if (params.from) qs.set("from_date", params.from);
+      if (params.to) qs.set("to_date", params.to);
+      return request<TimelineEntry[]>(`/training/timeline?${qs}`);
     },
   },
 };

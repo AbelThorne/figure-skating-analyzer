@@ -23,12 +23,13 @@ class User(Base):
     password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(
-        SAEnum("admin", "reader", "skater", name="user_role"), nullable=False, default="reader"
+        SAEnum("admin", "reader", "skater", "coach", name="user_role"), nullable=False, default="reader"
     )
     google_oauth_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
     token_version: Mapped[int] = mapped_column(Integer, default=0)
     must_change_password: Mapped[bool] = mapped_column(Boolean, default=False)
+    email_notifications: Mapped[bool] = mapped_column(Boolean, default=True)
     created_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow
     )

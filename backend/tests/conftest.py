@@ -92,6 +92,24 @@ async def reader_user(db_session: AsyncSession):
 
 
 @pytest_asyncio.fixture
+async def coach_user(db_session: AsyncSession):
+    """Create a coach user and return (user, plain_password)."""
+    from app.models.user import User
+
+    password = "coachpass1"
+    user = User(
+        email="coach@test.com",
+        password_hash=hash_password(password),
+        display_name="Test Coach",
+        role="coach",
+    )
+    db_session.add(user)
+    await db_session.commit()
+    await db_session.refresh(user)
+    return user, password
+
+
+@pytest_asyncio.fixture
 async def admin_token(admin_user) -> str:
     """Return a valid access token for the admin user."""
     from app.auth.tokens import create_access_token
@@ -106,6 +124,15 @@ async def reader_token(reader_user) -> str:
     from app.auth.tokens import create_access_token
 
     user, _ = reader_user
+    return create_access_token(user_id=user.id, role=user.role)
+
+
+@pytest_asyncio.fixture
+async def coach_token(coach_user) -> str:
+    """Return a valid access token for the coach user."""
+    from app.auth.tokens import create_access_token
+
+    user, _ = coach_user
     return create_access_token(user_id=user.id, role=user.role)
 
 
