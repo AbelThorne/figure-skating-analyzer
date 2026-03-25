@@ -4,6 +4,93 @@ import yaml from "js-yaml";
 import { api, type UserRecord, type ImportResult } from "../api/client";
 import { useJobs, type Lot } from "../contexts/JobContext";
 
+const inputCls =
+  "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
+
+function SkaterPicker({
+  selectedIds,
+  onChange,
+}: {
+  selectedIds: number[];
+  onChange: (ids: number[]) => void;
+}) {
+  const [search, setSearch] = useState("");
+  const [debouncedSearch, setDebouncedSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedSearch(search), 300);
+    return () => clearTimeout(timer);
+  }, [search]);
+
+  const { data: results } = useQuery({
+    queryKey: ["skaters", "search", debouncedSearch],
+    queryFn: () => api.skaters.list({ search: debouncedSearch }),
+    enabled: debouncedSearch.length >= 2,
+  });
+
+  const { data: allSkaters } = useQuery({
+    queryKey: ["skaters", "all"],
+    queryFn: () => api.skaters.list(),
+  });
+
+  const selectedSkaters = allSkaters?.filter((s) => selectedIds.includes(s.id)) ?? [];
+
+  return (
+    <div className="space-y-2">
+      <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+        Patineurs associés
+      </label>
+      {selectedSkaters.length > 0 && (
+        <div className="flex flex-wrap gap-1">
+          {selectedSkaters.map((s) => (
+            <span
+              key={s.id}
+              className="inline-flex items-center gap-1 bg-primary/10 text-primary text-xs px-2 py-1 rounded-full"
+            >
+              {s.first_name} {s.last_name}
+              <button
+                type="button"
+                onClick={() => onChange(selectedIds.filter((id) => id !== s.id))}
+                className="hover:text-error"
+              >
+                <span className="material-symbols-outlined text-sm">close</span>
+              </button>
+            </span>
+          ))}
+        </div>
+      )}
+      <input
+        placeholder="Rechercher un patineur..."
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className={inputCls}
+      />
+      {results && results.length > 0 && search.length >= 2 && (
+        <div className="bg-surface-container rounded-lg shadow-md max-h-40 overflow-y-auto">
+          {results
+            .filter((s) => !selectedIds.includes(s.id))
+            .map((s) => (
+              <button
+                key={s.id}
+                type="button"
+                onClick={() => {
+                  onChange([...selectedIds, s.id]);
+                  setSearch("");
+                }}
+                className="w-full text-left px-3 py-2 text-sm hover:bg-surface-container-high transition-colors"
+              >
+                {s.first_name} {s.last_name}
+                {s.club && (
+                  <span className="text-on-surface-variant ml-2 text-xs">({s.club})</span>
+                )}
+              </button>
+            ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function SettingsPage() {
   const qc = useQueryClient();
   const { data: config, dataUpdatedAt } = useQuery({
@@ -62,6 +149,7 @@ export default function SettingsPage() {
     role: "reader",
     password: "",
     must_change_password: false,
+    skater_ids: [] as number[],
   });
 
   const createUser = useMutation({
@@ -69,7 +157,7 @@ export default function SettingsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["users"] });
       setShowAddUser(false);
-      setNewUser({ email: "", display_name: "", role: "reader", password: "", must_change_password: false });
+      setNewUser({ email: "", display_name: "", role: "reader", password: "", must_change_password: false, skater_ids: [] });
     },
   });
 
@@ -155,9 +243,6 @@ export default function SettingsPage() {
       qc.invalidateQueries();
     },
   });
-
-  const inputCls =
-    "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
   return (
     <div className="space-y-8">
@@ -270,10 +355,12 @@ export default function SettingsPage() {
                   className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
                     u.role === "admin"
                       ? "bg-primary-container text-on-primary-container"
-                      : "bg-surface-container text-on-surface-variant"
+                      : u.role === "skater"
+                        ? "bg-blue-100 text-blue-700"
+                        : "bg-surface-container text-on-surface-variant"
                   }`}
                 >
-                  {u.role === "admin" ? "Admin" : "Lecteur"}
+                  {u.role === "admin" ? "Admin" : u.role === "skater" ? "Patineur" : "Lecteur"}
                 </span>
               </div>
               <div className="flex items-center gap-2">
@@ -329,7 +416,14 @@ export default function SettingsPage() {
             >
               <option value="reader">Lecteur</option>
               <option value="admin">Administrateur</option>
+              <option value="skater">Patineur</option>
             </select>
+            {newUser.role === "skater" && (
+              <SkaterPicker
+                selectedIds={newUser.skater_ids}
+                onChange={(ids) => setNewUser((u) => ({ ...u, skater_ids: ids }))}
+              />
+            )}
             <input
               type="password"
               placeholder="Mot de passe (optionnel pour OAuth)"
