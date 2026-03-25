@@ -180,6 +180,19 @@ async def _merge_pair_skaters() -> None:
             await session.commit()
             logger.info("Merged %d old-format pair skater records", merged)
 
+        # Delete orphaned skaters (no scores and no category results)
+        from sqlalchemy import exists
+        orphan_stmt = select(Skater).where(
+            ~exists(select(Score.id).where(Score.skater_id == Skater.id)),
+            ~exists(select(CategoryResult.id).where(CategoryResult.skater_id == Skater.id)),
+        )
+        orphans = (await session.execute(orphan_stmt)).scalars().all()
+        if orphans:
+            for orphan in orphans:
+                await session.delete(orphan)
+            await session.commit()
+            logger.info("Deleted %d orphaned skater records", len(orphans))
+
 
 async def _bootstrap() -> None:
     """Seed admin user and app settings from env vars on first run."""
