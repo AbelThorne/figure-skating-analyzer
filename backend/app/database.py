@@ -32,6 +32,7 @@ async def init_db() -> None:
         await _migrate_add_columns(conn)
 
     await _backfill_categories()
+    await _merge_pair_skaters()
     await _bootstrap()
 
 
@@ -87,6 +88,97 @@ async def _backfill_categories() -> None:
         if scores or cat_results:
             await session.commit()
             logger.info("Backfilled categories: %d scores, %d category_results", len(scores), len(cat_results))
+
+
+async def _merge_pair_skaters() -> None:
+    """Merge old-format pair skater records into the correct format.
+
+    Old format: first_name="Laurence", last_name="FOURNIER BEAUDRY / Guillaume CIZERON"
+    New format: first_name="",         last_name="Laurence FOURNIER BEAUDRY / Guillaume CIZERON"
+
+    Reassigns scores and category_results from old to new, then deletes orphans.
+    """
+    from app.models.skater import Skater
+    from app.models.score import Score
+    from app.models.category_result import CategoryResult
+
+    async with async_session_factory() as session:
+        # Find old-format pair skaters: non-empty first_name with " / " in last_name
+        result = await session.execute(
+            select(Skater).where(
+                Skater.first_name != "",
+                Skater.last_name.contains(" / "),
+            )
+        )
+        old_pairs = result.scalars().all()
+        if not old_pairs:
+            return
+
+        merged = 0
+        for old in old_pairs:
+            correct_last = f"{old.first_name} {old.last_name}"
+            # Check if the correct-format record already exists
+            result = await session.execute(
+                select(Skater).where(
+                    Skater.first_name == "",
+                    Skater.last_name == correct_last,
+                )
+            )
+            new = result.scalar_one_or_none()
+
+            if new:
+                # Reassign scores from old to new (skip duplicates)
+                old_scores = (await session.execute(
+                    select(Score).where(Score.skater_id == old.id)
+                )).scalars().all()
+                for score in old_scores:
+                    existing = (await session.execute(
+                        select(Score).where(
+                            Score.skater_id == new.id,
+                            Score.competition_id == score.competition_id,
+                            Score.category == score.category,
+                            Score.segment == score.segment,
+                        )
+                    )).scalar_one_or_none()
+                    if existing:
+                        await session.delete(score)
+                    else:
+                        score.skater_id = new.id
+
+                # Reassign category_results from old to new (skip duplicates)
+                old_crs = (await session.execute(
+                    select(CategoryResult).where(CategoryResult.skater_id == old.id)
+                )).scalars().all()
+                for cr in old_crs:
+                    existing = (await session.execute(
+                        select(CategoryResult).where(
+                            CategoryResult.skater_id == new.id,
+                            CategoryResult.competition_id == cr.competition_id,
+                            CategoryResult.category == cr.category,
+                        )
+                    )).scalar_one_or_none()
+                    if existing:
+                        await session.delete(cr)
+                    else:
+                        cr.skater_id = new.id
+
+                # Merge metadata
+                if not new.nationality and old.nationality:
+                    new.nationality = old.nationality
+                if not new.club and old.club:
+                    new.club = old.club
+
+                await session.delete(old)
+            else:
+                # No new-format record — just fix the old one in place
+                old.last_name = correct_last
+                old.first_name = ""
+
+            merged += 1
+
+        if merged:
+            await session.commit()
+            logger.info("Merged %d old-format pair skater records", merged)
 
 
 async def _bootstrap() -> None:
