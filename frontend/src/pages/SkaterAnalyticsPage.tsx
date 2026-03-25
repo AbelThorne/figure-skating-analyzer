@@ -19,6 +19,7 @@ import JudgePanel from "../components/JudgePanel";
 import ScoreCardModal from "../components/ScoreCardModal";
 import { countryFlag } from "../utils/countryFlags";
 import { isJumpElement, isSpinElement, isStepElement, elementLevel } from "../utils/elementClassifier";
+import { useAuth } from "../auth/AuthContext";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function avg(arr: number[]) {
@@ -151,6 +152,7 @@ function HeroStatBox({ label, value }: { label: string; value: string }) {
 export default function SkaterAnalyticsPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
+  const { user } = useAuth();
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
 
   const { data: skater, isLoading: loadingSkater } = useQuery({
@@ -776,13 +778,19 @@ export default function SkaterAnalyticsPage() {
                                   <span className="material-symbols-outlined text-sm text-on-surface-variant leading-none">
                                     {isCollapsed ? "chevron_right" : "expand_more"}
                                   </span>
-                                  <Link
-                                    to={`/competitions/${row.competitionId}`}
-                                    className="text-primary hover:underline font-medium"
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    {row.competitionName ?? `#${row.competitionId}`}
-                                  </Link>
+                                  {user?.role === "skater" ? (
+                                    <span className="font-medium text-on-surface">
+                                      {row.competitionName ?? `#${row.competitionId}`}
+                                    </span>
+                                  ) : (
+                                    <Link
+                                      to={`/competitions/${row.competitionId}`}
+                                      className="text-primary hover:underline font-medium"
+                                      onClick={(e) => e.stopPropagation()}
+                                    >
+                                      {row.competitionName ?? `#${row.competitionId}`}
+                                    </Link>
+                                  )}
                                 </div>
                               </td>
                               {/* col 2: category */}
@@ -857,12 +865,18 @@ export default function SkaterAnalyticsPage() {
                                 <>
                                   {/* col 1: competition name */}
                                   <td className="px-3 py-2 text-sm text-on-surface">
-                                    <Link
-                                      to={`/competitions/${s.competition_id}`}
-                                      className="text-primary hover:underline font-medium"
-                                    >
-                                      {s.competition_name ?? `#${s.competition_id}`}
-                                    </Link>
+                                    {user?.role === "skater" ? (
+                                      <span className="font-medium text-on-surface">
+                                        {s.competition_name ?? `#${s.competition_id}`}
+                                      </span>
+                                    ) : (
+                                      <Link
+                                        to={`/competitions/${s.competition_id}`}
+                                        className="text-primary hover:underline font-medium"
+                                      >
+                                        {s.competition_name ?? `#${s.competition_id}`}
+                                      </Link>
+                                    )}
                                   </td>
                                   {/* col 2: category */}
                                   <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
