@@ -152,6 +152,7 @@ export default function SettingsPage() {
     skater_ids: [] as number[],
   });
   const [editingUserId, setEditingUserId] = useState<string | null>(null);
+  const [confirmingDeleteId, setConfirmingDeleteId] = useState<string | null>(null);
   const [editData, setEditData] = useState<{ role: UserRecord["role"]; skater_ids: number[]; display_name: string }>({ role: "reader", skater_ids: [], display_name: "" });
 
   const createUser = useMutation({
@@ -180,7 +181,10 @@ export default function SettingsPage() {
 
   const deleteUser = useMutation({
     mutationFn: (id: string) => api.users.delete(id),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["users"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["users"] });
+      setConfirmingDeleteId(null);
+    },
   });
 
   // --- Domains ---
@@ -400,15 +404,29 @@ export default function SettingsPage() {
                     >
                       {u.is_active ? "Actif" : "Désactivé"}
                     </button>
-                    <button
-                      onClick={() => {
-                        if (confirm("Supprimer cet utilisateur ?"))
-                          deleteUser.mutate(u.id);
-                      }}
-                      className="text-error text-xs hover:bg-error-container rounded-lg px-2 py-1"
-                    >
-                      <span className="material-symbols-outlined text-sm">delete</span>
-                    </button>
+                    {confirmingDeleteId === u.id ? (
+                      <span className="flex items-center gap-1">
+                        <button
+                          onClick={() => deleteUser.mutate(u.id)}
+                          className="text-xs px-2 py-1 rounded-lg bg-error text-on-error font-bold"
+                        >
+                          Confirmer
+                        </button>
+                        <button
+                          onClick={() => setConfirmingDeleteId(null)}
+                          className="text-xs px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container"
+                        >
+                          Annuler
+                        </button>
+                      </span>
+                    ) : (
+                      <button
+                        onClick={() => setConfirmingDeleteId(u.id)}
+                        className="text-error text-xs hover:bg-error-container rounded-lg px-2 py-1"
+                      >
+                        <span className="material-symbols-outlined text-sm">delete</span>
+                      </button>
+                    )}
                   </div>
                 </div>
 
