@@ -111,8 +111,6 @@ async def _merge_pair_skaters() -> None:
             )
         )
         old_pairs = result.scalars().all()
-        if not old_pairs:
-            return
 
         merged = 0
         for old in old_pairs:
