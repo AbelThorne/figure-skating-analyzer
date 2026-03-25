@@ -201,6 +201,18 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
     comp.last_import_log = import_log
     await session.commit()
 
+    # Clean up orphaned skaters (no scores and no category results)
+    from sqlalchemy import exists
+    orphan_stmt = select(Skater).where(
+        ~exists(select(Score.id).where(Score.skater_id == Skater.id)),
+        ~exists(select(CategoryResult.id).where(CategoryResult.skater_id == Skater.id)),
+    )
+    orphans = (await session.execute(orphan_stmt)).scalars().all()
+    for orphan in orphans:
+        await session.delete(orphan)
+    if orphans:
+        await session.commit()
+
     return {
         "competition_id": competition_id,
         **import_log,
