@@ -9,7 +9,7 @@ L'application figure-skating-analyzer permet aujourd'hui d'analyser les résulta
 | Question | Décision |
 |----------|----------|
 | Utilisateurs | Nouveau rôle `coach` dédié |
-| Relation coach-patineurs | Un coach voit tous les patineurs du club |
+| Relation coach-patineurs | Un coach voit tous les patineurs (app mono-club, pas de scoping) |
 | Format retour | Mixte : notes rapides (1-5) par critère + commentaires séparés |
 | Critères | Assiduité (fractionnaire), engagement (1-5), progression (1-5), attitude (1-5) |
 | Commentaires | Deux champs : "points forts" et "axes d'amélioration" |
@@ -24,7 +24,7 @@ L'application figure-skating-analyzer permet aujourd'hui d'analyser les résulta
 ### Rôle `coach`
 
 Ajout de `"coach"` à l'enum `user_role` dans `User.role`. Permissions :
-- Voit tous les patineurs du club (pas de lien explicite)
+- Voit tous les patineurs de la base (app mono-club, pas de filtrage par club)
 - Crée/modifie/supprime des retours hebdomadaires et incidents
 - Accès lecture seule aux compétitions et scores
 - Pas d'accès à la gestion utilisateurs, imports, ou configuration
@@ -47,7 +47,7 @@ Ajout de `"coach"` à l'enum `user_role` dans `User.role`. Permissions :
 | `created_at` | DateTime | |
 | `updated_at` | DateTime | |
 
-Contrainte unique : `(skater_id, week_start)` — un seul retour par patineur par semaine.
+Contrainte unique : `(skater_id, week_start)` — un seul retour par patineur par semaine, quel que soit le coach. Si un retour existe déjà pour cette semaine, le formulaire charge le retour existant en mode édition (le `coach_id` est mis à jour vers le coach qui édite).
 
 ### Table `Incident`
 
@@ -104,7 +104,9 @@ Pour le rôle `skater`, le backend filtre automatiquement par `visible_to_skater
 - Le rôle `reader` n'a pas accès aux données d'entraînement
 - Le rôle `skater` accède en lecture seule aux entrées marquées visibles pour ses patineurs liés
 
-## 3. Notifications email
+## 3. Notifications email (phase séparable)
+
+> **Note de scope :** Le système email est un sous-système indépendant. La v1 du suivi d'entraînement fonctionne sans notifications. L'implémentation email (service SMTP, templates, préférences) peut être planifiée et livrée séparément.
 
 ### Déclenchement
 
