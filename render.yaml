@@ -1,0 +1,54 @@
+services:
+  - type: web
+    name: skating-backend
+    runtime: docker
+    dockerfilePath: ./Dockerfile.backend
+    dockerContext: .
+    plan: free
+    healthCheckPath: /api/health
+    disk:
+      name: skating-data
+      mountPath: /data
+      sizeGB: 1
+    envVars:
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DATABASE_URL
+        value: sqlite+aiosqlite:////data/skating.db
+      - key: PDF_DIR
+        value: /data/pdfs
+      - key: LOGOS_DIR
+        value: /data/logos
+      - key: ALLOWED_ORIGINS
+        sync: false
+      - key: SECURE_COOKIES
+        value: "true"
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: CLUB_NAME
+        sync: false
+      - key: CLUB_SHORT
+        sync: false
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+
+  - type: web
+    name: skating-frontend
+    runtime: static
+    buildCommand: cd frontend && npm ci && npm run build
+    staticPublishPath: frontend/dist
+    headers:
+      - path: /*
+        name: X-Frame-Options
+        value: DENY
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html
+    envVars:
+      - key: VITE_API_URL
+        sync: false
+      - key: VITE_GOOGLE_CLIENT_ID
+        sync: false
