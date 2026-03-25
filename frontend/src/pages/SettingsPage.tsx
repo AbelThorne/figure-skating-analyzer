@@ -10,9 +10,11 @@ const inputCls =
 function SkaterPicker({
   selectedIds,
   onChange,
+  club,
 }: {
   selectedIds: number[];
   onChange: (ids: number[]) => void;
+  club?: string;
 }) {
   const [search, setSearch] = useState("");
   const [debouncedSearch, setDebouncedSearch] = useState("");
@@ -23,14 +25,14 @@ function SkaterPicker({
   }, [search]);
 
   const { data: results } = useQuery({
-    queryKey: ["skaters", "search", debouncedSearch],
-    queryFn: () => api.skaters.list({ search: debouncedSearch }),
+    queryKey: ["skaters", "search", debouncedSearch, club],
+    queryFn: () => api.skaters.list({ search: debouncedSearch, club }),
     enabled: debouncedSearch.length >= 2,
   });
 
   const { data: allSkaters } = useQuery({
-    queryKey: ["skaters", "all"],
-    queryFn: () => api.skaters.list(),
+    queryKey: ["skaters", "all", club],
+    queryFn: () => api.skaters.list({ club }),
   });
 
   const selectedSkaters = allSkaters?.filter((s) => selectedIds.includes(s.id)) ?? [];
@@ -463,6 +465,7 @@ export default function SettingsPage() {
                       <SkaterPicker
                         selectedIds={editData.skater_ids}
                         onChange={(ids) => setEditData((d) => ({ ...d, skater_ids: ids }))}
+                        club={config?.club_short}
                       />
                     )}
                     <div className="flex gap-2">
@@ -530,6 +533,7 @@ export default function SettingsPage() {
               <SkaterPicker
                 selectedIds={newUser.skater_ids}
                 onChange={(ids) => setNewUser((u) => ({ ...u, skater_ids: ids }))}
+                club={config?.club_short}
               />
             )}
             <input
