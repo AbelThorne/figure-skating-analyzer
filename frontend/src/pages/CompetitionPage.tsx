@@ -117,7 +117,7 @@ function OverallResultsTable({ group }: { group: CategoryGroup }) {
                   to={`/patineurs/${cr.skater_id}/analyse`}
                   className="font-medium hover:text-primary transition-colors"
                 >
-                  {cr.skater_first_name ? `${cr.skater_first_name} ${cr.skater_last_name}` : "-"}
+                  {cr.skater_first_name ? `${cr.skater_first_name} ${cr.skater_last_name}` : (cr.skater_last_name || "-")}
                 </Link>
               </td>
               <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">
@@ -172,7 +172,7 @@ function SegmentScoresTable({ scores }: { scores: Score[] }) {
                   to={`/patineurs/${s.skater_id}/analyse`}
                   className="font-medium hover:text-primary transition-colors"
                 >
-                  {s.skater_first_name ? `${s.skater_first_name} ${s.skater_last_name}` : "-"}
+                  {s.skater_first_name ? `${s.skater_first_name} ${s.skater_last_name}` : (s.skater_last_name || "-")}
                 </Link>
               </td>
               <td className="px-3 py-2 text-gray-600 max-w-[180px] truncate">

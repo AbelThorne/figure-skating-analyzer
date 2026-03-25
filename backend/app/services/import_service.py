@@ -29,6 +29,30 @@ async def _get_or_create_skater(
         Skater.last_name == last_name,
     )
     skater = (await session.execute(stmt)).scalar_one_or_none()
+
+    # For pairs (first_name="" and last_name contains " / "), look for old-format
+    # duplicates where the first partner's first name was incorrectly stored in
+    # first_name (e.g. first_name="Laurence", last_name="FOURNIER BEAUDRY / Guillaume CIZERON").
+    # Migrate old record to new format and reassign scores.
+    if not skater and first_name == "" and " / " in last_name:
+        parts = last_name.split(" / ", 1)
+        first_part_words = parts[0].split()
+        # Try each possible split of the first partner's name
+        for i in range(1, len(first_part_words)):
+            candidate_first = " ".join(first_part_words[:i])
+            candidate_last = " ".join(first_part_words[i:]) + " / " + parts[1]
+            old_stmt = select(Skater).where(
+                Skater.first_name == candidate_first,
+                Skater.last_name == candidate_last,
+            )
+            old_skater = (await session.execute(old_stmt)).scalar_one_or_none()
+            if old_skater:
+                # Migrate old record to correct format
+                old_skater.first_name = ""
+                old_skater.last_name = last_name
+                skater = old_skater
+                break
+
     if not skater:
         skater = Skater(
             first_name=first_name,
