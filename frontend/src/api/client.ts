@@ -660,6 +660,11 @@ export const api = {
       const query = qs.toString() ? `?${qs}` : "";
       return request<Element[]>(`/skaters/${id}/elements${query}`);
     },
+    merge: (targetId: number, sourceIds: number[]) =>
+      request<{ merged: number; aliases_created: number }>("/skaters/merge", {
+        method: "POST",
+        body: JSON.stringify({ target_id: targetId, source_ids: sourceIds }),
+      }),
   },
 
   scores: {
