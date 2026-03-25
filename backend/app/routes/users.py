@@ -19,6 +19,7 @@ async def _sync_skater_links(session: AsyncSession, user_id: str, skater_ids: li
     )
     for link in existing.scalars().all():
         await session.delete(link)
+    await session.flush()
     for sid in skater_ids:
         session.add(UserSkater(user_id=user_id, skater_id=sid))
 
