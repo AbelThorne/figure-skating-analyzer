@@ -47,6 +47,7 @@ async def _migrate_add_columns(conn) -> None:
         ("category_results", "age_group", "VARCHAR(30)"),
         ("category_results", "gender", "VARCHAR(10)"),
         ("users", "must_change_password", "BOOLEAN DEFAULT 0"),
+        ("users", "email_notifications", "BOOLEAN DEFAULT 1"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
