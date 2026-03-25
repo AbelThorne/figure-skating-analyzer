@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, Skater, WeeklyReview, TrainingIncident } from "../api/client";
+import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 
 const TABS = [
   { key: "reviews", label: "Retours", icon: "rate_review" },
@@ -480,9 +481,10 @@ export default function SkaterTrainingPage() {
       )}
 
       {activeTab === "evolution" && (
-        <div className="text-sm text-on-surface-variant text-center py-10">
-          Les graphiques d'évolution seront ajoutés dans la prochaine tâche.
-        </div>
+        <TrainingEvolutionChart
+          reviews={reviews ?? []}
+          incidents={incidents ?? []}
+        />
       )}
 
       {showReviewForm && <ReviewFormModal skaterId={skaterId} existing={editingReview} onClose={() => setShowReviewForm(false)} />}
