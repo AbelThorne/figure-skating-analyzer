@@ -23,7 +23,7 @@ class User(Base):
     password_hash: Mapped[str | None] = mapped_column(String(255), nullable=True)
     display_name: Mapped[str] = mapped_column(String(255), nullable=False)
     role: Mapped[str] = mapped_column(
-        SAEnum("admin", "reader", name="user_role"), nullable=False, default="reader"
+        SAEnum("admin", "reader", "skater", name="user_role"), nullable=False, default="reader"
     )
     google_oauth_enabled: Mapped[bool] = mapped_column(Boolean, default=False)
     is_active: Mapped[bool] = mapped_column(Boolean, default=True)
