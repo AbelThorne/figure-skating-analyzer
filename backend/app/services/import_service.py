@@ -81,6 +81,16 @@ async def _get_or_create_skater(
     return skater
 
 
+def _orphan_skater_query():
+    """Query for skaters with no scores, no category results, and no aliases."""
+    from sqlalchemy import exists
+    return select(Skater).where(
+        ~exists(select(Score.id).where(Score.skater_id == Skater.id)),
+        ~exists(select(CategoryResult.id).where(CategoryResult.skater_id == Skater.id)),
+        ~exists(select(SkaterAlias.id).where(SkaterAlias.skater_id == Skater.id)),
+    )
+
+
 async def run_import(session: AsyncSession, competition_id: int, force: bool = False) -> dict:
     """Import competition results. Returns the import result dict."""
     comp = await session.get(Competition, competition_id)
@@ -213,11 +223,7 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
     await session.commit()
 
     # Clean up orphaned skaters (no scores and no category results)
-    from sqlalchemy import exists
-    orphan_stmt = select(Skater).where(
-        ~exists(select(Score.id).where(Score.skater_id == Skater.id)),
-        ~exists(select(CategoryResult.id).where(CategoryResult.skater_id == Skater.id)),
-    )
+    orphan_stmt = _orphan_skater_query()
     orphans = (await session.execute(orphan_stmt)).scalars().all()
     for orphan in orphans:
         await session.delete(orphan)

@@ -244,3 +244,24 @@ async def test_get_or_create_skater_uses_alias(db_session):
     result = await _get_or_create_skater(db_session, "Emma DUPONT", None, None)
     assert result.id == target.id
     assert result.last_name == "MARTIN"
+
+
+@pytest.mark.asyncio
+async def test_orphan_cleanup_preserves_alias_targets(db_session):
+    """Skaters that are alias targets should not be deleted as orphans."""
+    from app.services.import_service import _orphan_skater_query
+
+    target = Skater(first_name="Zoe", last_name="TARGET", club="Club")
+    db_session.add(target)
+    await db_session.flush()
+
+    alias = SkaterAlias(first_name="Zoe", last_name="OLD-NAME", skater_id=target.id)
+    db_session.add(alias)
+    await db_session.commit()
+
+    target_id = target.id
+
+    orphans = (await db_session.execute(_orphan_skater_query())).scalars().all()
+
+    orphan_ids = [o.id for o in orphans]
+    assert target_id not in orphan_ids
