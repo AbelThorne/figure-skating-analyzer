@@ -44,12 +44,12 @@ export default function TrainingPage() {
     staleTime: Infinity,
   });
 
-  const clubName = config?.club_name;
+  const clubShort = config?.club_short;
 
   const { data: skaters, isLoading: skatersLoading } = useQuery({
-    queryKey: ["skaters", "club", clubName],
-    queryFn: () => api.skaters.list({ club: clubName }),
-    enabled: !!clubName,
+    queryKey: ["skaters", "club", clubShort],
+    queryFn: () => api.skaters.list({ club: clubShort }),
+    enabled: !!clubShort,
   });
 
   const { data: reviews } = useQuery({
