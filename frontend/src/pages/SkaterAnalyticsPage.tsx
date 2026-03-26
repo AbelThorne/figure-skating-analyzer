@@ -165,13 +165,21 @@ export default function SkaterAnalyticsPage() {
   const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
   const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
   const [viewingIncident, setViewingIncident] = useState<TrainingIncident | undefined>();
+  const { data: config } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
+  });
+
   const { data: skater, isLoading: loadingSkater } = useQuery({
     queryKey: ["skater", skaterId],
     queryFn: () => api.skaters.get(skaterId),
   });
 
-  const showTrainingTab = user?.role === "skater" || (
-    (user?.role === "admin" || user?.role === "coach") && skater?.training_tracked
+  const showTrainingTab = config?.training_enabled && (
+    user?.role === "skater" || (
+      (user?.role === "admin" || user?.role === "coach") && skater?.training_tracked
+    )
   );
 
   const toggleTrainingTracked = useMutation({
@@ -561,21 +569,23 @@ export default function SkaterAnalyticsPage() {
             />
             {user?.role === "admin" && (
               <>
-                <button
-                  onClick={() => toggleTrainingTracked.mutate()}
-                  disabled={toggleTrainingTracked.isPending}
-                  className={`flex items-center gap-1.5 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-bold font-headline transition-colors cursor-pointer disabled:opacity-50 ${
-                    skater?.training_tracked
-                      ? "bg-white/25 text-white hover:bg-white/35"
-                      : "bg-white/10 text-white/70 hover:bg-white/20"
-                  }`}
-                  title={skater?.training_tracked ? "Retirer du suivi entraînement" : "Ajouter au suivi entraînement"}
-                >
-                  <span className="material-symbols-outlined text-sm">
-                    {skater?.training_tracked ? "fitness_center" : "add"}
-                  </span>
-                  {skater?.training_tracked ? "Suivi actif" : "Suivre"}
-                </button>
+                {config?.training_enabled && (
+                  <button
+                    onClick={() => toggleTrainingTracked.mutate()}
+                    disabled={toggleTrainingTracked.isPending}
+                    className={`flex items-center gap-1.5 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-bold font-headline transition-colors cursor-pointer disabled:opacity-50 ${
+                      skater?.training_tracked
+                        ? "bg-white/25 text-white hover:bg-white/35"
+                        : "bg-white/10 text-white/70 hover:bg-white/20"
+                    }`}
+                    title={skater?.training_tracked ? "Retirer du suivi entraînement" : "Ajouter au suivi entraînement"}
+                  >
+                    <span className="material-symbols-outlined text-sm">
+                      {skater?.training_tracked ? "fitness_center" : "add"}
+                    </span>
+                    {skater?.training_tracked ? "Suivi actif" : "Suivre"}
+                  </button>
+                )}
                 {skater?.manual_create && (
                   <button
                     onClick={() => {
