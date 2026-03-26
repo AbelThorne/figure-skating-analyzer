@@ -123,8 +123,16 @@ export default function SettingsPage() {
   const { data: config, dataUpdatedAt } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
+    staleTime: Infinity,
   });
   const logoSrc = config?.logo_url ? `${config.logo_url}?v=${dataUpdatedAt}` : "";
+
+  const toggleTrainingModule = useMutation({
+    mutationFn: (enabled: boolean) => api.config.update({ training_enabled: enabled }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["config"] });
+    },
+  });
   const { data: users = [] } = useQuery({
     queryKey: ["users"],
     queryFn: api.users.list,
@@ -277,6 +285,12 @@ export default function SettingsPage() {
   // --- Tabs ---
   const [activeTab, setActiveTab] = useState<"general" | "users" | "training">("general");
 
+  useEffect(() => {
+    if (activeTab === "training" && !config?.training_enabled) {
+      setActiveTab("general");
+    }
+  }, [config?.training_enabled, activeTab]);
+
   // --- Training onboarding ---
   const { data: trackedSkaters, isLoading: loadingTracked } = useQuery({
     queryKey: ["skaters", "training_tracked"],
@@ -407,16 +421,18 @@ export default function SettingsPage() {
         >
           Utilisateurs
         </button>
-        <button
-          onClick={() => setActiveTab("training")}
-          className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
-            activeTab === "training"
-              ? "text-primary border-primary"
-              : "text-on-surface-variant border-transparent hover:text-on-surface"
-          }`}
-        >
-          Entraînement
-        </button>
+        {config?.training_enabled && (
+          <button
+            onClick={() => setActiveTab("training")}
+            className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+              activeTab === "training"
+                ? "text-primary border-primary"
+                : "text-on-surface-variant border-transparent hover:text-on-surface"
+            }`}
+          >
+            Entraînement
+          </button>
+        )}
       </div>
 
       {activeTab === "general" && (
@@ -946,6 +962,33 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+
+        {/* Module entraînement toggle */}
+        <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="font-headline font-bold text-on-surface text-base">
+                Module entraînement
+              </h2>
+              <p className="text-sm text-on-surface-variant mt-1">
+                Active le suivi d'entraînement des patineurs (retours hebdomadaires, défis, incidents)
+              </p>
+            </div>
+            <button
+              onClick={() => toggleTrainingModule.mutate(!config?.training_enabled)}
+              disabled={toggleTrainingModule.isPending}
+              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+                config?.training_enabled ? "bg-primary" : "bg-on-surface/20"
+              }`}
+            >
+              <span
+                className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                  config?.training_enabled ? "translate-x-6" : "translate-x-1"
+                }`}
+              />
+            </button>
+          </div>
+        </section>
       </div>
       )}
 
