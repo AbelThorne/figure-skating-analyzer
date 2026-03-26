@@ -424,18 +424,17 @@ export default function SkaterTrainingPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-surface-container rounded-xl p-1">
+      <div className="flex gap-0">
         {TABS.map((tab) => (
           <button
             key={tab.key}
             onClick={() => setActiveTab(tab.key)}
-            className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+            className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
               activeTab === tab.key
-                ? "bg-white text-primary shadow-sm"
-                : "text-on-surface-variant hover:text-on-surface"
+                ? "text-primary border-primary"
+                : "text-on-surface-variant border-transparent hover:text-on-surface"
             }`}
           >
-            <span className="material-symbols-outlined text-lg">{tab.icon}</span>
             {tab.label}
           </button>
         ))}

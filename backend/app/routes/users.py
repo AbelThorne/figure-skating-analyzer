@@ -47,6 +47,7 @@ async def list_users(request: Request, session: AsyncSession) -> list[dict]:
             "is_active": u.is_active,
             "google_oauth_enabled": u.google_oauth_enabled,
             "skater_ids": links_by_user.get(u.id, []),
+            "last_login_at": u.last_login_at.isoformat() if u.last_login_at else None,
         }
         for u in users
     ]

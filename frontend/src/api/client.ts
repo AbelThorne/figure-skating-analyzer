@@ -207,6 +207,8 @@ export interface Skater {
   nationality: string | null;
   club: string | null;
   birth_year: number | null;
+  training_tracked: boolean;
+  manual_create: boolean;
 }
 
 export interface ImportResult {
@@ -325,6 +327,7 @@ export interface UserRecord {
   is_active: boolean;
   google_oauth_enabled: boolean;
   skater_ids: number[];
+  last_login_at: string | null;
 }
 
 export interface MySkater {
@@ -701,14 +704,27 @@ export const api = {
   },
 
   skaters: {
-    list: (params?: { club?: string; search?: string }) => {
+    list: (params?: { club?: string; search?: string; training_tracked?: boolean }) => {
       const qs = new URLSearchParams();
       if (params?.club) qs.set("club", params.club);
       if (params?.search) qs.set("search", params.search);
+      if (params?.training_tracked !== undefined) qs.set("training_tracked", String(params.training_tracked));
       const query = qs.toString() ? `?${qs}` : "";
       return request<Skater[]>(`/skaters/${query}`);
     },
     get: (id: number) => request<Skater>(`/skaters/${id}`),
+    create: (data: { first_name: string; last_name: string; nationality?: string; club?: string }) =>
+      request<Skater>("/skaters/", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
+    update: (id: number, data: Partial<Pick<Skater, "first_name" | "last_name" | "nationality" | "club" | "training_tracked">>) =>
+      request<Skater>(`/skaters/${id}`, {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
+    clearTrainingData: (id: number) =>
+      request<{ deleted: number }>(`/skaters/${id}/training-data`, { method: "DELETE" }),
     seasons: (id: number) => request<string[]>(`/skaters/${id}/seasons`),
     scores: (id: number, season?: string) => {
       const qs = new URLSearchParams();

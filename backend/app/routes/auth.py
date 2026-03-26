@@ -6,6 +6,8 @@ from litestar.exceptions import NotAuthorizedException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from datetime import datetime, timezone
+
 from app.auth.passwords import hash_password, verify_password
 from app.auth.tokens import create_access_token, create_refresh_token, decode_token
 from app.auth.rate_limit import login_limiter
@@ -59,6 +61,9 @@ async def login(data: dict, session: AsyncSession) -> Response:
 
     if not user.is_active:
         raise NotAuthorizedException("Account is disabled")
+
+    user.last_login_at = datetime.now(timezone.utc)
+    await session.commit()
 
     access = create_access_token(user_id=user.id, role=user.role)
     refresh = create_refresh_token(user_id=user.id, token_version=user.token_version)
@@ -216,6 +221,7 @@ async def google_login(data: dict, session: AsyncSession) -> Response:
             if not user.is_active:
                 raise NotAuthorizedException("Account is disabled")
             user.google_oauth_enabled = True
+            user.last_login_at = datetime.now(timezone.utc)
             await session.commit()
         else:
             domain = email.split("@")[1] if "@" in email else ""

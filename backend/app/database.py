@@ -48,6 +48,9 @@ async def _migrate_add_columns(conn) -> None:
         ("category_results", "gender", "VARCHAR(10)"),
         ("users", "must_change_password", "BOOLEAN DEFAULT 0"),
         ("users", "email_notifications", "BOOLEAN DEFAULT 1"),
+        ("users", "last_login_at", "DATETIME"),
+        ("skaters", "training_tracked", "BOOLEAN DEFAULT 0"),
+        ("skaters", "manual_create", "BOOLEAN DEFAULT 0"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
@@ -179,11 +182,12 @@ async def _merge_pair_skaters() -> None:
             await session.commit()
             logger.info("Merged %d old-format pair skater records", merged)
 
-        # Delete orphaned skaters (no scores and no category results)
+        # Delete orphaned skaters (no scores and no category results, not manually created)
         from sqlalchemy import exists
         orphan_stmt = select(Skater).where(
             ~exists(select(Score.id).where(Score.skater_id == Skater.id)),
             ~exists(select(CategoryResult.id).where(CategoryResult.skater_id == Skater.id)),
+            Skater.manual_create != True,  # noqa: E712
         )
         orphans = (await session.execute(orphan_stmt)).scalars().all()
         if orphans:

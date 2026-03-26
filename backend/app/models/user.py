@@ -36,3 +36,6 @@ class User(Base):
     updated_at: Mapped[datetime] = mapped_column(
         DateTime, default=_utcnow, onupdate=_utcnow
     )
+    last_login_at: Mapped[datetime | None] = mapped_column(
+        DateTime, nullable=True, default=None
+    )

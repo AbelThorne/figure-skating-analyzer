@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Optional
 
-from litestar import Request, Router, get, post
+from litestar import Request, Router, delete, get, patch, post
 from litestar.di import Provide
 from litestar.exceptions import ClientException, NotFoundException
 from sqlalchemy import func, select, union_all
@@ -21,11 +21,13 @@ from app.models.category_result import CategoryResult
 
 
 @get("/")
-async def list_skaters(request: Request, session: AsyncSession, club: Optional[str] = None, search: Optional[str] = None) -> list[dict]:
+async def list_skaters(request: Request, session: AsyncSession, club: Optional[str] = None, search: Optional[str] = None, training_tracked: Optional[bool] = None) -> list[dict]:
     reject_skater_role(request)
     stmt = select(Skater)
     if club:
         stmt = stmt.where(func.lower(Skater.club) == club.lower())
+    if training_tracked is not None:
+        stmt = stmt.where(Skater.training_tracked == training_tracked)
     if search:
         pattern = f"%{search}%"
         stmt = stmt.where(
@@ -53,6 +55,8 @@ def _skater_to_dict(s: Skater) -> dict:
         "nationality": s.nationality,
         "club": s.club,
         "birth_year": s.birth_year,
+        "training_tracked": s.training_tracked,
+        "manual_create": s.manual_create,
     }
 
 
@@ -339,8 +343,100 @@ async def merge_skaters(request: Request, session: AsyncSession, data: dict) -> 
     return {"merged": len(sources), "aliases_created": aliases_created}
 
 
+@patch("/{skater_id:int}")
+async def update_skater(skater_id: int, request: Request, session: AsyncSession, data: dict) -> dict:
+    """Update skater fields. Admin only.
+
+    All skaters: training_tracked can be toggled.
+    Manual-create skaters: first_name, last_name, nationality, club are also editable.
+    """
+    require_admin(request)
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        raise NotFoundException(f"Skater {skater_id} not found")
+
+    if "training_tracked" in data:
+        skater.training_tracked = bool(data["training_tracked"])
+
+    # Only allow editing identity fields on manually created skaters
+    if skater.manual_create:
+        for field in ("first_name", "last_name", "nationality", "club"):
+            if field in data:
+                setattr(skater, field, data[field])
+
+    await session.commit()
+    await session.refresh(skater)
+    return _skater_to_dict(skater)
+
+
+@post("/", status_code=201)
+async def create_skater(request: Request, session: AsyncSession, data: dict) -> dict:
+    """Create a manual skater (no competition scores). Admin only."""
+    require_admin(request)
+
+    first_name = (data.get("first_name") or "").strip()
+    last_name = (data.get("last_name") or "").strip()
+    if not last_name:
+        raise ClientException(detail="last_name is required", status_code=400)
+
+    # Check for duplicate
+    existing = (await session.execute(
+        select(Skater).where(
+            func.lower(Skater.first_name) == first_name.lower(),
+            func.lower(Skater.last_name) == last_name.lower(),
+        )
+    )).scalar_one_or_none()
+    if existing:
+        raise ClientException(detail=f"Un patineur nommé {first_name} {last_name} existe déjà", status_code=409)
+
+    skater = Skater(
+        first_name=first_name,
+        last_name=last_name,
+        nationality=data.get("nationality"),
+        club=data.get("club"),
+        manual_create=True,
+        training_tracked=True,
+    )
+    session.add(skater)
+    await session.commit()
+    await session.refresh(skater)
+    return _skater_to_dict(skater)
+
+
+@delete("/{skater_id:int}/training-data", status_code=200)
+async def clear_training_data(skater_id: int, request: Request, session: AsyncSession) -> dict:
+    """Delete all training reviews and incidents for a skater. Admin only."""
+    require_admin(request)
+    from app.models.weekly_review import WeeklyReview
+    from app.models.incident import Incident
+
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        raise NotFoundException(f"Skater {skater_id} not found")
+
+    reviews = (await session.execute(
+        select(WeeklyReview).where(WeeklyReview.skater_id == skater_id)
+    )).scalars().all()
+    incidents = (await session.execute(
+        select(Incident).where(Incident.skater_id == skater_id)
+    )).scalars().all()
+
+    count = len(reviews) + len(incidents)
+    for r in reviews:
+        await session.delete(r)
+    for i in incidents:
+        await session.delete(i)
+
+    await session.commit()
+    return {"deleted": count}
+
+
 router = Router(
     path="/api/skaters",
-    route_handlers=[list_skaters, get_skater, get_skater_elements, get_skater_scores, get_skater_category_results, get_skater_seasons, merge_skaters],
+    route_handlers=[
+        list_skaters, get_skater, get_skater_elements, get_skater_scores,
+        get_skater_category_results, get_skater_seasons, merge_skaters,
+        update_skater, create_skater, clear_training_data,
+    ],
     dependencies={"session": Provide(get_session)},
 )

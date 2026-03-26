@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useParams, Link } from "react-router-dom";
-import { useQuery, keepPreviousData } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient, keepPreviousData } from "@tanstack/react-query";
 import {
   LineChart,
   Line,
@@ -154,14 +154,38 @@ export default function SkaterAnalyticsPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
   const { user } = useAuth();
+  const qc = useQueryClient();
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
   const [analyticsTab, setAnalyticsTab] = useState<"competitions" | "training">(
     user?.role === "skater" ? "training" : "competitions"
   );
-
+  const [editingSkater, setEditingSkater] = useState(false);
+  const [editForm, setEditForm] = useState({ first_name: "", last_name: "", nationality: "", club: "" });
   const { data: skater, isLoading: loadingSkater } = useQuery({
     queryKey: ["skater", skaterId],
     queryFn: () => api.skaters.get(skaterId),
+  });
+
+  const showTrainingTab = user?.role === "skater" || (
+    (user?.role === "admin" || user?.role === "coach") && skater?.training_tracked
+  );
+
+  const toggleTrainingTracked = useMutation({
+    mutationFn: () => api.skaters.update(skaterId, { training_tracked: !skater?.training_tracked }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["skater", skaterId] });
+      qc.invalidateQueries({ queryKey: ["skaters"] });
+    },
+  });
+
+  const updateSkaterMutation = useMutation({
+    mutationFn: (data: { first_name: string; last_name: string; nationality: string; club: string }) =>
+      api.skaters.update(skaterId, data),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["skater", skaterId] });
+      qc.invalidateQueries({ queryKey: ["skaters"] });
+      setEditingSkater(false);
+    },
   });
 
   const { data: seasons } = useQuery({
@@ -190,19 +214,19 @@ export default function SkaterAnalyticsPage() {
   const { data: timeline } = useQuery({
     queryKey: ["training", "timeline", skaterId],
     queryFn: () => api.training.timeline({ skater_id: skaterId }),
-    enabled: user?.role === "skater",
+    enabled: showTrainingTab,
   });
 
   const { data: trainingReviews } = useQuery({
     queryKey: ["training", "reviews", skaterId],
     queryFn: () => api.training.reviews.list({ skater_id: skaterId }),
-    enabled: user?.role === "skater",
+    enabled: showTrainingTab,
   });
 
   const { data: trainingIncidents } = useQuery({
     queryKey: ["training", "incidents", skaterId],
     queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
-    enabled: user?.role === "skater",
+    enabled: showTrainingTab,
   });
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
@@ -531,34 +555,128 @@ export default function SkaterAnalyticsPage() {
               label="Compétitions"
               value={String(historyRows.length)}
             />
+            {user?.role === "admin" && (
+              <>
+                <button
+                  onClick={() => toggleTrainingTracked.mutate()}
+                  disabled={toggleTrainingTracked.isPending}
+                  className={`flex items-center gap-1.5 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-bold font-headline transition-colors cursor-pointer disabled:opacity-50 ${
+                    skater?.training_tracked
+                      ? "bg-white/25 text-white hover:bg-white/35"
+                      : "bg-white/10 text-white/70 hover:bg-white/20"
+                  }`}
+                  title={skater?.training_tracked ? "Retirer du suivi entraînement" : "Ajouter au suivi entraînement"}
+                >
+                  <span className="material-symbols-outlined text-sm">
+                    {skater?.training_tracked ? "fitness_center" : "add"}
+                  </span>
+                  {skater?.training_tracked ? "Suivi actif" : "Suivre"}
+                </button>
+                {skater?.manual_create && (
+                  <button
+                    onClick={() => {
+                      setEditForm({
+                        first_name: skater.first_name,
+                        last_name: skater.last_name,
+                        nationality: skater.nationality ?? "",
+                        club: skater.club ?? "",
+                      });
+                      setEditingSkater(true);
+                    }}
+                    className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline hover:bg-white/25 transition-colors cursor-pointer"
+                    title="Modifier les informations"
+                  >
+                    <span className="material-symbols-outlined text-sm">edit</span>
+                  </button>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}
 
-      {/* Tab bar for skater role */}
-      {user?.role === "skater" && (
+      {/* Edit panel for manually created skaters */}
+      {editingSkater && skater?.manual_create && user?.role === "admin" && (
+        <div className="mx-6 mt-4 p-4 bg-surface-container-lowest rounded-xl shadow-arctic space-y-3">
+          <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+            Modifier le patineur
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+            <div>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">Prénom</label>
+              <input
+                value={editForm.first_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, first_name: e.target.value }))}
+                className="w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">Nom</label>
+              <input
+                value={editForm.last_name}
+                onChange={(e) => setEditForm((f) => ({ ...f, last_name: e.target.value }))}
+                className="w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">Nation</label>
+              <input
+                value={editForm.nationality}
+                onChange={(e) => setEditForm((f) => ({ ...f, nationality: e.target.value }))}
+                className="w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                maxLength={3}
+                placeholder="FRA"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-on-surface-variant mb-1">Club</label>
+              <input
+                value={editForm.club}
+                onChange={(e) => setEditForm((f) => ({ ...f, club: e.target.value }))}
+                className="w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+              />
+            </div>
+          </div>
+          <div className="flex gap-2">
+            <button
+              onClick={() => updateSkaterMutation.mutate(editForm)}
+              disabled={updateSkaterMutation.isPending || !editForm.last_name.trim()}
+              className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+            >
+              {updateSkaterMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+            </button>
+            <button
+              onClick={() => setEditingSkater(false)}
+              className="px-4 py-2 text-on-surface-variant text-sm"
+            >
+              Annuler
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Tab bar for training-tracked skaters (visible to skater/admin/coach) */}
+      {showTrainingTab && (
         <div className="px-6 pt-4">
-          <div className="flex gap-1 bg-surface-container rounded-xl p-1 max-w-md">
+          <div className="flex gap-0">
             <button
               onClick={() => setAnalyticsTab("training")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
                 analyticsTab === "training"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-on-surface-variant hover:text-on-surface"
+                  ? "text-primary border-primary"
+                  : "text-on-surface-variant border-transparent hover:text-on-surface"
               }`}
             >
-              <span className="material-symbols-outlined text-lg">fitness_center</span>
               Entraînement
             </button>
             <button
               onClick={() => setAnalyticsTab("competitions")}
-              className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-colors ${
+              className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
                 analyticsTab === "competitions"
-                  ? "bg-white text-primary shadow-sm"
-                  : "text-on-surface-variant hover:text-on-surface"
+                  ? "text-primary border-primary"
+                  : "text-on-surface-variant border-transparent hover:text-on-surface"
               }`}
             >
-              <span className="material-symbols-outlined text-lg">emoji_events</span>
               Compétitions
             </button>
           </div>
@@ -566,7 +684,7 @@ export default function SkaterAnalyticsPage() {
       )}
 
       {/* ── Main content ── */}
-      {(analyticsTab === "competitions" || user?.role !== "skater") && (
+      {(analyticsTab === "competitions" || !showTrainingTab) && (
         <>
           <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ────────── LEFT PANEL ────────── */}
@@ -1120,7 +1238,7 @@ export default function SkaterAnalyticsPage() {
       )}
 
       {/* ── Training content ── */}
-      {analyticsTab === "training" && user?.role === "skater" && (
+      {analyticsTab === "training" && showTrainingTab && (
         <div className="p-6 space-y-6">
           {/* Evolution chart */}
           <TrainingEvolutionChart

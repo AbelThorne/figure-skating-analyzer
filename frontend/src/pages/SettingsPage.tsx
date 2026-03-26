@@ -7,6 +7,30 @@ import { useJobs, type Lot } from "../contexts/JobContext";
 const inputCls =
   "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
+function formatRelativeTime(isoDate: string): string {
+  const date = new Date(isoDate);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffSec = Math.floor(diffMs / 1000);
+  const diffMin = Math.floor(diffSec / 60);
+  const diffHour = Math.floor(diffMin / 60);
+  const diffDay = Math.floor(diffHour / 24);
+  const diffMonth = Math.floor(diffDay / 30);
+
+  if (diffSec < 60) return "à l'instant";
+  if (diffMin < 60) return `il y a ${diffMin} min`;
+  if (diffHour < 24) return `il y a ${diffHour} h`;
+  if (diffDay < 30) return `il y a ${diffDay} j`;
+  return `il y a ${diffMonth} mois`;
+}
+
+function formatFullDate(isoDate: string): string {
+  return new Date(isoDate).toLocaleString("fr-FR", {
+    dateStyle: "long",
+    timeStyle: "short",
+  });
+}
+
 function SkaterPicker({
   selectedIds,
   onChange,
@@ -249,6 +273,45 @@ export default function SettingsPage() {
     }
   };
 
+  // --- Tabs ---
+  const [activeTab, setActiveTab] = useState<"general" | "users" | "training">("general");
+
+  // --- Training onboarding ---
+  const { data: trackedSkaters, isLoading: loadingTracked } = useQuery({
+    queryKey: ["skaters", "training_tracked"],
+    queryFn: () => api.skaters.list({ training_tracked: true }),
+  });
+  const [showCreateSkater, setShowCreateSkater] = useState(false);
+  const [newSkater, setNewSkater] = useState({ first_name: "", last_name: "", nationality: "", club: config?.club_short ?? "" });
+  const [clearingTrainingId, setClearingTrainingId] = useState<number | null>(null);
+
+  const createSkaterMutation = useMutation({
+    mutationFn: () => api.skaters.create({
+      first_name: newSkater.first_name.trim(),
+      last_name: newSkater.last_name.trim(),
+      nationality: newSkater.nationality.trim() || undefined,
+      club: newSkater.club.trim() || undefined,
+    }),
+    onSuccess: () => {
+      setNewSkater({ first_name: "", last_name: "", nationality: "", club: config?.club_short ?? "" });
+      setShowCreateSkater(false);
+      qc.invalidateQueries({ queryKey: ["skaters"] });
+    },
+  });
+
+  const removeTrackingMutation = useMutation({
+    mutationFn: (id: number) => api.skaters.update(id, { training_tracked: false }),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["skaters"] }),
+  });
+
+  const clearTrainingDataMutation = useMutation({
+    mutationFn: (id: number) => api.skaters.clearTrainingData(id),
+    onSuccess: () => {
+      setClearingTrainingId(null);
+      qc.invalidateQueries({ queryKey: ["training"] });
+    },
+  });
+
   // --- Database reset ---
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const [resetConfirmText, setResetConfirmText] = useState("");
@@ -298,7 +361,43 @@ export default function SettingsPage() {
   });
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-6">
+      {/* Tab bar */}
+      <div className="flex gap-0 mb-2">
+        <button
+          onClick={() => setActiveTab("general")}
+          className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+            activeTab === "general"
+              ? "text-primary border-primary"
+              : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          Général
+        </button>
+        <button
+          onClick={() => setActiveTab("users")}
+          className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+            activeTab === "users"
+              ? "text-primary border-primary"
+              : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          Utilisateurs
+        </button>
+        <button
+          onClick={() => setActiveTab("training")}
+          className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+            activeTab === "training"
+              ? "text-primary border-primary"
+              : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          Entraînement
+        </button>
+      </div>
+
+      {activeTab === "general" && (
+      <div className="space-y-8">
       {/* Club settings */}
       <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
         <h2 className="font-headline font-bold text-on-surface text-lg mb-4">
@@ -374,246 +473,6 @@ export default function SettingsPage() {
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Users */}
-      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
-        <div className="flex justify-between items-center mb-4">
-          <h2 className="font-headline font-bold text-on-surface text-lg">
-            Utilisateurs
-          </h2>
-          <button
-            onClick={() => setShowAddUser(true)}
-            className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1"
-          >
-            <span className="material-symbols-outlined text-sm">add</span>
-            Ajouter
-          </button>
-        </div>
-
-        <div className="space-y-2">
-          {users.map((u) => {
-            const isEditing = editingUserId === u.id;
-            return (
-              <div
-                key={u.id}
-                className="p-3 bg-surface-container-low rounded-xl"
-              >
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-medium text-on-surface text-sm">
-                      {u.display_name}
-                    </span>
-                    <span className="text-on-surface-variant text-xs ml-2">
-                      {u.email}
-                    </span>
-                    {!isEditing && (
-                      <span
-                        className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
-                          u.role === "admin"
-                            ? "bg-primary-container text-on-primary-container"
-                            : u.role === "coach"
-                              ? "bg-green-100 text-green-700"
-                              : u.role === "skater"
-                                ? "bg-blue-100 text-blue-700"
-                                : "bg-surface-container text-on-surface-variant"
-                        }`}
-                      >
-                        {u.role === "admin" ? "Admin" : u.role === "coach" ? "Coach" : u.role === "skater" ? "Patineur" : "Lecteur"}
-                      </span>
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    {!isEditing && (
-                      <button
-                        onClick={() => {
-                          setEditingUserId(u.id);
-                          setEditData({ role: u.role, skater_ids: u.skater_ids || [], display_name: u.display_name });
-                        }}
-                        className="text-on-surface-variant text-xs hover:bg-surface-container rounded-lg px-2 py-1"
-                        title="Modifier"
-                      >
-                        <span className="material-symbols-outlined text-sm">edit</span>
-                      </button>
-                    )}
-                    <button
-                      onClick={() => toggleActive.mutate(u)}
-                      className={`text-xs px-2 py-1 rounded-lg ${
-                        u.is_active ? "text-primary" : "text-error"
-                      }`}
-                    >
-                      {u.is_active ? "Actif" : "Désactivé"}
-                    </button>
-                    {confirmingDeleteId === u.id ? (
-                      <span className="flex items-center gap-1">
-                        <button
-                          onClick={() => deleteUser.mutate(u.id)}
-                          className="text-xs px-2 py-1 rounded-lg bg-error text-on-error font-bold"
-                        >
-                          Confirmer
-                        </button>
-                        <button
-                          onClick={() => setConfirmingDeleteId(null)}
-                          className="text-xs px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container"
-                        >
-                          Annuler
-                        </button>
-                      </span>
-                    ) : (
-                      <button
-                        onClick={() => setConfirmingDeleteId(u.id)}
-                        className="text-error text-xs hover:bg-error-container rounded-lg px-2 py-1"
-                      >
-                        <span className="material-symbols-outlined text-sm">delete</span>
-                      </button>
-                    )}
-                  </div>
-                </div>
-
-                {/* Inline edit form */}
-                {isEditing && (
-                  <div className="mt-3 pt-3 border-t border-outline-variant/30 space-y-3">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                      <div>
-                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                          Nom affiché
-                        </label>
-                        <input
-                          value={editData.display_name}
-                          onChange={(e) => setEditData((d) => ({ ...d, display_name: e.target.value }))}
-                          className={inputCls}
-                        />
-                      </div>
-                      <div>
-                        <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
-                          Rôle
-                        </label>
-                        <select
-                          value={editData.role}
-                          onChange={(e) => setEditData((d) => ({ ...d, role: e.target.value as UserRecord["role"], skater_ids: e.target.value !== "skater" ? [] : d.skater_ids }))}
-                          className={inputCls}
-                        >
-                          <option value="reader">Lecteur</option>
-                          <option value="admin">Administrateur</option>
-                          <option value="coach">Coach</option>
-                          <option value="skater">Patineur</option>
-                        </select>
-                      </div>
-                    </div>
-                    {editData.role === "skater" && (
-                      <SkaterPicker
-                        selectedIds={editData.skater_ids}
-                        onChange={(ids) => setEditData((d) => ({ ...d, skater_ids: ids }))}
-                        club={config?.club_short}
-                      />
-                    )}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() =>
-                          updateUser.mutate({
-                            id: u.id,
-                            data: {
-                              display_name: editData.display_name,
-                              role: editData.role,
-                              skater_ids: editData.role === "skater" ? editData.skater_ids : [],
-                            },
-                          })
-                        }
-                        disabled={updateUser.isPending}
-                        className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
-                      >
-                        {updateUser.isPending ? "Enregistrement..." : "Enregistrer"}
-                      </button>
-                      <button
-                        onClick={() => setEditingUserId(null)}
-                        className="px-4 py-2 text-on-surface-variant text-sm"
-                      >
-                        Annuler
-                      </button>
-                    </div>
-                  </div>
-                )}
-              </div>
-            );
-          })}
-        </div>
-
-        {/* Add user form */}
-        {showAddUser && (
-          <div className="mt-4 p-4 bg-surface-container rounded-xl space-y-3">
-            <input
-              placeholder="Email"
-              value={newUser.email}
-              onChange={(e) =>
-                setNewUser((u) => ({ ...u, email: e.target.value }))
-              }
-              className={inputCls}
-            />
-            <input
-              placeholder="Nom affiché"
-              value={newUser.display_name}
-              onChange={(e) =>
-                setNewUser((u) => ({ ...u, display_name: e.target.value }))
-              }
-              className={inputCls}
-            />
-            <select
-              value={newUser.role}
-              onChange={(e) =>
-                setNewUser((u) => ({ ...u, role: e.target.value }))
-              }
-              className={inputCls}
-            >
-              <option value="reader">Lecteur</option>
-              <option value="admin">Administrateur</option>
-              <option value="coach">Coach</option>
-              <option value="skater">Patineur</option>
-            </select>
-            {newUser.role === "skater" && (
-              <SkaterPicker
-                selectedIds={newUser.skater_ids}
-                onChange={(ids) => setNewUser((u) => ({ ...u, skater_ids: ids }))}
-                club={config?.club_short}
-              />
-            )}
-            <input
-              type="password"
-              placeholder="Mot de passe (optionnel pour OAuth)"
-              value={newUser.password}
-              onChange={(e) =>
-                setNewUser((u) => ({ ...u, password: e.target.value }))
-              }
-              className={inputCls}
-            />
-            {newUser.password && (
-              <label className="flex items-center gap-2 text-xs text-on-surface-variant">
-                <input
-                  type="checkbox"
-                  checked={newUser.must_change_password}
-                  onChange={(e) =>
-                    setNewUser((u) => ({ ...u, must_change_password: e.target.checked }))
-                  }
-                  className="rounded"
-                />
-                Forcer le changement au prochain login
-              </label>
-            )}
-            <div className="flex gap-2">
-              <button
-                onClick={() => createUser.mutate()}
-                className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold"
-              >
-                Créer
-              </button>
-              <button
-                onClick={() => setShowAddUser(false)}
-                className="px-4 py-2 text-on-surface-variant text-sm"
-              >
-                Annuler
-              </button>
-            </div>
-          </div>
-        )}
       </section>
 
       {/* Domains */}
@@ -1064,6 +923,440 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+      </div>
+      )}
+
+      {activeTab === "users" && (
+      <div className="space-y-8">
+        {/* Users table */}
+        <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-headline font-bold text-on-surface text-lg">
+              Utilisateurs
+            </h2>
+            <button
+              onClick={() => setShowAddUser(true)}
+              className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              Ajouter
+            </button>
+          </div>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="text-left text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                  <th className="pb-3 pr-4">Nom</th>
+                  <th className="pb-3 pr-4">Email</th>
+                  <th className="pb-3 pr-4">Rôle</th>
+                  <th className="pb-3 pr-4">Statut</th>
+                  <th className="pb-3 pr-4">Dernière connexion</th>
+                  <th className="pb-3 text-right">Actions</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-outline-variant/20">
+                {users.map((u) => {
+                  const isEditing = editingUserId === u.id;
+                  return (
+                    <tr key={u.id} className="group">
+                      <td className="py-3 pr-4">
+                        <span className="font-medium text-on-surface">{u.display_name}</span>
+                      </td>
+                      <td className="py-3 pr-4 text-on-surface-variant">{u.email}</td>
+                      <td className="py-3 pr-4">
+                        {isEditing ? (
+                          <select
+                            value={editData.role}
+                            onChange={(e) => setEditData((d) => ({ ...d, role: e.target.value as UserRecord["role"], skater_ids: e.target.value !== "skater" ? [] : d.skater_ids }))}
+                            className="px-2 py-1 bg-surface-container-low rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-primary"
+                          >
+                            <option value="reader">Lecteur</option>
+                            <option value="admin">Administrateur</option>
+                            <option value="coach">Coach</option>
+                            <option value="skater">Patineur</option>
+                          </select>
+                        ) : (
+                          <span
+                            className={`text-xs px-2 py-0.5 rounded-full ${
+                              u.role === "admin"
+                                ? "bg-primary-container text-on-primary-container"
+                                : u.role === "coach"
+                                  ? "bg-green-100 text-green-700"
+                                  : u.role === "skater"
+                                    ? "bg-blue-100 text-blue-700"
+                                    : "bg-surface-container text-on-surface-variant"
+                            }`}
+                          >
+                            {u.role === "admin" ? "Admin" : u.role === "coach" ? "Coach" : u.role === "skater" ? "Patineur" : "Lecteur"}
+                          </span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-4">
+                        <button
+                          onClick={() => toggleActive.mutate(u)}
+                          className={`text-xs px-2 py-1 rounded-lg transition-colors ${
+                            u.is_active
+                              ? "text-primary hover:bg-primary/10"
+                              : "text-error hover:bg-error/10"
+                          }`}
+                        >
+                          {u.is_active ? "Actif" : "Désactivé"}
+                        </button>
+                      </td>
+                      <td className="py-3 pr-4 text-on-surface-variant text-xs">
+                        {u.last_login_at ? (
+                          <span title={formatFullDate(u.last_login_at)}>
+                            {formatRelativeTime(u.last_login_at)}
+                          </span>
+                        ) : (
+                          <span className="text-on-surface-variant/50">Jamais</span>
+                        )}
+                      </td>
+                      <td className="py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {isEditing ? (
+                            <>
+                              <button
+                                onClick={() =>
+                                  updateUser.mutate({
+                                    id: u.id,
+                                    data: {
+                                      display_name: editData.display_name,
+                                      role: editData.role,
+                                      skater_ids: editData.role === "skater" ? editData.skater_ids : [],
+                                    },
+                                  })
+                                }
+                                disabled={updateUser.isPending}
+                                className="text-xs px-2 py-1 rounded-lg bg-primary text-on-primary font-bold hover:bg-primary/90 disabled:opacity-50"
+                              >
+                                {updateUser.isPending ? "..." : "Enregistrer"}
+                              </button>
+                              <button
+                                onClick={() => setEditingUserId(null)}
+                                className="text-xs px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container"
+                              >
+                                Annuler
+                              </button>
+                            </>
+                          ) : (
+                            <>
+                              <button
+                                onClick={() => {
+                                  setEditingUserId(u.id);
+                                  setEditData({ role: u.role, skater_ids: u.skater_ids || [], display_name: u.display_name });
+                                }}
+                                className="text-on-surface-variant hover:bg-surface-container rounded-lg px-2 py-1"
+                                title="Modifier"
+                              >
+                                <span className="material-symbols-outlined text-sm">edit</span>
+                              </button>
+                              {confirmingDeleteId === u.id ? (
+                                <span className="flex items-center gap-1">
+                                  <button
+                                    onClick={() => deleteUser.mutate(u.id)}
+                                    className="text-xs px-2 py-1 rounded-lg bg-error text-on-error font-bold"
+                                  >
+                                    Confirmer
+                                  </button>
+                                  <button
+                                    onClick={() => setConfirmingDeleteId(null)}
+                                    className="text-xs px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container"
+                                  >
+                                    Annuler
+                                  </button>
+                                </span>
+                              ) : (
+                                <button
+                                  onClick={() => setConfirmingDeleteId(u.id)}
+                                  className="text-error hover:bg-error-container rounded-lg px-2 py-1"
+                                >
+                                  <span className="material-symbols-outlined text-sm">delete</span>
+                                </button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          </div>
+
+          {/* Inline edit details (skater picker, display name) - shown below table */}
+          {editingUserId && (
+            <div className="mt-4 p-4 bg-surface-container-low rounded-xl space-y-3">
+              <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                Modifier — {users.find((u) => u.id === editingUserId)?.display_name}
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+                <div>
+                  <label className="text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    Nom affiché
+                  </label>
+                  <input
+                    value={editData.display_name}
+                    onChange={(e) => setEditData((d) => ({ ...d, display_name: e.target.value }))}
+                    className={inputCls}
+                  />
+                </div>
+              </div>
+              {editData.role === "skater" && (
+                <SkaterPicker
+                  selectedIds={editData.skater_ids}
+                  onChange={(ids) => setEditData((d) => ({ ...d, skater_ids: ids }))}
+                  club={config?.club_short}
+                />
+              )}
+            </div>
+          )}
+
+          {/* Add user form */}
+          {showAddUser && (
+            <div className="mt-4 p-4 bg-surface-container rounded-xl space-y-3">
+              <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                Nouvel utilisateur
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+                <input
+                  placeholder="Email"
+                  value={newUser.email}
+                  onChange={(e) =>
+                    setNewUser((u) => ({ ...u, email: e.target.value }))
+                  }
+                  className={inputCls}
+                />
+                <input
+                  placeholder="Nom affiché"
+                  value={newUser.display_name}
+                  onChange={(e) =>
+                    setNewUser((u) => ({ ...u, display_name: e.target.value }))
+                  }
+                  className={inputCls}
+                />
+              </div>
+              <div className="max-w-xs">
+                <select
+                  value={newUser.role}
+                  onChange={(e) =>
+                    setNewUser((u) => ({ ...u, role: e.target.value }))
+                  }
+                  className={inputCls}
+                >
+                  <option value="reader">Lecteur</option>
+                  <option value="admin">Administrateur</option>
+                  <option value="coach">Coach</option>
+                  <option value="skater">Patineur</option>
+                </select>
+              </div>
+              {newUser.role === "skater" && (
+                <SkaterPicker
+                  selectedIds={newUser.skater_ids}
+                  onChange={(ids) => setNewUser((u) => ({ ...u, skater_ids: ids }))}
+                  club={config?.club_short}
+                />
+              )}
+              <div className="max-w-xs">
+                <input
+                  type="password"
+                  placeholder="Mot de passe (optionnel pour OAuth)"
+                  value={newUser.password}
+                  onChange={(e) =>
+                    setNewUser((u) => ({ ...u, password: e.target.value }))
+                  }
+                  className={inputCls}
+                />
+              </div>
+              {newUser.password && (
+                <label className="flex items-center gap-2 text-xs text-on-surface-variant">
+                  <input
+                    type="checkbox"
+                    checked={newUser.must_change_password}
+                    onChange={(e) =>
+                      setNewUser((u) => ({ ...u, must_change_password: e.target.checked }))
+                    }
+                    className="rounded"
+                  />
+                  Forcer le changement au prochain login
+                </label>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => createUser.mutate()}
+                  className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold"
+                >
+                  Créer
+                </button>
+                <button
+                  onClick={() => setShowAddUser(false)}
+                  className="px-4 py-2 text-on-surface-variant text-sm"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+      )}
+
+      {activeTab === "training" && (
+      <div className="space-y-8">
+        <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+          <div className="flex justify-between items-center mb-4">
+            <h2 className="font-headline font-bold text-on-surface text-lg">
+              Patineurs suivis en entraînement
+            </h2>
+            <button
+              onClick={() => setShowCreateSkater(true)}
+              className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              Nouveau patineur
+            </button>
+          </div>
+
+          {loadingTracked ? (
+            <div className="flex items-center justify-center py-10">
+              <span className="material-symbols-outlined animate-spin text-primary text-2xl">progress_activity</span>
+            </div>
+          ) : !trackedSkaters?.length ? (
+            <p className="text-on-surface-variant text-sm text-center py-10">
+              Aucun patineur suivi. Ajoutez des patineurs depuis leur fiche ou créez-en un nouveau.
+            </p>
+          ) : (
+            <div className="overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead>
+                  <tr className="text-left text-xs font-bold text-on-surface-variant uppercase tracking-wider">
+                    <th className="pb-3 pr-4">Nom</th>
+                    <th className="pb-3 pr-4">Club</th>
+                    <th className="pb-3 pr-4">Type</th>
+                    <th className="pb-3 text-right">Actions</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-outline-variant/20">
+                  {trackedSkaters.map((s) => (
+                    <tr key={s.id}>
+                      <td className="py-3 pr-4">
+                        <span className="font-medium text-on-surface">
+                          {s.first_name} {s.last_name}
+                        </span>
+                        {s.nationality && (
+                          <span className="text-xs text-on-surface-variant ml-2">{s.nationality}</span>
+                        )}
+                      </td>
+                      <td className="py-3 pr-4 text-on-surface-variant">{s.club ?? "—"}</td>
+                      <td className="py-3 pr-4">
+                        {s.manual_create ? (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700">Manuel</span>
+                        ) : (
+                          <span className="text-xs px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant">Importé</span>
+                        )}
+                      </td>
+                      <td className="py-3 text-right">
+                        <div className="flex items-center justify-end gap-1">
+                          {clearingTrainingId === s.id ? (
+                            <span className="flex items-center gap-1">
+                              <button
+                                onClick={() => clearTrainingDataMutation.mutate(s.id)}
+                                disabled={clearTrainingDataMutation.isPending}
+                                className="text-xs px-2 py-1 rounded-lg bg-error text-on-error font-bold disabled:opacity-50"
+                              >
+                                Confirmer
+                              </button>
+                              <button
+                                onClick={() => setClearingTrainingId(null)}
+                                className="text-xs px-2 py-1 rounded-lg text-on-surface-variant hover:bg-surface-container"
+                              >
+                                Annuler
+                              </button>
+                            </span>
+                          ) : (
+                            <button
+                              onClick={() => setClearingTrainingId(s.id)}
+                              className="text-error hover:bg-error-container rounded-lg px-2 py-1"
+                              title="Supprimer les données d'entraînement"
+                            >
+                              <span className="material-symbols-outlined text-sm">delete_sweep</span>
+                            </button>
+                          )}
+                          <button
+                            onClick={() => removeTrackingMutation.mutate(s.id)}
+                            disabled={removeTrackingMutation.isPending}
+                            className="text-on-surface-variant hover:bg-surface-container rounded-lg px-2 py-1 disabled:opacity-50"
+                            title="Retirer du suivi"
+                          >
+                            <span className="material-symbols-outlined text-sm">person_remove</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+
+          {/* Create manual skater form */}
+          {showCreateSkater && (
+            <div className="mt-4 p-4 bg-surface-container rounded-xl space-y-3">
+              <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                Nouveau patineur
+              </h3>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-lg">
+                <input
+                  placeholder="Prénom"
+                  value={newSkater.first_name}
+                  onChange={(e) => setNewSkater((s) => ({ ...s, first_name: e.target.value }))}
+                  className={inputCls}
+                />
+                <input
+                  placeholder="Nom *"
+                  value={newSkater.last_name}
+                  onChange={(e) => setNewSkater((s) => ({ ...s, last_name: e.target.value }))}
+                  className={inputCls}
+                />
+                <input
+                  placeholder="Nation (ex: FRA)"
+                  value={newSkater.nationality}
+                  onChange={(e) => setNewSkater((s) => ({ ...s, nationality: e.target.value }))}
+                  className={inputCls}
+                  maxLength={3}
+                />
+                <input
+                  placeholder="Club"
+                  value={newSkater.club}
+                  onChange={(e) => setNewSkater((s) => ({ ...s, club: e.target.value }))}
+                  className={inputCls}
+                />
+              </div>
+              {createSkaterMutation.isError && (
+                <p className="text-error text-xs">{String(createSkaterMutation.error)}</p>
+              )}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => createSkaterMutation.mutate()}
+                  disabled={!newSkater.last_name.trim() || createSkaterMutation.isPending}
+                  className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 disabled:opacity-50"
+                >
+                  {createSkaterMutation.isPending ? "Création..." : "Créer"}
+                </button>
+                <button
+                  onClick={() => setShowCreateSkater(false)}
+                  className="px-4 py-2 text-on-surface-variant text-sm"
+                >
+                  Annuler
+                </button>
+              </div>
+            </div>
+          )}
+        </section>
+      </div>
+      )}
     </div>
   );
 }

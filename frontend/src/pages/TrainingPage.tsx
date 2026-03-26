@@ -38,18 +38,9 @@ function SkaterCard({ skater, lastReview }: { skater: Skater; lastReview?: Weekl
 }
 
 export default function TrainingPage() {
-  const { data: config } = useQuery({
-    queryKey: ["config"],
-    queryFn: api.config.get,
-    staleTime: Infinity,
-  });
-
-  const clubShort = config?.club_short;
-
   const { data: skaters, isLoading: skatersLoading } = useQuery({
-    queryKey: ["skaters", "club", clubShort],
-    queryFn: () => api.skaters.list({ club: clubShort }),
-    enabled: !!clubShort,
+    queryKey: ["skaters", "training_tracked"],
+    queryFn: () => api.skaters.list({ training_tracked: true }),
   });
 
   const { data: reviews } = useQuery({
