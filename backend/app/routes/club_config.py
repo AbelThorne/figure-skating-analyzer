@@ -24,6 +24,7 @@ async def get_config(request: Request, session: AsyncSession) -> dict:
     if not settings:
         return {
             "setup_required": True,
+            "training_enabled": False,
             "google_client_id": GOOGLE_CLIENT_ID or None,
         }
 
@@ -33,6 +34,7 @@ async def get_config(request: Request, session: AsyncSession) -> dict:
         "club_short": settings.club_short,
         "logo_url": f"/api/logos/{settings.logo_path}" if settings.logo_path else "",
         "current_season": settings.current_season,
+        "training_enabled": bool(settings.training_enabled),
         "google_client_id": GOOGLE_CLIENT_ID or None,
     }
 
@@ -54,6 +56,8 @@ async def update_config(
         settings.club_short = data["club_short"]
     if "current_season" in data:
         settings.current_season = data["current_season"]
+    if "training_enabled" in data:
+        settings.training_enabled = bool(data["training_enabled"])
 
     await session.commit()
     await session.refresh(settings)
@@ -64,6 +68,7 @@ async def update_config(
             "club_short": settings.club_short,
             "logo_url": f"/api/logos/{settings.logo_path}" if settings.logo_path else "",
             "current_season": settings.current_season,
+            "training_enabled": bool(settings.training_enabled),
         },
         status_code=200,
     )
