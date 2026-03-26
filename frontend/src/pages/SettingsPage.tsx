@@ -514,6 +514,33 @@ export default function SettingsPage() {
         </div>
       </section>
 
+      {/* Module entraînement toggle */}
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="font-headline font-bold text-on-surface text-base">
+              Module entraînement
+            </h2>
+            <p className="text-sm text-on-surface-variant mt-1">
+              Active le suivi d'entraînement des patineurs (retours hebdomadaires, défis, incidents)
+            </p>
+          </div>
+          <button
+            onClick={() => toggleTrainingModule.mutate(!config?.training_enabled)}
+            disabled={toggleTrainingModule.isPending}
+            className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
+              config?.training_enabled ? "bg-primary" : "bg-on-surface/20"
+            }`}
+          >
+            <span
+              className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
+                config?.training_enabled ? "translate-x-6" : "translate-x-1"
+              }`}
+            />
+          </button>
+        </div>
+      </section>
+
       {/* Domains */}
       <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
         <h2 className="font-headline font-bold text-on-surface text-lg mb-4">
@@ -963,32 +990,6 @@ export default function SettingsPage() {
         )}
       </section>
 
-        {/* Module entraînement toggle */}
-        <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
-          <div className="flex items-center justify-between">
-            <div>
-              <h2 className="font-headline font-bold text-on-surface text-base">
-                Module entraînement
-              </h2>
-              <p className="text-sm text-on-surface-variant mt-1">
-                Active le suivi d'entraînement des patineurs (retours hebdomadaires, défis, incidents)
-              </p>
-            </div>
-            <button
-              onClick={() => toggleTrainingModule.mutate(!config?.training_enabled)}
-              disabled={toggleTrainingModule.isPending}
-              className={`relative inline-flex h-7 w-12 items-center rounded-full transition-colors ${
-                config?.training_enabled ? "bg-primary" : "bg-on-surface/20"
-              }`}
-            >
-              <span
-                className={`inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-                  config?.training_enabled ? "translate-x-6" : "translate-x-1"
-                }`}
-              />
-            </button>
-          </div>
-        </section>
       </div>
       )}
 

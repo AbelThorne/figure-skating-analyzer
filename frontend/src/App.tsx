@@ -38,7 +38,7 @@ function getPageTitle(pathname: string): string {
   if (pathname.startsWith("/patineurs/")) return "Analyse patineur";
   if (pathname.startsWith("/club")) return "Club";
   if (pathname === "/stats") return "Club";
-  if (pathname === "/settings") return "Paramètres";
+  if (pathname === "/settings") return "Administration";
   if (pathname === "/mes-patineurs") return "Mes patineurs";
   if (pathname === "/profil") return "Mon compte";
   if (pathname === "/entrainement") return "Suivi entraînement";
@@ -208,7 +208,7 @@ function AuthenticatedLayout() {
               }
             >
               <span className="material-symbols-outlined text-xl">settings</span>
-              <span className="text-[11px] font-bold uppercase tracking-wider">PARAMÈTRES</span>
+              <span className="text-[11px] font-bold uppercase tracking-wider">ADMINISTRATION</span>
             </NavLink>
           )}
           <div className="flex items-center gap-2 px-4 py-2">
