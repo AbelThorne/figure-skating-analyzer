@@ -11,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { api, downloadPdf, Element, Score, CategoryResult, TimelineEntry, WeeklyReview, TrainingIncident } from "../api/client";
+import { api, downloadPdf, Element, Score, CategoryResult, WeeklyReview, TrainingIncident, TrainingChallenge } from "../api/client";
 import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
@@ -161,6 +161,10 @@ export default function SkaterAnalyticsPage() {
   );
   const [editingSkater, setEditingSkater] = useState(false);
   const [editForm, setEditForm] = useState({ first_name: "", last_name: "", nationality: "", club: "" });
+  const [trainingSubTab, setTrainingSubTab] = useState<"reviews" | "challenges" | "incidents" | "evolution">("reviews");
+  const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
+  const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
+  const [viewingIncident, setViewingIncident] = useState<TrainingIncident | undefined>();
   const { data: skater, isLoading: loadingSkater } = useQuery({
     queryKey: ["skater", skaterId],
     queryFn: () => api.skaters.get(skaterId),
@@ -211,12 +215,6 @@ export default function SkaterAnalyticsPage() {
     placeholderData: keepPreviousData,
   });
 
-  const { data: timeline } = useQuery({
-    queryKey: ["training", "timeline", skaterId],
-    queryFn: () => api.training.timeline({ skater_id: skaterId }),
-    enabled: showTrainingTab,
-  });
-
   const { data: trainingReviews } = useQuery({
     queryKey: ["training", "reviews", skaterId],
     queryFn: () => api.training.reviews.list({ skater_id: skaterId }),
@@ -226,6 +224,12 @@ export default function SkaterAnalyticsPage() {
   const { data: trainingIncidents } = useQuery({
     queryKey: ["training", "incidents", skaterId],
     queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
+    enabled: showTrainingTab,
+  });
+
+  const { data: trainingChallenges } = useQuery({
+    queryKey: ["training", "challenges", skaterId],
+    queryFn: () => api.training.challenges.list({ skater_id: skaterId }),
     enabled: showTrainingTab,
   });
 
@@ -1238,84 +1242,321 @@ export default function SkaterAnalyticsPage() {
       )}
 
       {/* ── Training content ── */}
-      {analyticsTab === "training" && showTrainingTab && (
-        <div className="p-6 space-y-6">
-          {/* Evolution chart */}
-          <TrainingEvolutionChart
-            reviews={trainingReviews ?? []}
-            incidents={trainingIncidents ?? []}
-          />
+      {analyticsTab === "training" && showTrainingTab && (() => {
+        const allReviews = trainingReviews ?? [];
+        const allIncidents = trainingIncidents ?? [];
+        const allChallenges = trainingChallenges ?? [];
+        const latestReview = allReviews[0];
+        const today = new Date().toISOString().split("T")[0];
+        const activeChallenges = allChallenges.filter((c) => c.target_date >= today);
 
-          {/* Timeline */}
-          <div className="space-y-3">
-            <h4 className="font-headline font-bold text-on-surface text-sm">Historique</h4>
-            {(timeline ?? []).length === 0 ? (
-              <p className="text-sm text-on-surface-variant text-center py-10">Aucune donnée d'entraînement disponible</p>
-            ) : (
-              timeline?.map((entry) => {
-                if (entry.type === "review") {
-                  const r = entry as WeeklyReview & { type: "review" };
-                  return (
-                    <div key={`review-${r.id}`} className="bg-surface-container-low rounded-2xl p-5 space-y-3">
-                      <div className="flex items-center justify-between">
-                        <h4 className="font-headline font-bold text-on-surface text-sm">
-                          Semaine du {new Date(r.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                        </h4>
-                      </div>
-                      <div className="grid grid-cols-3 gap-4">
-                        {(["engagement", "progression", "attitude"] as const).map((field) => (
-                          <div key={field}>
-                            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 capitalize">{field}</p>
-                            <div className="flex gap-0.5">
-                              {Array.from({ length: 5 }, (_, i) => (
-                                <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < r[field] ? "bg-primary" : "bg-surface-container"}`} />
-                              ))}
-                            </div>
+        const INCIDENT_META: Record<string, { label: string; color: string; icon: string }> = {
+          injury: { label: "Blessure", color: "text-error", icon: "healing" },
+          behavior: { label: "Comportement", color: "text-orange-600", icon: "report" },
+          other: { label: "Autre", color: "text-on-surface-variant", icon: "info" },
+        };
+
+        const RATING_TIPS: Record<string, string> = {
+          engagement: "Implication et motivation lors des entraînements : concentration, volonté de progresser, participation active aux exercices.",
+          progression: "Évolution technique constatée : acquisition de nouveaux éléments, amélioration de la qualité d'exécution.",
+          attitude: "Comportement général : respect des consignes, esprit d'équipe, ponctualité, relation avec les autres patineurs.",
+        };
+
+        const TRAINING_TABS = [
+          { key: "reviews" as const, label: "Retours", icon: "rate_review" },
+          { key: "challenges" as const, label: "Défis", icon: "flag" },
+          { key: "incidents" as const, label: "Incidents", icon: "warning" },
+          { key: "evolution" as const, label: "Évolution", icon: "trending_up" },
+        ];
+
+        return (
+          <div className="p-6 space-y-6">
+            {/* Featured cards: latest review + active challenges */}
+            {(latestReview || activeChallenges.length > 0) && (
+              <div className="space-y-3">
+                {latestReview && (
+                  <div className="bg-surface-container-low rounded-2xl p-5 space-y-3">
+                    <h4 className="font-headline font-bold text-on-surface text-sm">
+                      Semaine du {new Date(latestReview.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                    </h4>
+                    <div className="grid grid-cols-3 gap-4">
+                      {(["engagement", "progression", "attitude"] as const).map((field) => (
+                        <div key={field}>
+                          <span className="inline-flex items-center gap-1">
+                            <span className="text-[10px] uppercase tracking-wider text-on-surface-variant capitalize">{field}</span>
+                            <span className="material-symbols-outlined text-on-surface-variant text-xs cursor-help" title={RATING_TIPS[field]}>info</span>
+                          </span>
+                          <div className="flex gap-0.5">
+                            {Array.from({ length: 5 }, (_, i) => (
+                              <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < latestReview[field] ? "bg-primary" : "bg-surface-container"}`} />
+                            ))}
                           </div>
+                        </div>
+                      ))}
+                    </div>
+                    {latestReview.strengths && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Points forts</p>
+                        <p className="text-sm text-on-surface">{latestReview.strengths}</p>
+                      </div>
+                    )}
+                    {latestReview.improvements && (
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Axes d'amélioration</p>
+                        <p className="text-sm text-on-surface">{latestReview.improvements}</p>
+                      </div>
+                    )}
+                  </div>
+                )}
+                {activeChallenges.map((c) => (
+                  <div key={c.id} className="bg-surface-container-low rounded-2xl p-5 space-y-3 ring-1 ring-primary/20">
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="material-symbols-outlined text-lg text-primary">flag</span>
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">En cours</span>
+                      </div>
+                      <span className="text-xs text-on-surface-variant">
+                        Échéance : {new Date(c.target_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    </div>
+                    <p className="text-sm text-on-surface">{c.objective}</p>
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+                      <div className="flex gap-0.5">
+                        {Array.from({ length: 5 }, (_, i) => (
+                          <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < c.score ? "bg-primary" : "bg-surface-container"}`} />
                         ))}
                       </div>
-                      {r.strengths && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Points forts</p>
-                          <p className="text-sm text-on-surface">{r.strengths}</p>
-                        </div>
-                      )}
-                      {r.improvements && (
-                        <div>
-                          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Axes d'amélioration</p>
-                          <p className="text-sm text-on-surface">{r.improvements}</p>
-                        </div>
-                      )}
                     </div>
-                  );
-                } else {
-                  const i = entry as TrainingIncident & { type: "incident" };
-                  const typeMap: Record<string, { label: string; color: string; icon: string }> = {
-                    injury: { label: "Blessure", color: "text-error", icon: "healing" },
-                    behavior: { label: "Comportement", color: "text-orange-600", icon: "report" },
-                    other: { label: "Autre", color: "text-on-surface-variant", icon: "info" },
-                  };
-                  const meta = typeMap[i.incident_type] ?? typeMap.other;
-                  return (
-                    <div key={`incident-${i.id}`} className="bg-surface-container-low rounded-2xl p-5 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <span className={`material-symbols-outlined text-lg ${meta.color}`}>{meta.icon}</span>
-                          <span className={`text-sm font-bold ${meta.color}`}>{meta.label}</span>
-                        </div>
-                        <span className="text-xs text-on-surface-variant">
-                          {new Date(i.date).toLocaleDateString("fr-FR")}
-                        </span>
-                      </div>
-                      <p className="text-sm text-on-surface">{i.description}</p>
-                    </div>
-                  );
-                }
-              })
+                  </div>
+                ))}
+              </div>
             )}
+
+            {/* Sub-tabs */}
+            <div className="flex gap-0">
+              {TRAINING_TABS.map((tab) => (
+                <button
+                  key={tab.key}
+                  onClick={() => setTrainingSubTab(tab.key)}
+                  className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+                    trainingSubTab === tab.key
+                      ? "text-primary border-primary"
+                      : "text-on-surface-variant border-transparent hover:text-on-surface"
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+
+            {/* Reviews tab */}
+            {trainingSubTab === "reviews" && (
+              allReviews.length === 0 ? (
+                <p className="text-sm text-on-surface-variant text-center py-10">Aucun retour pour le moment</p>
+              ) : (
+                <div className="divide-y divide-outline-variant/20">
+                  {allReviews.map((r) => {
+                    const weekDate = new Date(r.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+                    const avg = ((r.engagement + r.progression + r.attitude) / 3).toFixed(1);
+                    const hasText = !!(r.strengths || r.improvements);
+                    return (
+                      <button
+                        key={r.id}
+                        onClick={() => setViewingReview(r)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+                      >
+                        <span className="text-xs text-on-surface-variant w-16 shrink-0">{weekDate}</span>
+                        <div className="flex gap-2 shrink-0">
+                          {(["engagement", "progression", "attitude"] as const).map((field) => (
+                            <div key={field} className="flex gap-0.5">
+                              {Array.from({ length: 5 }, (_, i) => (
+                                <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < r[field] ? "bg-primary" : "bg-surface-container"}`} />
+                              ))}
+                            </div>
+                          ))}
+                        </div>
+                        <span className="font-mono text-xs text-primary font-bold w-8 shrink-0">{avg}</span>
+                        {hasText && (
+                          <p className="text-xs text-on-surface-variant truncate flex-1 min-w-0">
+                            {r.strengths || r.improvements}
+                          </p>
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+              )
+            )}
+
+            {/* Challenges tab */}
+            {trainingSubTab === "challenges" && (
+              allChallenges.length === 0 ? (
+                <p className="text-sm text-on-surface-variant text-center py-10">Aucun défi pour le moment</p>
+              ) : (
+                <div className="divide-y divide-outline-variant/20">
+                  {allChallenges.map((c) => {
+                    const isActive = c.target_date >= today;
+                    const targetDate = new Date(c.target_date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+                    return (
+                      <button
+                        key={c.id}
+                        onClick={() => setViewingChallenge(c)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+                      >
+                        <span className={`material-symbols-outlined text-sm ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+                        <span className="text-xs text-on-surface-variant w-16 shrink-0">{targetDate}</span>
+                        <div className="flex gap-0.5 shrink-0">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < c.score ? "bg-primary" : "bg-surface-container"}`} />
+                          ))}
+                        </div>
+                        <p className="text-xs text-on-surface truncate flex-1 min-w-0">{c.objective}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )
+            )}
+
+            {/* Incidents tab */}
+            {trainingSubTab === "incidents" && (
+              allIncidents.length === 0 ? (
+                <p className="text-sm text-on-surface-variant text-center py-10">Aucun incident signalé</p>
+              ) : (
+                <div className="divide-y divide-outline-variant/20">
+                  {allIncidents.map((inc) => {
+                    const meta = INCIDENT_META[inc.incident_type] ?? INCIDENT_META.other;
+                    const dateStr = new Date(inc.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+                    return (
+                      <button
+                        key={inc.id}
+                        onClick={() => setViewingIncident(inc)}
+                        className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+                      >
+                        <span className={`material-symbols-outlined text-sm ${meta.color}`}>{meta.icon}</span>
+                        <span className="text-xs text-on-surface-variant w-16 shrink-0">{dateStr}</span>
+                        <span className={`text-xs font-bold shrink-0 ${meta.color}`}>{meta.label}</span>
+                        <p className="text-xs text-on-surface-variant truncate flex-1 min-w-0">{inc.description}</p>
+                      </button>
+                    );
+                  })}
+                </div>
+              )
+            )}
+
+            {/* Evolution tab */}
+            {trainingSubTab === "evolution" && (
+              <TrainingEvolutionChart
+                reviews={allReviews}
+                incidents={allIncidents}
+              />
+            )}
+
+            {/* Detail modals (read-only) */}
+            {viewingReview && (
+              <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={() => setViewingReview(undefined)}>
+                <div className="bg-surface rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-4" onClick={(e) => e.stopPropagation()}>
+                  <h3 className="font-headline font-bold text-on-surface text-lg">
+                    Semaine du {new Date(viewingReview.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                  </h3>
+                  <div className="grid grid-cols-3 gap-4">
+                    {(["engagement", "progression", "attitude"] as const).map((field) => (
+                      <div key={field}>
+                        <span className="inline-flex items-center gap-1">
+                          <span className="text-[10px] uppercase tracking-wider text-on-surface-variant capitalize">{field}</span>
+                          <span className="material-symbols-outlined text-on-surface-variant text-xs cursor-help" title={RATING_TIPS[field]}>info</span>
+                        </span>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < viewingReview[field] ? "bg-primary" : "bg-surface-container"}`} />
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                  {viewingReview.strengths && (
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Points forts</p>
+                      <p className="text-sm text-on-surface">{viewingReview.strengths}</p>
+                    </div>
+                  )}
+                  {viewingReview.improvements && (
+                    <div>
+                      <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Axes d'amélioration</p>
+                      <p className="text-sm text-on-surface">{viewingReview.improvements}</p>
+                    </div>
+                  )}
+                  <div className="flex justify-end pt-2">
+                    <button onClick={() => setViewingReview(undefined)} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                      Fermer
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {viewingChallenge && (() => {
+              const isActive = viewingChallenge.target_date >= today;
+              return (
+                <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={() => setViewingChallenge(undefined)}>
+                  <div className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2">
+                      <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+                      <h3 className="font-headline font-bold text-on-surface text-lg">Défi</h3>
+                      {isActive && (
+                        <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">En cours</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-on-surface">{viewingChallenge.objective}</p>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+                        <div className="flex gap-0.5">
+                          {Array.from({ length: 5 }, (_, i) => (
+                            <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < viewingChallenge.score ? "bg-primary" : "bg-surface-container"}`} />
+                          ))}
+                        </div>
+                      </div>
+                      <span className="text-xs text-on-surface-variant">
+                        Échéance : {new Date(viewingChallenge.target_date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                      </span>
+                    </div>
+                    <div className="flex justify-end pt-2">
+                      <button onClick={() => setViewingChallenge(undefined)} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+
+            {viewingIncident && (() => {
+              const meta = INCIDENT_META[viewingIncident.incident_type] ?? INCIDENT_META.other;
+              return (
+                <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={() => setViewingIncident(undefined)}>
+                  <div className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4" onClick={(e) => e.stopPropagation()}>
+                    <div className="flex items-center gap-2">
+                      <span className={`material-symbols-outlined text-lg ${meta.color}`}>{meta.icon}</span>
+                      <h3 className="font-headline font-bold text-on-surface text-lg">{meta.label}</h3>
+                    </div>
+                    <p className="text-xs text-on-surface-variant">
+                      {new Date(viewingIncident.date).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                    </p>
+                    <p className="text-sm text-on-surface">{viewingIncident.description}</p>
+                    <div className="flex justify-end pt-2">
+                      <button onClick={() => setViewingIncident(undefined)} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+                        Fermer
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
-        </div>
-      )}
+        );
+      })()}
     </div>
   );
 }
