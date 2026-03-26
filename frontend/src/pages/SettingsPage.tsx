@@ -281,9 +281,31 @@ export default function SettingsPage() {
     queryKey: ["skaters", "training_tracked"],
     queryFn: () => api.skaters.list({ training_tracked: true }),
   });
-  const [showCreateSkater, setShowCreateSkater] = useState(false);
+  const [addSkaterMode, setAddSkaterMode] = useState<null | "choose" | "create" | "existing">(null);
   const [newSkater, setNewSkater] = useState({ first_name: "", last_name: "", nationality: "", club: config?.club_short ?? "" });
   const [clearingTrainingId, setClearingTrainingId] = useState<number | null>(null);
+  const [onboardSearch, setOnboardSearch] = useState("");
+  const [debouncedOnboardSearch, setDebouncedOnboardSearch] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedOnboardSearch(onboardSearch), 300);
+    return () => clearTimeout(timer);
+  }, [onboardSearch]);
+
+  const { data: onboardResults } = useQuery({
+    queryKey: ["skaters", "onboard-search", debouncedOnboardSearch],
+    queryFn: () => api.skaters.list({ search: debouncedOnboardSearch }),
+    enabled: debouncedOnboardSearch.length >= 2,
+  });
+
+  const onboardSkaterMutation = useMutation({
+    mutationFn: (id: number) => api.skaters.update(id, { training_tracked: true }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["skaters"] });
+      setOnboardSearch("");
+      setAddSkaterMode(null);
+    },
+  });
 
   const createSkaterMutation = useMutation({
     mutationFn: () => api.skaters.create({
@@ -294,7 +316,7 @@ export default function SettingsPage() {
     }),
     onSuccess: () => {
       setNewSkater({ first_name: "", last_name: "", nationality: "", club: config?.club_short ?? "" });
-      setShowCreateSkater(false);
+      setAddSkaterMode(null);
       qc.invalidateQueries({ queryKey: ["skaters"] });
     },
   });
@@ -1211,11 +1233,11 @@ export default function SettingsPage() {
               Patineurs suivis en entraînement
             </h2>
             <button
-              onClick={() => setShowCreateSkater(true)}
+              onClick={() => setAddSkaterMode(addSkaterMode ? null : "choose")}
               className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1"
             >
               <span className="material-symbols-outlined text-sm">add</span>
-              Nouveau patineur
+              Ajouter
             </button>
           </div>
 
@@ -1301,8 +1323,85 @@ export default function SettingsPage() {
             </div>
           )}
 
-          {/* Create manual skater form */}
-          {showCreateSkater && (
+          {/* Add skater: choice panel */}
+          {addSkaterMode === "choose" && (
+            <div className="mt-4 p-4 bg-surface-container rounded-xl">
+              <p className="text-sm text-on-surface mb-3">Ajouter un patineur au suivi d'entraînement :</p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setAddSkaterMode("existing")}
+                  className="flex-1 px-4 py-3 bg-surface-container-low rounded-xl text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-sm">person_search</span>
+                  Patineur existant
+                </button>
+                <button
+                  onClick={() => setAddSkaterMode("create")}
+                  className="flex-1 px-4 py-3 bg-surface-container-low rounded-xl text-sm font-bold text-on-surface hover:bg-surface-container-high transition-colors flex items-center justify-center gap-2"
+                >
+                  <span className="material-symbols-outlined text-sm">person_add</span>
+                  Nouveau patineur
+                </button>
+              </div>
+              <button
+                onClick={() => setAddSkaterMode(null)}
+                className="mt-2 text-xs text-on-surface-variant hover:text-on-surface"
+              >
+                Annuler
+              </button>
+            </div>
+          )}
+
+          {/* Add skater: onboard existing */}
+          {addSkaterMode === "existing" && (
+            <div className="mt-4 p-4 bg-surface-container rounded-xl space-y-3">
+              <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
+                Rechercher un patineur existant
+              </h3>
+              <input
+                placeholder="Rechercher par nom…"
+                value={onboardSearch}
+                onChange={(e) => setOnboardSearch(e.target.value)}
+                className={inputCls + " max-w-sm"}
+                autoFocus
+              />
+              {onboardResults && onboardSearch.length >= 2 && (
+                <div className="bg-surface-container-low rounded-lg shadow-md max-h-48 overflow-y-auto max-w-sm">
+                  {onboardResults
+                    .filter((s) => !s.training_tracked)
+                    .map((s) => (
+                      <button
+                        key={s.id}
+                        type="button"
+                        onClick={() => onboardSkaterMutation.mutate(s.id)}
+                        disabled={onboardSkaterMutation.isPending}
+                        className="w-full text-left px-3 py-2 text-sm hover:bg-surface-container-high transition-colors flex items-center justify-between disabled:opacity-50"
+                      >
+                        <span>
+                          {s.first_name} {s.last_name}
+                          {s.club && (
+                            <span className="text-on-surface-variant ml-2 text-xs">({s.club})</span>
+                          )}
+                        </span>
+                        <span className="material-symbols-outlined text-sm text-primary">add</span>
+                      </button>
+                    ))}
+                  {onboardResults.filter((s) => !s.training_tracked).length === 0 && (
+                    <p className="px-3 py-2 text-xs text-on-surface-variant">Aucun patineur non suivi trouvé</p>
+                  )}
+                </div>
+              )}
+              <button
+                onClick={() => { setAddSkaterMode("choose"); setOnboardSearch(""); }}
+                className="text-xs text-on-surface-variant hover:text-on-surface"
+              >
+                ← Retour
+              </button>
+            </div>
+          )}
+
+          {/* Add skater: create new manual skater */}
+          {addSkaterMode === "create" && (
             <div className="mt-4 p-4 bg-surface-container rounded-xl space-y-3">
               <h3 className="text-xs font-bold text-on-surface-variant uppercase tracking-wider mb-2">
                 Nouveau patineur
@@ -1346,10 +1445,10 @@ export default function SettingsPage() {
                   {createSkaterMutation.isPending ? "Création..." : "Créer"}
                 </button>
                 <button
-                  onClick={() => setShowCreateSkater(false)}
-                  className="px-4 py-2 text-on-surface-variant text-sm"
+                  onClick={() => { setAddSkaterMode("choose"); setNewSkater({ first_name: "", last_name: "", nationality: "", club: config?.club_short ?? "" }); }}
+                  className="text-xs text-on-surface-variant hover:text-on-surface"
                 >
-                  Annuler
+                  ← Retour
                 </button>
               </div>
             </div>
