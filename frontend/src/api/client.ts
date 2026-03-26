@@ -399,7 +399,6 @@ export interface WeeklyReview {
   skater_id: number;
   coach_id: string;
   week_start: string;
-  attendance: string;
   engagement: number;
   progression: number;
   attitude: number;
@@ -413,7 +412,6 @@ export interface WeeklyReview {
 export interface CreateReviewPayload {
   skater_id: number;
   week_start: string;
-  attendance: string;
   engagement: number;
   progression: number;
   attitude: number;
@@ -423,7 +421,6 @@ export interface CreateReviewPayload {
 }
 
 export interface UpdateReviewPayload {
-  attendance?: string;
   engagement?: number;
   progression?: number;
   attitude?: number;

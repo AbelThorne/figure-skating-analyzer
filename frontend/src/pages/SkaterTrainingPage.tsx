@@ -13,6 +13,12 @@ const TABS = [
 
 type Tab = typeof TABS[number]["key"];
 
+const RATING_TOOLTIPS: Record<string, string> = {
+  engagement: "Implication et motivation lors des entraînements : concentration, volonté de progresser, participation active aux exercices.",
+  progression: "Évolution technique constatée : acquisition de nouveaux éléments, amélioration de la qualité d'exécution.",
+  attitude: "Comportement général : respect des consignes, esprit d'équipe, ponctualité, relation avec les autres patineurs.",
+};
+
 function RatingDots({ value, max = 5 }: { value: number; max?: number }) {
   return (
     <div className="flex gap-0.5">
@@ -25,6 +31,20 @@ function RatingDots({ value, max = 5 }: { value: number; max?: number }) {
         />
       ))}
     </div>
+  );
+}
+
+function RatingLabel({ field }: { field: string }) {
+  const tooltip = RATING_TOOLTIPS[field];
+  return (
+    <span className="inline-flex items-center gap-1">
+      <span className="text-[10px] uppercase tracking-wider text-on-surface-variant capitalize">{field}</span>
+      {tooltip && (
+        <span className="material-symbols-outlined text-on-surface-variant text-xs cursor-help" title={tooltip}>
+          info
+        </span>
+      )}
+    </span>
   );
 }
 
@@ -47,7 +67,6 @@ function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => v
               visibility_off
             </span>
           )}
-          <span className="font-mono text-xs text-on-surface-variant">{review.attendance}</span>
           {onEdit && (
             <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
               <span className="material-symbols-outlined text-lg">edit</span>
@@ -56,18 +75,12 @@ function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => v
         </div>
       </div>
       <div className="grid grid-cols-3 gap-4">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Engagement</p>
-          <RatingDots value={review.engagement} />
-        </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Progression</p>
-          <RatingDots value={review.progression} />
-        </div>
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Attitude</p>
-          <RatingDots value={review.attitude} />
-        </div>
+        {(["engagement", "progression", "attitude"] as const).map((field) => (
+          <div key={field}>
+            <RatingLabel field={field} />
+            <RatingDots value={review[field]} />
+          </div>
+        ))}
       </div>
       {review.strengths && (
         <div>
@@ -82,6 +95,104 @@ function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => v
         </div>
       )}
     </div>
+  );
+}
+
+function ReviewDetailModal({ review, onClose, onEdit }: { review: WeeklyReview; onClose: () => void; onEdit?: () => void }) {
+  const weekDate = new Date(review.week_start).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-surface rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <h3 className="font-headline font-bold text-on-surface text-lg">
+            Semaine du {weekDate}
+          </h3>
+          <div className="flex items-center gap-2">
+            {!review.visible_to_skater && (
+              <span className="material-symbols-outlined text-on-surface-variant text-sm" title="Non visible par le patineur">
+                visibility_off
+              </span>
+            )}
+            {onEdit && (
+              <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-lg">edit</span>
+              </button>
+            )}
+          </div>
+        </div>
+        <div className="grid grid-cols-3 gap-4">
+          {(["engagement", "progression", "attitude"] as const).map((field) => (
+            <div key={field}>
+              <RatingLabel field={field} />
+              <RatingDots value={review[field]} />
+            </div>
+          ))}
+        </div>
+        {review.strengths && (
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Points forts</p>
+            <p className="text-sm text-on-surface">{review.strengths}</p>
+          </div>
+        )}
+        {review.improvements && (
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-0.5">Axes d'amélioration</p>
+            <p className="text-sm text-on-surface">{review.improvements}</p>
+          </div>
+        )}
+        <div className="flex justify-end pt-2">
+          <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function ReviewRow({ review, onClick }: { review: WeeklyReview; onClick: () => void }) {
+  const weekDate = new Date(review.week_start).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+  const avg = ((review.engagement + review.progression + review.attitude) / 3).toFixed(1);
+  const hasText = !!(review.strengths || review.improvements);
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+    >
+      <span className="text-xs text-on-surface-variant w-16 shrink-0">{weekDate}</span>
+      <div className="flex gap-2 shrink-0">
+        {(["engagement", "progression", "attitude"] as const).map((field) => (
+          <div key={field} className="flex gap-0.5">
+            {Array.from({ length: 5 }, (_, i) => (
+              <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < review[field] ? "bg-primary" : "bg-surface-container"}`} />
+            ))}
+          </div>
+        ))}
+      </div>
+      <span className="font-mono text-xs text-primary font-bold w-8 shrink-0">{avg}</span>
+      {hasText && (
+        <p className="text-xs text-on-surface-variant truncate flex-1 min-w-0">
+          {review.strengths || review.improvements}
+        </p>
+      )}
+      {!review.visible_to_skater && (
+        <span className="material-symbols-outlined text-on-surface-variant text-sm shrink-0" title="Non visible par le patineur">
+          visibility_off
+        </span>
+      )}
+    </button>
   );
 }
 
@@ -133,7 +244,6 @@ function ReviewFormModal({
   const queryClient = useQueryClient();
   const [form, setForm] = useState({
     week_start: existing?.week_start ?? new Date().toISOString().split("T")[0],
-    attendance: existing?.attendance ?? "",
     engagement: existing?.engagement ?? 3,
     progression: existing?.progression ?? 3,
     attitude: existing?.attitude ?? 3,
@@ -153,10 +263,12 @@ function ReviewFormModal({
     },
   });
 
-  function RatingSelect({ value, onChange, label }: { value: number; onChange: (v: number) => void; label: string }) {
+  function RatingSelect({ value, onChange, field }: { value: number; onChange: (v: number) => void; field: string }) {
     return (
       <div>
-        <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">{label}</label>
+        <div className="mb-1">
+          <RatingLabel field={field} />
+        </div>
         <div className="flex gap-1">
           {[1, 2, 3, 4, 5].map((n) => (
             <button
@@ -197,21 +309,10 @@ function ReviewFormModal({
           />
         </div>
 
-        <div>
-          <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Assiduité</label>
-          <input
-            type="text"
-            placeholder="ex: 3/4"
-            value={form.attendance}
-            onChange={(e) => setForm({ ...form, attendance: e.target.value })}
-            className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-sm text-on-surface outline-none focus:ring-2 focus:ring-primary"
-          />
-        </div>
-
         <div className="grid grid-cols-3 gap-4">
-          <RatingSelect label="Engagement" value={form.engagement} onChange={(v) => setForm({ ...form, engagement: v })} />
-          <RatingSelect label="Progression" value={form.progression} onChange={(v) => setForm({ ...form, progression: v })} />
-          <RatingSelect label="Attitude" value={form.attitude} onChange={(v) => setForm({ ...form, attitude: v })} />
+          <RatingSelect field="engagement" value={form.engagement} onChange={(v) => setForm({ ...form, engagement: v })} />
+          <RatingSelect field="progression" value={form.progression} onChange={(v) => setForm({ ...form, progression: v })} />
+          <RatingSelect field="attitude" value={form.attitude} onChange={(v) => setForm({ ...form, attitude: v })} />
         </div>
 
         <div>
@@ -427,6 +528,78 @@ function ChallengeCard({ challenge, onEdit }: { challenge: TrainingChallenge; on
   );
 }
 
+function ChallengeRow({ challenge, onClick }: { challenge: TrainingChallenge; onClick: () => void }) {
+  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+    >
+      <span className={`material-symbols-outlined text-sm ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+      <span className="text-xs text-on-surface-variant w-16 shrink-0">{targetDate}</span>
+      <div className="flex gap-0.5 shrink-0">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < challenge.score ? "bg-primary" : "bg-surface-container"}`} />
+        ))}
+      </div>
+      <p className="text-xs text-on-surface truncate flex-1 min-w-0">{challenge.objective}</p>
+    </button>
+  );
+}
+
+function ChallengeDetailModal({ challenge, onClose, onEdit }: { challenge: TrainingChallenge; onClose: () => void; onEdit?: () => void }) {
+  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+            <h3 className="font-headline font-bold text-on-surface text-lg">Défi</h3>
+            {isActive && (
+              <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                En cours
+              </span>
+            )}
+          </div>
+          {onEdit && (
+            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-lg">edit</span>
+            </button>
+          )}
+        </div>
+        <p className="text-sm text-on-surface">{challenge.objective}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+            <ScoreDots value={challenge.score} />
+          </div>
+          <span className="text-xs text-on-surface-variant">Échéance : {targetDate}</span>
+        </div>
+        <div className="flex justify-end pt-2">
+          <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function ChallengeFormModal({
   skaterId,
   existing,
@@ -530,10 +703,12 @@ export default function SkaterTrainingPage() {
   const [activeTab, setActiveTab] = useState<Tab>("reviews");
   const [editingReview, setEditingReview] = useState<WeeklyReview | undefined>();
   const [showReviewForm, setShowReviewForm] = useState(false);
+  const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
   const [editingIncident, setEditingIncident] = useState<TrainingIncident | undefined>();
   const [showIncidentForm, setShowIncidentForm] = useState(false);
   const [editingChallenge, setEditingChallenge] = useState<TrainingChallenge | undefined>();
   const [showChallengeForm, setShowChallengeForm] = useState(false);
+  const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
 
   const { data: skater } = useQuery({
     queryKey: ["skater", skaterId],
@@ -571,6 +746,18 @@ export default function SkaterTrainingPage() {
     recentReviews.length
       ? (recentReviews.reduce((s, r) => s + r[field], 0) / recentReviews.length).toFixed(1)
       : "—";
+
+  const latestReview = reviews?.[0];
+  const olderReviews = reviews?.slice(1) ?? [];
+
+  const today = new Date().toISOString().split("T")[0];
+  const activeChallenges = (challenges ?? []).filter((c) => c.target_date >= today);
+  const pastChallenges = (challenges ?? []).filter((c) => c.target_date < today);
+  const latestActiveChallenge = activeChallenges[0];
+  const otherChallenges = [
+    ...activeChallenges.slice(1),
+    ...pastChallenges,
+  ];
 
   return (
     <div className="space-y-6">
@@ -625,7 +812,21 @@ export default function SkaterTrainingPage() {
           {(reviews ?? []).length === 0 ? (
             <p className="text-sm text-on-surface-variant text-center py-10">Aucun retour pour le moment</p>
           ) : (
-            reviews?.map((r) => <ReviewCard key={r.id} review={r} onEdit={() => { setEditingReview(r); setShowReviewForm(true); }} />)
+            <>
+              {latestReview && (
+                <ReviewCard review={latestReview} onEdit={() => { setEditingReview(latestReview); setShowReviewForm(true); }} />
+              )}
+              {olderReviews.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 mt-4">Historique</p>
+                  <div className="divide-y divide-outline-variant/20">
+                    {olderReviews.map((r) => (
+                      <ReviewRow key={r.id} review={r} onClick={() => setViewingReview(r)} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -663,7 +864,23 @@ export default function SkaterTrainingPage() {
           {(challenges ?? []).length === 0 ? (
             <p className="text-sm text-on-surface-variant text-center py-10">Aucun défi pour le moment</p>
           ) : (
-            challenges?.map((c) => <ChallengeCard key={c.id} challenge={c} onEdit={() => { setEditingChallenge(c); setShowChallengeForm(true); }} />)
+            <>
+              {latestActiveChallenge && (
+                <ChallengeCard challenge={latestActiveChallenge} onEdit={() => { setEditingChallenge(latestActiveChallenge); setShowChallengeForm(true); }} />
+              )}
+              {otherChallenges.length > 0 && (
+                <div>
+                  <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 mt-4">
+                    {activeChallenges.length > 1 ? "Autres défis" : "Historique"}
+                  </p>
+                  <div className="divide-y divide-outline-variant/20">
+                    {otherChallenges.map((c) => (
+                      <ChallengeRow key={c.id} challenge={c} onClick={() => setViewingChallenge(c)} />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
@@ -678,6 +895,28 @@ export default function SkaterTrainingPage() {
       {showReviewForm && <ReviewFormModal skaterId={skaterId} existing={editingReview} onClose={() => setShowReviewForm(false)} />}
       {showIncidentForm && <IncidentFormModal skaterId={skaterId} existing={editingIncident} onClose={() => setShowIncidentForm(false)} />}
       {showChallengeForm && <ChallengeFormModal skaterId={skaterId} existing={editingChallenge} onClose={() => setShowChallengeForm(false)} />}
+      {viewingReview && (
+        <ReviewDetailModal
+          review={viewingReview}
+          onClose={() => setViewingReview(undefined)}
+          onEdit={() => {
+            setViewingReview(undefined);
+            setEditingReview(viewingReview);
+            setShowReviewForm(true);
+          }}
+        />
+      )}
+      {viewingChallenge && (
+        <ChallengeDetailModal
+          challenge={viewingChallenge}
+          onClose={() => setViewingChallenge(undefined)}
+          onEdit={() => {
+            setViewingChallenge(undefined);
+            setEditingChallenge(viewingChallenge);
+            setShowChallengeForm(true);
+          }}
+        />
+      )}
     </div>
   );
 }

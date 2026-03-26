@@ -1261,7 +1261,6 @@ export default function SkaterAnalyticsPage() {
                         <h4 className="font-headline font-bold text-on-surface text-sm">
                           Semaine du {new Date(r.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
                         </h4>
-                        <span className="font-mono text-xs text-on-surface-variant">{r.attendance}</span>
                       </div>
                       <div className="grid grid-cols-3 gap-4">
                         {(["engagement", "progression", "attitude"] as const).map((field) => (

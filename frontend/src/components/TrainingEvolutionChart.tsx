@@ -31,7 +31,6 @@ export default function TrainingEvolutionChart({ reviews, incidents }: Props) {
     engagement: r.engagement,
     progression: r.progression,
     attitude: r.attitude,
-    attendance: r.attendance,
   }));
 
   // Map incidents to their nearest week for overlay
@@ -88,19 +87,6 @@ export default function TrainingEvolutionChart({ reviews, incidents }: Props) {
             ))}
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Attendance row */}
-      <div>
-        <h4 className="font-headline font-bold text-on-surface text-sm mb-2">Assiduité</h4>
-        <div className="flex gap-2 flex-wrap">
-          {data.map((d, i) => (
-            <div key={i} className="bg-surface-container-low rounded-xl px-3 py-2 text-center min-w-[60px]">
-              <span className="font-mono text-sm font-bold text-on-surface">{d.attendance || "—"}</span>
-              <p className="text-[9px] text-on-surface-variant mt-0.5">{d.week}</p>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Incident legend */}
