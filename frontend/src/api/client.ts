@@ -350,6 +350,7 @@ export interface ConfigResponse {
   logo_url?: string;
   current_season?: string;
   google_client_id?: string;
+  training_enabled?: boolean;
 }
 
 export interface BulkImportResult {
@@ -582,7 +583,7 @@ export interface CompetitionClubAnalysis {
 export const api = {
   config: {
     get: () => request<ConfigResponse>("/config/"),
-    update: (data: { club_name?: string; club_short?: string; current_season?: string }) =>
+    update: (data: { club_name?: string; club_short?: string; current_season?: string; training_enabled?: boolean }) =>
       request<ConfigResponse>("/config/", {
         method: "PATCH",
         body: JSON.stringify(data),
