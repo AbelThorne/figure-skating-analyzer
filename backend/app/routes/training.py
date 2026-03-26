@@ -14,6 +14,7 @@ from app.auth.guards import require_coach_or_admin
 from app.database import get_session
 from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
+from app.models.challenge import Challenge
 from app.models.user_skater import UserSkater
 
 
@@ -332,6 +333,103 @@ async def delete_incident(incident_id: int, request: Request, session: AsyncSess
     await session.commit()
 
 
+def _challenge_to_dict(c: Challenge) -> dict:
+    return {
+        "id": c.id,
+        "skater_id": c.skater_id,
+        "coach_id": c.coach_id,
+        "objective": c.objective,
+        "target_date": c.target_date.isoformat(),
+        "score": c.score,
+        "created_at": c.created_at.isoformat() if c.created_at else None,
+        "updated_at": c.updated_at.isoformat() if c.updated_at else None,
+    }
+
+
+@get("/challenges")
+async def list_challenges(
+    request: Request,
+    session: AsyncSession,
+    skater_id: Optional[int] = None,
+    active: Optional[bool] = None,
+) -> list[dict]:
+    state = request.scope.get("state", {})
+    role = state.get("user_role")
+
+    if role not in ("coach", "admin", "skater"):
+        raise PermissionDeniedException("Access denied")
+
+    stmt = select(Challenge).order_by(Challenge.created_at.desc())
+
+    if skater_id is not None:
+        if role == "skater":
+            await _check_skater_read_access(request, skater_id, session)
+        stmt = stmt.where(Challenge.skater_id == skater_id)
+
+    if role == "skater" and skater_id is None:
+        user_id = state["user_id"]
+        linked = select(UserSkater.skater_id).where(UserSkater.user_id == user_id)
+        stmt = stmt.where(Challenge.skater_id.in_(linked))
+
+    if active is True:
+        stmt = stmt.where(Challenge.target_date >= date.today())
+    elif active is False:
+        stmt = stmt.where(Challenge.target_date < date.today())
+
+    result = await session.execute(stmt)
+    return [_challenge_to_dict(c) for c in result.scalars().all()]
+
+
+@post("/challenges", status_code=HTTP_201_CREATED)
+async def create_challenge(request: Request, session: AsyncSession, data: dict) -> dict:
+    require_coach_or_admin(request)
+    state = request.scope.get("state", {})
+
+    challenge = Challenge(
+        skater_id=data["skater_id"],
+        coach_id=state["user_id"],
+        objective=data["objective"],
+        target_date=date.fromisoformat(data["target_date"]),
+        score=0,
+    )
+    session.add(challenge)
+    await session.commit()
+    await session.refresh(challenge)
+    return _challenge_to_dict(challenge)
+
+
+@put("/challenges/{challenge_id:int}")
+async def update_challenge(challenge_id: int, request: Request, session: AsyncSession, data: dict) -> dict:
+    require_coach_or_admin(request)
+
+    challenge = await session.get(Challenge, challenge_id)
+    if not challenge:
+        raise NotFoundException("Challenge not found")
+
+    for field in ("objective", "target_date", "score"):
+        if field in data:
+            value = data[field]
+            if field == "target_date":
+                value = date.fromisoformat(value)
+            setattr(challenge, field, value)
+
+    await session.commit()
+    await session.refresh(challenge)
+    return _challenge_to_dict(challenge)
+
+
+@delete("/challenges/{challenge_id:int}", status_code=HTTP_204_NO_CONTENT)
+async def delete_challenge(challenge_id: int, request: Request, session: AsyncSession) -> None:
+    require_coach_or_admin(request)
+
+    challenge = await session.get(Challenge, challenge_id)
+    if not challenge:
+        raise NotFoundException("Challenge not found")
+
+    await session.delete(challenge)
+    await session.commit()
+
+
 @get("/timeline")
 async def get_timeline(
     request: Request,
@@ -388,6 +486,7 @@ router = Router(
     route_handlers=[
         list_reviews, get_review, create_review, update_review, delete_review,
         list_incidents, get_incident, create_incident, update_incident, delete_incident,
+        list_challenges, create_challenge, update_challenge, delete_challenge,
         get_timeline,
     ],
     dependencies={"session": Provide(get_session)},

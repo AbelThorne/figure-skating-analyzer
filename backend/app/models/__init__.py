@@ -9,6 +9,7 @@ from app.models.app_settings import AppSettings
 from app.models.skater_alias import SkaterAlias
 from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
+from app.models.challenge import Challenge
 
 __all__ = [
     "Competition",
@@ -22,4 +23,5 @@ __all__ = [
     "SkaterAlias",
     "WeeklyReview",
     "Incident",
+    "Challenge",
 ]

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { api, Skater, WeeklyReview, TrainingIncident } from "../api/client";
+import { api, Skater, WeeklyReview, TrainingIncident, TrainingChallenge } from "../api/client";
 import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 
 const TABS = [
   { key: "reviews", label: "Retours", icon: "rate_review" },
   { key: "incidents", label: "Incidents", icon: "warning" },
+  { key: "challenges", label: "Défis", icon: "flag" },
   { key: "evolution", label: "Évolution", icon: "trending_up" },
 ] as const;
 
@@ -358,6 +359,171 @@ function IncidentFormModal({
   );
 }
 
+function ScoreDots({ value, max = 5 }: { value: number; max?: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: max }, (_, i) => (
+        <div
+          key={i}
+          className={`w-2.5 h-2.5 rounded-full ${
+            i < value ? "bg-primary" : "bg-surface-container"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+function ChallengeCard({ challenge, onEdit }: { challenge: TrainingChallenge; onEdit?: () => void }) {
+  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+  const createdDate = challenge.created_at
+    ? new Date(challenge.created_at).toLocaleDateString("fr-FR", {
+        day: "numeric",
+        month: "long",
+        year: "numeric",
+      })
+    : null;
+
+  return (
+    <div className={`bg-surface-container-low rounded-2xl p-5 space-y-3 ${isActive ? "ring-1 ring-primary/20" : ""}`}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>
+            flag
+          </span>
+          {isActive && (
+            <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+              En cours
+            </span>
+          )}
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-on-surface-variant">
+            Échéance : {targetDate}
+          </span>
+          {onEdit && (
+            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-lg">edit</span>
+            </button>
+          )}
+        </div>
+      </div>
+      <p className="text-sm text-on-surface">{challenge.objective}</p>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+          <ScoreDots value={challenge.score} />
+        </div>
+        {createdDate && (
+          <p className="text-[10px] text-on-surface-variant">Créé le {createdDate}</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ChallengeFormModal({
+  skaterId,
+  existing,
+  onClose,
+}: {
+  skaterId: number;
+  existing?: TrainingChallenge;
+  onClose: () => void;
+}) {
+  const queryClient = useQueryClient();
+  const [form, setForm] = useState({
+    objective: existing?.objective ?? "",
+    target_date: existing?.target_date ?? "",
+    score: existing?.score ?? 0,
+  });
+
+  const mutation = useMutation({
+    mutationFn: () =>
+      existing
+        ? api.training.challenges.update(existing.id, form)
+        : api.training.challenges.create({ ...form, skater_id: skaterId }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["training", "challenges"] });
+      onClose();
+    },
+  });
+
+  return (
+    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <h3 className="font-headline font-bold text-on-surface text-lg">
+          {existing ? "Modifier le défi" : "Nouveau défi"}
+        </h3>
+
+        <div>
+          <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Objectif</label>
+          <textarea
+            value={form.objective}
+            onChange={(e) => setForm({ ...form, objective: e.target.value })}
+            rows={3}
+            className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-sm text-on-surface outline-none focus:ring-2 focus:ring-primary resize-none"
+            placeholder="Décrivez l'objectif du défi..."
+          />
+        </div>
+
+        <div>
+          <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Date cible</label>
+          <input
+            type="date"
+            value={form.target_date}
+            onChange={(e) => setForm({ ...form, target_date: e.target.value })}
+            className="w-full bg-surface-container rounded-xl px-4 py-2.5 text-sm text-on-surface outline-none focus:ring-2 focus:ring-primary"
+          />
+        </div>
+
+        {existing && (
+          <div>
+            <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Atteinte</label>
+            <div className="flex gap-1">
+              {[0, 1, 2, 3, 4, 5].map((n) => (
+                <button
+                  key={n}
+                  type="button"
+                  onClick={() => setForm({ ...form, score: n })}
+                  className={`w-8 h-8 rounded-lg font-mono text-sm font-bold transition-colors ${
+                    n <= form.score && form.score > 0
+                      ? "bg-primary text-white"
+                      : "bg-surface-container text-on-surface-variant hover:bg-surface-container-high"
+                  }`}
+                >
+                  {n}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <button onClick={onClose} className="flex-1 py-2.5 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+            Annuler
+          </button>
+          <button
+            onClick={() => mutation.mutate()}
+            disabled={!form.objective.trim() || !form.target_date || mutation.isPending}
+            className="flex-1 py-2.5 rounded-xl text-sm font-bold bg-primary text-white hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            {mutation.isPending ? "Enregistrement..." : "Enregistrer"}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export default function SkaterTrainingPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
@@ -366,6 +532,8 @@ export default function SkaterTrainingPage() {
   const [showReviewForm, setShowReviewForm] = useState(false);
   const [editingIncident, setEditingIncident] = useState<TrainingIncident | undefined>();
   const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [editingChallenge, setEditingChallenge] = useState<TrainingChallenge | undefined>();
+  const [showChallengeForm, setShowChallengeForm] = useState(false);
 
   const { data: skater } = useQuery({
     queryKey: ["skater", skaterId],
@@ -380,6 +548,11 @@ export default function SkaterTrainingPage() {
   const { data: incidents } = useQuery({
     queryKey: ["training", "incidents", skaterId],
     queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
+  });
+
+  const { data: challenges } = useQuery({
+    queryKey: ["training", "challenges", skaterId],
+    queryFn: () => api.training.challenges.list({ skater_id: skaterId }),
   });
 
   if (!skater) {
@@ -479,6 +652,25 @@ export default function SkaterTrainingPage() {
         </div>
       )}
 
+      {activeTab === "challenges" && (
+        <div className="space-y-3">
+          <div className="flex justify-end">
+            <button
+              onClick={() => { setEditingChallenge(undefined); setShowChallengeForm(true); }}
+              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              Nouveau défi
+            </button>
+          </div>
+          {(challenges ?? []).length === 0 ? (
+            <p className="text-sm text-on-surface-variant text-center py-10">Aucun défi pour le moment</p>
+          ) : (
+            challenges?.map((c) => <ChallengeCard key={c.id} challenge={c} onEdit={() => { setEditingChallenge(c); setShowChallengeForm(true); }} />)
+          )}
+        </div>
+      )}
+
       {activeTab === "evolution" && (
         <TrainingEvolutionChart
           reviews={reviews ?? []}
@@ -488,6 +680,7 @@ export default function SkaterTrainingPage() {
 
       {showReviewForm && <ReviewFormModal skaterId={skaterId} existing={editingReview} onClose={() => setShowReviewForm(false)} />}
       {showIncidentForm && <IncidentFormModal skaterId={skaterId} existing={editingIncident} onClose={() => setShowIncidentForm(false)} />}
+      {showChallengeForm && <ChallengeFormModal skaterId={skaterId} existing={editingChallenge} onClose={() => setShowChallengeForm(false)} />}
     </div>
   );
 }

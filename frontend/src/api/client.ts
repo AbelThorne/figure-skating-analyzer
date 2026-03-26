@@ -459,6 +459,29 @@ export interface UpdateIncidentPayload {
   visible_to_skater?: boolean;
 }
 
+export interface TrainingChallenge {
+  id: number;
+  skater_id: number;
+  coach_id: string;
+  objective: string;
+  target_date: string;
+  score: number;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface CreateChallengePayload {
+  skater_id: number;
+  objective: string;
+  target_date: string;
+}
+
+export interface UpdateChallengePayload {
+  objective?: string;
+  target_date?: string;
+  score?: number;
+}
+
 export type TimelineEntry = (WeeklyReview & { type: "review"; sort_date: string }) | (TrainingIncident & { type: "incident"; sort_date: string });
 
 export interface JumpMastery {
@@ -891,6 +914,27 @@ export const api = {
         }),
       delete: (id: number) =>
         request<void>(`/training/incidents/${id}`, { method: "DELETE" }),
+    },
+    challenges: {
+      list: (params?: { skater_id?: number; active?: boolean }) => {
+        const qs = new URLSearchParams();
+        if (params?.skater_id !== undefined) qs.set("skater_id", String(params.skater_id));
+        if (params?.active !== undefined) qs.set("active", String(params.active));
+        const query = qs.toString() ? `?${qs}` : "";
+        return request<TrainingChallenge[]>(`/training/challenges${query}`);
+      },
+      create: (data: CreateChallengePayload) =>
+        request<TrainingChallenge>("/training/challenges", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: number, data: UpdateChallengePayload) =>
+        request<TrainingChallenge>(`/training/challenges/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: number) =>
+        request<void>(`/training/challenges/${id}`, { method: "DELETE" }),
     },
     timeline: (params: { skater_id: number; from?: string; to?: string }) => {
       const qs = new URLSearchParams({ skater_id: String(params.skater_id) });
