@@ -154,9 +154,11 @@ function AuthenticatedLayout() {
         ) : user?.role === "coach" ? (
           <nav className="flex-1 py-2">
             {[
+              { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
               ...(config?.training_enabled ? [{ to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: true }] : []),
               { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
               { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
+              { to: "/club", label: "CLUB", icon: "bar_chart", end: false },
             ].map(({ to, label, icon, end }) => (
               <NavLink
                 key={to}
@@ -260,6 +262,7 @@ function AuthenticatedLayout() {
               </>
             ) : user?.role === "coach" ? (
               <>
+                <Route path="/" element={<HomePage />} />
                 {config?.training_enabled && (
                   <>
                     <Route path="/entrainement" element={<TrainingPage />} />
@@ -270,8 +273,11 @@ function AuthenticatedLayout() {
                 <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
                 <Route path="/competitions" element={<CompetitionsPage />} />
                 <Route path="/competitions/:id" element={<CompetitionPage />} />
+                <Route path="/club/saison" element={<StatsPage />} />
+                <Route path="/club/competition" element={<ClubCompetitionPage />} />
+                <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/profil" element={<ProfilePage />} />
-                <Route path="*" element={<Navigate to={config?.training_enabled ? "/entrainement" : "/patineurs"} replace />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
               </>
             ) : (
               <>
