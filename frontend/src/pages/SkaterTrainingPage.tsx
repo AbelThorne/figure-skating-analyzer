@@ -6,8 +6,8 @@ import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 
 const TABS = [
   { key: "reviews", label: "Retours", icon: "rate_review" },
-  { key: "incidents", label: "Incidents", icon: "warning" },
   { key: "challenges", label: "Défis", icon: "flag" },
+  { key: "incidents", label: "Incidents", icon: "warning" },
   { key: "evolution", label: "Évolution", icon: "trending_up" },
 ] as const;
 
@@ -47,6 +47,23 @@ function RatingLabel({ field }: { field: string }) {
     </span>
   );
 }
+
+function ScoreDots({ value, max = 5 }: { value: number; max?: number }) {
+  return (
+    <div className="flex gap-0.5">
+      {Array.from({ length: max }, (_, i) => (
+        <div
+          key={i}
+          className={`w-2.5 h-2.5 rounded-full ${
+            i < value ? "bg-primary" : "bg-surface-container"
+          }`}
+        />
+      ))}
+    </div>
+  );
+}
+
+/* ── Cards (used for latest / featured items above the tabs) ── */
 
 function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => void }) {
   const weekDate = new Date(review.week_start).toLocaleDateString("fr-FR", {
@@ -97,6 +114,42 @@ function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => v
     </div>
   );
 }
+
+function ChallengeCard({ challenge, onEdit }: { challenge: TrainingChallenge; onEdit?: () => void }) {
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="bg-surface-container-low rounded-2xl p-5 space-y-3 ring-1 ring-primary/20">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <span className="material-symbols-outlined text-lg text-primary">flag</span>
+          <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+            En cours
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
+          <span className="text-xs text-on-surface-variant">Échéance : {targetDate}</span>
+          {onEdit && (
+            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-lg">edit</span>
+            </button>
+          )}
+        </div>
+      </div>
+      <p className="text-sm text-on-surface">{challenge.objective}</p>
+      <div>
+        <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+        <ScoreDots value={challenge.score} />
+      </div>
+    </div>
+  );
+}
+
+/* ── Detail modals (opened from compact rows) ── */
 
 function ReviewDetailModal({ review, onClose, onEdit }: { review: WeeklyReview; onClose: () => void; onEdit?: () => void }) {
   const weekDate = new Date(review.week_start).toLocaleDateString("fr-FR", {
@@ -158,6 +211,100 @@ function ReviewDetailModal({ review, onClose, onEdit }: { review: WeeklyReview; 
   );
 }
 
+function ChallengeDetailModal({ challenge, onClose, onEdit }: { challenge: TrainingChallenge; onClose: () => void; onEdit?: () => void }) {
+  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+            <h3 className="font-headline font-bold text-on-surface text-lg">Défi</h3>
+            {isActive && (
+              <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
+                En cours
+              </span>
+            )}
+          </div>
+          {onEdit && (
+            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+              <span className="material-symbols-outlined text-lg">edit</span>
+            </button>
+          )}
+        </div>
+        <p className="text-sm text-on-surface">{challenge.objective}</p>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
+            <ScoreDots value={challenge.score} />
+          </div>
+          <span className="text-xs text-on-surface-variant">Échéance : {targetDate}</span>
+        </div>
+        <div className="flex justify-end pt-2">
+          <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function IncidentDetailModal({ incident, onClose, onEdit }: { incident: TrainingIncident; onClose: () => void; onEdit?: () => void }) {
+  const meta = INCIDENT_TYPE_LABELS[incident.incident_type] ?? INCIDENT_TYPE_LABELS.other;
+  const dateStr = new Date(incident.date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  return (
+    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
+      <div
+        className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <span className={`material-symbols-outlined text-lg ${meta.color}`}>{meta.icon}</span>
+            <h3 className="font-headline font-bold text-on-surface text-lg">{meta.label}</h3>
+          </div>
+          <div className="flex items-center gap-2">
+            {!incident.visible_to_skater && (
+              <span className="material-symbols-outlined text-on-surface-variant text-sm" title="Non visible par le patineur">
+                visibility_off
+              </span>
+            )}
+            {onEdit && (
+              <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
+                <span className="material-symbols-outlined text-lg">edit</span>
+              </button>
+            )}
+          </div>
+        </div>
+        <p className="text-xs text-on-surface-variant">{dateStr}</p>
+        <p className="text-sm text-on-surface">{incident.description}</p>
+        <div className="flex justify-end pt-2">
+          <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
+            Fermer
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Compact rows ── */
+
 function ReviewRow({ review, onClick }: { review: WeeklyReview; onClick: () => void }) {
   const weekDate = new Date(review.week_start).toLocaleDateString("fr-FR", {
     day: "numeric",
@@ -196,41 +343,62 @@ function ReviewRow({ review, onClick }: { review: WeeklyReview; onClick: () => v
   );
 }
 
+function ChallengeRow({ challenge, onClick }: { challenge: TrainingChallenge; onClick: () => void }) {
+  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
+  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+
+  return (
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+    >
+      <span className={`material-symbols-outlined text-sm ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
+      <span className="text-xs text-on-surface-variant w-16 shrink-0">{targetDate}</span>
+      <div className="flex gap-0.5 shrink-0">
+        {Array.from({ length: 5 }, (_, i) => (
+          <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < challenge.score ? "bg-primary" : "bg-surface-container"}`} />
+        ))}
+      </div>
+      <p className="text-xs text-on-surface truncate flex-1 min-w-0">{challenge.objective}</p>
+    </button>
+  );
+}
+
 const INCIDENT_TYPE_LABELS: Record<string, { label: string; color: string; icon: string }> = {
   injury: { label: "Blessure", color: "text-error", icon: "healing" },
   behavior: { label: "Comportement", color: "text-orange-600", icon: "report" },
   other: { label: "Autre", color: "text-on-surface-variant", icon: "info" },
 };
 
-function IncidentCard({ incident, onEdit }: { incident: TrainingIncident; onEdit?: () => void }) {
+function IncidentRow({ incident, onClick }: { incident: TrainingIncident; onClick: () => void }) {
   const meta = INCIDENT_TYPE_LABELS[incident.incident_type] ?? INCIDENT_TYPE_LABELS.other;
+  const dateStr = new Date(incident.date).toLocaleDateString("fr-FR", {
+    day: "numeric",
+    month: "short",
+  });
+
   return (
-    <div className="bg-surface-container-low rounded-2xl p-5 space-y-2">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={`material-symbols-outlined text-lg ${meta.color}`}>{meta.icon}</span>
-          <span className={`text-sm font-bold ${meta.color}`}>{meta.label}</span>
-        </div>
-        <div className="flex items-center gap-2">
-          {!incident.visible_to_skater && (
-            <span className="material-symbols-outlined text-on-surface-variant text-sm" title="Non visible par le patineur">
-              visibility_off
-            </span>
-          )}
-          <span className="text-xs text-on-surface-variant">
-            {new Date(incident.date).toLocaleDateString("fr-FR")}
-          </span>
-          {onEdit && (
-            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-lg">edit</span>
-            </button>
-          )}
-        </div>
-      </div>
-      <p className="text-sm text-on-surface">{incident.description}</p>
-    </div>
+    <button
+      onClick={onClick}
+      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
+    >
+      <span className={`material-symbols-outlined text-sm ${meta.color}`}>{meta.icon}</span>
+      <span className="text-xs text-on-surface-variant w-16 shrink-0">{dateStr}</span>
+      <span className={`text-xs font-bold shrink-0 ${meta.color}`}>{meta.label}</span>
+      <p className="text-xs text-on-surface-variant truncate flex-1 min-w-0">{incident.description}</p>
+      {!incident.visible_to_skater && (
+        <span className="material-symbols-outlined text-on-surface-variant text-sm shrink-0" title="Non visible par le patineur">
+          visibility_off
+        </span>
+      )}
+    </button>
   );
 }
+
+/* ── Form modals ── */
 
 function ReviewFormModal({
   skaterId,
@@ -460,146 +628,6 @@ function IncidentFormModal({
   );
 }
 
-function ScoreDots({ value, max = 5 }: { value: number; max?: number }) {
-  return (
-    <div className="flex gap-0.5">
-      {Array.from({ length: max }, (_, i) => (
-        <div
-          key={i}
-          className={`w-2.5 h-2.5 rounded-full ${
-            i < value ? "bg-primary" : "bg-surface-container"
-          }`}
-        />
-      ))}
-    </div>
-  );
-}
-
-function ChallengeCard({ challenge, onEdit }: { challenge: TrainingChallenge; onEdit?: () => void }) {
-  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
-  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-  const createdDate = challenge.created_at
-    ? new Date(challenge.created_at).toLocaleDateString("fr-FR", {
-        day: "numeric",
-        month: "long",
-        year: "numeric",
-      })
-    : null;
-
-  return (
-    <div className={`bg-surface-container-low rounded-2xl p-5 space-y-3 ${isActive ? "ring-1 ring-primary/20" : ""}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>
-            flag
-          </span>
-          {isActive && (
-            <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-              En cours
-            </span>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-on-surface-variant">
-            Échéance : {targetDate}
-          </span>
-          {onEdit && (
-            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-lg">edit</span>
-            </button>
-          )}
-        </div>
-      </div>
-      <p className="text-sm text-on-surface">{challenge.objective}</p>
-      <div className="flex items-center justify-between">
-        <div>
-          <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
-          <ScoreDots value={challenge.score} />
-        </div>
-        {createdDate && (
-          <p className="text-[10px] text-on-surface-variant">Créé le {createdDate}</p>
-        )}
-      </div>
-    </div>
-  );
-}
-
-function ChallengeRow({ challenge, onClick }: { challenge: TrainingChallenge; onClick: () => void }) {
-  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
-  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "short",
-  });
-
-  return (
-    <button
-      onClick={onClick}
-      className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
-    >
-      <span className={`material-symbols-outlined text-sm ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
-      <span className="text-xs text-on-surface-variant w-16 shrink-0">{targetDate}</span>
-      <div className="flex gap-0.5 shrink-0">
-        {Array.from({ length: 5 }, (_, i) => (
-          <div key={i} className={`w-1.5 h-1.5 rounded-full ${i < challenge.score ? "bg-primary" : "bg-surface-container"}`} />
-        ))}
-      </div>
-      <p className="text-xs text-on-surface truncate flex-1 min-w-0">{challenge.objective}</p>
-    </button>
-  );
-}
-
-function ChallengeDetailModal({ challenge, onClose, onEdit }: { challenge: TrainingChallenge; onClose: () => void; onEdit?: () => void }) {
-  const isActive = challenge.target_date >= new Date().toISOString().split("T")[0];
-  const targetDate = new Date(challenge.target_date).toLocaleDateString("fr-FR", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-  });
-
-  return (
-    <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={onClose}>
-      <div
-        className="bg-surface rounded-3xl p-6 w-full max-w-lg space-y-4"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className={`material-symbols-outlined text-lg ${isActive ? "text-primary" : "text-on-surface-variant"}`}>flag</span>
-            <h3 className="font-headline font-bold text-on-surface text-lg">Défi</h3>
-            {isActive && (
-              <span className="text-[10px] uppercase tracking-wider font-bold text-primary bg-primary/10 px-2 py-0.5 rounded-full">
-                En cours
-              </span>
-            )}
-          </div>
-          {onEdit && (
-            <button onClick={onEdit} className="text-on-surface-variant hover:text-primary transition-colors">
-              <span className="material-symbols-outlined text-lg">edit</span>
-            </button>
-          )}
-        </div>
-        <p className="text-sm text-on-surface">{challenge.objective}</p>
-        <div className="flex items-center justify-between">
-          <div>
-            <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1">Atteinte</p>
-            <ScoreDots value={challenge.score} />
-          </div>
-          <span className="text-xs text-on-surface-variant">Échéance : {targetDate}</span>
-        </div>
-        <div className="flex justify-end pt-2">
-          <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
-            Fermer
-          </button>
-        </div>
-      </div>
-    </div>
-  );
-}
-
 function ChallengeFormModal({
   skaterId,
   existing,
@@ -697,6 +725,8 @@ function ChallengeFormModal({
   );
 }
 
+/* ── Main page ── */
+
 export default function SkaterTrainingPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
@@ -706,6 +736,7 @@ export default function SkaterTrainingPage() {
   const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
   const [editingIncident, setEditingIncident] = useState<TrainingIncident | undefined>();
   const [showIncidentForm, setShowIncidentForm] = useState(false);
+  const [viewingIncident, setViewingIncident] = useState<TrainingIncident | undefined>();
   const [editingChallenge, setEditingChallenge] = useState<TrainingChallenge | undefined>();
   const [showChallengeForm, setShowChallengeForm] = useState(false);
   const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
@@ -748,16 +779,11 @@ export default function SkaterTrainingPage() {
       : "—";
 
   const latestReview = reviews?.[0];
-  const olderReviews = reviews?.slice(1) ?? [];
+  const allReviews = reviews ?? [];
 
   const today = new Date().toISOString().split("T")[0];
   const activeChallenges = (challenges ?? []).filter((c) => c.target_date >= today);
-  const pastChallenges = (challenges ?? []).filter((c) => c.target_date < today);
-  const latestActiveChallenge = activeChallenges[0];
-  const otherChallenges = [
-    ...activeChallenges.slice(1),
-    ...pastChallenges,
-  ];
+  const allChallenges = challenges ?? [];
 
   return (
     <div className="space-y-6">
@@ -779,6 +805,18 @@ export default function SkaterTrainingPage() {
           ))}
         </div>
       </div>
+
+      {/* Featured cards: latest review + active challenges */}
+      {(latestReview || activeChallenges.length > 0) && (
+        <div className="space-y-3">
+          {latestReview && (
+            <ReviewCard review={latestReview} onEdit={() => { setEditingReview(latestReview); setShowReviewForm(true); }} />
+          )}
+          {activeChallenges.map((c) => (
+            <ChallengeCard key={c.id} challenge={c} onEdit={() => { setEditingChallenge(c); setShowChallengeForm(true); }} />
+          ))}
+        </div>
+      )}
 
       {/* Tabs */}
       <div className="flex gap-0">
@@ -809,24 +847,37 @@ export default function SkaterTrainingPage() {
               Nouveau retour
             </button>
           </div>
-          {(reviews ?? []).length === 0 ? (
+          {allReviews.length === 0 ? (
             <p className="text-sm text-on-surface-variant text-center py-10">Aucun retour pour le moment</p>
           ) : (
-            <>
-              {latestReview && (
-                <ReviewCard review={latestReview} onEdit={() => { setEditingReview(latestReview); setShowReviewForm(true); }} />
-              )}
-              {olderReviews.length > 0 && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 mt-4">Historique</p>
-                  <div className="divide-y divide-outline-variant/20">
-                    {olderReviews.map((r) => (
-                      <ReviewRow key={r.id} review={r} onClick={() => setViewingReview(r)} />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
+            <div className="divide-y divide-outline-variant/20">
+              {allReviews.map((r) => (
+                <ReviewRow key={r.id} review={r} onClick={() => setViewingReview(r)} />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === "challenges" && (
+        <div className="space-y-3">
+          <div className="flex justify-end">
+            <button
+              onClick={() => { setEditingChallenge(undefined); setShowChallengeForm(true); }}
+              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              Nouveau défi
+            </button>
+          </div>
+          {allChallenges.length === 0 ? (
+            <p className="text-sm text-on-surface-variant text-center py-10">Aucun défi pour le moment</p>
+          ) : (
+            <div className="divide-y divide-outline-variant/20">
+              {allChallenges.map((c) => (
+                <ChallengeRow key={c.id} challenge={c} onClick={() => setViewingChallenge(c)} />
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -845,42 +896,11 @@ export default function SkaterTrainingPage() {
           {(incidents ?? []).length === 0 ? (
             <p className="text-sm text-on-surface-variant text-center py-10">Aucun incident signalé</p>
           ) : (
-            incidents?.map((i) => <IncidentCard key={i.id} incident={i} onEdit={() => { setEditingIncident(i); setShowIncidentForm(true); }} />)
-          )}
-        </div>
-      )}
-
-      {activeTab === "challenges" && (
-        <div className="space-y-3">
-          <div className="flex justify-end">
-            <button
-              onClick={() => { setEditingChallenge(undefined); setShowChallengeForm(true); }}
-              className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors"
-            >
-              <span className="material-symbols-outlined text-lg">add</span>
-              Nouveau défi
-            </button>
-          </div>
-          {(challenges ?? []).length === 0 ? (
-            <p className="text-sm text-on-surface-variant text-center py-10">Aucun défi pour le moment</p>
-          ) : (
-            <>
-              {latestActiveChallenge && (
-                <ChallengeCard challenge={latestActiveChallenge} onEdit={() => { setEditingChallenge(latestActiveChallenge); setShowChallengeForm(true); }} />
-              )}
-              {otherChallenges.length > 0 && (
-                <div>
-                  <p className="text-[10px] uppercase tracking-wider text-on-surface-variant mb-1 mt-4">
-                    {activeChallenges.length > 1 ? "Autres défis" : "Historique"}
-                  </p>
-                  <div className="divide-y divide-outline-variant/20">
-                    {otherChallenges.map((c) => (
-                      <ChallengeRow key={c.id} challenge={c} onClick={() => setViewingChallenge(c)} />
-                    ))}
-                  </div>
-                </div>
-              )}
-            </>
+            <div className="divide-y divide-outline-variant/20">
+              {incidents?.map((i) => (
+                <IncidentRow key={i.id} incident={i} onClick={() => setViewingIncident(i)} />
+              ))}
+            </div>
           )}
         </div>
       )}
@@ -914,6 +934,17 @@ export default function SkaterTrainingPage() {
             setViewingChallenge(undefined);
             setEditingChallenge(viewingChallenge);
             setShowChallengeForm(true);
+          }}
+        />
+      )}
+      {viewingIncident && (
+        <IncidentDetailModal
+          incident={viewingIncident}
+          onClose={() => setViewingIncident(undefined)}
+          onEdit={() => {
+            setViewingIncident(undefined);
+            setEditingIncident(viewingIncident);
+            setShowIncidentForm(true);
           }}
         />
       )}

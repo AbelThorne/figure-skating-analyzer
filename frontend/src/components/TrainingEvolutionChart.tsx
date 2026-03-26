@@ -58,10 +58,8 @@ export default function TrainingEvolutionChart({ reviews, incidents }: Props) {
   }
 
   return (
-    <div className="space-y-6">
-      {/* Main chart */}
-      <div>
-        <h4 className="font-headline font-bold text-on-surface text-sm mb-3">Évolution des notes</h4>
+    <div>
+      <h4 className="font-headline font-bold text-on-surface text-sm mb-3">Évolution des notes</h4>
         <ResponsiveContainer width="100%" height={280}>
           <LineChart data={data}>
             <XAxis dataKey="week" tick={{ fontSize: 11 }} />
@@ -73,42 +71,34 @@ export default function TrainingEvolutionChart({ reviews, incidents }: Props) {
             <Line type="monotone" dataKey="engagement" name="Engagement" stroke="#2e6385" strokeWidth={2} dot={{ r: 3 }} />
             <Line type="monotone" dataKey="progression" name="Progression" stroke="#059669" strokeWidth={2} dot={{ r: 3 }} />
             <Line type="monotone" dataKey="attitude" name="Attitude" stroke="#7c3aed" strokeWidth={2} dot={{ r: 3 }} />
-            {/* Incident markers */}
-            {incidentMarkers.map((m, idx) => (
-              <ReferenceDot
-                key={idx}
-                x={m.week}
-                y={0.3}
-                r={6}
-                fill={INCIDENT_COLORS[m.incident.incident_type] ?? "#6b7280"}
-                stroke="white"
-                strokeWidth={2}
-              />
-            ))}
+            {/* Incident markers with tooltips */}
+            {incidentMarkers.map((m, idx) => {
+              const color = INCIDENT_COLORS[m.incident.incident_type] ?? "#6b7280";
+              const label = INCIDENT_LABELS[m.incident.incident_type] ?? m.incident.incident_type;
+              const dateStr = new Date(m.incident.date).toLocaleDateString("fr-FR");
+              const tip = `${dateStr} — ${label}: ${m.incident.description}`;
+              return (
+                <ReferenceDot
+                  key={idx}
+                  x={m.week}
+                  y={0.3}
+                  r={6}
+                  fill={color}
+                  stroke="white"
+                  strokeWidth={2}
+                  shape={(props: Record<string, unknown>) => {
+                    const { cx, cy } = props as { cx: number; cy: number };
+                    return (
+                      <circle cx={cx} cy={cy} r={6} fill={color} stroke="white" strokeWidth={2}>
+                        <title>{tip}</title>
+                      </circle>
+                    );
+                  }}
+                />
+              );
+            })}
           </LineChart>
         </ResponsiveContainer>
-      </div>
-
-      {/* Incident legend */}
-      {incidents.length > 0 && (
-        <div>
-          <h4 className="font-headline font-bold text-on-surface text-sm mb-2">Incidents</h4>
-          <div className="space-y-1">
-            {incidents.map((i) => (
-              <div key={i.id} className="flex items-center gap-2 text-sm">
-                <div
-                  className="w-3 h-3 rounded-full"
-                  style={{ backgroundColor: INCIDENT_COLORS[i.incident_type] }}
-                />
-                <span className="text-on-surface-variant">
-                  {new Date(i.date).toLocaleDateString("fr-FR")} —{" "}
-                  {INCIDENT_LABELS[i.incident_type]}: {i.description}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 }
