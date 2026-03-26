@@ -17,9 +17,6 @@ function SkaterCard({ skater, lastReview }: { skater: Skater; lastReview?: Weekl
           <h3 className="font-headline font-bold text-on-surface">
             {skater.first_name} {skater.last_name}
           </h3>
-          {skater.club && (
-            <p className="text-xs text-on-surface-variant mt-0.5">{skater.club}</p>
-          )}
         </div>
         {avgScore && (
           <div className="text-right">

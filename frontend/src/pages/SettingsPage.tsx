@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import yaml from "js-yaml";
 import { api, type UserRecord, type ImportResult, type Skater } from "../api/client";
+import { countryFlag } from "../utils/countryFlags";
 import { useJobs, type Lot } from "../contexts/JobContext";
 
 const inputCls =
@@ -1268,7 +1269,9 @@ export default function SettingsPage() {
                           {s.first_name} {s.last_name}
                         </span>
                         {s.nationality && (
-                          <span className="text-xs text-on-surface-variant ml-2">{s.nationality}</span>
+                          <span className="ml-2" title={s.nationality}>
+                            {countryFlag(s.nationality) ?? s.nationality}
+                          </span>
                         )}
                       </td>
                       <td className="py-3 pr-4 text-on-surface-variant">{s.club ?? "—"}</td>

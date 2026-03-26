@@ -580,9 +580,6 @@ export default function SkaterTrainingPage() {
           <h2 className="font-headline font-bold text-on-surface text-xl">
             {skater.first_name} {skater.last_name}
           </h2>
-          {skater.club && (
-            <p className="text-sm text-on-surface-variant">{skater.club}</p>
-          )}
         </div>
         <div className="flex gap-4">
           {(["engagement", "progression", "attitude"] as const).map((field) => (
