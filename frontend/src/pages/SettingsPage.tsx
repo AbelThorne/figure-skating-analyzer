@@ -412,12 +412,14 @@ export default function SettingsPage() {
                         className={`ml-2 text-xs px-2 py-0.5 rounded-full ${
                           u.role === "admin"
                             ? "bg-primary-container text-on-primary-container"
-                            : u.role === "skater"
-                              ? "bg-blue-100 text-blue-700"
-                              : "bg-surface-container text-on-surface-variant"
+                            : u.role === "coach"
+                              ? "bg-green-100 text-green-700"
+                              : u.role === "skater"
+                                ? "bg-blue-100 text-blue-700"
+                                : "bg-surface-container text-on-surface-variant"
                         }`}
                       >
-                        {u.role === "admin" ? "Admin" : u.role === "skater" ? "Patineur" : "Lecteur"}
+                        {u.role === "admin" ? "Admin" : u.role === "coach" ? "Coach" : u.role === "skater" ? "Patineur" : "Lecteur"}
                       </span>
                     )}
                   </div>
@@ -493,6 +495,7 @@ export default function SettingsPage() {
                         >
                           <option value="reader">Lecteur</option>
                           <option value="admin">Administrateur</option>
+                          <option value="coach">Coach</option>
                           <option value="skater">Patineur</option>
                         </select>
                       </div>
@@ -563,6 +566,7 @@ export default function SettingsPage() {
             >
               <option value="reader">Lecteur</option>
               <option value="admin">Administrateur</option>
+              <option value="coach">Coach</option>
               <option value="skater">Patineur</option>
             </select>
             {newUser.role === "skater" && (
