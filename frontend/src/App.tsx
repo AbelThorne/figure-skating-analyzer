@@ -21,13 +21,14 @@ import MySkatersPage from "./pages/MySkatersPage";
 import TrainingPage from "./pages/TrainingPage";
 import SkaterTrainingPage from "./pages/SkaterTrainingPage";
 
-const navLinks = [
+const navLinksBase = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
   { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
   { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
   { to: "/club", label: "CLUB", icon: "bar_chart", end: false },
-  { to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: false },
 ];
+
+const trainingNavLink = { to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: false };
 
 function getPageTitle(pathname: string): string {
   if (pathname === "/") return "Tableau de bord";
@@ -153,7 +154,7 @@ function AuthenticatedLayout() {
         ) : user?.role === "coach" ? (
           <nav className="flex-1 py-2">
             {[
-              { to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: true },
+              ...(config?.training_enabled ? [{ to: "/entrainement", label: "ENTRAÎNEMENT", icon: "fitness_center", end: true }] : []),
               { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
               { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
             ].map(({ to, label, icon, end }) => (
@@ -175,7 +176,7 @@ function AuthenticatedLayout() {
           </nav>
         ) : (
           <nav className="flex-1 py-2">
-            {navLinks.map(({ to, label, icon, end }) => (
+            {[...navLinksBase, ...(config?.training_enabled ? [trainingNavLink] : [])].map(({ to, label, icon, end }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -259,14 +260,18 @@ function AuthenticatedLayout() {
               </>
             ) : user?.role === "coach" ? (
               <>
-                <Route path="/entrainement" element={<TrainingPage />} />
-                <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
+                {config?.training_enabled && (
+                  <>
+                    <Route path="/entrainement" element={<TrainingPage />} />
+                    <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
+                  </>
+                )}
                 <Route path="/patineurs" element={<SkaterBrowserPage />} />
                 <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
                 <Route path="/competitions" element={<CompetitionsPage />} />
                 <Route path="/competitions/:id" element={<CompetitionPage />} />
                 <Route path="/profil" element={<ProfilePage />} />
-                <Route path="*" element={<Navigate to="/entrainement" replace />} />
+                <Route path="*" element={<Navigate to={config?.training_enabled ? "/entrainement" : "/patineurs"} replace />} />
               </>
             ) : (
               <>
@@ -279,8 +284,12 @@ function AuthenticatedLayout() {
                 <Route path="/club/competition" element={<ClubCompetitionPage />} />
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
-                <Route path="/entrainement" element={<TrainingPage />} />
-                <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
+                {config?.training_enabled && (
+                  <>
+                    <Route path="/entrainement" element={<TrainingPage />} />
+                    <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
+                  </>
+                )}
                 <Route
                   path="/settings"
                   element={
