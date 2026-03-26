@@ -51,6 +51,7 @@ async def _migrate_add_columns(conn) -> None:
         ("users", "last_login_at", "DATETIME"),
         ("skaters", "training_tracked", "BOOLEAN DEFAULT 0"),
         ("skaters", "manual_create", "BOOLEAN DEFAULT 0"),
+        ("app_settings", "training_enabled", "INTEGER DEFAULT 0"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:

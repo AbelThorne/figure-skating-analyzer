@@ -16,3 +16,6 @@ class AppSettings(Base):
     current_season: Mapped[str] = mapped_column(
         String(20), nullable=False, default="2025-2026"
     )
+    training_enabled: Mapped[bool] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
