@@ -21,6 +21,7 @@ import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 import { countryFlag } from "../utils/countryFlags";
 import { isJumpElement, isSpinElement, isStepElement, elementLevel } from "../utils/elementClassifier";
 import { useAuth } from "../auth/AuthContext";
+import { seasonDateRange } from "../utils/season";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 function avg(arr: number[]) {
@@ -223,21 +224,32 @@ export default function SkaterAnalyticsPage() {
     placeholderData: keepPreviousData,
   });
 
+  const trainingSeasonRange = selectedSeason ? seasonDateRange(selectedSeason) : undefined;
+
   const { data: trainingReviews } = useQuery({
-    queryKey: ["training", "reviews", skaterId],
-    queryFn: () => api.training.reviews.list({ skater_id: skaterId }),
+    queryKey: ["training", "reviews", skaterId, selectedSeason],
+    queryFn: () => api.training.reviews.list({
+      skater_id: skaterId,
+      ...(trainingSeasonRange ? { from: trainingSeasonRange.from, to: trainingSeasonRange.to } : {}),
+    }),
     enabled: showTrainingTab,
   });
 
   const { data: trainingIncidents } = useQuery({
-    queryKey: ["training", "incidents", skaterId],
-    queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
+    queryKey: ["training", "incidents", skaterId, selectedSeason],
+    queryFn: () => api.training.incidents.list({
+      skater_id: skaterId,
+      ...(trainingSeasonRange ? { from: trainingSeasonRange.from, to: trainingSeasonRange.to } : {}),
+    }),
     enabled: showTrainingTab,
   });
 
   const { data: trainingChallenges } = useQuery({
-    queryKey: ["training", "challenges", skaterId],
-    queryFn: () => api.training.challenges.list({ skater_id: skaterId }),
+    queryKey: ["training", "challenges", skaterId, selectedSeason],
+    queryFn: () => api.training.challenges.list({
+      skater_id: skaterId,
+      ...(trainingSeasonRange ? { from: trainingSeasonRange.from, to: trainingSeasonRange.to } : {}),
+    }),
     enabled: showTrainingTab,
   });
 

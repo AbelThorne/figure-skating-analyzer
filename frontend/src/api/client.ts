@@ -914,10 +914,12 @@ export const api = {
         request<void>(`/training/incidents/${id}`, { method: "DELETE" }),
     },
     challenges: {
-      list: (params?: { skater_id?: number; active?: boolean }) => {
+      list: (params?: { skater_id?: number; active?: boolean; from?: string; to?: string }) => {
         const qs = new URLSearchParams();
         if (params?.skater_id !== undefined) qs.set("skater_id", String(params.skater_id));
         if (params?.active !== undefined) qs.set("active", String(params.active));
+        if (params?.from) qs.set("from_date", params.from);
+        if (params?.to) qs.set("to_date", params.to);
         const query = qs.toString() ? `?${qs}` : "";
         return request<TrainingChallenge[]>(`/training/challenges${query}`);
       },

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, Skater, WeeklyReview, TrainingIncident, TrainingChallenge } from "../api/client";
 import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
+import { seasonDateRange, currentSeason } from "../utils/season";
 
 const TABS = [
   { key: "reviews", label: "Retours", icon: "rate_review" },
@@ -730,6 +731,7 @@ function ChallengeFormModal({
 export default function SkaterTrainingPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
+  const [selectedSeason, setSelectedSeason] = useState<string>(currentSeason());
   const [activeTab, setActiveTab] = useState<Tab>("reviews");
   const [editingReview, setEditingReview] = useState<WeeklyReview | undefined>();
   const [showReviewForm, setShowReviewForm] = useState(false);
@@ -741,24 +743,48 @@ export default function SkaterTrainingPage() {
   const [showChallengeForm, setShowChallengeForm] = useState(false);
   const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
 
+  const seasonRange = selectedSeason ? seasonDateRange(selectedSeason) : undefined;
+
   const { data: skater } = useQuery({
     queryKey: ["skater", skaterId],
     queryFn: () => api.skaters.get(skaterId),
   });
 
+  const { data: seasons } = useQuery({
+    queryKey: ["skater-seasons", skaterId],
+    queryFn: () => api.skaters.seasons(skaterId),
+  });
+
+  // Build the season list: merge competition seasons with a set of training-relevant seasons
+  const seasonOptions = (() => {
+    const current = currentSeason();
+    const set = new Set(seasons ?? []);
+    set.add(current);
+    return [...set].sort().reverse();
+  })();
+
   const { data: reviews } = useQuery({
-    queryKey: ["training", "reviews", skaterId],
-    queryFn: () => api.training.reviews.list({ skater_id: skaterId }),
+    queryKey: ["training", "reviews", skaterId, selectedSeason],
+    queryFn: () => api.training.reviews.list({
+      skater_id: skaterId,
+      ...(seasonRange ? { from: seasonRange.from, to: seasonRange.to } : {}),
+    }),
   });
 
   const { data: incidents } = useQuery({
-    queryKey: ["training", "incidents", skaterId],
-    queryFn: () => api.training.incidents.list({ skater_id: skaterId }),
+    queryKey: ["training", "incidents", skaterId, selectedSeason],
+    queryFn: () => api.training.incidents.list({
+      skater_id: skaterId,
+      ...(seasonRange ? { from: seasonRange.from, to: seasonRange.to } : {}),
+    }),
   });
 
   const { data: challenges } = useQuery({
-    queryKey: ["training", "challenges", skaterId],
-    queryFn: () => api.training.challenges.list({ skater_id: skaterId }),
+    queryKey: ["training", "challenges", skaterId, selectedSeason],
+    queryFn: () => api.training.challenges.list({
+      skater_id: skaterId,
+      ...(seasonRange ? { from: seasonRange.from, to: seasonRange.to } : {}),
+    }),
   });
 
   if (!skater) {
@@ -789,10 +815,19 @@ export default function SkaterTrainingPage() {
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
+        <div className="flex items-center gap-4">
           <h2 className="font-headline font-bold text-on-surface text-xl">
             {skater.first_name} {skater.last_name}
           </h2>
+          <select
+            value={selectedSeason}
+            onChange={(e) => setSelectedSeason(e.target.value)}
+            className="bg-surface-container-high rounded-xl px-4 py-2 text-sm font-bold text-on-surface font-headline appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary"
+          >
+            {seasonOptions.map((s) => (
+              <option key={s} value={s}>{s}</option>
+            ))}
+          </select>
         </div>
         <div className="flex gap-4">
           {(["engagement", "progression", "attitude"] as const).map((field) => (

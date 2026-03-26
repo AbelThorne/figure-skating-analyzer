@@ -352,6 +352,8 @@ async def list_challenges(
     session: AsyncSession,
     skater_id: Optional[int] = None,
     active: Optional[bool] = None,
+    from_date: Optional[str] = None,
+    to_date: Optional[str] = None,
 ) -> list[dict]:
     state = request.scope.get("state", {})
     role = state.get("user_role")
@@ -375,6 +377,11 @@ async def list_challenges(
         stmt = stmt.where(Challenge.target_date >= date.today())
     elif active is False:
         stmt = stmt.where(Challenge.target_date < date.today())
+
+    if from_date:
+        stmt = stmt.where(Challenge.target_date >= date.fromisoformat(from_date))
+    if to_date:
+        stmt = stmt.where(Challenge.target_date <= date.fromisoformat(to_date))
 
     result = await session.execute(stmt)
     return [_challenge_to_dict(c) for c in result.scalars().all()]
