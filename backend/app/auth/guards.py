@@ -13,26 +13,29 @@ _PUBLIC_EXACT = ("/api/config", "/api/config/")
 
 
 async def auth_guard(request: Request) -> None:
-    """Litestar before_request hook: validate JWT on non-public routes."""
+    """Litestar before_request hook: validate JWT on non-public routes.
+
+    For public routes, still parses the token if present so that downstream
+    handlers can optionally enforce role checks (e.g. PATCH /api/config/).
+    """
     path: str = request.scope["path"]
-    if any(path.startswith(p) for p in _PUBLIC_PREFIXES) or path in _PUBLIC_EXACT:
-        return
+    is_public = any(path.startswith(p) for p in _PUBLIC_PREFIXES) or path in _PUBLIC_EXACT
     auth_header = request.headers.get("authorization", "")
-    if not auth_header.startswith("Bearer "):
+    if auth_header.startswith("Bearer "):
+        token = auth_header[7:]
+        try:
+            payload = decode_token(token)
+            if payload.get("type") == "access":
+                request.scope["state"] = {
+                    **request.scope.get("state", {}),
+                    "user_id": payload["sub"],
+                    "user_role": payload["role"],
+                }
+        except Exception:
+            if not is_public:
+                raise NotAuthorizedException("Invalid or expired token")
+    elif not is_public:
         raise NotAuthorizedException("Missing or invalid Authorization header")
-    token = auth_header[7:]
-    try:
-        payload = decode_token(token)
-    except Exception:
-        raise NotAuthorizedException("Invalid or expired token")
-    if payload.get("type") != "access":
-        raise NotAuthorizedException("Invalid token type")
-    # Store user info in request state for downstream handlers
-    request.scope["state"] = {
-        **request.scope.get("state", {}),
-        "user_id": payload["sub"],
-        "user_role": payload["role"],
-    }
 
 
 def require_admin(request: Request) -> None:
