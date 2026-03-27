@@ -16,6 +16,7 @@ from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.user_skater import UserSkater
+from app.services.notification_service import notify_review, notify_incident
 
 
 def _snap_to_monday(d: date) -> date:
@@ -149,6 +150,9 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
         existing.visible_to_skater = data.get("visible_to_skater", True)
         await session.commit()
         await session.refresh(existing)
+        if existing.visible_to_skater:
+            await notify_review(session, existing)
+            await session.commit()
         return _review_to_dict(existing)
 
     review = WeeklyReview(
@@ -166,6 +170,8 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
     session.add(review)
     await session.commit()
     await session.refresh(review)
+    await notify_review(session, review)
+    await session.commit()
     return _review_to_dict(review)
 
 
@@ -190,6 +196,9 @@ async def update_review(review_id: int, request: Request, session: AsyncSession,
 
     await session.commit()
     await session.refresh(review)
+    if data.get("visible_to_skater") and review.visible_to_skater:
+        await notify_review(session, review)
+        await session.commit()
     return _review_to_dict(review)
 
 
@@ -284,6 +293,8 @@ async def create_incident(request: Request, session: AsyncSession, data: dict) -
     session.add(incident)
     await session.commit()
     await session.refresh(incident)
+    await notify_incident(session, incident)
+    await session.commit()
     return _incident_to_dict(incident)
 
 
@@ -311,6 +322,9 @@ async def update_incident(incident_id: int, request: Request, session: AsyncSess
 
     await session.commit()
     await session.refresh(incident)
+    if data.get("visible_to_skater") and incident.visible_to_skater:
+        await notify_incident(session, incident)
+        await session.commit()
     return _incident_to_dict(incident)
 
 
