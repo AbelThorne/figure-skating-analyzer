@@ -18,6 +18,7 @@ dependencies = [
     "requests>=2.28",
     "weasyprint>=62.0",
     "jinja2>=3.1",
+    "aiosmtplib>=2.0",
 ]
 
 [project.optional-dependencies]
