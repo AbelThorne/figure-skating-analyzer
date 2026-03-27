@@ -98,12 +98,88 @@ async def upload_logo(
     return {"logo_url": f"/api/logos/{filename}"}
 
 
+@get("/smtp")
+async def get_smtp_settings(request: Request, session: AsyncSession) -> dict:
+    require_admin(request)
+    result = await session.execute(select(AppSettings).limit(1))
+    settings = result.scalar_one_or_none()
+    if not settings:
+        return {"smtp_host": "", "smtp_port": 587, "smtp_user": "", "smtp_from": "", "configured": False}
+
+    return {
+        "smtp_host": settings.smtp_host or "",
+        "smtp_port": settings.smtp_port or 587,
+        "smtp_user": settings.smtp_user or "",
+        "smtp_from": settings.smtp_from or "",
+        "configured": bool(settings.smtp_host),
+    }
+
+
+@patch("/smtp")
+async def update_smtp_settings(data: dict, request: Request, session: AsyncSession) -> dict:
+    require_admin(request)
+    result = await session.execute(select(AppSettings).limit(1))
+    settings = result.scalar_one_or_none()
+    if not settings:
+        raise ClientException(detail="Run setup first", status_code=400)
+
+    if "smtp_host" in data:
+        settings.smtp_host = data["smtp_host"] or None
+    if "smtp_port" in data:
+        settings.smtp_port = int(data["smtp_port"])
+    if "smtp_user" in data:
+        settings.smtp_user = data["smtp_user"] or None
+    if "smtp_password" in data:
+        settings.smtp_password = data["smtp_password"] or None
+    if "smtp_from" in data:
+        settings.smtp_from = data["smtp_from"] or None
+
+    await session.commit()
+    await session.refresh(settings)
+
+    return {
+        "smtp_host": settings.smtp_host or "",
+        "smtp_port": settings.smtp_port or 587,
+        "smtp_user": settings.smtp_user or "",
+        "smtp_from": settings.smtp_from or "",
+        "configured": bool(settings.smtp_host),
+    }
+
+
+@post("/smtp-test")
+async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Response:
+    require_admin(request)
+
+    result = await session.execute(select(AppSettings).limit(1))
+    settings = result.scalar_one_or_none()
+    if not settings or not settings.smtp_host:
+        raise ClientException(detail="SMTP non configuré", status_code=400)
+
+    from app.services.email_service import send_test_email
+
+    smtp_cfg = {
+        "host": settings.smtp_host,
+        "port": settings.smtp_port or 587,
+        "user": settings.smtp_user or "",
+        "password": settings.smtp_password or "",
+        "from_addr": settings.smtp_from or settings.smtp_user or "",
+    }
+
+    to = data.get("to") or request.user.email
+    ok = await send_test_email(smtp_cfg, to)
+
+    if ok:
+        return Response(content={"success": True, "message": f"Email de test envoyé à {to}"}, status_code=200)
+    else:
+        return Response(content={"success": False, "message": "Échec de l'envoi — vérifiez les paramètres SMTP"}, status_code=200)
+
+
 def _ext(name: str) -> str:
     return "." + name.rsplit(".", 1)[-1] if "." in name else ".png"
 
 
 router = Router(
     path="/api/config",
-    route_handlers=[get_config, update_config, upload_logo],
+    route_handlers=[get_config, update_config, upload_logo, get_smtp_settings, update_smtp_settings, test_smtp],
     dependencies={"session": Provide(get_session)},
 )

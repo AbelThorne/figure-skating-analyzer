@@ -1,0 +1,5 @@
+{% extends "base_email.html" %}
+{% block content %}
+<p>La configuration SMTP fonctionne correctement.</p>
+<p style="color: #49454f; font-size: 12px;">Ce message a été envoyé à <strong>{{ to_email }}</strong> pour vérifier les paramètres email.</p>
+{% endblock %}

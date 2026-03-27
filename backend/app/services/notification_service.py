@@ -10,7 +10,7 @@ from app.models.user import User
 from app.models.user_skater import UserSkater
 from app.models.skater import Skater
 from app.models.app_settings import AppSettings
-from app.services.email_service import send_email, is_smtp_configured
+from app.services.email_service import send_email, get_smtp_config
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
@@ -67,6 +67,10 @@ async def notify_review(session: AsyncSession, review, app_base_url: str = "") -
     message = f"Semaine du {review.week_start.isoformat()} — Engagement {review.engagement}/5, Progression {review.progression}/5, Attitude {review.attitude}/5"
     link = f"/patineurs/{review.skater_id}/analyse"
 
+    smtp_cfg = await get_smtp_config(session)
+    settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+    club_name = settings.club_name if settings else "SkateLab"
+
     for user in users:
         notif = Notification(
             user_id=user.id,
@@ -77,10 +81,8 @@ async def notify_review(session: AsyncSession, review, app_base_url: str = "") -
         )
         session.add(notif)
 
-        if user.email_notifications and is_smtp_configured():
+        if user.email_notifications and smtp_cfg:
             app_url = f"{app_base_url}{link}" if app_base_url else ""
-            settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
-            club_name = settings.club_name if settings else "SkateLab"
 
             await send_email(
                 to=user.email,
@@ -97,6 +99,7 @@ async def notify_review(session: AsyncSession, review, app_base_url: str = "") -
                     "improvements": review.improvements or "",
                     "app_url": app_url,
                 },
+                smtp_config=smtp_cfg,
             )
 
     await session.flush()
@@ -117,6 +120,10 @@ async def notify_incident(session: AsyncSession, incident, app_base_url: str = "
     message = f"{type_label} — {incident.description[:100]}" if incident.description else type_label
     link = f"/patineurs/{incident.skater_id}/analyse"
 
+    smtp_cfg = await get_smtp_config(session)
+    settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+    club_name = settings.club_name if settings else "SkateLab"
+
     for user in users:
         notif = Notification(
             user_id=user.id,
@@ -127,10 +134,8 @@ async def notify_incident(session: AsyncSession, incident, app_base_url: str = "
         )
         session.add(notif)
 
-        if user.email_notifications and is_smtp_configured():
+        if user.email_notifications and smtp_cfg:
             app_url = f"{app_base_url}{link}" if app_base_url else ""
-            settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
-            club_name = settings.club_name if settings else "SkateLab"
 
             await send_email(
                 to=user.email,
@@ -144,6 +149,7 @@ async def notify_incident(session: AsyncSession, incident, app_base_url: str = "
                     "description": incident.description or "",
                     "app_url": app_url,
                 },
+                smtp_config=smtp_cfg,
             )
 
     await session.flush()

@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from sqlalchemy import Integer, String
+from sqlalchemy import Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -19,3 +19,8 @@ class AppSettings(Base):
     training_enabled: Mapped[bool] = mapped_column(
         Integer, nullable=False, default=0, server_default="0"
     )
+    smtp_host: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    smtp_port: Mapped[int] = mapped_column(Integer, nullable=False, default=587)
+    smtp_user: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    smtp_password: Mapped[str | None] = mapped_column(Text, nullable=True)
+    smtp_from: Mapped[str | None] = mapped_column(String(255), nullable=True)

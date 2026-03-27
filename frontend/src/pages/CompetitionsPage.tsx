@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, CreateCompetitionPayload, JobInfo, COMPETITION_TYPES } from "../api/client";
+import { api, Competition, JobInfo, COMPETITION_TYPES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useJobs } from "../contexts/JobContext";
 import ErrorDetailModal from "../components/ErrorDetailModal";
@@ -34,12 +34,7 @@ export default function CompetitionsPage() {
   });
 
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState<CreateCompetitionPayload>({
-    name: "",
-    url: "",
-    season: "",
-    discipline: "",
-  });
+  const [importUrl, setImportUrl] = useState("");
 
   const [filterSeason, setFilterSeason] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
@@ -49,11 +44,18 @@ export default function CompetitionsPage() {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
 
   const createMutation = useMutation({
-    mutationFn: api.competitions.create,
+    mutationFn: async (url: string) => {
+      const comp = await api.competitions.create({ name: url, url });
+      const importJob = await api.competitions.import(comp.id);
+      trackJob(importJob);
+      const enrichJob = await api.competitions.enrich(comp.id);
+      trackJob(enrichJob);
+      return comp;
+    },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["competitions"] });
       setShowForm(false);
-      setForm({ name: "", url: "", season: "", discipline: "" });
+      setImportUrl("");
     },
   });
 
@@ -163,54 +165,31 @@ export default function CompetitionsPage() {
           className="bg-surface-container-lowest rounded-xl shadow-sm p-6 mb-6"
           onSubmit={(e) => {
             e.preventDefault();
-            createMutation.mutate(form);
+            createMutation.mutate(importUrl);
           }}
         >
           <h2 className="font-headline font-bold text-on-surface text-base mb-4">
-            Nouvelle compétition
+            Importer une compétition
           </h2>
-          <div className="space-y-3">
-            <input
-              className={inputClass}
-              placeholder="Nom de la compétition"
-              required
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
-            />
-            <input
-              className={inputClass}
-              placeholder="URL du site de résultats"
-              required
-              type="url"
-              value={form.url}
-              onChange={(e) => setForm((f) => ({ ...f, url: e.target.value }))}
-            />
-            <div className="flex gap-3">
-              <input
-                className={inputClass}
-                placeholder="Saison (ex: 2024-25)"
-                value={form.season ?? ""}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, season: e.target.value }))
-                }
-              />
-              <input
-                className={inputClass}
-                placeholder="Discipline (ex: Dames, Messieurs)"
-                value={form.discipline ?? ""}
-                onChange={(e) =>
-                  setForm((f) => ({ ...f, discipline: e.target.value }))
-                }
-              />
-            </div>
-          </div>
+          <input
+            className={inputClass}
+            placeholder="URL du site de résultats"
+            required
+            type="url"
+            value={importUrl}
+            onChange={(e) => setImportUrl(e.target.value)}
+          />
+          <p className="text-xs text-on-surface-variant mt-1.5">
+            Le nom, la saison, la ville et le type seront détectés automatiquement.
+          </p>
           <div className="flex gap-2 mt-4">
             <button
               type="submit"
               disabled={createMutation.isPending}
-              className="bg-primary text-on-primary rounded-lg py-2 px-4 text-xs font-bold active:scale-95 transition-all disabled:opacity-50"
+              className="bg-primary text-on-primary rounded-lg py-2 px-4 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1.5"
             >
-              {createMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+              <span className="material-symbols-outlined text-sm">download</span>
+              {createMutation.isPending ? "Importation..." : "Importer"}
             </button>
             <button
               type="button"

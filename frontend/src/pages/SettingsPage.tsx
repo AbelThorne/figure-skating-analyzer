@@ -380,6 +380,51 @@ export default function SettingsPage() {
     enabled: debouncedMergeSearch.length >= 2,
   });
 
+  // --- SMTP settings ---
+  const { data: smtpData } = useQuery({
+    queryKey: ["smtp-settings"],
+    queryFn: api.config.smtp.get,
+    enabled: config?.training_enabled === true,
+  });
+  const [smtpHost, setSmtpHost] = useState("");
+  const [smtpPort, setSmtpPort] = useState("587");
+  const [smtpUser, setSmtpUser] = useState("");
+  const [smtpPassword, setSmtpPassword] = useState("");
+  const [smtpFrom, setSmtpFrom] = useState("");
+  const [smtpLoaded, setSmtpLoaded] = useState(false);
+
+  useEffect(() => {
+    if (smtpData && !smtpLoaded) {
+      setSmtpHost(smtpData.smtp_host);
+      setSmtpPort(String(smtpData.smtp_port));
+      setSmtpUser(smtpData.smtp_user);
+      setSmtpFrom(smtpData.smtp_from);
+      setSmtpLoaded(true);
+    }
+  }, [smtpData, smtpLoaded]);
+
+  const smtpMutation = useMutation({
+    mutationFn: () =>
+      api.config.smtp.update({
+        smtp_host: smtpHost,
+        smtp_port: parseInt(smtpPort) || 587,
+        smtp_user: smtpUser,
+        ...(smtpPassword ? { smtp_password: smtpPassword } : {}),
+        smtp_from: smtpFrom,
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["smtp-settings"] });
+      setSmtpPassword("");
+    },
+  });
+
+  const [smtpTestResult, setSmtpTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const smtpTestMutation = useMutation({
+    mutationFn: () => api.config.smtp.test(),
+    onSuccess: (data) => setSmtpTestResult(data),
+    onError: (err) => setSmtpTestResult({ success: false, message: String(err) }),
+  });
+
   const mergeMutation = useMutation({
     mutationFn: () => {
       const sourceIds = mergeSelected
@@ -918,6 +963,107 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+
+      {/* SMTP settings — only when training module is enabled */}
+      {config?.training_enabled && (
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <h2 className="font-headline font-bold text-on-surface text-lg mb-1">
+          Notifications email (SMTP)
+        </h2>
+        <p className="text-on-surface-variant text-xs mb-4">
+          Configurez le serveur SMTP pour envoyer des notifications par email aux patineurs.
+        </p>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg">
+          <div className="sm:col-span-2">
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Serveur SMTP
+            </label>
+            <input
+              value={smtpHost}
+              onChange={(e) => setSmtpHost(e.target.value)}
+              placeholder="smtp-relay.gmail.com"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Port
+            </label>
+            <input
+              value={smtpPort}
+              onChange={(e) => setSmtpPort(e.target.value)}
+              placeholder="587"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Adresse d'expédition
+            </label>
+            <input
+              value={smtpFrom}
+              onChange={(e) => setSmtpFrom(e.target.value)}
+              placeholder="noreply@monclub.fr"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Utilisateur SMTP
+            </label>
+            <input
+              value={smtpUser}
+              onChange={(e) => setSmtpUser(e.target.value)}
+              placeholder="user@monclub.fr"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Mot de passe SMTP
+            </label>
+            <input
+              type="password"
+              value={smtpPassword}
+              onChange={(e) => setSmtpPassword(e.target.value)}
+              placeholder={smtpData?.configured ? "••••••••" : ""}
+              className={inputCls}
+            />
+          </div>
+        </div>
+        <div className="flex items-center gap-3 mt-5">
+          <button
+            onClick={() => smtpMutation.mutate()}
+            disabled={smtpMutation.isPending}
+            className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold disabled:opacity-50 hover:bg-primary/90 transition-colors"
+          >
+            {smtpMutation.isPending ? "..." : "Enregistrer"}
+          </button>
+          <button
+            onClick={() => {
+              setSmtpTestResult(null);
+              smtpTestMutation.mutate();
+            }}
+            disabled={smtpTestMutation.isPending || !smtpData?.configured}
+            className="px-4 py-2 bg-surface-container text-on-surface rounded-xl text-sm font-bold disabled:opacity-50 hover:bg-surface-container-high transition-colors flex items-center gap-1.5"
+          >
+            <span className="material-symbols-outlined text-sm">send</span>
+            {smtpTestMutation.isPending ? "Envoi..." : "Tester"}
+          </button>
+        </div>
+        {smtpMutation.isSuccess && (
+          <p className="text-xs text-primary font-semibold mt-2">Paramètres SMTP enregistrés</p>
+        )}
+        {smtpMutation.isError && (
+          <p className="text-xs text-error mt-2">{String(smtpMutation.error)}</p>
+        )}
+        {smtpTestResult && (
+          <p className={`text-xs mt-2 font-semibold ${smtpTestResult.success ? "text-primary" : "text-error"}`}>
+            {smtpTestResult.message}
+          </p>
+        )}
+      </section>
+      )}
 
       {/* Danger zone */}
       <section className="rounded-2xl p-6 shadow-arctic border-2 border-error/30 bg-error-container/10">

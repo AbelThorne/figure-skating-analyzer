@@ -353,6 +353,19 @@ export interface ConfigResponse {
   training_enabled?: boolean;
 }
 
+export interface SmtpSettings {
+  smtp_host: string;
+  smtp_port: number;
+  smtp_user: string;
+  smtp_from: string;
+  configured: boolean;
+}
+
+export interface SmtpTestResult {
+  success: boolean;
+  message: string;
+}
+
 export interface BulkImportResult {
   job_ids: string[];
   total: number;
@@ -598,6 +611,13 @@ export const api = {
         method: "PATCH",
         body: JSON.stringify(data),
       }),
+    smtp: {
+      get: () => request<SmtpSettings>("/config/smtp"),
+      update: (data: { smtp_host?: string; smtp_port?: number; smtp_user?: string; smtp_password?: string; smtp_from?: string }) =>
+        request<SmtpSettings>("/config/smtp", { method: "PATCH", body: JSON.stringify(data) }),
+      test: (to?: string) =>
+        request<SmtpTestResult>("/config/smtp-test", { method: "POST", body: JSON.stringify({ to }) }),
+    },
     uploadLogo: async (file: File): Promise<{ logo_url: string }> => {
       const form = new FormData();
       form.append("data", file);

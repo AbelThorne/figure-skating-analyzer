@@ -52,6 +52,11 @@ async def _migrate_add_columns(conn) -> None:
         ("skaters", "training_tracked", "BOOLEAN DEFAULT 0"),
         ("skaters", "manual_create", "BOOLEAN DEFAULT 0"),
         ("app_settings", "training_enabled", "INTEGER DEFAULT 0"),
+        ("app_settings", "smtp_host", "VARCHAR(255)"),
+        ("app_settings", "smtp_port", "INTEGER DEFAULT 587"),
+        ("app_settings", "smtp_user", "VARCHAR(255)"),
+        ("app_settings", "smtp_password", "TEXT"),
+        ("app_settings", "smtp_from", "VARCHAR(255)"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
