@@ -155,6 +155,7 @@ async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Resp
     if not settings or not settings.smtp_host:
         raise ClientException(detail="SMTP non configuré", status_code=400)
 
+    from app.models.user import User
     from app.services.email_service import send_test_email
 
     smtp_cfg = {
@@ -165,7 +166,12 @@ async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Resp
         "from_addr": settings.smtp_from or settings.smtp_user or "",
     }
 
-    to = data.get("to") or request.user.email
+    to = data.get("to")
+    if not to:
+        user_id = request.scope.get("state", {}).get("user_id")
+        user = await session.get(User, user_id) if user_id else None
+        to = user.email if user else smtp_cfg["from_addr"]
+
     ok = await send_test_email(smtp_cfg, to)
 
     if ok:
