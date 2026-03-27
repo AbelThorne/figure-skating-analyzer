@@ -391,6 +391,7 @@ export default function SettingsPage() {
   const [smtpUser, setSmtpUser] = useState("");
   const [smtpPassword, setSmtpPassword] = useState("");
   const [smtpFrom, setSmtpFrom] = useState("");
+  const [smtpFromName, setSmtpFromName] = useState("");
   const [smtpLoaded, setSmtpLoaded] = useState(false);
 
   useEffect(() => {
@@ -399,6 +400,7 @@ export default function SettingsPage() {
       setSmtpPort(String(smtpData.smtp_port));
       setSmtpUser(smtpData.smtp_user);
       setSmtpFrom(smtpData.smtp_from);
+      setSmtpFromName(smtpData.smtp_from_name);
       setSmtpLoaded(true);
     }
   }, [smtpData, smtpLoaded]);
@@ -411,6 +413,7 @@ export default function SettingsPage() {
         smtp_user: smtpUser,
         ...(smtpPassword ? { smtp_password: smtpPassword } : {}),
         smtp_from: smtpFrom,
+        smtp_from_name: smtpFromName,
       }),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["smtp-settings"] });
@@ -1004,6 +1007,17 @@ export default function SettingsPage() {
               value={smtpFrom}
               onChange={(e) => setSmtpFrom(e.target.value)}
               placeholder="noreply@monclub.fr"
+              className={inputCls}
+            />
+          </div>
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Nom d'expéditeur
+            </label>
+            <input
+              value={smtpFromName}
+              onChange={(e) => setSmtpFromName(e.target.value)}
+              placeholder="Mon Club Patinage"
               className={inputCls}
             />
           </div>

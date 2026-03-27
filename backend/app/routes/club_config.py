@@ -104,13 +104,14 @@ async def get_smtp_settings(request: Request, session: AsyncSession) -> dict:
     result = await session.execute(select(AppSettings).limit(1))
     settings = result.scalar_one_or_none()
     if not settings:
-        return {"smtp_host": "", "smtp_port": 587, "smtp_user": "", "smtp_from": "", "configured": False}
+        return {"smtp_host": "", "smtp_port": 587, "smtp_user": "", "smtp_from": "", "smtp_from_name": "", "configured": False}
 
     return {
         "smtp_host": settings.smtp_host or "",
         "smtp_port": settings.smtp_port or 587,
         "smtp_user": settings.smtp_user or "",
         "smtp_from": settings.smtp_from or "",
+        "smtp_from_name": settings.smtp_from_name or "",
         "configured": bool(settings.smtp_host),
     }
 
@@ -133,6 +134,8 @@ async def update_smtp_settings(data: dict, request: Request, session: AsyncSessi
         settings.smtp_password = data["smtp_password"] or None
     if "smtp_from" in data:
         settings.smtp_from = data["smtp_from"] or None
+    if "smtp_from_name" in data:
+        settings.smtp_from_name = data["smtp_from_name"] or None
 
     await session.commit()
     await session.refresh(settings)
@@ -142,6 +145,7 @@ async def update_smtp_settings(data: dict, request: Request, session: AsyncSessi
         "smtp_port": settings.smtp_port or 587,
         "smtp_user": settings.smtp_user or "",
         "smtp_from": settings.smtp_from or "",
+        "smtp_from_name": settings.smtp_from_name or "",
         "configured": bool(settings.smtp_host),
     }
 
@@ -158,12 +162,15 @@ async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Resp
     from app.models.user import User
     from app.services.email_service import send_test_email
 
+    from_addr = settings.smtp_from or settings.smtp_user or ""
+    if settings.smtp_from_name and from_addr:
+        from_addr = f"{settings.smtp_from_name} <{from_addr}>"
     smtp_cfg = {
         "host": settings.smtp_host,
         "port": settings.smtp_port or 587,
         "user": settings.smtp_user or "",
         "password": settings.smtp_password or "",
-        "from_addr": settings.smtp_from or settings.smtp_user or "",
+        "from_addr": from_addr,
     }
 
     to = data.get("to")

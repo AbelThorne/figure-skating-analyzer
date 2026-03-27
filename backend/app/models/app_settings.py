@@ -24,3 +24,4 @@ class AppSettings(Base):
     smtp_user: Mapped[str | None] = mapped_column(String(255), nullable=True)
     smtp_password: Mapped[str | None] = mapped_column(Text, nullable=True)
     smtp_from: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    smtp_from_name: Mapped[str | None] = mapped_column(String(255), nullable=True)

@@ -44,12 +44,15 @@ async def get_smtp_config(session: AsyncSession) -> dict | None:
 
     # DB settings take priority if smtp_host is set
     if settings and settings.smtp_host:
+        from_addr = settings.smtp_from or settings.smtp_user or ""
+        if settings.smtp_from_name and from_addr:
+            from_addr = f"{settings.smtp_from_name} <{from_addr}>"
         return {
             "host": settings.smtp_host,
             "port": settings.smtp_port or 587,
             "user": settings.smtp_user or "",
             "password": settings.smtp_password or "",
-            "from_addr": settings.smtp_from or settings.smtp_user or "",
+            "from_addr": from_addr,
         }
 
     # Fall back to env vars

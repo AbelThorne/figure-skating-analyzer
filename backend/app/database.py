@@ -57,6 +57,7 @@ async def _migrate_add_columns(conn) -> None:
         ("app_settings", "smtp_user", "VARCHAR(255)"),
         ("app_settings", "smtp_password", "TEXT"),
         ("app_settings", "smtp_from", "VARCHAR(255)"),
+        ("app_settings", "smtp_from_name", "VARCHAR(255)"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:

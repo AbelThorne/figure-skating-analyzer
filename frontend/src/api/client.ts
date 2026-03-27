@@ -358,6 +358,7 @@ export interface SmtpSettings {
   smtp_port: number;
   smtp_user: string;
   smtp_from: string;
+  smtp_from_name: string;
   configured: boolean;
 }
 
@@ -613,7 +614,7 @@ export const api = {
       }),
     smtp: {
       get: () => request<SmtpSettings>("/config/smtp"),
-      update: (data: { smtp_host?: string; smtp_port?: number; smtp_user?: string; smtp_password?: string; smtp_from?: string }) =>
+      update: (data: { smtp_host?: string; smtp_port?: number; smtp_user?: string; smtp_password?: string; smtp_from?: string; smtp_from_name?: string }) =>
         request<SmtpSettings>("/config/smtp", { method: "PATCH", body: JSON.stringify(data) }),
       test: (to?: string) =>
         request<SmtpTestResult>("/config/smtp-test", { method: "POST", body: JSON.stringify({ to }) }),
