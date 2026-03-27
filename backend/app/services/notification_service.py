@@ -1,0 +1,141 @@
+from __future__ import annotations
+
+import logging
+from typing import TYPE_CHECKING
+
+from sqlalchemy import select
+
+from app.models.notification import Notification
+from app.models.user import User
+from app.models.user_skater import UserSkater
+from app.models.skater import Skater
+from app.services.email_service import send_email, is_smtp_configured
+
+if TYPE_CHECKING:
+    from sqlalchemy.ext.asyncio import AsyncSession
+
+logger = logging.getLogger(__name__)
+
+INCIDENT_TYPE_LABELS = {
+    "injury": "Blessure",
+    "behavior": "Comportement",
+    "other": "Autre",
+}
+
+
+async def _get_skater_name(session: AsyncSession, skater_id: int) -> str:
+    skater = await session.get(Skater, skater_id)
+    if not skater:
+        return "Patineur inconnu"
+    if skater.first_name:
+        return f"{skater.first_name} {skater.last_name}"
+    return skater.last_name
+
+
+async def _get_linked_skater_users(session: AsyncSession, skater_id: int) -> list[User]:
+    """Return skater-role users linked to this skater."""
+    stmt = (
+        select(User)
+        .join(UserSkater, UserSkater.user_id == User.id)
+        .where(
+            UserSkater.skater_id == skater_id,
+            User.role == "skater",
+            User.is_active == True,  # noqa: E712
+        )
+    )
+    result = await session.execute(stmt)
+    return list(result.scalars().all())
+
+
+async def notify_review(session: AsyncSession, review, app_base_url: str = "") -> None:
+    """Create in-app notifications and queue emails for a visible review."""
+    if not review.visible_to_skater:
+        return
+
+    skater_name = await _get_skater_name(session, review.skater_id)
+    users = await _get_linked_skater_users(session, review.skater_id)
+
+    title = f"Nouveau retour pour {skater_name}"
+    message = f"Semaine du {review.week_start.isoformat()} — Engagement {review.engagement}/5, Progression {review.progression}/5, Attitude {review.attitude}/5"
+    link = f"/patineurs/{review.skater_id}/analyse"
+
+    for user in users:
+        notif = Notification(
+            user_id=user.id,
+            type="review",
+            title=title,
+            message=message,
+            link=link,
+        )
+        session.add(notif)
+
+        if user.email_notifications and is_smtp_configured():
+            app_url = f"{app_base_url}{link}" if app_base_url else ""
+            from app.models.app_settings import AppSettings
+            settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+            club_name = settings.club_name if settings else "SkateLab"
+
+            await send_email(
+                to=user.email,
+                subject=f"Nouveau retour d'entraînement pour {skater_name}",
+                template_name="review_notification.html",
+                context={
+                    "club_name": club_name,
+                    "skater_name": skater_name,
+                    "week_start": review.week_start.strftime("%d/%m/%Y"),
+                    "engagement": review.engagement,
+                    "progression": review.progression,
+                    "attitude": review.attitude,
+                    "strengths": review.strengths or "",
+                    "improvements": review.improvements or "",
+                    "app_url": app_url,
+                },
+            )
+
+    await session.flush()
+
+
+async def notify_incident(session: AsyncSession, incident, app_base_url: str = "") -> None:
+    """Create in-app notifications and queue emails for a visible incident."""
+    if not incident.visible_to_skater:
+        return
+
+    skater_name = await _get_skater_name(session, incident.skater_id)
+    users = await _get_linked_skater_users(session, incident.skater_id)
+
+    type_label = INCIDENT_TYPE_LABELS.get(incident.incident_type, incident.incident_type)
+    title = f"Incident signalé pour {skater_name}"
+    message = f"{type_label} — {incident.description[:100]}" if incident.description else type_label
+    link = f"/patineurs/{incident.skater_id}/analyse"
+
+    for user in users:
+        notif = Notification(
+            user_id=user.id,
+            type="incident",
+            title=title,
+            message=message,
+            link=link,
+        )
+        session.add(notif)
+
+        if user.email_notifications and is_smtp_configured():
+            app_url = f"{app_base_url}{link}" if app_base_url else ""
+            from app.models.app_settings import AppSettings
+            settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+            club_name = settings.club_name if settings else "SkateLab"
+
+            await send_email(
+                to=user.email,
+                subject=f"Nouvel incident signalé pour {skater_name}",
+                template_name="incident_notification.html",
+                context={
+                    "club_name": club_name,
+                    "skater_name": skater_name,
+                    "date": incident.date.strftime("%d/%m/%Y"),
+                    "incident_type_label": type_label,
+                    "description": incident.description or "",
+                    "app_url": app_url,
+                },
+            )
+
+    await session.flush()
