@@ -6,6 +6,7 @@ import { useAuth } from "./auth/AuthContext";
 import { ProtectedRoute } from "./auth/ProtectedRoute";
 import { JobProvider } from "./contexts/JobContext";
 import ForcePasswordModal from "./components/ForcePasswordModal";
+import NotificationBell from "./components/NotificationBell";
 import HomePage from "./pages/HomePage";
 import CompetitionPage from "./pages/CompetitionPage";
 import CompetitionsPage from "./pages/CompetitionsPage";
@@ -247,7 +248,8 @@ function AuthenticatedLayout() {
           >
             <span className="material-symbols-outlined text-2xl">menu</span>
           </button>
-          <h1 className="font-headline font-bold text-on-surface text-xl truncate">{pageTitle}</h1>
+          <h1 className="font-headline font-bold text-on-surface text-xl truncate flex-1">{pageTitle}</h1>
+          <NotificationBell />
         </header>
 
         {/* Page content */}
