@@ -10,8 +10,52 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [emailNotif, setEmailNotif] = useState(true);
+  const [emailNotifLoading, setEmailNotifLoading] = useState(false);
+
+  async function toggleEmailNotif() {
+    setEmailNotifLoading(true);
+    try {
+      const res = await api.me.updatePreferences({ email_notifications: !emailNotif });
+      setEmailNotif(res.email_notifications);
+    } catch {
+      // ignore
+    } finally {
+      setEmailNotifLoading(false);
+    }
+  }
 
   if (!user) return null;
+
+  const preferencesCard = (
+    <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6 max-w-md mt-6">
+      <h2 className="font-headline font-bold text-on-surface text-sm mb-4">
+        Préférences
+      </h2>
+      <div className="flex items-center justify-between">
+        <div>
+          <p className="text-sm text-on-surface">Notifications par email</p>
+          <p className="text-xs text-on-surface-variant mt-0.5">
+            Recevoir un email lors de nouveaux retours ou incidents
+          </p>
+        </div>
+        <button
+          onClick={toggleEmailNotif}
+          disabled={emailNotifLoading}
+          className={`relative w-11 h-6 rounded-full transition-colors ${
+            emailNotif ? "bg-primary" : "bg-outline-variant"
+          }`}
+          aria-label="Activer les notifications email"
+        >
+          <span
+            className={`absolute top-0.5 left-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform ${
+              emailNotif ? "translate-x-5" : ""
+            }`}
+          />
+        </button>
+      </div>
+    </div>
+  );
 
   if (!user.has_password) {
     return (
@@ -22,6 +66,7 @@ export default function ProfilePage() {
         <p className="text-sm text-on-surface-variant">
           Vous utilisez Google pour vous connecter. La modification du mot de passe n'est pas disponible.
         </p>
+        {preferencesCard}
       </div>
     );
   }
@@ -128,6 +173,7 @@ export default function ProfilePage() {
           </button>
         </form>
       </div>
+      {preferencesCard}
     </div>
   );
 }
