@@ -482,6 +482,16 @@ export interface UpdateChallengePayload {
 
 export type TimelineEntry = (WeeklyReview & { type: "review"; sort_date: string }) | (TrainingIncident & { type: "incident"; sort_date: string });
 
+export interface AppNotification {
+  id: number;
+  type: "review" | "incident";
+  title: string;
+  message: string;
+  link: string;
+  is_read: boolean;
+  created_at: string | null;
+}
+
 export interface JumpMastery {
   jump_type: string;
   attempts: number;
@@ -638,6 +648,22 @@ export const api = {
 
   me: {
     skaters: (): Promise<MySkater[]> => request<MySkater[]>("/me/skaters"),
+    notifications: {
+      list: (unread?: boolean) => {
+        const qs = unread !== undefined ? `?unread=${unread}` : "";
+        return request<AppNotification[]>(`/me/notifications/${qs}`);
+      },
+      count: () => request<{ count: number }>("/me/notifications/count"),
+      markRead: (id: number) =>
+        request<AppNotification>(`/me/notifications/${id}/read`, { method: "PATCH" }),
+      markAllRead: () =>
+        request<{ marked: number }>("/me/notifications/read-all", { method: "POST" }),
+    },
+    updatePreferences: (data: { email_notifications: boolean }) =>
+      request<{ email_notifications: boolean }>("/me/preferences", {
+        method: "PATCH",
+        body: JSON.stringify(data),
+      }),
   },
 
   users: {
