@@ -1,0 +1,34 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="margin:0 0 16px; font-family:Manrope,sans-serif; font-size:18px; color:#191c1e;">
+  Nouveau retour d'entraînement
+</h2>
+<p style="margin:0 0 8px; color:#49454f;">
+  Un retour hebdomadaire a été publié pour <strong>{{ skater_name }}</strong> (semaine du {{ week_start }}).
+</p>
+<table style="width:100%; border-collapse:collapse; margin:16px 0;">
+  <tr>
+    <td style="padding:6px 12px; background:#e8f0f6; border-radius:6px 0 0 0; font-size:12px; color:#49454f;">Engagement</td>
+    <td style="padding:6px 12px; background:#e8f0f6; text-align:right; font-family:monospace; font-weight:700; border-radius:0 6px 0 0;">{{ engagement }}/5</td>
+  </tr>
+  <tr>
+    <td style="padding:6px 12px; font-size:12px; color:#49454f;">Progression</td>
+    <td style="padding:6px 12px; text-align:right; font-family:monospace; font-weight:700;">{{ progression }}/5</td>
+  </tr>
+  <tr>
+    <td style="padding:6px 12px; background:#e8f0f6; font-size:12px; color:#49454f;">Attitude</td>
+    <td style="padding:6px 12px; background:#e8f0f6; text-align:right; font-family:monospace; font-weight:700;">{{ attitude }}/5</td>
+  </tr>
+</table>
+{% if strengths %}
+<p style="margin:0 0 4px; font-size:12px; font-weight:700; color:#2e6385;">Points forts</p>
+<p style="margin:0 0 12px; font-size:13px;">{{ strengths }}</p>
+{% endif %}
+{% if improvements %}
+<p style="margin:0 0 4px; font-size:12px; font-weight:700; color:#2e6385;">Axes d'amélioration</p>
+<p style="margin:0 0 12px; font-size:13px;">{{ improvements }}</p>
+{% endif %}
+{% if app_url %}
+<p style="margin:16px 0 0;"><a href="{{ app_url }}" class="btn">Voir dans l'application</a></p>
+{% endif %}
+{% endblock %}
