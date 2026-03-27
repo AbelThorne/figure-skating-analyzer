@@ -9,12 +9,18 @@ from app.models.notification import Notification
 from app.models.user import User
 from app.models.user_skater import UserSkater
 from app.models.skater import Skater
+from app.models.app_settings import AppSettings
 from app.services.email_service import send_email, is_smtp_configured
 
 if TYPE_CHECKING:
     from sqlalchemy.ext.asyncio import AsyncSession
 
 logger = logging.getLogger(__name__)
+
+
+async def _is_training_enabled(session: AsyncSession) -> bool:
+    settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+    return bool(settings and settings.training_enabled)
 
 INCIDENT_TYPE_LABELS = {
     "injury": "Blessure",
@@ -51,6 +57,8 @@ async def notify_review(session: AsyncSession, review, app_base_url: str = "") -
     """Create in-app notifications and queue emails for a visible review."""
     if not review.visible_to_skater:
         return
+    if not await _is_training_enabled(session):
+        return
 
     skater_name = await _get_skater_name(session, review.skater_id)
     users = await _get_linked_skater_users(session, review.skater_id)
@@ -71,7 +79,6 @@ async def notify_review(session: AsyncSession, review, app_base_url: str = "") -
 
         if user.email_notifications and is_smtp_configured():
             app_url = f"{app_base_url}{link}" if app_base_url else ""
-            from app.models.app_settings import AppSettings
             settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
             club_name = settings.club_name if settings else "SkateLab"
 
@@ -99,6 +106,8 @@ async def notify_incident(session: AsyncSession, incident, app_base_url: str = "
     """Create in-app notifications and queue emails for a visible incident."""
     if not incident.visible_to_skater:
         return
+    if not await _is_training_enabled(session):
+        return
 
     skater_name = await _get_skater_name(session, incident.skater_id)
     users = await _get_linked_skater_users(session, incident.skater_id)
@@ -120,7 +129,6 @@ async def notify_incident(session: AsyncSession, incident, app_base_url: str = "
 
         if user.email_notifications and is_smtp_configured():
             app_url = f"{app_base_url}{link}" if app_base_url else ""
-            from app.models.app_settings import AppSettings
             settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
             club_name = settings.club_name if settings else "SkateLab"
 

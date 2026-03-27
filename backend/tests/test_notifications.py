@@ -1,11 +1,21 @@
 """Tests for the notification system (in-app + email preferences)."""
 import pytest
+import pytest_asyncio
 from app.models.notification import Notification
 from app.models.skater import Skater
 from app.models.user_skater import UserSkater
 from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
+from app.models.app_settings import AppSettings
 from datetime import date, datetime, timezone
+
+
+@pytest_asyncio.fixture
+async def training_enabled(db_session):
+    """Seed AppSettings with training_enabled=True."""
+    settings = AppSettings(club_name="TestClub", club_short="TC", current_season="2025-2026", training_enabled=True)
+    db_session.add(settings)
+    await db_session.commit()
 
 
 @pytest.mark.asyncio
@@ -30,7 +40,7 @@ async def test_list_notifications_empty(client, admin_token):
 
 @pytest.mark.asyncio
 async def test_create_review_creates_notification(
-    client, db_session, coach_token, skater_user_with_skater
+    client, db_session, coach_token, skater_user_with_skater, training_enabled
 ):
     """When a coach creates a visible review, the linked skater user gets a notification."""
     user, _, skater = skater_user_with_skater
@@ -91,7 +101,7 @@ async def test_create_review_no_notification_when_not_visible(
 
 @pytest.mark.asyncio
 async def test_create_incident_creates_notification(
-    client, db_session, coach_token, skater_user_with_skater
+    client, db_session, coach_token, skater_user_with_skater, training_enabled
 ):
     user, _, skater = skater_user_with_skater
 

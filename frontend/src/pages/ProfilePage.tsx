@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { api, setAccessToken } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 
@@ -10,6 +11,11 @@ export default function ProfilePage() {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState(false);
   const [loading, setLoading] = useState(false);
+  const { data: config } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
+  });
   const [emailNotif, setEmailNotif] = useState(true);
   const [emailNotifLoading, setEmailNotifLoading] = useState(false);
 
@@ -27,7 +33,7 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const preferencesCard = (
+  const preferencesCard = !config?.training_enabled ? null : (
     <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6 max-w-md mt-6">
       <h2 className="font-headline font-bold text-on-surface text-sm mb-4">
         Préférences
