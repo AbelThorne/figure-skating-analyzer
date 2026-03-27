@@ -6,6 +6,7 @@ pdfplumber>=0.11
 beautifulsoup4>=4.12
 python-multipart>=0.0.9
 uvicorn[standard]>=0.30
+aiosmtplib>=2.0
 # dev
 pytest>=8.0
 pytest-asyncio>=0.23
