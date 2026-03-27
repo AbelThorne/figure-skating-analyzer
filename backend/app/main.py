@@ -24,6 +24,7 @@ from app.routes.stats import router as stats_router
 from app.routes.reports import router as reports_router
 from app.routes.me import router as me_router
 from app.routes.training import router as training_router
+from app.routes.notifications import router as notifications_router
 
 
 @asynccontextmanager
@@ -79,6 +80,7 @@ app = Litestar(
         reports_router,
         me_router,
         training_router,
+        notifications_router,
     ],
     cors_config=cors_config,
     lifespan=[lifespan],
