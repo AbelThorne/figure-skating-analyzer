@@ -58,6 +58,10 @@ async def _migrate_add_columns(conn) -> None:
         ("app_settings", "smtp_password", "TEXT"),
         ("app_settings", "smtp_from", "VARCHAR(255)"),
         ("app_settings", "smtp_from_name", "VARCHAR(255)"),
+        ("competitions", "ligue", "VARCHAR(50)"),
+        ("competitions", "date_end", "DATE"),
+        ("competitions", "polling_enabled", "BOOLEAN DEFAULT 0"),
+        ("competitions", "polling_activated_at", "DATETIME"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
