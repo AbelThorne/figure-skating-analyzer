@@ -520,7 +520,7 @@ export type TimelineEntry = (WeeklyReview & { type: "review"; sort_date: string 
 
 export interface AppNotification {
   id: number;
-  type: "review" | "incident";
+  type: "review" | "incident" | "competition";
   title: string;
   message: string;
   link: string;
