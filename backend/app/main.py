@@ -1,9 +1,13 @@
+import asyncio
+import logging
 from contextlib import asynccontextmanager
+from datetime import date as date_type, timedelta
 from typing import AsyncGenerator
 
 from litestar import Litestar, get
 from litestar.config.cors import CORSConfig
 from litestar.static_files import StaticFilesConfig
+from sqlalchemy import select
 
 from app.config import ALLOWED_ORIGINS, LOGOS_DIR, PDF_DIR
 from app.database import init_db, async_session_factory
@@ -27,6 +31,42 @@ from app.routes.training import router as training_router
 from app.routes.notifications import router as notifications_router
 
 
+logger = logging.getLogger(__name__)
+
+
+def _should_disable_polling(comp, today: date_type | None = None) -> bool:
+    """Return True if polling should be auto-disabled for this competition."""
+    if today is None:
+        today = date_type.today()
+    if not comp.date_end:
+        return False
+    return (comp.date_end + timedelta(days=7)) < today
+
+
+async def _polling_loop() -> None:
+    """Background loop that polls enabled competitions every hour."""
+    from app.models.competition import Competition
+
+    while True:
+        await asyncio.sleep(3600)
+        try:
+            async with async_session_factory() as session:
+                stmt = select(Competition).where(Competition.polling_enabled == True)  # noqa: E712
+                comps = (await session.execute(stmt)).scalars().all()
+                today = date_type.today()
+                for comp in comps:
+                    if _should_disable_polling(comp, today):
+                        comp.polling_enabled = False
+                        logger.info("Auto-disabled polling for competition %d (%s)", comp.id, comp.name)
+                        continue
+                    job_queue.create_job("import", comp.id)
+                    job_queue.create_job("enrich", comp.id)
+                    logger.info("Polling: submitted import+enrich for competition %d (%s)", comp.id, comp.name)
+                await session.commit()
+        except Exception:
+            logger.exception("Error in polling loop")
+
+
 @asynccontextmanager
 async def lifespan(_: Litestar) -> AsyncGenerator[None, None]:
     await init_db()
@@ -44,9 +84,15 @@ async def lifespan(_: Litestar) -> AsyncGenerator[None, None]:
 
     job_queue.set_handler(_handle_job)
     await job_queue.start_worker()
+    polling_task = asyncio.create_task(_polling_loop())
     try:
         yield
     finally:
+        polling_task.cancel()
+        try:
+            await polling_task
+        except asyncio.CancelledError:
+            pass
         await job_queue.stop_worker()
 
 
