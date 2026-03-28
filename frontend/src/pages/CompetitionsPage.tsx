@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, JobInfo, COMPETITION_TYPES } from "../api/client";
+import { api, Competition, JobInfo, COMPETITION_TYPES, LIGUES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useJobs } from "../contexts/JobContext";
 import ErrorDetailModal from "../components/ErrorDetailModal";
@@ -42,6 +42,8 @@ export default function CompetitionsPage() {
   const [showUnconfirmedOnly, setShowUnconfirmedOnly] = useState(false);
   const [confirmingReimportId, setConfirmingReimportId] = useState<number | null>(null);
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
+  const [filterLigue, setFilterLigue] = useState<string>("all");
+  const [showPolledOnly, setShowPolledOnly] = useState(false);
 
   const createMutation = useMutation({
     mutationFn: async (url: string) => {
@@ -85,7 +87,8 @@ export default function CompetitionsPage() {
     country: string;
     competition_type: string;
     season: string;
-  }>({ city: "", country: "", competition_type: "", season: "" });
+    ligue: string;
+  }>({ city: "", country: "", competition_type: "", season: "", ligue: "" });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Record<string, string> }) =>
@@ -98,6 +101,12 @@ export default function CompetitionsPage() {
 
   const confirmMutation = useMutation({
     mutationFn: (id: number) => api.competitions.confirmMetadata(id),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["competitions"] }),
+  });
+
+  const pollingMutation = useMutation({
+    mutationFn: ({ id, enabled }: { id: number; enabled: boolean }) =>
+      api.competitions.togglePolling(id, enabled),
     onSuccess: () => qc.invalidateQueries({ queryKey: ["competitions"] }),
   });
 
@@ -116,10 +125,25 @@ export default function CompetitionsPage() {
     new Set(competitions?.map((c) => c.season).filter(Boolean) as string[])
   ).sort().reverse();
 
+  function getCompetitionStatus(c: Competition): { label: string; className: string } | null {
+    if (!c.date) return null;
+    const today = new Date().toISOString().split("T")[0];
+    const endDate = c.date_end ?? c.date;
+    if (c.date > today) {
+      return { label: "Prochainement", className: "bg-surface-container text-on-surface-variant" };
+    }
+    if (c.date <= today && endDate >= today) {
+      return { label: "En cours", className: "bg-primary/10 text-primary" };
+    }
+    return null;
+  }
+
   const filteredCompetitions = (competitions ?? [])
     .filter((c) => filterSeason === "all" || c.season === filterSeason)
     .filter((c) => filterType === "all" || c.competition_type === filterType)
+    .filter((c) => filterLigue === "all" || c.ligue === filterLigue)
     .filter((c) => !showUnconfirmedOnly || !c.metadata_confirmed)
+    .filter((c) => !showPolledOnly || c.polling_enabled)
     .sort((a, b) => {
       switch (sortBy) {
         case "date-asc":
@@ -237,6 +261,19 @@ export default function CompetitionsPage() {
             </select>
           </div>
           <div className="flex items-center gap-2">
+            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Ligue</span>
+            <select
+              value={filterLigue}
+              onChange={(e) => setFilterLigue(e.target.value)}
+              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+            >
+              <option value="all">Toutes</option>
+              {Object.entries(LIGUES).map(([code, label]) => (
+                <option key={code} value={code}>{label}</option>
+              ))}
+            </select>
+          </div>
+          <div className="flex items-center gap-2">
             <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Trier par</span>
             <select
               value={sortBy}
@@ -258,6 +295,15 @@ export default function CompetitionsPage() {
               className="accent-error"
             />
             À vérifier uniquement
+          </label>
+          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+            <input
+              type="checkbox"
+              checked={showPolledOnly}
+              onChange={(e) => setShowPolledOnly(e.target.checked)}
+              className="accent-primary"
+            />
+            Suivi auto
           </label>
         </div>
       )}
@@ -329,12 +375,21 @@ export default function CompetitionsPage() {
                         À vérifier
                       </span>
                     )}
+                    {(() => {
+                      const status = getCompetitionStatus(c);
+                      return status ? (
+                        <span className={`${status.className} text-[10px] font-semibold px-2 py-0.5 rounded-full`}>
+                          {status.label}
+                        </span>
+                      ) : null;
+                    })()}
                   </div>
                   <p className="text-xs text-on-surface-variant mt-1">
                     {[
                       c.city && c.country ? `${c.city}, ${c.country}` : c.city || c.country,
                       c.date ? new Date(c.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }) : null,
                       c.season,
+                      c.ligue,
                     ].filter(Boolean).join(" · ")}
                   </p>
                 </div>
@@ -342,6 +397,18 @@ export default function CompetitionsPage() {
                 {/* Right: action buttons (admin only) */}
                 {isAdmin && (
                   <div className="flex flex-wrap gap-2 shrink-0">
+                    <button
+                      onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
+                      disabled={pollingMutation.isPending}
+                      className={`rounded-lg py-1.5 px-2 text-xs font-bold active:scale-95 transition-all flex items-center gap-1 ${
+                        c.polling_enabled
+                          ? "bg-primary/10 text-primary"
+                          : "bg-surface-container text-on-surface-variant"
+                      }`}
+                      title={c.polling_enabled ? "Suivi automatique actif" : "Activer le suivi automatique"}
+                    >
+                      <span className="material-symbols-outlined text-base leading-none">sync</span>
+                    </button>
                     {!c.metadata_confirmed && (
                       <button
                         onClick={() => confirmMutation.mutate(c.id)}
@@ -359,6 +426,7 @@ export default function CompetitionsPage() {
                           country: c.country ?? "",
                           competition_type: c.competition_type ?? "",
                           season: c.season ?? "",
+                          ligue: c.ligue ?? "",
                         });
                       }}
                       className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
@@ -500,6 +568,19 @@ export default function CompetitionsPage() {
                         className={inputClass}
                         placeholder="2025-2026"
                       />
+                    </div>
+                    <div className="flex-1 min-w-[150px]">
+                      <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Ligue</label>
+                      <select
+                        value={editForm.ligue}
+                        onChange={(e) => setEditForm((f) => ({ ...f, ligue: e.target.value }))}
+                        className={inputClass}
+                      >
+                        <option value="">—</option>
+                        {Object.entries(LIGUES).map(([code, label]) => (
+                          <option key={code} value={code}>{label}</option>
+                        ))}
+                      </select>
                     </div>
                   </div>
                   <div className="flex gap-2 mt-3 justify-end">
