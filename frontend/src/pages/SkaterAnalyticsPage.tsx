@@ -794,9 +794,15 @@ export default function SkaterAnalyticsPage() {
                   />
                   <Tooltip
                     formatter={(value: number) => [value?.toFixed(2), "Total"]}
-                    labelFormatter={(label, payload) =>
-                      payload?.[0]?.payload?.label ?? label
-                    }
+                    labelFormatter={(label, payload) => {
+                      const p = payload?.[0]?.payload;
+                      const name = p?.label ?? label;
+                      const dateStr = p?.date;
+                      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return name;
+                      const formatted = new Date(dateStr + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                      return `${name}\n${formatted}`;
+                    }}
+                    labelStyle={{ whiteSpace: "pre-line" }}
                     contentStyle={{
                       fontSize: 11,
                       fontFamily: "Inter, sans-serif",
@@ -834,9 +840,15 @@ export default function SkaterAnalyticsPage() {
                   />
                   <Tooltip
                     formatter={(value: number) => value?.toFixed(2)}
-                    labelFormatter={(label, payload) =>
-                      payload?.[0]?.payload?.label ?? label
-                    }
+                    labelFormatter={(label, payload) => {
+                      const p = payload?.[0]?.payload;
+                      const name = p?.label ?? label;
+                      const dateStr = p?.date;
+                      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return name;
+                      const formatted = new Date(dateStr + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                      return `${name}\n${formatted}`;
+                    }}
+                    labelStyle={{ whiteSpace: "pre-line" }}
                     contentStyle={{
                       fontSize: 11,
                       fontFamily: "Inter, sans-serif",
@@ -883,9 +895,15 @@ export default function SkaterAnalyticsPage() {
                   />
                   <Tooltip
                     formatter={(value: number) => value?.toFixed(2)}
-                    labelFormatter={(label, payload) =>
-                      payload?.[0]?.payload?.label ?? label
-                    }
+                    labelFormatter={(label, payload) => {
+                      const p = payload?.[0]?.payload;
+                      const name = p?.label ?? label;
+                      const dateStr = p?.date;
+                      if (!dateStr || !/^\d{4}-\d{2}-\d{2}$/.test(dateStr)) return name;
+                      const formatted = new Date(dateStr + "T00:00:00").toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" });
+                      return `${name}\n${formatted}`;
+                    }}
+                    labelStyle={{ whiteSpace: "pre-line" }}
                     contentStyle={{
                       fontSize: 11,
                       fontFamily: "Inter, sans-serif",
