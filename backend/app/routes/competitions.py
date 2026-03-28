@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import date as date_type
+from datetime import date as date_type, datetime, timezone
 
 from litestar import Router, get, post, delete, patch, Request
 from litestar.di import Provide
@@ -24,13 +24,17 @@ def competition_to_dict(c: Competition) -> dict:
         "name": c.name,
         "url": c.url,
         "date": c.date.isoformat() if c.date else None,
+        "date_end": c.date_end.isoformat() if c.date_end else None,
         "season": c.season,
         "discipline": c.discipline,
         "city": c.city,
         "country": c.country,
         "rink": c.rink,
+        "ligue": c.ligue,
         "competition_type": c.competition_type,
         "metadata_confirmed": c.metadata_confirmed,
+        "polling_enabled": c.polling_enabled,
+        "polling_activated_at": c.polling_activated_at.isoformat() if c.polling_activated_at else None,
     }
 
 
@@ -42,6 +46,7 @@ async def list_competitions(
     session: AsyncSession,
     club: str | None = None,
     season: str | None = None,
+    ligue: str | None = None,
     my_club: bool = False,
 ) -> list[dict]:
     reject_skater_role(request)
@@ -55,6 +60,8 @@ async def list_competitions(
     stmt = select(Competition).order_by(Competition.date.desc())
     if season:
         stmt = stmt.where(Competition.season == season)
+    if ligue:
+        stmt = stmt.where(Competition.ligue == ligue)
     if effective_club:
         stmt = (
             stmt
@@ -97,7 +104,7 @@ async def update_competition(competition_id: int, data: dict, request: Request, 
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
-    for field in ("city", "country", "competition_type", "season"):
+    for field in ("city", "country", "competition_type", "season", "ligue"):
         if field in data:
             setattr(comp, field, data[field])
     comp.metadata_confirmed = True
@@ -256,6 +263,21 @@ async def list_seasons(session: AsyncSession) -> list[str]:
     return [row[0] for row in result]
 
 
+@post("/{competition_id:int}/polling")
+async def toggle_polling(competition_id: int, data: dict, request: Request, session: AsyncSession) -> dict:
+    require_admin(request)
+    comp = await session.get(Competition, competition_id)
+    if not comp:
+        raise NotFoundException(f"Competition {competition_id} not found")
+    enabled = data.get("enabled", False)
+    comp.polling_enabled = enabled
+    if enabled:
+        comp.polling_activated_at = datetime.now(timezone.utc)
+    await session.commit()
+    await session.refresh(comp)
+    return competition_to_dict(comp)
+
+
 router = Router(
     path="/api/competitions",
     route_handlers=[
@@ -271,6 +293,7 @@ router = Router(
         confirm_metadata,
         backfill_metadata,
         bulk_import,
+        toggle_polling,
     ],
     dependencies={"session": Provide(get_session)},
 )
