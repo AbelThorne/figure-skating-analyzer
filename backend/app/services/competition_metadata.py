@@ -6,10 +6,18 @@ import re
 from bs4 import BeautifulSoup
 
 
-# Domain -> ligue mapping (when CSNPA is NOT present)
-_DOMAIN_TO_LIGUE: dict[str, str] = {
-    "ligue-des-alpes-patinage.org": "AURA",
+# Domain -> ligue mapping
+# For domains that host both regional and FFSG (CSNPA) events,
+# use a tuple (default_ligue, csnpa_path_pattern) — if the path matches,
+# the competition is FFSG; otherwise it's the regional ligue.
+_DOMAIN_TO_LIGUE: dict[str, str | tuple[str, str]] = {
+    "ligue-des-alpes-patinage.org": ("AURA", r"/CSNPA/"),  # /CSNPA/ path → FFSG, else AURA
     "ligue-occitanie-sg.com": "Occitanie",
+    "isujs.so.free.fr": "Occitanie",
+    "lna-sportsdeglace.fr": "Aquitaine",
+    "lchampionpaca.sos-ordi91.fr": "Région Sud",
+    "resultatscmpt.great-site.net": "Centre Val de Loire",
+    "csnpa.x10.mx": "FFSG",
 }
 
 
@@ -41,26 +49,35 @@ def detect_ligue(url: str, html: str) -> str:
     """Detect the ligue (regional league) from URL and HTML content.
 
     Priority:
-    1. CSNPA mention in URL or HTML -> FFSG (national)
-    2. ISU domains -> ISU
-    3. Domain mapping -> regional ligue
+    1. ISU domains -> ISU
+    2. Domain mapping (with optional CSNPA path disambiguation)
+    3. CSNPA mention in URL or HTML for unknown domains -> FFSG
     4. Fallback -> Autres
     """
     from urllib.parse import urlparse
 
-    # 1. CSNPA in URL or HTML -> FFSG
-    if re.search(r"csnpa", url, re.IGNORECASE) or re.search(r"csnpa", html[:3000], re.IGNORECASE):
-        return "FFSG"
+    parsed = urlparse(url)
+    domain = parsed.hostname or ""
+    path = parsed.path or ""
 
-    # 2. ISU domains
-    domain = urlparse(url).hostname or ""
+    # 1. ISU domains
     if any(domain.endswith(d) for d in _ISU_DOMAINS):
         return "ISU"
 
-    # 3. Domain mapping
-    for domain_pattern, ligue in _DOMAIN_TO_LIGUE.items():
+    # 2. Domain mapping (checked first so known domains are never misclassified)
+    for domain_pattern, ligue_value in _DOMAIN_TO_LIGUE.items():
         if domain.endswith(domain_pattern):
-            return ligue
+            if isinstance(ligue_value, tuple):
+                # Tuple: (default_ligue, csnpa_path_pattern)
+                default_ligue, csnpa_pattern = ligue_value
+                if re.search(csnpa_pattern, path, re.IGNORECASE):
+                    return "FFSG"
+                return default_ligue
+            return ligue_value
+
+    # 3. CSNPA in URL or HTML for unknown domains -> FFSG
+    if re.search(r"csnpa", url, re.IGNORECASE) or re.search(r"csnpa", html[:3000], re.IGNORECASE):
+        return "FFSG"
 
     # 4. Fallback
     return "Autres"

@@ -152,6 +152,7 @@ export const LIGUES: Record<string, string> = {
   "Centre Val de Loire": "Centre Val de Loire",
   "Hauts de France": "Hauts de France",
   Normandie: "Normandie",
+  "Région Sud": "Région Sud",
   Autres: "Autres",
 };
 
