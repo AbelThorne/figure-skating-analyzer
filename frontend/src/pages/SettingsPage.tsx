@@ -384,7 +384,7 @@ export default function SettingsPage() {
   const { data: smtpData } = useQuery({
     queryKey: ["smtp-settings"],
     queryFn: api.config.smtp.get,
-    enabled: config?.training_enabled === true,
+    enabled: !!config,
   });
   const [smtpHost, setSmtpHost] = useState("");
   const [smtpPort, setSmtpPort] = useState("587");
@@ -967,8 +967,7 @@ export default function SettingsPage() {
         )}
       </section>
 
-      {/* SMTP settings — only when training module is enabled */}
-      {config?.training_enabled && (
+      {/* SMTP settings */}
       <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
         <h2 className="font-headline font-bold text-on-surface text-lg mb-1">
           Notifications email (SMTP)
@@ -1077,7 +1076,6 @@ export default function SettingsPage() {
           </p>
         )}
       </section>
-      )}
 
       {/* Danger zone */}
       <section className="rounded-2xl p-6 shadow-arctic border-2 border-error/30 bg-error-container/10">

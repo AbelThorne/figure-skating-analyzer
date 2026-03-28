@@ -249,7 +249,7 @@ function AuthenticatedLayout() {
             <span className="material-symbols-outlined text-2xl">menu</span>
           </button>
           <h1 className="font-headline font-bold text-on-surface text-xl truncate flex-1">{pageTitle}</h1>
-          {config?.training_enabled && <NotificationBell />}
+          <NotificationBell />
         </header>
 
         {/* Page content */}

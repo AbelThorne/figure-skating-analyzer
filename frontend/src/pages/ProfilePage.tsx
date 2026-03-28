@@ -33,7 +33,7 @@ export default function ProfilePage() {
 
   if (!user) return null;
 
-  const preferencesCard = !config?.training_enabled ? null : (
+  const preferencesCard = (
     <div className="bg-surface-container-lowest rounded-xl shadow-sm p-6 max-w-md mt-6">
       <h2 className="font-headline font-bold text-on-surface text-sm mb-4">
         Préférences
