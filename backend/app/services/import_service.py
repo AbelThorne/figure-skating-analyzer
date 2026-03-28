@@ -113,6 +113,8 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
         comp.name = comp_info.name
     if comp_info.date and not comp.date:
         comp.date = date_type.fromisoformat(comp_info.date)
+    if comp_info.date_end and not comp.date_end:
+        comp.date_end = date_type.fromisoformat(comp_info.date_end)
 
     # Detect metadata from URL + HTML content
     from app.services.competition_metadata import detect_metadata
@@ -133,6 +135,8 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             comp.season = meta["season"]
         if comp_info.rink:
             comp.rink = comp_info.rink
+        if meta.get("ligue"):
+            comp.ligue = meta["ligue"]
 
     imported = 0
     skipped = 0

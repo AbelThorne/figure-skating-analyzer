@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+from datetime import date as date_type
+
 from litestar import Router, get, post, delete, patch, Request
 from litestar.di import Provide
 from litestar.exceptions import NotFoundException
@@ -181,6 +183,8 @@ async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
                 html = resp.text
                 scraper = get_scraper(comp.url)
                 comp_info = scraper.parse_competition_info(html)
+                if comp_info.date_end and not comp.date_end:
+                    comp.date_end = date_type.fromisoformat(comp_info.date_end)
                 meta = detect_metadata(
                     comp.url, html,
                     scraped_city=comp_info.city,
@@ -196,6 +200,8 @@ async def backfill_metadata(request: Request, session: AsyncSession) -> dict:
                     comp.season = meta["season"]
                 if comp_info.rink and not comp.rink:
                     comp.rink = comp_info.rink
+                if meta.get("ligue") and not comp.ligue:
+                    comp.ligue = meta["ligue"]
                 updated += 1
             except Exception:
                 continue
