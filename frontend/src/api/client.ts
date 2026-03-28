@@ -109,13 +109,17 @@ export interface Competition {
   name: string;
   url: string;
   date: string | null;
+  date_end: string | null;
   season: string | null;
   discipline: string | null;
   city: string | null;
   country: string | null;
   rink: string | null;
+  ligue: string | null;
   competition_type: string | null;
   metadata_confirmed: boolean;
+  polling_enabled: boolean;
+  polling_activated_at: string | null;
 }
 
 export const COMPETITION_TYPES: Record<string, string> = {
@@ -132,6 +136,23 @@ export const COMPETITION_TYPES: Record<string, string> = {
   championnats_monde_junior: "Championnats du Monde Junior",
   jeux_olympiques: "Jeux Olympiques",
   autre: "Autre",
+};
+
+export const LIGUES: Record<string, string> = {
+  ISU: "ISU",
+  FFSG: "FFSG",
+  Occitanie: "Occitanie",
+  Aquitaine: "Aquitaine",
+  "Ile-de-France": "Ile-de-France",
+  AURA: "AURA",
+  "Grand Est": "Grand Est",
+  "Pays de Loire": "Pays de Loire",
+  Bretagne: "Bretagne",
+  "Bourgogne Franche-Comte": "Bourgogne Franche-Comte",
+  "Centre Val de Loire": "Centre Val de Loire",
+  "Hauts de France": "Hauts de France",
+  Normandie: "Normandie",
+  Autres: "Autres",
 };
 
 export interface CreateCompetitionPayload {
@@ -750,7 +771,7 @@ export const api = {
         method: "POST",
         body: JSON.stringify(data),
       }),
-    update: (id: number, data: Partial<Pick<Competition, "city" | "country" | "competition_type" | "season">>) =>
+    update: (id: number, data: Partial<Pick<Competition, "city" | "country" | "competition_type" | "season" | "ligue">>) =>
       request<Competition>(`/competitions/${id}`, {
         method: "PATCH",
         body: JSON.stringify(data),
@@ -759,6 +780,11 @@ export const api = {
       request<Competition>(`/competitions/${id}/confirm-metadata`, { method: "POST" }),
     backfillMetadata: () =>
       request<{ status: string; competitions_updated: number }>("/competitions/backfill-metadata", { method: "POST" }),
+    togglePolling: (id: number, enabled: boolean) =>
+      request<Competition>(`/competitions/${id}/polling`, {
+        method: "POST",
+        body: JSON.stringify({ enabled }),
+      }),
   },
 
   jobs: {
