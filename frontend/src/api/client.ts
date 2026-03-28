@@ -124,7 +124,7 @@ export interface Competition {
 
 export const COMPETITION_TYPES: Record<string, string> = {
   cr: "Compétition Régionale",
-  tf: "Trophée Fédéral",
+  tf: "Tournoi Fédéral",
   tdf: "Tournoi de France",
   masters: "Masters",
   nationales_autres: "Nationales Autres",
