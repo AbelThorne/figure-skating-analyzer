@@ -36,6 +36,41 @@
     - https://ligue-occitanie-sg.com/Resultats/2025-2026/CSNPA-2026-CR-Castres/index.htm
     - https://ligue-occitanie-sg.com/Resultats/2025-2026/CSNPA-2026-CR-Montpellier/index.htm
 
+- name: "Ligue Nouvelle-Aquitaine 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/TropheeAngelique2026/
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/CoupeduDragon2026/
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/LimogesAdultes2026/
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/TFAnglet2026/
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/CoupeCeladon2026/
+    - https://lna-sportsdeglace.fr/Resultats/Artistique/2026/CoupeBriviste2026/
+
+- name: "Ligue AURA 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://ligue-des-alpes-patinage.org/Saison20252026/AURA_CR1_Roanne_2025/index.htm
+    - https://ligue-des-alpes-patinage.org/Saison20252026/FFSG_CSNPA_CR2_ALB_2026/index.htm
+    - https://ligue-des-alpes-patinage.org/Saison20252026/AURA_TF3_Grenoble_2026/index.htm
+    - https://ligue-des-alpes-patinage.org/Saison20252026/AURA_CR3_VALENCE_2026/index.htm
+    - https://ligue-des-alpes-patinage.org/Saison20252026/AURA_CR4_CHAMONIX_2026/index.htm
+
+- name: "Ligue PACA 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://lchampionpaca.sos-ordi91.fr/2025_2026/tf_brian%c3%a7on_2025/
+    - https://lchampionpaca.sos-ordi91.fr/2025_2026/CR_Gap_2025/
+    - hhttps://lchampionpaca.sos-ordi91.fr/2025_2026/TF_Gap_2025/
+    - https://lchampionpaca.sos-ordi91.fr/2025_2026/CR_Toulon/
+    - https://lchampionpaca.sos-ordi91.fr/2025_2026/cr_marseille_2026/
+    - https://lchampionpaca.sos-ordi91.fr/2025_2026/CR_BRIANCON_2026/
+
+- name: "Ligue Centre Val de Loire 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://resultatscmpt.great-site.net/Saison%202025-2026/TF-Tours-2025/index.htm
+    - https://resultatscmpt.great-site.net/Saison%202025-2026/Chateaux_2026/index.htm
+
 - name: "CSNPA 2024-2025"
   season: "2024-2025"
   urls:
