@@ -1,6 +1,6 @@
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { api, Score, CategoryResult } from "../api/client";
+import { api, Score, CategoryResult, Competition } from "../api/client";
 import ScoreChart from "../components/ScoreChart";
 
 // --- Grouping helpers ---
@@ -229,6 +229,21 @@ export default function CompetitionPage() {
 
   const groups = buildCategoryGroups(scores ?? [], catResults ?? []);
 
+  function getCompetitionStatus(c: Competition): { label: string; className: string } | null {
+    if (!c.date) return null;
+    const today = new Date().toISOString().split("T")[0];
+    const endDate = c.date_end ?? c.date;
+    if (c.date > today) {
+      return { label: "Prochainement", className: "bg-surface-container text-on-surface-variant" };
+    }
+    if (c.date <= today && endDate >= today) {
+      return { label: "En cours", className: "bg-primary/10 text-primary" };
+    }
+    return null;
+  }
+
+  const competitionStatus = getCompetitionStatus(competition);
+
   return (
     <div>
       <Link
@@ -251,9 +266,23 @@ export default function CompetitionPage() {
             <span className="material-symbols-outlined text-xl">open_in_new</span>
           </a>
         )}
+        {competitionStatus && (
+          <span className={`${competitionStatus.className} text-xs font-semibold px-2.5 py-0.5 rounded-full`}>
+            {competitionStatus.label}
+          </span>
+        )}
       </h1>
       <div className="text-sm text-gray-500 mb-4">
-        {[competition.discipline, competition.season, competition.date]
+        {[
+          competition.discipline,
+          competition.season,
+          competition.date && competition.date_end && competition.date !== competition.date_end
+            ? `${new Date(competition.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })} - ${new Date(competition.date_end).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })}`
+            : competition.date
+              ? new Date(competition.date).toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" })
+              : null,
+          competition.ligue,
+        ]
           .filter(Boolean)
           .join(" · ")}
       </div>
