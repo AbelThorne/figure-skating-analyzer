@@ -1,0 +1,15 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="margin:0 0 16px; font-family:Manrope,sans-serif; font-size:18px; color:#191c1e;">
+  Mise à jour de compétition
+</h2>
+<p style="margin:0 0 8px; color:#49454f;">
+  De nouveaux résultats ont été importés pour <strong>{{ competition_name }}</strong>.
+</p>
+<p style="margin:0 0 16px; font-size:13px; color:#49454f;">
+  {{ detail }}
+</p>
+{% if app_url %}
+<p style="margin:16px 0 0;"><a href="{{ app_url }}" class="btn">Voir la compétition</a></p>
+{% endif %}
+{% endblock %}

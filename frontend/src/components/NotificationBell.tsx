@@ -97,7 +97,7 @@ export default function NotificationBell() {
                   }`}
                 >
                   <span className="material-symbols-outlined text-lg mt-0.5 shrink-0 text-primary">
-                    {n.type === "review" ? "rate_review" : "warning"}
+                    {n.type === "review" ? "rate_review" : n.type === "competition" ? "emoji_events" : "warning"}
                   </span>
                   <div className="min-w-0 flex-1">
                     <p className={`text-sm truncate ${!n.is_read ? "font-bold text-on-surface" : "text-on-surface-variant"}`}>

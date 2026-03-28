@@ -233,6 +233,12 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
         "errors": errors,
     }
     comp.last_import_log = import_log
+
+    # Notify admins when a polled competition gets new results
+    if comp.polling_enabled and (imported > 0 or cat_imported > 0):
+        from app.services.notification_service import notify_competition_update
+        await notify_competition_update(session, comp, import_log)
+
     await session.commit()
 
     # Clean up orphaned skaters (no scores and no category results)
