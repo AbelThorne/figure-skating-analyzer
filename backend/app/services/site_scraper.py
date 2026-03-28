@@ -619,6 +619,7 @@ def _parse_int(text: str | None) -> int | None:
 
 
 async def _fetch(url: str, client: httpx.AsyncClient) -> str | None:
+    url = url.strip()
     try:
         resp = await client.get(url, follow_redirects=True)
         if resp.status_code != 200:

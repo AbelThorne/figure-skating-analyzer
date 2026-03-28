@@ -85,9 +85,10 @@ async def get_competition(competition_id: int, request: Request, session: AsyncS
 
 @post("/")
 async def create_competition(data: dict, session: AsyncSession) -> dict:
+    url = data["url"].strip()
     comp = Competition(
-        name=data["name"],
-        url=data["url"],
+        name=data.get("name", url).strip(),
+        url=url,
         date=data.get("date"),
         season=data.get("season"),
         discipline=data.get("discipline"),
@@ -228,7 +229,8 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
     discipline: str = data.get("discipline", "")
 
     job_ids = []
-    for url in urls:
+    for raw_url in urls:
+        url = raw_url.strip()
         existing = await session.execute(
             select(Competition).where(Competition.url == url)
         )
