@@ -123,6 +123,10 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
         scraped_city=comp_info.city,
         scraped_country=comp_info.country,
     )
+    # Always fill in ligue and date_end if missing (even if metadata confirmed)
+    if meta.get("ligue") and not comp.ligue:
+        comp.ligue = meta["ligue"]
+
     if not comp.metadata_confirmed:
         # Overwrite all detectable fields when metadata is not yet confirmed
         if meta["competition_type"]:
@@ -135,8 +139,6 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             comp.season = meta["season"]
         if comp_info.rink:
             comp.rink = comp_info.rink
-        if meta.get("ligue"):
-            comp.ligue = meta["ligue"]
 
     # Auto-enable polling for future or in-progress competitions
     today = date_type.today()
