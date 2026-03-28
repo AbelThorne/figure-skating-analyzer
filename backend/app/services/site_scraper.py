@@ -618,6 +618,30 @@ def _parse_int(text: str | None) -> int | None:
     return int(m.group(1)) if m else None
 
 
+def _solve_aes_challenge(html: str) -> str | None:
+    """Solve the AES cookie challenge used by some free hosting providers.
+
+    Returns the ``__test`` cookie value, or *None* if the page is not a
+    challenge page.
+    """
+    a_m = re.search(r'var a=toNumbers\("([0-9a-f]+)"\)', html)
+    b_m = re.search(r'b=toNumbers\("([0-9a-f]+)"\)', html)
+    c_m = re.search(r'c=toNumbers\("([0-9a-f]+)"\)', html)
+    if not (a_m and b_m and c_m):
+        return None
+    try:
+        from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+
+        key = bytes.fromhex(a_m.group(1))
+        iv = bytes.fromhex(b_m.group(1))
+        ct = bytes.fromhex(c_m.group(1))
+        dec = Cipher(algorithms.AES(key), modes.CBC(iv)).decryptor()
+        return (dec.update(ct) + dec.finalize()).hex()
+    except Exception:
+        logger.debug("Failed to solve AES challenge for page")
+        return None
+
+
 async def _fetch(url: str, client: httpx.AsyncClient) -> str | None:
     url = url.strip()
     try:
@@ -629,7 +653,21 @@ async def _fetch(url: str, client: httpx.AsyncClient) -> str | None:
         charset_match = re.search(r"charset=([^\s;]+)", content_type, re.IGNORECASE)
         declared = charset_match.group(1) if charset_match else None
         encoding = declared or "windows-1252"
-        return resp.content.decode(encoding, errors="replace")
+        html = resp.content.decode(encoding, errors="replace")
+
+        # Handle AES cookie challenge (used by some free hosting providers)
+        cookie_val = _solve_aes_challenge(html)
+        if cookie_val is not None:
+            redir_m = re.search(r'location\.href="([^"]+)"', html)
+            redir_url = redir_m.group(1) if redir_m else url + "?i=1"
+            client.cookies.set("__test", cookie_val)
+            resp2 = await client.get(redir_url, follow_redirects=True)
+            if resp2.status_code != 200:
+                logger.warning("HTTP %d after AES challenge for %s", resp2.status_code, url)
+                return None
+            html = resp2.content.decode(encoding, errors="replace")
+
+        return html
     except (httpx.HTTPError, OSError) as exc:
         logger.warning("Failed to fetch %s: %s", url, exc)
         return None

@@ -37,6 +37,10 @@ cd backend && uv run pytest tests/test_parser.py::test_name -v
 # Install deps
 cd backend && uv pip install -r requirements.txt
 cd frontend && npm install
+
+# IMPORTANT: After changing requirements.txt, regenerate the lock file:
+cd backend && uv lock
+# The Dockerfile uses uv.lock, NOT requirements.txt directly.
 ```
 
 ## Architecture
