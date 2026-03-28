@@ -105,7 +105,7 @@ async def update_competition(competition_id: int, data: dict, request: Request, 
     comp = await session.get(Competition, competition_id)
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
-    for field in ("city", "country", "competition_type", "season", "ligue"):
+    for field in ("name", "city", "country", "competition_type", "season", "ligue"):
         if field in data:
             setattr(comp, field, data[field])
     comp.metadata_confirmed = True

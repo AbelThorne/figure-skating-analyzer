@@ -83,12 +83,13 @@ export default function CompetitionsPage() {
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<{
+    name: string;
     city: string;
     country: string;
     competition_type: string;
     season: string;
     ligue: string;
-  }>({ city: "", country: "", competition_type: "", season: "", ligue: "" });
+  }>({ name: "", city: "", country: "", competition_type: "", season: "", ligue: "" });
 
   const updateMutation = useMutation({
     mutationFn: ({ id, data }: { id: number; data: Record<string, string> }) =>
@@ -422,6 +423,7 @@ export default function CompetitionsPage() {
                       onClick={() => {
                         setEditingId(editingId === c.id ? null : c.id);
                         setEditForm({
+                          name: c.name ?? "",
                           city: c.city ?? "",
                           country: c.country ?? "",
                           competition_type: c.competition_type ?? "",
@@ -528,6 +530,15 @@ export default function CompetitionsPage() {
               {/* Inline metadata editor */}
               {editingId === c.id && (
                 <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 mt-1 border-l-[3px] border-primary">
+                  <div className="mb-3">
+                    <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Nom</label>
+                    <input
+                      value={editForm.name}
+                      onChange={(e) => setEditForm((f) => ({ ...f, name: e.target.value }))}
+                      className={inputClass}
+                      placeholder="Nom de la compétition"
+                    />
+                  </div>
                   <div className="flex gap-3 flex-wrap">
                     <div className="flex-1 min-w-[150px]">
                       <label className="text-[10px] uppercase tracking-wider text-on-surface-variant block mb-1">Type</label>
