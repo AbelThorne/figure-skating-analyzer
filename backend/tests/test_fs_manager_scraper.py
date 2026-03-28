@@ -26,6 +26,7 @@ def test_parse_competition_info_extracts_city_country_rink():
     info = scraper.parse_competition_info(html)
     assert info.name == "CSNPA Coupe d'Automne 2025"
     assert info.date == "2025-10-04"
+    assert info.date_end == "2025-10-05"
     assert info.city == "Toulouse"
     assert info.country == "FRA"
     assert info.rink == "Alex JANY"
@@ -164,3 +165,44 @@ def test_parse_seg_page():
     assert r2.rank == 2
     assert r2.total_score == 27.55
     assert r2.starting_number == 4
+
+
+def test_parse_competition_info_extracts_date_end():
+    html = """<html>
+    <head><title>Test Event 2025</title></head>
+    <body>
+    <table class="MainTab">
+    <tr><td><img src="evt_header.jpg"></td></tr>
+    <tr><td>
+        <table width="100%" cellspacing="1" align="center">
+            <tr>
+                <td class="caption3" width="50%">TOULOUSE / FRA</td>
+                <td class="caption3" width="50%">Alex JANY</td>
+            </tr>
+        </table>
+    </td></tr>
+    <tr class="caption3"><td>20.03.2026 - 22.03.2026</td></tr>
+    </table>
+    </body></html>"""
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.date == "2026-03-20"
+    assert info.date_end == "2026-03-22"
+
+
+def test_parse_competition_info_single_date_sets_date_end():
+    html = """<html>
+    <head><title>Test Event</title></head>
+    <body>15.11.2025</body></html>"""
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.date == "2025-11-15"
+    assert info.date_end == "2025-11-15"
+
+
+def test_parse_competition_info_no_date_no_date_end():
+    html = "<html><head><title>Test</title></head><body>No dates here</body></html>"
+    scraper = FSManagerScraper()
+    info = scraper.parse_competition_info(html)
+    assert info.date is None
+    assert info.date_end is None

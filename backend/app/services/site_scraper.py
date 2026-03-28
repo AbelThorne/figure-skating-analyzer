@@ -42,6 +42,7 @@ class ScrapedCompetitionInfo:
     """Competition metadata extracted from the index page."""
     name: str | None = None
     date: str | None = None  # ISO format YYYY-MM-DD (first day of competition)
+    date_end: str | None = None  # ISO format YYYY-MM-DD (last day of competition)
     city: str | None = None
     country: str | None = None
     rink: str | None = None
@@ -105,12 +106,17 @@ class FSManagerScraper:
         if title_tag:
             info.name = _clean_text(title_tag.get_text())
 
-        # Date from first DD.MM.YYYY pattern found (typically in a date range row)
+        # Dates from DD.MM.YYYY patterns (typically a date range like "20.03.2026 - 22.03.2026")
         text = soup.get_text()
-        date_match = re.search(r"(\d{2})\.(\d{2})\.(\d{4})", text)
-        if date_match:
-            day, month, year = date_match.groups()
+        date_matches = re.findall(r"(\d{2})\.(\d{2})\.(\d{4})", text)
+        if date_matches:
+            day, month, year = date_matches[0]
             info.date = f"{year}-{month}-{day}"
+            if len(date_matches) >= 2:
+                day2, month2, year2 = date_matches[-1]
+                info.date_end = f"{year2}-{month2}-{day2}"
+            else:
+                info.date_end = info.date
 
         # City, country, and rink from the caption3 banner row:
         #   <td class="caption3">CITY / COUNTRY_CODE</td>
