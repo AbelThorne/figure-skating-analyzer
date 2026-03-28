@@ -1,7 +1,7 @@
 # backend/app/services/import_service.py
 from __future__ import annotations
 
-from datetime import date as date_type
+from datetime import date as date_type, datetime, timezone
 
 from sqlalchemy import select, delete as sa_delete
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -137,6 +137,13 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             comp.rink = comp_info.rink
         if meta.get("ligue"):
             comp.ligue = meta["ligue"]
+
+    # Auto-enable polling for future or in-progress competitions
+    today = date_type.today()
+    end = comp.date_end or comp.date
+    if end and end >= today and not comp.polling_enabled:
+        comp.polling_enabled = True
+        comp.polling_activated_at = datetime.now(timezone.utc)
 
     imported = 0
     skipped = 0
