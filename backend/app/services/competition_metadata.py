@@ -6,6 +6,13 @@ import re
 from bs4 import BeautifulSoup
 
 
+# Domain -> ligue mapping (when CSNPA is NOT present)
+_DOMAIN_TO_LIGUE: dict[str, str] = {
+    "ligue-des-alpes-patinage.org": "AURA",
+    "ligue-occitanie-sg.com": "Occitanie",
+}
+
+
 # Ordered list of (type_code, url_patterns, title_keywords).
 # First match wins — order matters (specific before general).
 _TYPE_RULES: list[tuple[str, list[str], list[str]]] = [
@@ -30,11 +37,40 @@ _TYPE_RULES: list[tuple[str, list[str], list[str]]] = [
 _ISU_DOMAINS = ("results.isu.org", "isuresults.com", "www.isuresults.com")
 
 
-def detect_metadata(url: str, html: str, *, scraped_city: str | None = None, scraped_country: str | None = None) -> dict:
-    """Detect competition type, city, country, and season from URL + HTML.
+def detect_ligue(url: str, html: str) -> str:
+    """Detect the ligue (regional league) from URL and HTML content.
 
-    Returns dict with keys: competition_type, city, country, season.
-    Values are None when not detectable.
+    Priority:
+    1. CSNPA mention in URL or HTML -> FFSG (national)
+    2. ISU domains -> ISU
+    3. Domain mapping -> regional ligue
+    4. Fallback -> Autres
+    """
+    from urllib.parse import urlparse
+
+    # 1. CSNPA in URL or HTML -> FFSG
+    if re.search(r"csnpa", url, re.IGNORECASE) or re.search(r"csnpa", html[:3000], re.IGNORECASE):
+        return "FFSG"
+
+    # 2. ISU domains
+    domain = urlparse(url).hostname or ""
+    if any(domain.endswith(d) for d in _ISU_DOMAINS):
+        return "ISU"
+
+    # 3. Domain mapping
+    for domain_pattern, ligue in _DOMAIN_TO_LIGUE.items():
+        if domain.endswith(domain_pattern):
+            return ligue
+
+    # 4. Fallback
+    return "Autres"
+
+
+def detect_metadata(url: str, html: str, *, scraped_city: str | None = None, scraped_country: str | None = None) -> dict:
+    """Detect competition type, city, country, season, and ligue from URL + HTML.
+
+    Returns dict with keys: competition_type, city, country, season, ligue.
+    Values are None when not detectable (except ligue which defaults to 'Autres').
 
     ``scraped_city`` and ``scraped_country`` are values already extracted from
     the FS Manager HTML banner (caption3 row).  When provided they take
@@ -44,11 +80,13 @@ def detect_metadata(url: str, html: str, *, scraped_city: str | None = None, scr
     season = _detect_season(url, html)
     city = scraped_city or _detect_city(url, html)
     country = _map_country_code(scraped_country) if scraped_country else _detect_country(url)
+    ligue = detect_ligue(url, html)
     return {
         "competition_type": comp_type,
         "city": city,
         "country": country,
         "season": season,
+        "ligue": ligue,
     }
 
 
