@@ -413,7 +413,7 @@ export default function CompetitionsPage() {
                 {isAdmin && (
                   <>
                     {/* Desktop: inline buttons */}
-                    <div className="hidden sm:flex flex-wrap gap-2 shrink-0">
+                    <div className="hidden lg:flex flex-wrap gap-2 shrink-0">
                       <button
                         onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
                         disabled={pollingMutation.isPending}
@@ -542,7 +542,7 @@ export default function CompetitionsPage() {
                     </div>
 
                     {/* Mobile: polling toggle + overflow menu */}
-                    <div className="flex items-center gap-1 sm:hidden shrink-0">
+                    <div className="flex items-center gap-1 lg:hidden shrink-0">
                       <button
                         onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
                         disabled={pollingMutation.isPending}
@@ -563,7 +563,7 @@ export default function CompetitionsPage() {
                           <span className="material-symbols-outlined text-xl leading-none">more_vert</span>
                         </button>
                         {openMenuId === c.id && (
-                          <div className="absolute right-0 top-full mt-1 bg-surface-container-lowest rounded-xl shadow-lg z-30 min-w-[200px] py-1">
+                          <div className="absolute right-0 top-full mt-1 bg-surface-container-lowest rounded-xl shadow-lg z-30 w-[220px] py-1" style={{ maxWidth: 'calc(100vw - 2rem)' }}>
                           {!c.metadata_confirmed && (
                             <button
                               onClick={() => { confirmMutation.mutate(c.id); setOpenMenuId(null); }}
