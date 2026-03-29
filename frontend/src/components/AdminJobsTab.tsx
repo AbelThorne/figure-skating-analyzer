@@ -304,6 +304,7 @@ export default function AdminJobsTab() {
     queryKey: ["admin-jobs"],
     queryFn: () => api.jobs.list(),
     refetchInterval: 5000,
+    refetchOnMount: "always",
   });
 
   const cancelMutation = useMutation({
@@ -340,7 +341,7 @@ export default function AdminJobsTab() {
           <p className="text-on-surface-variant text-sm">Aucune tâche récente</p>
         </div>
       ) : (
-        <div className="bg-surface-container-lowest rounded-2xl shadow-arctic overflow-hidden">
+        <div className="bg-surface-container-lowest rounded-2xl shadow-arctic">
           <table className="w-full text-sm">
             <thead>
               <tr className="text-left text-xs font-semibold text-on-surface-variant uppercase tracking-wider">
