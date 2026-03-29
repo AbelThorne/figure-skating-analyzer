@@ -4,6 +4,7 @@ import yaml from "js-yaml";
 import { api, type UserRecord, type ImportResult, type Skater } from "../api/client";
 import { countryFlag } from "../utils/countryFlags";
 import { useJobs, type Lot } from "../contexts/JobContext";
+import AdminJobsTab from "../components/AdminJobsTab";
 
 const inputCls =
   "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
@@ -283,7 +284,7 @@ export default function SettingsPage() {
   };
 
   // --- Tabs ---
-  const [activeTab, setActiveTab] = useState<"general" | "users" | "training">("general");
+  const [activeTab, setActiveTab] = useState<"general" | "users" | "training" | "jobs">("general");
 
   useEffect(() => {
     if (activeTab === "training" && !config?.training_enabled) {
@@ -481,6 +482,16 @@ export default function SettingsPage() {
             Entraînement
           </button>
         )}
+        <button
+          onClick={() => setActiveTab("jobs")}
+          className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+            activeTab === "jobs"
+              ? "text-primary border-primary"
+              : "text-on-surface-variant border-transparent hover:text-on-surface"
+          }`}
+        >
+          Tâches
+        </button>
       </div>
 
       {activeTab === "general" && (
@@ -1427,6 +1438,8 @@ export default function SettingsPage() {
         </section>
       </div>
       )}
+
+      {activeTab === "jobs" && <AdminJobsTab />}
 
       {activeTab === "training" && (
       <div className="space-y-8">
