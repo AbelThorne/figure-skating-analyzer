@@ -47,7 +47,7 @@ function getPageTitle(pathname: string): string {
   return "";
 }
 
-function SkaterNav({ closeSidebar }: { closeSidebar: () => void }) {
+function SkaterNav({ closeSidebar, collapsed }: { closeSidebar: () => void; collapsed: boolean }) {
   const { data: skaters } = useQuery({
     queryKey: ["me", "skaters"],
     queryFn: api.me.skaters,
@@ -63,14 +63,15 @@ function SkaterNav({ closeSidebar }: { closeSidebar: () => void }) {
       <NavLink
         to={to}
         onClick={closeSidebar}
+        title={collapsed ? label : undefined}
         className={({ isActive }) =>
           isActive
-            ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
-            : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+            ? `bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 py-3 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
+            : `text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 py-3 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`
         }
       >
         <span className="material-symbols-outlined text-xl">ice_skating</span>
-        <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+        {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>}
       </NavLink>
     </nav>
   );
@@ -96,6 +97,9 @@ function AuthenticatedLayout() {
   const pageTitle = getPageTitle(location.pathname);
   const { user, logout } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(
+    () => localStorage.getItem("sidebar_collapsed") === "true"
+  );
   const [passwordModalDismissed, setPasswordModalDismissed] = useState(
     () => sessionStorage.getItem("password_change_dismissed") === "true"
   );
@@ -119,6 +123,15 @@ function AuthenticatedLayout() {
     setSidebarOpen(false);
   }
 
+  function toggleCollapsed() {
+    setSidebarCollapsed((prev) => {
+      localStorage.setItem("sidebar_collapsed", String(!prev));
+      return !prev;
+    });
+  }
+
+  const collapsed = sidebarCollapsed;
+
   return (
     <JobProvider>
     <div className="flex min-h-screen">
@@ -131,27 +144,29 @@ function AuthenticatedLayout() {
       )}
 
       {/* Sidebar */}
-      <aside className={`w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col z-40 transition-transform duration-300 ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
+      <aside className={`${collapsed ? "lg:w-16" : "lg:w-64"} w-64 fixed left-0 top-0 h-screen bg-surface-container-low flex flex-col z-40 transition-all duration-300 overflow-hidden ${sidebarOpen ? "translate-x-0" : "-translate-x-full"} lg:translate-x-0`}>
         {/* Club header */}
-        <div className="px-6 py-5 flex items-center gap-3">
+        <div className={`py-5 flex items-center gap-3 ${collapsed ? "px-3 justify-center" : "px-6"}`}>
           {logoSrc ? (
-            <img src={logoSrc} alt="" className="w-10 h-10 object-contain" />
+            <img src={logoSrc} alt="" className="w-10 h-10 object-contain shrink-0" />
           ) : (
-            <span className="material-symbols-outlined text-primary text-2xl">sports_score</span>
+            <span className="material-symbols-outlined text-primary text-2xl shrink-0">sports_score</span>
           )}
-          <div className="min-w-0">
-            <span className="font-headline font-bold text-on-surface text-xs leading-tight block">
-              {config?.club_name ?? "SkateLab"}
-            </span>
-            <p className="text-[10px] uppercase tracking-widest text-on-surface-variant mt-0.5">
-              Patinage artistique
-            </p>
-          </div>
+          {!collapsed && (
+            <div className="min-w-0">
+              <span className="font-headline font-bold text-on-surface text-xs leading-tight block">
+                {config?.club_name ?? "SkateLab"}
+              </span>
+              <p className="text-[10px] uppercase tracking-widest text-on-surface-variant mt-0.5">
+                Patinage artistique
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Nav links */}
         {user?.role === "skater" ? (
-          <SkaterNav closeSidebar={closeSidebar} />
+          <SkaterNav closeSidebar={closeSidebar} collapsed={collapsed} />
         ) : user?.role === "coach" ? (
           <nav className="flex-1 py-2">
             {[
@@ -166,14 +181,15 @@ function AuthenticatedLayout() {
                 to={to}
                 end={end}
                 onClick={closeSidebar}
+                title={collapsed ? label : undefined}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
-                    : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+                    ? `bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 py-3 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
+                    : `text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 py-3 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`
                 }
               >
                 <span className="material-symbols-outlined text-xl">{icon}</span>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+                {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>}
               </NavLink>
             ))}
           </nav>
@@ -185,14 +201,15 @@ function AuthenticatedLayout() {
                 to={to}
                 end={end}
                 onClick={closeSidebar}
+                title={collapsed ? label : undefined}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 px-4 py-3 font-bold flex items-center gap-3"
-                    : "text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 px-4 py-3 flex items-center gap-3 transition-colors"
+                    ? `bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 py-3 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
+                    : `text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 py-3 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`
                 }
               >
                 <span className="material-symbols-outlined text-xl">{icon}</span>
-                <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>
+                {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>}
               </NavLink>
             ))}
           </nav>
@@ -204,41 +221,72 @@ function AuthenticatedLayout() {
             <NavLink
               to="/settings"
               onClick={closeSidebar}
+              title={collapsed ? "ADMINISTRATION" : undefined}
               className={({ isActive }) =>
                 isActive
-                  ? "bg-white text-primary shadow-sm rounded-xl px-4 py-2.5 font-bold flex items-center gap-3"
-                  : "text-on-surface-variant hover:bg-surface-container rounded-xl px-4 py-2.5 flex items-center gap-3 transition-colors"
+                  ? `bg-white text-primary shadow-sm rounded-xl py-2.5 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
+                  : `text-on-surface-variant hover:bg-surface-container rounded-xl py-2.5 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`
               }
             >
               <span className="material-symbols-outlined text-xl">settings</span>
-              <span className="text-[11px] font-bold uppercase tracking-wider">ADMINISTRATION</span>
+              {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider">ADMINISTRATION</span>}
             </NavLink>
           )}
-          <div className="flex items-center gap-2 px-4 py-2">
-            <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
-            <Link
-              to="/profil"
-              onClick={closeSidebar}
-              className="text-xs text-on-surface-variant hover:text-on-surface truncate flex-1 transition-colors"
-            >
-              {user?.display_name || user?.email}
-            </Link>
-            {user?.must_change_password && (
-              <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" title="Changement de mot de passe requis" />
-            )}
-            <button
-              onClick={logout}
-              className="text-on-surface-variant hover:text-error transition-colors shrink-0"
-              title="Déconnexion"
-            >
-              <span className="material-symbols-outlined text-lg">logout</span>
-            </button>
-          </div>
+          {collapsed ? (
+            <div className="flex flex-col items-center gap-1 py-2">
+              <Link
+                to="/profil"
+                onClick={closeSidebar}
+                className="text-on-surface-variant hover:text-on-surface transition-colors"
+                title={user?.display_name || user?.email}
+              >
+                <span className="material-symbols-outlined text-xl">account_circle</span>
+              </Link>
+              <button
+                onClick={logout}
+                className="text-on-surface-variant hover:text-error transition-colors"
+                title="Déconnexion"
+              >
+                <span className="material-symbols-outlined text-lg">logout</span>
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-center gap-2 px-4 py-2">
+              <span className="material-symbols-outlined text-on-surface-variant text-xl">account_circle</span>
+              <Link
+                to="/profil"
+                onClick={closeSidebar}
+                className="text-xs text-on-surface-variant hover:text-on-surface truncate flex-1 transition-colors"
+              >
+                {user?.display_name || user?.email}
+              </Link>
+              {user?.must_change_password && (
+                <span className="w-2 h-2 rounded-full bg-orange-500 shrink-0" title="Changement de mot de passe requis" />
+              )}
+              <button
+                onClick={logout}
+                className="text-on-surface-variant hover:text-error transition-colors shrink-0"
+                title="Déconnexion"
+              >
+                <span className="material-symbols-outlined text-lg">logout</span>
+              </button>
+            </div>
+          )}
+          {/* Collapse toggle (desktop only) */}
+          <button
+            onClick={toggleCollapsed}
+            className="hidden lg:flex items-center justify-center w-full py-1.5 text-on-surface-variant hover:text-on-surface transition-colors"
+            title={collapsed ? "Déplier le menu" : "Replier le menu"}
+          >
+            <span className="material-symbols-outlined text-lg">
+              {collapsed ? "chevron_right" : "chevron_left"}
+            </span>
+          </button>
         </div>
       </aside>
 
       {/* Main content */}
-      <div className="lg:ml-64 min-h-screen bg-surface flex-1 min-w-0">
+      <div className={`${collapsed ? "lg:ml-16" : "lg:ml-64"} min-h-screen bg-surface flex-1 min-w-0 transition-[margin] duration-300`}>
         {/* Top bar */}
         <header className="sticky top-0 bg-surface/70 backdrop-blur-xl z-30 shadow-sm flex items-center gap-3 px-4 lg:px-8 py-4">
           <button
