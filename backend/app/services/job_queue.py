@@ -2,40 +2,144 @@ from __future__ import annotations
 
 import asyncio
 import uuid
-from datetime import datetime, timezone
+from contextlib import asynccontextmanager
+from datetime import datetime, timedelta, timezone
 from typing import Any, Callable, Awaitable
+
+from sqlalchemy import select, delete
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.orm import joinedload
+
+from app.models.job import Job
 
 
 class JobQueue:
-    """In-memory async job queue. Processes one job at a time."""
+    """Async job queue with DB persistence. Processes one job at a time."""
 
     def __init__(self) -> None:
         self._queue: asyncio.Queue[str] = asyncio.Queue()
-        self._jobs: dict[str, dict[str, Any]] = {}
         self._handler: Callable[[dict], Awaitable[Any]] | None = None
         self._worker_task: asyncio.Task | None = None
+        self._session_factory: Callable | None = None
 
-    def create_job(self, job_type: str, competition_id: int) -> dict:
+    def set_session_factory(self, factory: Callable) -> None:
+        self._session_factory = factory
+
+    @asynccontextmanager
+    async def _session_scope(self):
+        obj = self._session_factory()
+        # Production: session_factory() returns a context manager (async_sessionmaker())
+        # Tests: session_factory() returns a plain AsyncSession instance
+        if isinstance(obj, AsyncSession):
+            # Already an active session (test mode) — use directly, don't close
+            yield obj
+        else:
+            # Context manager from async_sessionmaker — enter/exit it
+            async with obj as s:
+                yield s
+
+    async def create_job(
+        self, job_type: str, competition_id: int, trigger: str = "manual"
+    ) -> dict:
         job_id = uuid.uuid4().hex[:12]
-        job = {
+        now = datetime.now(timezone.utc)
+
+        async with self._session_scope() as session:
+            job = Job(
+                id=job_id,
+                type=job_type,
+                trigger=trigger,
+                competition_id=competition_id,
+                status="queued",
+                created_at=now,
+            )
+            session.add(job)
+            await session.flush()
+
+        self._queue.put_nowait(job_id)
+
+        return {
             "id": job_id,
             "type": job_type,
+            "trigger": trigger,
             "competition_id": competition_id,
             "status": "queued",
             "result": None,
             "error": None,
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": now.isoformat(),
         }
-        self._jobs[job_id] = job
-        self._queue.put_nowait(job_id)
-        self._trim_old_jobs()
-        return job
 
-    def get_job(self, job_id: str) -> dict | None:
-        return self._jobs.get(job_id)
+    async def get_job(self, job_id: str) -> dict | None:
+        async with self._session_scope() as session:
+            stmt = (
+                select(Job)
+                .options(joinedload(Job.competition))
+                .where(Job.id == job_id)
+            )
+            result = await session.execute(stmt)
+            job = result.unique().scalar_one_or_none()
+            if job is None:
+                return None
+            return self._job_to_dict(job)
 
-    def list_jobs(self) -> list[dict]:
-        return list(self._jobs.values())
+    async def list_jobs(self) -> list[dict]:
+        async with self._session_scope() as session:
+            stmt = (
+                select(Job)
+                .options(joinedload(Job.competition))
+                .order_by(Job.created_at.desc())
+            )
+            result = await session.execute(stmt)
+            jobs = result.unique().scalars().all()
+            return [self._job_to_dict(j) for j in jobs]
+
+    async def cancel_job(self, job_id: str) -> bool:
+        async with self._session_scope() as session:
+            job = await session.get(Job, job_id)
+            if job is None or job.status != "queued":
+                return False
+            job.status = "cancelled"
+            job.completed_at = datetime.now(timezone.utc)
+            await session.flush()
+
+        # Remove from in-memory queue if present
+        try:
+            new_queue: asyncio.Queue[str] = asyncio.Queue()
+            while not self._queue.empty():
+                item = self._queue.get_nowait()
+                if item != job_id:
+                    new_queue.put_nowait(item)
+                self._queue.task_done()
+            self._queue = new_queue
+        except asyncio.QueueEmpty:
+            pass
+
+        return True
+
+    async def cleanup(self, days: int = 7) -> int:
+        cutoff = datetime.now(timezone.utc).replace(tzinfo=None) - timedelta(days=days)
+        deleted = 0
+
+        async with self._session_scope() as session:
+            # Mark stale running jobs as failed
+            stmt = select(Job).where(Job.status == "running")
+            result = await session.execute(stmt)
+            for job in result.scalars().all():
+                job.status = "failed"
+                job.error = "Server restarted during execution"
+                job.completed_at = datetime.now(timezone.utc)
+
+            # Delete old completed/failed/cancelled jobs
+            stmt = (
+                delete(Job)
+                .where(Job.created_at < cutoff)
+                .where(Job.status.in_(["completed", "failed", "cancelled"]))
+            )
+            result = await session.execute(stmt)
+            deleted = result.rowcount
+            await session.flush()
+
+        return deleted
 
     def set_handler(self, handler: Callable[[dict], Awaitable[Any]]) -> None:
         self._handler = handler
@@ -54,32 +158,59 @@ class JobQueue:
     async def _run_worker(self) -> None:
         while True:
             job_id = await self._queue.get()
-            job = self._jobs.get(job_id)
-            if not job or not self._handler:
-                self._queue.task_done()
-                continue
-            job["status"] = "running"
+
+            async with self._session_scope() as session:
+                job = await session.get(Job, job_id)
+                if not job or not self._handler or job.status != "queued":
+                    self._queue.task_done()
+                    continue
+
+                # Mark as running
+                job.status = "running"
+                job.started_at = datetime.now(timezone.utc)
+                await session.flush()
+
+            # Build dict for handler
+            job_dict = {
+                "id": job_id,
+                "type": job.type,
+                "competition_id": job.competition_id,
+                "status": "running",
+            }
+
             try:
-                result = await self._handler(job)
-                job["status"] = "completed"
-                job["result"] = result
+                result = await self._handler(job_dict)
+                async with self._session_scope() as session:
+                    job = await session.get(Job, job_id)
+                    job.status = "completed"
+                    job.result = result
+                    job.completed_at = datetime.now(timezone.utc)
+                    await session.flush()
             except Exception as e:
-                job["status"] = "failed"
-                job["error"] = str(e)
+                async with self._session_scope() as session:
+                    job = await session.get(Job, job_id)
+                    job.status = "failed"
+                    job.error = str(e)
+                    job.completed_at = datetime.now(timezone.utc)
+                    await session.flush()
             finally:
                 self._queue.task_done()
 
-    def _trim_old_jobs(self, keep: int = 50) -> None:
-        if len(self._jobs) <= keep:
-            return
-        finished = [
-            (k, v) for k, v in self._jobs.items()
-            if v["status"] in ("completed", "failed")
-        ]
-        finished.sort(key=lambda x: x[1]["created_at"])
-        to_remove = len(self._jobs) - keep
-        for k, _ in finished[:to_remove]:
-            del self._jobs[k]
+    @staticmethod
+    def _job_to_dict(job: Job) -> dict:
+        return {
+            "id": job.id,
+            "type": job.type,
+            "trigger": job.trigger,
+            "competition_id": job.competition_id,
+            "competition_name": job.competition.name if job.competition else None,
+            "status": job.status,
+            "result": job.result,
+            "error": job.error,
+            "created_at": job.created_at.isoformat() if job.created_at else None,
+            "started_at": job.started_at.isoformat() if job.started_at else None,
+            "completed_at": job.completed_at.isoformat() if job.completed_at else None,
+        }
 
 
 # Singleton instance
