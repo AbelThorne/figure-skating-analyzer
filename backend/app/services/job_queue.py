@@ -21,22 +21,24 @@ class JobQueue:
         self._handler: Callable[[dict], Awaitable[Any]] | None = None
         self._worker_task: asyncio.Task | None = None
         self._session_factory: Callable | None = None
+        self._owns_session = True  # True = create & commit/close sessions; False = use shared session
 
-    def set_session_factory(self, factory: Callable) -> None:
+    def set_session_factory(self, factory: Callable, *, owns_session: bool = True) -> None:
         self._session_factory = factory
+        self._owns_session = owns_session
 
     @asynccontextmanager
     async def _session_scope(self):
-        obj = self._session_factory()
-        # Production: session_factory() returns a context manager (async_sessionmaker())
-        # Tests: session_factory() returns a plain AsyncSession instance
-        if isinstance(obj, AsyncSession):
-            # Already an active session (test mode) — use directly, don't close
-            yield obj
+        if self._owns_session:
+            # Production: factory is async_sessionmaker — create, commit, and close
+            async with self._session_factory() as session:
+                yield session
+                await session.commit()
         else:
-            # Context manager from async_sessionmaker — enter/exit it
-            async with obj as s:
-                yield s
+            # Tests: factory returns a shared session — flush but don't commit/close
+            session = self._session_factory()
+            yield session
+            await session.flush()
 
     async def create_job(
         self, job_type: str, competition_id: int, trigger: str = "manual"
@@ -54,7 +56,6 @@ class JobQueue:
                 created_at=now,
             )
             session.add(job)
-            await session.flush()
 
         self._queue.put_nowait(job_id)
 
@@ -100,7 +101,6 @@ class JobQueue:
                 return False
             job.status = "cancelled"
             job.completed_at = datetime.now(timezone.utc)
-            await session.flush()
 
         # Remove from in-memory queue if present
         try:
@@ -137,7 +137,6 @@ class JobQueue:
             )
             result = await session.execute(stmt)
             deleted = result.rowcount
-            await session.flush()
 
         return deleted
 
@@ -168,7 +167,6 @@ class JobQueue:
                 # Mark as running
                 job.status = "running"
                 job.started_at = datetime.now(timezone.utc)
-                await session.flush()
 
             # Build dict for handler
             job_dict = {
@@ -185,14 +183,12 @@ class JobQueue:
                     job.status = "completed"
                     job.result = result
                     job.completed_at = datetime.now(timezone.utc)
-                    await session.flush()
             except Exception as e:
                 async with self._session_scope() as session:
                     job = await session.get(Job, job_id)
                     job.status = "failed"
                     job.error = str(e)
                     job.completed_at = datetime.now(timezone.utc)
-                    await session.flush()
             finally:
                 self._queue.task_done()
 

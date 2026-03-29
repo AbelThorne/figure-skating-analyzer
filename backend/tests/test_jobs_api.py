@@ -9,7 +9,7 @@ from app.models.job import Job
 @pytest_asyncio.fixture(autouse=True)
 async def setup_job_queue(db_session):
     from app.services.job_queue import job_queue
-    job_queue.set_session_factory(lambda: db_session)
+    job_queue.set_session_factory(lambda: db_session, owns_session=False)
     yield
 
 

@@ -25,7 +25,7 @@ async def competition(db_session):
 @pytest_asyncio.fixture
 async def queue(db_session):
     q = JobQueue()
-    q.set_session_factory(lambda: db_session)
+    q.set_session_factory(lambda: db_session, owns_session=False)
     return q
 
 
