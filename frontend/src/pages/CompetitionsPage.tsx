@@ -542,7 +542,7 @@ export default function CompetitionsPage() {
                     </div>
 
                     {/* Mobile: polling toggle + overflow menu */}
-                    <div className="flex items-center gap-1 lg:hidden shrink-0">
+                    <div className="flex items-center gap-1 lg:hidden shrink-0 self-end">
                       <button
                         onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
                         disabled={pollingMutation.isPending}
