@@ -1,3 +1,13 @@
+- name: "ISU 2025-2026"
+  season: "2025-2026"
+  urls:
+    - https://results.isu.org/results/season2526/gpfra2025/
+    - https://www.isuresults.com/results/season2526/gpf2025/
+    - https://results.isu.org/results/season2526/ec2026/
+    - https://results.isu.org/results/season2526/owg2026/
+    - https://www.isuresults.com/results/season2526/wjc2026/index.htm
+    - https://results.isu.org/results/season2526/wc2026/
+
 - name: "CSNPA 2025-2026"
   season: "2025-2026"
   urls:
@@ -5,29 +15,26 @@
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/Ouverture_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/tmnca_2025/index.htm
     - http://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/CSNPA_AUTOMNE_2025/index.htm
-    - https://results.isu.org/results/season2526/gpfra2025/
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_Colmar_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_Briancon_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_A3_NEUILLY_SUR_MARNE_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_B4_DAMMARIE_2025/index.htm
-    - https://www.isuresults.com/results/season2526/gpf2025/
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_B5_ROMORANTIN_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_B6_CAEN_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/FFSG_ELITES_2025/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_C7_NIMES_2026/index.htm
-    - https://results.isu.org/results/season2526/ec2026/
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_C8_GARGES_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/TDF_C9_CHARLEVILLE_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/Sel_Fr_Clubs_SE_2026/index.htm
-    - https://results.isu.org/results/season2526/owg2026/
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/FFSG_CSNPA_SFC_IDF_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/SFC_NO_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/SFC_NE_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/FRANCE_JUNIOR_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/SFC_SO_2026/index.htm
-    - https://www.isuresults.com/results/season2526/wjc2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/FRANCE_NOVICE_2026/index.htm
     - https://ligue-des-alpes-patinage.org/CSNPA/Saison20252026/FRANCE_MINIME_2026/index.htm
+    - https://csnpa.x10.mx/CSNPA/FRANCE_POUBEN_2026/index.htm
+    - https://csnpa.x10.mx/CSNPA/cdf_adults_2026/index.htm
 
 - name: "Ligue Occitanie 2025-2026"
   season: "2025-2026"
