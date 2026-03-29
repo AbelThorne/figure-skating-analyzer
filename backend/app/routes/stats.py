@@ -245,7 +245,8 @@ async def element_mastery(
         items = []
         for base, stats in sorted(stats_dict.items()):
             n = stats["attempts"]
-            level_dist = {str(i): stats["levels"].get(str(i), 0) for i in range(5)}
+            level_keys = ["0", "0.5", "1", "2", "3", "4"]
+            level_dist = {k: stats["levels"].get(k, 0) for k in level_keys}
             items.append({
                 "element_type": base,
                 "attempts": n,

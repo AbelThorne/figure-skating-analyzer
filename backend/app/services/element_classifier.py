@@ -29,9 +29,11 @@ def extract_jump_type(name: str) -> str | None:
     return f"{rotation}{jump_code}"
 
 
-def extract_level(name: str) -> int:
-    """Extract the level number from an element code. Returns 0 if no level or B suffix."""
+def extract_level(name: str) -> float:
+    """Extract the level number from an element code. B suffix = 0.5, no level = 0."""
     m = _LEVEL_PATTERN.search(name)
     if m:
         return int(m.group(1))
+    if name.endswith("B"):
+        return 0.5
     return 0

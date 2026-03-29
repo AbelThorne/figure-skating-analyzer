@@ -64,4 +64,4 @@ class TestExtractLevel:
     def test_no_level(self):
         assert extract_level("CCSp") == 0
     def test_b_suffix(self):
-        assert extract_level("CCoSpB") == 0
+        assert extract_level("CCoSpB") == 0.5

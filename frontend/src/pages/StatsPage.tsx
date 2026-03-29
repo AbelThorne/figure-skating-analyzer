@@ -676,7 +676,9 @@ export default function StatsPage() {
                 Niveaux pirouettes et pas
               </h3>
               {(() => {
-                const LEVEL_COLORS = ["#e0e0e0", "#b0bec5", "#78909c", "#455a64", "#263238"];
+                const LEVEL_KEYS = [0, 0.5, 1, 2, 3, 4] as const;
+                const LEVEL_LABELS: Record<number, string> = { 0: "Sans niveau", 0.5: "Base", 1: "Niveau 1", 2: "Niveau 2", 3: "Niveau 3", 4: "Niveau 4" };
+                const LEVEL_COLORS_MAP: Record<number, string> = { 0: "#e0e0e0", 0.5: "#cfd8dc", 1: "#b0bec5", 2: "#78909c", 3: "#455a64", 4: "#263238" };
                 const combined = [...(mastery!.spins ?? []), ...(mastery!.steps ?? [])];
                 const chartData = combined.map((el) => ({
                   name: el.element_type,
@@ -703,13 +705,13 @@ export default function StatsPage() {
                       <Tooltip
                         contentStyle={{ fontSize: 11, borderRadius: 12, border: "none", boxShadow: "0 1px 4px rgba(0,0,0,0.12)" }}
                       />
-                      {[0, 1, 2, 3, 4].map((level) => (
+                      {LEVEL_KEYS.map((level) => (
                         <Bar
                           key={level}
                           dataKey={`level_${level}`}
-                          name={`Niveau ${level}`}
+                          name={LEVEL_LABELS[level]}
                           stackId="levels"
-                          fill={LEVEL_COLORS[level]}
+                          fill={LEVEL_COLORS_MAP[level]}
                         />
                       ))}
                     </BarChart>

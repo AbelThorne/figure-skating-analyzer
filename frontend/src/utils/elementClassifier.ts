@@ -34,5 +34,6 @@ export function extractJumpType(name: string): string | null {
 export function elementLevel(name: string): number {
   const m = name.match(LEVEL_PATTERN);
   if (m) return parseInt(m[1], 10);
+  if (/B$/.test(name)) return 0.5;
   return 0;
 }
