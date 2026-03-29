@@ -131,7 +131,7 @@ async def import_competition(competition_id: int, session: AsyncSession, force: 
         raise NotFoundException(f"Competition {competition_id} not found")
     from app.services.job_queue import job_queue
     job_type = "reimport" if force else "import"
-    return job_queue.create_job(job_type, competition_id)
+    return await job_queue.create_job(job_type, competition_id, trigger="manual")
 
 
 @get("/{competition_id:int}/import-status")
@@ -152,7 +152,7 @@ async def enrich_competition(competition_id: int, session: AsyncSession) -> dict
     if not comp:
         raise NotFoundException(f"Competition {competition_id} not found")
     from app.services.job_queue import job_queue
-    return job_queue.create_job("enrich", competition_id)
+    return await job_queue.create_job("enrich", competition_id, trigger="manual")
 
 
 @post("/{competition_id:int}/confirm-metadata")
@@ -244,11 +244,11 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
             await session.flush()
             await session.refresh(comp)
 
-        job = job_queue.create_job("import", comp.id)
+        job = await job_queue.create_job("import", comp.id, trigger="bulk")
         job_ids.append(job["id"])
 
         if enrich:
-            enrich_job = job_queue.create_job("enrich", comp.id)
+            enrich_job = await job_queue.create_job("enrich", comp.id, trigger="bulk")
             job_ids.append(enrich_job["id"])
 
     await session.commit()

@@ -59,8 +59,8 @@ async def _polling_loop() -> None:
                         comp.polling_enabled = False
                         logger.info("Auto-disabled polling for competition %d (%s)", comp.id, comp.name)
                         continue
-                    job_queue.create_job("import", comp.id)
-                    job_queue.create_job("enrich", comp.id)
+                    await job_queue.create_job("import", comp.id, trigger="auto")
+                    await job_queue.create_job("enrich", comp.id, trigger="auto")
                     logger.info("Polling: submitted import+enrich for competition %d (%s)", comp.id, comp.name)
                 await session.commit()
         except Exception:
@@ -70,6 +70,8 @@ async def _polling_loop() -> None:
 @asynccontextmanager
 async def lifespan(_: Litestar) -> AsyncGenerator[None, None]:
     await init_db()
+    job_queue.set_session_factory(async_session_factory)
+    await job_queue.cleanup(days=7)
 
     async def _handle_job(job: dict) -> dict:
         async with async_session_factory() as session:
