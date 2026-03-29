@@ -403,7 +403,7 @@ export default function CompetitionsPage() {
                       disabled={pollingMutation.isPending}
                       className={`rounded-lg py-1.5 px-2 text-xs font-bold active:scale-95 transition-all flex items-center gap-1 ${
                         c.polling_enabled
-                          ? "bg-primary/10 text-primary"
+                          ? "bg-primary text-on-primary"
                           : "bg-surface-container text-on-surface-variant"
                       }`}
                       title={c.polling_enabled ? "Suivi automatique actif" : "Activer le suivi automatique"}
