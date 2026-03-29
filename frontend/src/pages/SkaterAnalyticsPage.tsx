@@ -537,9 +537,27 @@ export default function SkaterAnalyticsPage() {
               {skater?.last_name?.[0]?.toUpperCase() ?? "?"}
             </div>
             <div className="min-w-0 overflow-hidden">
-              <h1 className="text-2xl sm:text-3xl font-extrabold font-headline text-white leading-tight truncate">
-                {skater ? `${skater.first_name} ${skater.last_name}` : "—"}
-              </h1>
+              <div className="flex items-center gap-2">
+                <h1 className="text-2xl sm:text-3xl font-extrabold font-headline text-white leading-tight truncate">
+                  {skater ? `${skater.first_name} ${skater.last_name}` : "—"}
+                </h1>
+                {user?.role === "admin" && config?.training_enabled && (
+                  <button
+                    onClick={() => toggleTrainingTracked.mutate()}
+                    disabled={toggleTrainingTracked.isPending}
+                    className={`shrink-0 w-7 h-7 rounded-full flex items-center justify-center transition-colors disabled:opacity-50 ${
+                      skater?.training_tracked
+                        ? "bg-white/25 text-white hover:bg-white/35"
+                        : "bg-white/10 text-white/50 hover:bg-white/20"
+                    }`}
+                    title={skater?.training_tracked ? "Retirer du suivi entraînement" : "Ajouter au suivi entraînement"}
+                  >
+                    <span className="material-symbols-outlined text-[16px] leading-none">
+                      {skater?.training_tracked ? "fitness_center" : "add"}
+                    </span>
+                  </button>
+                )}
+              </div>
               <p className="text-sm text-white/70 mt-1 truncate">
                 {[
                   skater?.club,
@@ -579,43 +597,22 @@ export default function SkaterAnalyticsPage() {
               label="Compétitions"
               value={String(historyRows.length)}
             />
-            {user?.role === "admin" && (
-              <>
-                {config?.training_enabled && (
-                  <button
-                    onClick={() => toggleTrainingTracked.mutate()}
-                    disabled={toggleTrainingTracked.isPending}
-                    className={`flex items-center gap-1.5 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm font-bold font-headline transition-colors cursor-pointer disabled:opacity-50 ${
-                      skater?.training_tracked
-                        ? "bg-white/25 text-white hover:bg-white/35"
-                        : "bg-white/10 text-white/70 hover:bg-white/20"
-                    }`}
-                    title={skater?.training_tracked ? "Retirer du suivi entraînement" : "Ajouter au suivi entraînement"}
-                  >
-                    <span className="material-symbols-outlined text-sm">
-                      {skater?.training_tracked ? "fitness_center" : "add"}
-                    </span>
-                    {skater?.training_tracked ? "Suivi actif" : "Suivre"}
-                  </button>
-                )}
-                {skater?.manual_create && (
-                  <button
-                    onClick={() => {
-                      setEditForm({
-                        first_name: skater.first_name,
-                        last_name: skater.last_name,
-                        nationality: skater.nationality ?? "",
-                        club: skater.club ?? "",
-                      });
-                      setEditingSkater(true);
-                    }}
-                    className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline hover:bg-white/25 transition-colors cursor-pointer"
-                    title="Modifier les informations"
-                  >
-                    <span className="material-symbols-outlined text-sm">edit</span>
-                  </button>
-                )}
-              </>
+            {user?.role === "admin" && skater?.manual_create && (
+              <button
+                onClick={() => {
+                  setEditForm({
+                    first_name: skater.first_name,
+                    last_name: skater.last_name,
+                    nationality: skater.nationality ?? "",
+                    club: skater.club ?? "",
+                  });
+                  setEditingSkater(true);
+                }}
+                className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm rounded-xl px-4 py-2.5 text-sm text-white font-bold font-headline hover:bg-white/25 transition-colors cursor-pointer"
+                title="Modifier les informations"
+              >
+                <span className="material-symbols-outlined text-sm">edit</span>
+              </button>
             )}
           </div>
         </div>

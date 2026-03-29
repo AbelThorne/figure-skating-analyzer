@@ -61,14 +61,14 @@ export default function ClubCompetitionPage() {
             ))}
           </select>
         </div>
-        <div className="flex items-center gap-2">
-          <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">
+        <div className="flex items-center gap-2 min-w-0 flex-1">
+          <span className="text-[11px] uppercase tracking-wider text-on-surface-variant shrink-0">
             Compétition
           </span>
           <select
             value={selectedCompId ?? ""}
             onChange={(e) => setSelectedCompId(e.target.value ? Number(e.target.value) : null)}
-            className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary min-w-[300px]"
+            className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary min-w-0 flex-1"
           >
             <option value="">Sélectionner...</option>
             {competitions.map((c) => (

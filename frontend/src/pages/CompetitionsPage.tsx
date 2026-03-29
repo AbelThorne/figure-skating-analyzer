@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api, Competition, JobInfo, COMPETITION_TYPES, LIGUES } from "../api/client";
@@ -80,6 +80,20 @@ export default function CompetitionsPage() {
     mutationFn: (id: number) => api.competitions.enrich(id),
     onSuccess: (job: JobInfo) => trackJob(job),
   });
+
+  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (openMenuId === null) return;
+    function handleClick(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setOpenMenuId(null);
+      }
+    }
+    document.addEventListener("mousedown", handleClick);
+    return () => document.removeEventListener("mousedown", handleClick);
+  }, [openMenuId]);
 
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<{
@@ -397,133 +411,232 @@ export default function CompetitionsPage() {
 
                 {/* Right: action buttons (admin only) */}
                 {isAdmin && (
-                  <div className="flex flex-wrap gap-2 shrink-0">
-                    <button
-                      onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
-                      disabled={pollingMutation.isPending}
-                      className={`rounded-lg py-1.5 px-2 text-xs font-bold active:scale-95 transition-all flex items-center gap-1 ${
-                        c.polling_enabled
-                          ? "bg-primary text-on-primary"
-                          : "bg-surface-container text-on-surface-variant"
-                      }`}
-                      title={c.polling_enabled ? "Suivi automatique actif" : "Activer le suivi automatique"}
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">sync</span>
-                    </button>
-                    {!c.metadata_confirmed && (
+                  <>
+                    {/* Desktop: inline buttons */}
+                    <div className="hidden sm:flex flex-wrap gap-2 shrink-0">
                       <button
-                        onClick={() => confirmMutation.mutate(c.id)}
-                        className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                        onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
+                        disabled={pollingMutation.isPending}
+                        className={`rounded-lg py-1.5 px-2 text-xs font-bold active:scale-95 transition-all flex items-center gap-1 ${
+                          c.polling_enabled
+                            ? "bg-primary text-on-primary"
+                            : "bg-surface-container text-on-surface-variant"
+                        }`}
+                        title={c.polling_enabled ? "Suivi automatique actif" : "Activer le suivi automatique"}
                       >
-                        <span className="material-symbols-outlined text-base leading-none">check</span>
-                        Valider
+                        <span className="material-symbols-outlined text-base leading-none">sync</span>
                       </button>
-                    )}
-                    <button
-                      onClick={() => {
-                        setEditingId(editingId === c.id ? null : c.id);
-                        setEditForm({
-                          name: c.name ?? "",
-                          city: c.city ?? "",
-                          country: c.country ?? "",
-                          competition_type: c.competition_type ?? "",
-                          season: c.season ?? "",
-                          ligue: c.ligue ?? "",
-                        });
-                      }}
-                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">edit</span>
-                      Modifier
-                    </button>
-                    <button
-                      onClick={() => importMutation.mutate(c.id)}
-                      disabled={isImporting}
-                      className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">
-                        download
-                      </span>
-                      {importJobStatus === "queued"
-                        ? "En file d'attente"
-                        : importJobStatus === "running"
-                          ? "Importation..."
-                          : "Importer"}
-                    </button>
-                    {confirmingReimportId === c.id ? (
-                      <span className="flex items-center gap-1">
+                      {!c.metadata_confirmed && (
                         <button
-                          onClick={() => {
-                            reimportMutation.mutate(c.id);
-                            setConfirmingReimportId(null);
-                          }}
+                          onClick={() => confirmMutation.mutate(c.id)}
                           className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
                         >
-                          Confirmer
+                          <span className="material-symbols-outlined text-base leading-none">check</span>
+                          Valider
                         </button>
-                        <button
-                          onClick={() => setConfirmingReimportId(null)}
-                          className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
-                        >
-                          Annuler
-                        </button>
-                      </span>
-                    ) : (
+                      )}
                       <button
-                        onClick={() => setConfirmingReimportId(c.id)}
+                        onClick={() => {
+                          setEditingId(editingId === c.id ? null : c.id);
+                          setEditForm({
+                            name: c.name ?? "",
+                            city: c.city ?? "",
+                            country: c.country ?? "",
+                            competition_type: c.competition_type ?? "",
+                            season: c.season ?? "",
+                            ligue: c.ligue ?? "",
+                          });
+                        }}
+                        className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">edit</span>
+                        Modifier
+                      </button>
+                      <button
+                        onClick={() => importMutation.mutate(c.id)}
                         disabled={isImporting}
+                        className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                      >
+                        <span className="material-symbols-outlined text-base leading-none">
+                          download
+                        </span>
+                        {importJobStatus === "queued"
+                          ? "En file d'attente"
+                          : importJobStatus === "running"
+                            ? "Importation..."
+                            : "Importer"}
+                      </button>
+                      {confirmingReimportId === c.id ? (
+                        <span className="flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              reimportMutation.mutate(c.id);
+                              setConfirmingReimportId(null);
+                            }}
+                            className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                          >
+                            Confirmer
+                          </button>
+                          <button
+                            onClick={() => setConfirmingReimportId(null)}
+                            className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
+                          >
+                            Annuler
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          onClick={() => setConfirmingReimportId(c.id)}
+                          disabled={isImporting}
+                          className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
+                        >
+                          <span className="material-symbols-outlined text-base leading-none">
+                            refresh
+                          </span>
+                          Réimporter
+                        </button>
+                      )}
+                      <button
+                        onClick={() => enrichMutation.mutate(c.id)}
+                        disabled={isEnriching}
                         className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
                       >
                         <span className="material-symbols-outlined text-base leading-none">
-                          refresh
+                          description
                         </span>
-                        Réimporter
+                        {enrichJobStatus === "queued"
+                          ? "En file d'attente"
+                          : enrichJobStatus === "running"
+                            ? "Enrichissement..."
+                            : "Enrichir PDF"}
                       </button>
-                    )}
-                    <button
-                      onClick={() => enrichMutation.mutate(c.id)}
-                      disabled={isEnriching}
-                      className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50 flex items-center gap-1"
-                    >
-                      <span className="material-symbols-outlined text-base leading-none">
-                        description
-                      </span>
-                      {enrichJobStatus === "queued"
-                        ? "En file d'attente"
-                        : enrichJobStatus === "running"
-                          ? "Enrichissement..."
-                          : "Enrichir PDF"}
-                    </button>
-                    {confirmingDeleteId === c.id ? (
-                      <span className="flex items-center gap-1">
+                      {confirmingDeleteId === c.id ? (
+                        <span className="flex items-center gap-1">
+                          <button
+                            onClick={() => {
+                              deleteMutation.mutate(c.id);
+                              setConfirmingDeleteId(null);
+                            }}
+                            className="bg-error text-on-error rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                          >
+                            Confirmer
+                          </button>
+                          <button
+                            onClick={() => setConfirmingDeleteId(null)}
+                            className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
+                          >
+                            Annuler
+                          </button>
+                        </span>
+                      ) : (
                         <button
-                          onClick={() => {
-                            deleteMutation.mutate(c.id);
-                            setConfirmingDeleteId(null);
-                          }}
-                          className="bg-error text-on-error rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                          onClick={() => setConfirmingDeleteId(c.id)}
+                          className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
                         >
-                          Confirmer
+                          <span className="material-symbols-outlined text-base leading-none">
+                            delete
+                          </span>
+                          Supprimer
                         </button>
-                        <button
-                          onClick={() => setConfirmingDeleteId(null)}
-                          className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all"
-                        >
-                          Annuler
-                        </button>
-                      </span>
-                    ) : (
+                      )}
+                    </div>
+
+                    {/* Mobile: polling toggle + overflow menu */}
+                    <div className="flex items-center gap-1 sm:hidden shrink-0">
                       <button
-                        onClick={() => setConfirmingDeleteId(c.id)}
-                        className="bg-error-container/50 text-on-error-container rounded-lg py-1.5 px-3 text-xs font-bold flex items-center gap-1"
+                        onClick={() => pollingMutation.mutate({ id: c.id, enabled: !c.polling_enabled })}
+                        disabled={pollingMutation.isPending}
+                        className={`rounded-lg py-1.5 px-2 text-xs font-bold active:scale-95 transition-all flex items-center gap-1 ${
+                          c.polling_enabled
+                            ? "bg-primary text-on-primary"
+                            : "bg-surface-container text-on-surface-variant"
+                        }`}
+                        title={c.polling_enabled ? "Suivi automatique actif" : "Activer le suivi automatique"}
                       >
-                        <span className="material-symbols-outlined text-base leading-none">
-                          delete
-                        </span>
-                        Supprimer
+                        <span className="material-symbols-outlined text-base leading-none">sync</span>
                       </button>
-                    )}
-                  </div>
+                      <div className="relative" ref={openMenuId === c.id ? menuRef : undefined}>
+                        <button
+                          onClick={() => setOpenMenuId(openMenuId === c.id ? null : c.id)}
+                          className="rounded-lg p-1.5 text-on-surface-variant hover:bg-surface-container transition-colors"
+                        >
+                          <span className="material-symbols-outlined text-xl leading-none">more_vert</span>
+                        </button>
+                        {openMenuId === c.id && (
+                          <div className="absolute right-0 top-full mt-1 bg-surface-container-lowest rounded-xl shadow-lg z-30 min-w-[200px] py-1">
+                          {!c.metadata_confirmed && (
+                            <button
+                              onClick={() => { confirmMutation.mutate(c.id); setOpenMenuId(null); }}
+                              className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container transition-colors text-left"
+                            >
+                              <span className="material-symbols-outlined text-base leading-none">check</span>
+                              Valider les métadonnées
+                            </button>
+                          )}
+                          <button
+                            onClick={() => {
+                              setEditingId(editingId === c.id ? null : c.id);
+                              setEditForm({ name: c.name ?? "", city: c.city ?? "", country: c.country ?? "", competition_type: c.competition_type ?? "", season: c.season ?? "", ligue: c.ligue ?? "" });
+                              setOpenMenuId(null);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container transition-colors text-left"
+                          >
+                            <span className="material-symbols-outlined text-base leading-none">edit</span>
+                            Modifier
+                          </button>
+                          <button
+                            onClick={() => { importMutation.mutate(c.id); setOpenMenuId(null); }}
+                            disabled={isImporting}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container transition-colors text-left disabled:opacity-50"
+                          >
+                            <span className="material-symbols-outlined text-base leading-none">download</span>
+                            {importJobStatus === "queued" ? "En file d'attente" : importJobStatus === "running" ? "Importation..." : "Importer"}
+                          </button>
+                          <button
+                            onClick={() => {
+                              if (confirmingReimportId === c.id) {
+                                reimportMutation.mutate(c.id);
+                                setConfirmingReimportId(null);
+                              } else {
+                                setConfirmingReimportId(c.id);
+                              }
+                              setOpenMenuId(null);
+                            }}
+                            disabled={isImporting}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container transition-colors text-left disabled:opacity-50"
+                          >
+                            <span className="material-symbols-outlined text-base leading-none">refresh</span>
+                            Réimporter
+                          </button>
+                          <button
+                            onClick={() => { enrichMutation.mutate(c.id); setOpenMenuId(null); }}
+                            disabled={isEnriching}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-on-surface hover:bg-surface-container transition-colors text-left disabled:opacity-50"
+                          >
+                            <span className="material-symbols-outlined text-base leading-none">description</span>
+                            {enrichJobStatus === "queued" ? "En file d'attente" : enrichJobStatus === "running" ? "Enrichissement..." : "Enrichir PDF"}
+                          </button>
+                          <div className="my-1 border-t border-outline-variant/30" />
+                          <button
+                            onClick={() => {
+                              if (confirmingDeleteId === c.id) {
+                                deleteMutation.mutate(c.id);
+                                setConfirmingDeleteId(null);
+                              } else {
+                                setConfirmingDeleteId(c.id);
+                              }
+                              setOpenMenuId(null);
+                            }}
+                            className="w-full flex items-center gap-2 px-4 py-2.5 text-xs text-error hover:bg-error-container/20 transition-colors text-left"
+                          >
+                            <span className="material-symbols-outlined text-base leading-none">delete</span>
+                            Supprimer
+                          </button>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </>
                 )}
               </div>
 
