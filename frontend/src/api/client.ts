@@ -397,11 +397,15 @@ export interface BulkImportResult {
 export interface JobInfo {
   id: string;
   type: "import" | "reimport" | "enrich";
+  trigger: "manual" | "auto" | "bulk";
   competition_id: number;
-  status: "queued" | "running" | "completed" | "failed";
+  competition_name: string | null;
+  status: "queued" | "running" | "completed" | "failed" | "cancelled";
   result: ImportResult | EnrichResult | null;
   error: string | null;
   created_at: string;
+  started_at: string | null;
+  completed_at: string | null;
 }
 
 export interface ProgressionRankingEntry {
@@ -791,6 +795,7 @@ export const api = {
   jobs: {
     list: () => request<JobInfo[]>("/jobs/"),
     get: (id: string) => request<JobInfo>(`/jobs/${id}`),
+    cancel: (id: string) => request<JobInfo>(`/jobs/${id}/cancel`, { method: "POST" }),
   },
 
   admin: {

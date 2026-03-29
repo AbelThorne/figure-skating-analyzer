@@ -102,11 +102,15 @@ export function JobProvider({ children }: { children: ReactNode }) {
       newJobs[jid] = {
         id: jid,
         type: "import",
+        trigger: "bulk",
         competition_id: 0,
+        competition_name: null,
         status: "queued",
         result: null,
         error: null,
         created_at: "",
+        started_at: null,
+        completed_at: null,
       };
     }
     setBulkJobs((prev) => ({ ...prev, ...newJobs }));
