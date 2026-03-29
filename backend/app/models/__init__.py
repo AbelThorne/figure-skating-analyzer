@@ -11,6 +11,7 @@ from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.notification import Notification
+from app.models.job import Job
 
 __all__ = [
     "Competition",
@@ -26,4 +27,5 @@ __all__ = [
     "Incident",
     "Challenge",
     "Notification",
+    "Job",
 ]

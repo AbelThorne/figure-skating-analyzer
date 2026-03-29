@@ -33,3 +33,6 @@ class Competition(Base):
     category_results: Mapped[list["CategoryResult"]] = relationship(  # noqa: F821
         "CategoryResult", back_populates="competition", cascade="all, delete-orphan"
     )
+    jobs: Mapped[list["Job"]] = relationship(  # noqa: F821
+        "Job", back_populates="competition", cascade="all, delete-orphan"
+    )
