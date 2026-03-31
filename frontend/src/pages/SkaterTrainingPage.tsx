@@ -956,85 +956,49 @@ export default function SkaterTrainingPage() {
         />
       )}
 
-      {activeTab === "journal" && (
-        <div className="space-y-3">
-          {(timeline ?? []).length === 0 ? (
-            <p className="text-sm text-on-surface-variant text-center py-10">Aucune entree dans le journal</p>
-          ) : (
-            <div className="space-y-3">
-              {(timeline ?? []).map((entry, idx) => (
-                <div key={`${entry.type}-${idx}`}>
-                  {entry.type === "review" && (
-                    <div className="bg-surface-container-low rounded-2xl p-5 space-y-2">
+      {activeTab === "journal" && (() => {
+        const selfEvalEntries = (timeline ?? []).filter((e) => e.type === "self_evaluation");
+        return (
+          <div className="space-y-3">
+            {selfEvalEntries.length === 0 ? (
+              <p className="text-sm text-on-surface-variant text-center py-10">Aucune auto-evaluation</p>
+            ) : (
+              <div className="space-y-3">
+                {selfEvalEntries.map((entry, idx) => (
+                  <div key={`${entry.type}-${idx}`} className="bg-surface-container-low rounded-2xl p-5 space-y-2">
+                    <div className="flex items-center gap-2">
                       <h4 className="font-headline font-bold text-on-surface text-sm">
-                        Retour - Semaine du{" "}
-                        {new Date(entry.week_start + "T00:00:00").toLocaleDateString("fr-FR", {
-                          day: "numeric",
-                          month: "long",
-                        })}
-                      </h4>
-                      <div className="grid grid-cols-3 gap-4">
-                        {(["engagement", "progression", "attitude"] as const).map((field) => (
-                          <div key={field}>
-                            <span className="text-[10px] uppercase tracking-wider text-on-surface-variant capitalize">{field}</span>
-                            <div className="flex gap-0.5">
-                              {Array.from({ length: 5 }, (_, i) => (
-                                <div key={i} className={`w-2.5 h-2.5 rounded-full ${i < entry[field] ? "bg-primary" : "bg-surface-container"}`} />
-                              ))}
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                  {entry.type === "incident" && (
-                    <div className="bg-surface-container-low rounded-2xl p-5 space-y-2">
-                      <h4 className="font-headline font-bold text-on-surface text-sm">
-                        Incident du{" "}
+                        Auto-evaluation du{" "}
                         {new Date(entry.date + "T00:00:00").toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "long",
                         })}
                       </h4>
-                      <p className="text-sm text-on-surface-variant">{entry.description}</p>
+                      {entry.shared && (
+                        <span className="bg-primary-container text-on-primary-container text-[9px] font-bold px-2 py-0.5 rounded-full">
+                          Partage
+                        </span>
+                      )}
                     </div>
-                  )}
-                  {entry.type === "self_evaluation" && (
-                    <div className="bg-surface-container-low rounded-2xl p-5 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <h4 className="font-headline font-bold text-on-surface text-sm">
-                          Auto-evaluation du{" "}
-                          {new Date(entry.date + "T00:00:00").toLocaleDateString("fr-FR", {
-                            day: "numeric",
-                            month: "long",
-                          })}
-                        </h4>
-                        {entry.shared && (
-                          <span className="bg-primary-container text-on-primary-container text-[9px] font-bold px-2 py-0.5 rounded-full">
-                            Partage
+                    {entry.notes && (
+                      <p className="text-sm text-on-surface-variant">{entry.notes}</p>
+                    )}
+                    {entry.element_ratings && entry.element_ratings.length > 0 && (
+                      <div className="flex gap-1.5 flex-wrap">
+                        {entry.element_ratings.map((er: { name: string; rating: number }, i: number) => (
+                          <span key={i} className="bg-surface-container text-[10px] px-2 py-1 rounded-lg font-semibold">
+                            {er.name} <span className="text-primary">{er.rating}/5</span>
                           </span>
-                        )}
+                        ))}
                       </div>
-                      {entry.notes && (
-                        <p className="text-sm text-on-surface-variant">{entry.notes}</p>
-                      )}
-                      {entry.element_ratings && entry.element_ratings.length > 0 && (
-                        <div className="flex gap-1.5 flex-wrap">
-                          {entry.element_ratings.map((er: { name: string; rating: number }, i: number) => (
-                            <span key={i} className="bg-surface-container text-[10px] px-2 py-1 rounded-lg font-semibold">
-                              {er.name} <span className="text-primary">{er.rating}/5</span>
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      )}
+                    )}
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        );
+      })()}
 
       {showReviewForm && <ReviewFormModal skaterId={skaterId} existing={editingReview} onClose={() => setShowReviewForm(false)} />}
       {showIncidentForm && <IncidentFormModal skaterId={skaterId} existing={editingIncident} onClose={() => setShowIncidentForm(false)} />}

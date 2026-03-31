@@ -283,19 +283,29 @@ async def test_create_self_evaluation(client, skater_token, skater_user_with_ska
     assert data["element_ratings"] == [{"name": "3Lz", "rating": 4}]
 
 
-async def test_create_self_evaluation_duplicate_409(client, skater_token, skater_user_with_skater):
+async def test_create_multiple_self_evaluations_same_day(client, skater_token, skater_user_with_skater):
     _, _, skater = skater_user_with_skater
-    await client.post(
+    resp1 = await client.post(
         "/api/training/self-evaluations",
-        json={"skater_id": skater.id, "date": "2026-03-30", "notes": "First"},
+        json={"skater_id": skater.id, "date": "2026-03-30", "notes": "Morning session"},
         headers={"Authorization": f"Bearer {skater_token}"},
     )
-    resp = await client.post(
+    assert resp1.status_code == 201
+    resp2 = await client.post(
         "/api/training/self-evaluations",
-        json={"skater_id": skater.id, "date": "2026-03-30", "notes": "Second"},
+        json={"skater_id": skater.id, "date": "2026-03-30", "notes": "Afternoon session"},
         headers={"Authorization": f"Bearer {skater_token}"},
     )
-    assert resp.status_code == 409
+    assert resp2.status_code == 201
+    assert resp1.json()["id"] != resp2.json()["id"]
+
+    # Both should appear in the list
+    list_resp = await client.get(
+        f"/api/training/self-evaluations?skater_id={skater.id}&from_date=2026-03-30&to_date=2026-03-30",
+        headers={"Authorization": f"Bearer {skater_token}"},
+    )
+    assert list_resp.status_code == 200
+    assert len(list_resp.json()) == 2
 
 
 async def test_update_self_evaluation_toggle_shared(client, skater_token, skater_user_with_skater):

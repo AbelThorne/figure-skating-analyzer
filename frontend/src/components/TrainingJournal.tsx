@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { api, TrainingMood } from "../api/client";
+import { api, TrainingMood, SelfEvaluation } from "../api/client";
 
 const EMOJI_MAP: Record<number, string> = {
   1: "\u{1F61E}",
@@ -15,12 +15,14 @@ interface Props {
   skaterId: number;
   weekStart: string;
   weekEnd: string;
+  onEditEval?: (ev: SelfEvaluation) => void;
 }
 
 export default function TrainingJournal({
   skaterId,
   weekStart,
   weekEnd,
+  onEditEval,
 }: Props) {
   const { data: moods } = useQuery({
     queryKey: ["moods", skaterId, weekStart, weekEnd],
@@ -32,13 +34,12 @@ export default function TrainingJournal({
       }),
   });
 
+  // Fetch ALL evaluations (no date filter) for the full history
   const { data: evals } = useQuery({
-    queryKey: ["selfEvaluations", skaterId, weekStart, weekEnd],
+    queryKey: ["selfEvaluations", skaterId],
     queryFn: () =>
       api.training.selfEvaluations.list({
         skater_id: skaterId,
-        from: weekStart,
-        to: weekEnd,
       }),
   });
 
@@ -62,12 +63,18 @@ export default function TrainingJournal({
       month: "long",
     });
 
+  // Sort evals by date descending, then by id descending (newest first)
+  const sortedEvals = [...(evals ?? [])].sort((a, b) =>
+    a.date > b.date ? -1 : a.date < b.date ? 1 : b.id - a.id
+  );
+
   return (
     <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
       <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-4">
         Journal
       </p>
 
+      {/* Weekly mood board */}
       <div className="flex gap-2 mb-5 overflow-x-auto pb-1">
         {weekDays.map((day) => {
           const mood = moodByDate[day];
@@ -83,14 +90,16 @@ export default function TrainingJournal({
         })}
       </div>
 
-      {evals && evals.length > 0 && (
+      {/* Full evaluation history */}
+      {sortedEvals.length > 0 && (
         <div className="border-t border-surface-container-low pt-3 space-y-3">
-          {evals.map((ev) => {
+          {sortedEvals.map((ev) => {
             const mood = moodByDate[ev.date];
             return (
               <div
                 key={ev.id}
-                className="flex items-start gap-3 pb-3 border-b border-surface-container-low last:border-b-0"
+                className={`flex items-start gap-3 pb-3 border-b border-surface-container-low last:border-b-0${onEditEval ? " cursor-pointer hover:bg-surface-container-low/50 rounded-lg -mx-1 px-1 transition-colors" : ""}`}
+                onClick={onEditEval ? () => onEditEval(ev) : undefined}
               >
                 <div className="text-xl">
                   {mood ? EMOJI_MAP[mood.rating] : "\u{1F636}"}
@@ -104,6 +113,9 @@ export default function TrainingJournal({
                       <span className="bg-primary-container text-on-primary-container text-[9px] font-bold px-2 py-0.5 rounded-full">
                         Partage
                       </span>
+                    )}
+                    {onEditEval && (
+                      <span className="material-symbols-outlined text-on-surface-variant text-sm">edit</span>
                     )}
                   </div>
                   {ev.notes && (
@@ -131,9 +143,9 @@ export default function TrainingJournal({
         </div>
       )}
 
-      {(!evals || evals.length === 0) && (
+      {sortedEvals.length === 0 && (
         <p className="text-xs text-outline text-center py-4">
-          Aucune evaluation cette semaine
+          Aucune evaluation pour le moment
         </p>
       )}
     </div>

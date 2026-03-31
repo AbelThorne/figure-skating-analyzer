@@ -282,16 +282,6 @@ async def create_self_evaluation(request: Request, session: AsyncSession, data: 
 
     eval_date = date.fromisoformat(data["date"]) if "date" in data else date.today()
 
-    existing = (await session.execute(
-        select(SelfEvaluation).where(
-            SelfEvaluation.skater_id == skater_id,
-            SelfEvaluation.date == eval_date,
-        )
-    )).scalar_one_or_none()
-    if existing:
-        from litestar.exceptions import ClientException
-        raise ClientException(status_code=409, detail="Self-evaluation already exists for this date")
-
     element_ratings = data.get("element_ratings")
     if element_ratings:
         for er in element_ratings:

@@ -30,6 +30,7 @@ async def init_db() -> None:
     async with engine.begin() as conn:
         await conn.run_sync(Base.metadata.create_all)
         await _migrate_add_columns(conn)
+        await _migrate_drop_constraints(conn)
 
     await _backfill_categories()
     await _merge_pair_skaters()
@@ -69,6 +70,46 @@ async def _migrate_add_columns(conn) -> None:
             logger.info("Added column %s.%s", table, column)
         except Exception:
             pass  # Column already exists
+
+
+async def _migrate_drop_constraints(conn) -> None:
+    """Drop constraints that are no longer needed.
+
+    SQLite does not support ALTER TABLE DROP CONSTRAINT, so we must
+    recreate the table without the constraint.
+    """
+    # Check if self_evaluations still has the unique constraint
+    try:
+        result = await conn.execute(
+            text("SELECT sql FROM sqlite_master WHERE type='table' AND name='self_evaluations'")
+        )
+        row = result.fetchone()
+        if row and "uq_self_eval_skater_date" in (row[0] or ""):
+            logger.info("Recreating self_evaluations table to drop unique constraint")
+            await conn.execute(text("ALTER TABLE self_evaluations RENAME TO _self_evaluations_old"))
+            await conn.execute(text("""
+                CREATE TABLE self_evaluations (
+                    id INTEGER NOT NULL PRIMARY KEY,
+                    skater_id INTEGER NOT NULL,
+                    mood_id INTEGER,
+                    date DATE NOT NULL,
+                    notes TEXT,
+                    element_ratings JSON,
+                    shared BOOLEAN NOT NULL,
+                    created_at DATETIME NOT NULL,
+                    updated_at DATETIME NOT NULL,
+                    FOREIGN KEY(skater_id) REFERENCES skaters (id) ON DELETE CASCADE,
+                    FOREIGN KEY(mood_id) REFERENCES training_moods (id) ON DELETE SET NULL
+                )
+            """))
+            await conn.execute(text("""
+                INSERT INTO self_evaluations
+                SELECT * FROM _self_evaluations_old
+            """))
+            await conn.execute(text("DROP TABLE _self_evaluations_old"))
+            logger.info("Dropped unique constraint uq_self_eval_skater_date")
+    except Exception:
+        logger.exception("Failed to drop unique constraint on self_evaluations")
 
 
 async def _backfill_categories() -> None:

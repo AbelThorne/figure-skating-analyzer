@@ -11,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { api, downloadPdf, Element, Score, CategoryResult, WeeklyReview, TrainingIncident, TrainingChallenge } from "../api/client";
+import { api, downloadPdf, Element, Score, CategoryResult, WeeklyReview, TrainingIncident, TrainingChallenge, SelfEvaluation } from "../api/client";
 import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
@@ -166,11 +166,14 @@ export default function SkaterAnalyticsPage() {
   );
   const [editingSkater, setEditingSkater] = useState(false);
   const [editForm, setEditForm] = useState({ first_name: "", last_name: "", nationality: "", club: "" });
-  const [trainingSubTab, setTrainingSubTab] = useState<"reviews" | "challenges" | "incidents" | "evolution">("reviews");
+  const [trainingSubTab, setTrainingSubTab] = useState<"reviews" | "challenges" | "incidents" | "evolution" | "journal">(
+    user?.role === "skater" ? "journal" : "reviews"
+  );
   const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
   const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
   const [viewingIncident, setViewingIncident] = useState<TrainingIncident | undefined>();
   const [showEvalModal, setShowEvalModal] = useState(false);
+  const [editingEval, setEditingEval] = useState<SelfEvaluation | undefined>();
   const selfEvalToday = new Date().toISOString().slice(0, 10);
 
   // Week bounds for journal
@@ -267,6 +270,17 @@ export default function SkaterAnalyticsPage() {
       ...(trainingSeasonRange ? { from: trainingSeasonRange.from, to: trainingSeasonRange.to } : {}),
     }),
     enabled: showTrainingTab,
+  });
+
+  // Today's self-evaluations (for the eval panel)
+  const { data: selfEvalsToday } = useQuery({
+    queryKey: ["selfEvaluations", skaterId, selfEvalToday, selfEvalToday],
+    queryFn: () => api.training.selfEvaluations.list({
+      skater_id: skaterId,
+      from: selfEvalToday,
+      to: selfEvalToday,
+    }),
+    enabled: user?.role === "skater" && !!showTrainingTab,
   });
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
@@ -692,44 +706,6 @@ export default function SkaterAnalyticsPage() {
             </button>
           </div>
         </div>
-      )}
-
-      {/* Self-eval section for skater role */}
-      {user?.role === "skater" && skaterId && (
-        <>
-          <div className="px-6 pt-4 space-y-4">
-            <MoodInput skaterId={skaterId} today={selfEvalToday} />
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 text-center">
-                <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
-                  Evaluation d'aujourd'hui
-                </p>
-                <p className="text-3xl mb-2">{"\u{1F4DD}"}</p>
-                <p className="text-sm text-on-surface-variant mb-3">
-                  Pas encore d'evaluation pour aujourd'hui
-                </p>
-                <button
-                  onClick={() => setShowEvalModal(true)}
-                  className="bg-primary text-on-primary rounded-lg px-5 py-2.5 text-xs font-bold active:scale-95 transition-all"
-                >
-                  Evaluer ma seance
-                </button>
-              </div>
-              <ProgramEditor skaterId={skaterId} />
-            </div>
-
-            <TrainingJournal skaterId={skaterId} weekStart={weekStart} weekEnd={weekEnd} />
-          </div>
-
-          {showEvalModal && (
-            <SelfEvalModal
-              skaterId={skaterId}
-              today={selfEvalToday}
-              onClose={() => setShowEvalModal(false)}
-            />
-          )}
-        </>
       )}
 
       {/* Tab bar for training-tracked skaters (visible to skater/admin/coach) */}
@@ -1354,6 +1330,7 @@ export default function SkaterAnalyticsPage() {
         };
 
         const TRAINING_TABS = [
+          ...(user?.role === "skater" ? [{ key: "journal" as const, label: "Journal", icon: "auto_stories" }] : []),
           { key: "reviews" as const, label: "Retours", icon: "rate_review" },
           { key: "challenges" as const, label: "Défis", icon: "flag" },
           { key: "incidents" as const, label: "Incidents", icon: "warning" },
@@ -1541,6 +1518,66 @@ export default function SkaterAnalyticsPage() {
               <TrainingEvolutionChart
                 reviews={allReviews}
                 incidents={allIncidents}
+              />
+            )}
+
+            {/* Journal tab (skater self-eval) */}
+            {trainingSubTab === "journal" && user?.role === "skater" && (() => {
+              const todayEvals = (selfEvalsToday ?? []);
+
+              return (
+              <div className="space-y-4">
+                <MoodInput skaterId={skaterId} today={selfEvalToday} />
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
+                      Auto-evaluations du jour
+                    </p>
+                    {todayEvals.length > 0 && (
+                      <div className="space-y-2 mb-3">
+                        {todayEvals.map((ev) => (
+                          <button
+                            key={ev.id}
+                            onClick={() => { setEditingEval(ev); setShowEvalModal(true); }}
+                            className="w-full flex items-center gap-2 text-left bg-surface-container-low rounded-lg px-3 py-2 hover:bg-surface-container transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-primary text-sm">edit_note</span>
+                            <span className="text-xs text-on-surface truncate flex-1">
+                              {ev.notes || "Evaluation"}
+                            </span>
+                            <span className="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                    <button
+                      onClick={() => { setEditingEval(undefined); setShowEvalModal(true); }}
+                      className="bg-primary text-on-primary rounded-lg px-5 py-2.5 text-xs font-bold active:scale-95 transition-all w-full"
+                    >
+                      Nouvelle evaluation
+                    </button>
+                  </div>
+                  <ProgramEditor skaterId={skaterId} />
+                </div>
+
+                <TrainingJournal
+                  skaterId={skaterId}
+                  weekStart={weekStart}
+                  weekEnd={weekEnd}
+                  onEditEval={(ev) => { setEditingEval(ev); setShowEvalModal(true); }}
+                />
+              </div>
+              );
+            })()}
+
+            {/* Self-eval modal */}
+            {showEvalModal && (
+              <SelfEvalModal
+                skaterId={skaterId}
+                today={selfEvalToday}
+                existingEval={editingEval}
+                onClose={() => { setShowEvalModal(false); setEditingEval(undefined); }}
               />
             )}
 

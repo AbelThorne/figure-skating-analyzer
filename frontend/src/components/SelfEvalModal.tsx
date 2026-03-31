@@ -110,6 +110,21 @@ export default function SelfEvalModal({
     },
   });
 
+  const deleteMutation = useMutation({
+    mutationFn: () => api.training.selfEvaluations.delete(existingEval!.id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["selfEvaluations"] });
+      queryClient.invalidateQueries({ queryKey: ["timeline"] });
+      onClose();
+    },
+  });
+
+  const handleDelete = () => {
+    if (confirm("Supprimer cette evaluation ?")) {
+      deleteMutation.mutate();
+    }
+  };
+
   const handleSave = () => {
     if (moodRating) moodMutation.mutate(moodRating);
     if (existingEval) updateMutation.mutate();
@@ -280,13 +295,24 @@ export default function SelfEvalModal({
           </button>
         </div>
 
-        <button
-          onClick={handleSave}
-          disabled={createMutation.isPending || updateMutation.isPending}
-          className="w-full bg-primary text-on-primary rounded-lg py-3 text-sm font-bold mt-3 active:scale-95 transition-all disabled:opacity-50"
-        >
-          Enregistrer
-        </button>
+        <div className="flex gap-2 mt-3">
+          {existingEval && (
+            <button
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+              className="px-4 py-3 rounded-lg text-sm font-bold text-error hover:bg-error/10 transition-colors disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-sm">delete</span>
+            </button>
+          )}
+          <button
+            onClick={handleSave}
+            disabled={createMutation.isPending || updateMutation.isPending}
+            className="flex-1 bg-primary text-on-primary rounded-lg py-3 text-sm font-bold active:scale-95 transition-all disabled:opacity-50"
+          >
+            Enregistrer
+          </button>
+        </div>
       </div>
     </div>
   );

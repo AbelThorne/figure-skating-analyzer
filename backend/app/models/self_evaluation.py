@@ -1,7 +1,7 @@
 from datetime import date, datetime, timezone
 from typing import Optional
 
-from sqlalchemy import Boolean, Date, DateTime, Integer, JSON, Text, ForeignKey, UniqueConstraint
+from sqlalchemy import Boolean, Date, DateTime, Integer, JSON, Text, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -13,9 +13,6 @@ def _utcnow() -> datetime:
 
 class SelfEvaluation(Base):
     __tablename__ = "self_evaluations"
-    __table_args__ = (
-        UniqueConstraint("skater_id", "date", name="uq_self_eval_skater_date"),
-    )
 
     id: Mapped[int] = mapped_column(primary_key=True)
     skater_id: Mapped[int] = mapped_column(
