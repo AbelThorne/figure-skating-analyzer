@@ -18,6 +18,10 @@ import ElementDifficultyChart from "../components/ElementDifficultyChart";
 import JudgePanel from "../components/JudgePanel";
 import ScoreCardModal from "../components/ScoreCardModal";
 import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
+import MoodInput from "../components/MoodInput";
+import SelfEvalModal from "../components/SelfEvalModal";
+import ProgramEditor from "../components/ProgramEditor";
+import TrainingJournal from "../components/TrainingJournal";
 import { countryFlag } from "../utils/countryFlags";
 import { isJumpElement, isSpinElement, isStepElement, elementLevel } from "../utils/elementClassifier";
 import { useAuth } from "../auth/AuthContext";
@@ -166,6 +170,18 @@ export default function SkaterAnalyticsPage() {
   const [viewingReview, setViewingReview] = useState<WeeklyReview | undefined>();
   const [viewingChallenge, setViewingChallenge] = useState<TrainingChallenge | undefined>();
   const [viewingIncident, setViewingIncident] = useState<TrainingIncident | undefined>();
+  const [showEvalModal, setShowEvalModal] = useState(false);
+  const selfEvalToday = new Date().toISOString().slice(0, 10);
+
+  // Week bounds for journal
+  const _now = new Date();
+  const _monday = new Date(_now);
+  _monday.setDate(_now.getDate() - ((_now.getDay() + 6) % 7));
+  const _sunday = new Date(_monday);
+  _sunday.setDate(_monday.getDate() + 6);
+  const weekStart = _monday.toISOString().slice(0, 10);
+  const weekEnd = _sunday.toISOString().slice(0, 10);
+
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
@@ -676,6 +692,44 @@ export default function SkaterAnalyticsPage() {
             </button>
           </div>
         </div>
+      )}
+
+      {/* Self-eval section for skater role */}
+      {user?.role === "skater" && skaterId && (
+        <>
+          <div className="px-6 pt-4 space-y-4">
+            <MoodInput skaterId={skaterId} today={selfEvalToday} />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 text-center">
+                <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
+                  Evaluation d'aujourd'hui
+                </p>
+                <p className="text-3xl mb-2">{"\u{1F4DD}"}</p>
+                <p className="text-sm text-on-surface-variant mb-3">
+                  Pas encore d'evaluation pour aujourd'hui
+                </p>
+                <button
+                  onClick={() => setShowEvalModal(true)}
+                  className="bg-primary text-on-primary rounded-lg px-5 py-2.5 text-xs font-bold active:scale-95 transition-all"
+                >
+                  Evaluer ma seance
+                </button>
+              </div>
+              <ProgramEditor skaterId={skaterId} />
+            </div>
+
+            <TrainingJournal skaterId={skaterId} weekStart={weekStart} weekEnd={weekEnd} />
+          </div>
+
+          {showEvalModal && (
+            <SelfEvalModal
+              skaterId={skaterId}
+              today={selfEvalToday}
+              onClose={() => setShowEvalModal(false)}
+            />
+          )}
+        </>
       )}
 
       {/* Tab bar for training-tracked skaters (visible to skater/admin/coach) */}
