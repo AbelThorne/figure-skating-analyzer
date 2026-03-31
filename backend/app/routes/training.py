@@ -17,6 +17,7 @@ from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.user_skater import UserSkater
 from app.services.notification_service import notify_review, notify_incident
+from app.routes.self_eval import self_eval_handlers
 
 
 def _snap_to_monday(d: date) -> date:
@@ -509,6 +510,7 @@ router = Router(
         list_incidents, get_incident, create_incident, update_incident, delete_incident,
         list_challenges, create_challenge, update_challenge, delete_challenge,
         get_timeline,
+        *self_eval_handlers,
     ],
     dependencies={"session": Provide(get_session)},
 )
