@@ -111,6 +111,27 @@ async def get_skater_elements(
     return records
 
 
+@get("/{skater_id:int}/element-names")
+async def get_skater_element_names(
+    skater_id: int,
+    request: Request,
+    session: AsyncSession,
+) -> list[str]:
+    """Return distinct element names seen in competition for this skater."""
+    await require_skater_access(request, skater_id, session)
+    stmt = select(Score).where(Score.skater_id == skater_id)
+    result = await session.execute(stmt)
+    names: set[str] = set()
+    for s in result.scalars().all():
+        if not s.elements:
+            continue
+        for element in s.elements:
+            name = element.get("name", "")
+            if name:
+                names.add(name)
+    return sorted(names)
+
+
 @get("/{skater_id:int}/scores")
 async def get_skater_scores(skater_id: int, request: Request, session: AsyncSession, season: Optional[str] = None) -> list[dict]:
     await require_skater_access(request, skater_id, session)
@@ -434,7 +455,7 @@ async def clear_training_data(skater_id: int, request: Request, session: AsyncSe
 router = Router(
     path="/api/skaters",
     route_handlers=[
-        list_skaters, get_skater, get_skater_elements, get_skater_scores,
+        list_skaters, get_skater, get_skater_elements, get_skater_element_names, get_skater_scores,
         get_skater_category_results, get_skater_seasons, merge_skaters,
         update_skater, create_skater, clear_training_data,
     ],

@@ -914,6 +914,8 @@ export const api = {
       const query = qs.toString() ? `?${qs}` : "";
       return request<Element[]>(`/skaters/${id}/elements${query}`);
     },
+    elementNames: (id: number) =>
+      request<string[]>(`/skaters/${id}/element-names`),
     merge: (targetId: number, sourceIds: number[]) =>
       request<{ merged: number; aliases_created: number }>("/skaters/merge", {
         method: "POST",
