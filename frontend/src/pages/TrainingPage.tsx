@@ -1,6 +1,8 @@
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { api, Skater, WeeklyReview, TrainingChallenge } from "../api/client";
+import { useAuth } from "../auth/AuthContext";
+import MoodAggregateWidget from "../components/MoodAggregateWidget";
 
 function SkaterCard({ skater, lastReview }: { skater: Skater; lastReview?: WeeklyReview }) {
   const avgScore = lastReview
@@ -35,6 +37,19 @@ function SkaterCard({ skater, lastReview }: { skater: Skater; lastReview?: Weekl
 }
 
 export default function TrainingPage() {
+  const { user } = useAuth();
+
+  // Week bounds for mood aggregate
+  const now = new Date();
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - ((now.getDay() + 6) % 7));
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const prevMonday = new Date(monday);
+  prevMonday.setDate(monday.getDate() - 7);
+  const prevSunday = new Date(monday);
+  prevSunday.setDate(monday.getDate() - 1);
+
   const { data: skaters, isLoading: skatersLoading } = useQuery({
     queryKey: ["skaters", "training_tracked"],
     queryFn: () => api.skaters.list({ training_tracked: true }),
@@ -83,6 +98,14 @@ export default function TrainingPage() {
 
   return (
     <div className="space-y-6">
+      {(user?.role === "admin" || user?.role === "coach") && (
+        <MoodAggregateWidget
+          currentWeekStart={monday.toISOString().slice(0, 10)}
+          currentWeekEnd={sunday.toISOString().slice(0, 10)}
+          previousWeekStart={prevMonday.toISOString().slice(0, 10)}
+          previousWeekEnd={prevSunday.toISOString().slice(0, 10)}
+        />
+      )}
       <div>
         <p className="text-on-surface-variant text-sm mb-3">
           {skaters?.length ?? 0} patineur{(skaters?.length ?? 0) > 1 ? "s" : ""}
