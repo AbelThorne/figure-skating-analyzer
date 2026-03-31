@@ -161,8 +161,8 @@ export default function SkaterAnalyticsPage() {
   const { user } = useAuth();
   const qc = useQueryClient();
   const [selectedSeason, setSelectedSeason] = useState<string | null>(null);
-  const [analyticsTab, setAnalyticsTab] = useState<"competitions" | "training">(
-    user?.role === "skater" ? "training" : "competitions"
+  const [analyticsTab, setAnalyticsTab] = useState<"competitions" | "training" | "journal">(
+    user?.role === "skater" ? "journal" : "competitions"
   );
   const [editingSkater, setEditingSkater] = useState(false);
   const [editForm, setEditForm] = useState({ first_name: "", last_name: "", nationality: "", club: "" });
@@ -196,11 +196,14 @@ export default function SkaterAnalyticsPage() {
     queryFn: () => api.skaters.get(skaterId),
   });
 
+  // Full training tab (with coach sub-tabs) visible for tracked skaters or coaches/admins
   const showTrainingTab = config?.training_enabled && (
-    user?.role === "skater" || (
+    (user?.role === "skater" && skater?.training_tracked) || (
       (user?.role === "admin" || user?.role === "coach") && skater?.training_tracked
     )
   );
+  // Journal-only tab for skater role even if not tracked
+  const showJournalTab = config?.training_enabled && user?.role === "skater";
 
   const toggleTrainingTracked = useMutation({
     mutationFn: () => api.skaters.update(skaterId, { training_tracked: !skater?.training_tracked }),
@@ -280,7 +283,7 @@ export default function SkaterAnalyticsPage() {
       from: selfEvalToday,
       to: selfEvalToday,
     }),
-    enabled: user?.role === "skater" && !!showTrainingTab,
+    enabled: user?.role === "skater" && !!config?.training_enabled,
   });
 
   const isLoading = loadingSkater || loadingScores || loadingElements || loadingCatResults;
@@ -708,20 +711,34 @@ export default function SkaterAnalyticsPage() {
         </div>
       )}
 
-      {/* Tab bar for training-tracked skaters (visible to skater/admin/coach) */}
-      {showTrainingTab && (
+      {/* Tab bar */}
+      {(showTrainingTab || showJournalTab) && (
         <div className="px-6 pt-4">
           <div className="flex gap-0">
-            <button
-              onClick={() => setAnalyticsTab("training")}
-              className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
-                analyticsTab === "training"
-                  ? "text-primary border-primary"
-                  : "text-on-surface-variant border-transparent hover:text-on-surface"
-              }`}
-            >
-              Entraînement
-            </button>
+            {showJournalTab && !showTrainingTab && (
+              <button
+                onClick={() => setAnalyticsTab("journal")}
+                className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+                  analyticsTab === "journal"
+                    ? "text-primary border-primary"
+                    : "text-on-surface-variant border-transparent hover:text-on-surface"
+                }`}
+              >
+                Journal
+              </button>
+            )}
+            {showTrainingTab && (
+              <button
+                onClick={() => setAnalyticsTab("training")}
+                className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
+                  analyticsTab === "training" || analyticsTab === "journal"
+                    ? "text-primary border-primary"
+                    : "text-on-surface-variant border-transparent hover:text-on-surface"
+                }`}
+              >
+                Entraînement
+              </button>
+            )}
             <button
               onClick={() => setAnalyticsTab("competitions")}
               className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
@@ -736,8 +753,66 @@ export default function SkaterAnalyticsPage() {
         </div>
       )}
 
+      {/* ── Journal tab (top-level, non-tracked skaters) ── */}
+      {analyticsTab === "journal" && !showTrainingTab && showJournalTab && (() => {
+        const todayEvals = (selfEvalsToday ?? []);
+        return (
+          <div className="p-6 space-y-4">
+            <MoodInput skaterId={skaterId} today={selfEvalToday} />
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5">
+                <p className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
+                  Auto-evaluations du jour
+                </p>
+                {todayEvals.length > 0 && (
+                  <div className="space-y-2 mb-3">
+                    {todayEvals.map((ev) => (
+                      <button
+                        key={ev.id}
+                        onClick={() => { setEditingEval(ev); setShowEvalModal(true); }}
+                        className="w-full flex items-center gap-2 text-left bg-surface-container-low rounded-lg px-3 py-2 hover:bg-surface-container transition-colors"
+                      >
+                        <span className="material-symbols-outlined text-primary text-sm">edit_note</span>
+                        <span className="text-xs text-on-surface truncate flex-1">
+                          {ev.notes || "Evaluation"}
+                        </span>
+                        <span className="material-symbols-outlined text-on-surface-variant text-sm">chevron_right</span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <button
+                  onClick={() => { setEditingEval(undefined); setShowEvalModal(true); }}
+                  className="bg-primary text-on-primary rounded-lg px-5 py-2.5 text-xs font-bold active:scale-95 transition-all w-full"
+                >
+                  Nouvelle evaluation
+                </button>
+              </div>
+              <ProgramEditor skaterId={skaterId} />
+            </div>
+
+            <TrainingJournal
+              skaterId={skaterId}
+              weekStart={weekStart}
+              weekEnd={weekEnd}
+              onEditEval={(ev) => { setEditingEval(ev); setShowEvalModal(true); }}
+            />
+
+            {showEvalModal && (
+              <SelfEvalModal
+                skaterId={skaterId}
+                today={selfEvalToday}
+                existingEval={editingEval}
+                onClose={() => { setShowEvalModal(false); setEditingEval(undefined); }}
+              />
+            )}
+          </div>
+        );
+      })()}
+
       {/* ── Main content ── */}
-      {(analyticsTab === "competitions" || !showTrainingTab) && (
+      {(analyticsTab === "competitions" || (!showTrainingTab && !showJournalTab)) && (
         <>
           <div className="p-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* ────────── LEFT PANEL ────────── */}
@@ -1309,7 +1384,7 @@ export default function SkaterAnalyticsPage() {
       )}
 
       {/* ── Training content ── */}
-      {analyticsTab === "training" && showTrainingTab && (() => {
+      {(analyticsTab === "training" || analyticsTab === "journal") && showTrainingTab && (() => {
         const allReviews = trainingReviews ?? [];
         const allIncidents = trainingIncidents ?? [];
         const allChallenges = trainingChallenges ?? [];

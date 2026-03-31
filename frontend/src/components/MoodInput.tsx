@@ -70,10 +70,18 @@ export default function MoodInput({ skaterId, today }: Props) {
             ))}
           </div>
         </div>
-        <p className="text-[10px] text-outline flex items-center gap-1">
-          <span className="material-symbols-outlined text-sm">visibility</span>
-          Visible par vos coachs
-        </p>
+        <div className="flex items-center gap-1">
+          <p className="text-[10px] text-outline flex items-center gap-1">
+            <span className="material-symbols-outlined text-sm">visibility</span>
+            Visible par vos coachs
+          </p>
+          <span className="group relative cursor-help">
+            <span className="material-symbols-outlined text-outline text-[14px]">info</span>
+            <span className="invisible group-hover:visible absolute right-0 bottom-full mb-1.5 w-56 bg-on-surface text-surface text-[11px] font-body font-normal normal-case tracking-normal rounded-lg px-3 py-2 shadow-lg z-50 leading-relaxed">
+              Les humeurs sont agrégées sur l'ensemble des patineurs. Vos coachs voient une tendance globale, pas vos réponses individuelles.
+            </span>
+          </span>
+        </div>
       </div>
     </div>
   );
