@@ -12,6 +12,9 @@ from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.notification import Notification
 from app.models.job import Job
+from app.models.skater_program import SkaterProgram
+from app.models.training_mood import TrainingMood
+from app.models.self_evaluation import SelfEvaluation
 
 __all__ = [
     "Competition",
@@ -28,4 +31,7 @@ __all__ = [
     "Challenge",
     "Notification",
     "Job",
+    "SkaterProgram",
+    "TrainingMood",
+    "SelfEvaluation",
 ]
