@@ -827,7 +827,7 @@ export default function SkaterTrainingPage() {
         <div className="flex items-center gap-4">
           <h2 className="font-headline font-bold text-on-surface text-xl">
             <Link
-              to={`/patineurs/${skater.id}`}
+              to={`/patineurs/${skater.id}/analyse`}
               className="hover:text-primary transition-colors flex items-center gap-1.5"
             >
               {skater.first_name} {skater.last_name}
