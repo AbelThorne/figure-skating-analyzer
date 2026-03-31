@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, Skater, WeeklyReview, TrainingIncident, TrainingChallenge, TimelineEntry } from "../api/client";
 import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
@@ -826,7 +826,13 @@ export default function SkaterTrainingPage() {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <h2 className="font-headline font-bold text-on-surface text-xl">
-            {skater.first_name} {skater.last_name}
+            <Link
+              to={`/patineurs/${skater.id}`}
+              className="hover:text-primary transition-colors flex items-center gap-1.5"
+            >
+              {skater.first_name} {skater.last_name}
+              <span className="material-symbols-outlined text-on-surface-variant text-base">open_in_new</span>
+            </Link>
           </h2>
           <select
             value={selectedSeason}
