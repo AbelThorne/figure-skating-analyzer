@@ -16,7 +16,9 @@ from app.models.weekly_review import WeeklyReview
 from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.user_skater import UserSkater
+from app.models.self_evaluation import SelfEvaluation
 from app.services.notification_service import notify_review, notify_incident
+from app.routes.self_eval import self_eval_handlers
 
 
 def _snap_to_monday(d: date) -> date:
@@ -486,6 +488,16 @@ async def get_timeline(
         incident_stmt = incident_stmt.where(Incident.date <= date.fromisoformat(to_date))
     incidents = (await session.execute(incident_stmt)).scalars().all()
 
+    # Self-evaluations (shared only for coach/admin, all for skater own)
+    eval_stmt = select(SelfEvaluation).where(SelfEvaluation.skater_id == skater_id)
+    if role in ("coach", "admin"):
+        eval_stmt = eval_stmt.where(SelfEvaluation.shared == True)  # noqa: E712
+    if from_date:
+        eval_stmt = eval_stmt.where(SelfEvaluation.date >= date.fromisoformat(from_date))
+    if to_date:
+        eval_stmt = eval_stmt.where(SelfEvaluation.date <= date.fromisoformat(to_date))
+    self_evals = (await session.execute(eval_stmt)).scalars().all()
+
     timeline = []
     for r in reviews:
         entry = _review_to_dict(r)
@@ -496,6 +508,20 @@ async def get_timeline(
         entry = _incident_to_dict(i)
         entry["type"] = "incident"
         entry["sort_date"] = i.date.isoformat()
+        timeline.append(entry)
+    for e in self_evals:
+        entry = {
+            "id": e.id,
+            "type": "self_evaluation",
+            "skater_id": e.skater_id,
+            "date": e.date.isoformat(),
+            "notes": e.notes,
+            "element_ratings": e.element_ratings,
+            "shared": e.shared,
+            "mood_id": e.mood_id,
+            "sort_date": e.date.isoformat(),
+            "created_at": e.created_at.isoformat() if e.created_at else None,
+        }
         timeline.append(entry)
 
     timeline.sort(key=lambda x: x["sort_date"], reverse=True)
@@ -509,6 +535,7 @@ router = Router(
         list_incidents, get_incident, create_incident, update_incident, delete_incident,
         list_challenges, create_challenge, update_challenge, delete_challenge,
         get_timeline,
+        *self_eval_handlers,
     ],
     dependencies={"session": Provide(get_session)},
 )

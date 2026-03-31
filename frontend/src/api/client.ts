@@ -520,7 +520,76 @@ export interface UpdateChallengePayload {
   score?: number;
 }
 
-export type TimelineEntry = (WeeklyReview & { type: "review"; sort_date: string }) | (TrainingIncident & { type: "incident"; sort_date: string });
+export interface SkaterProgram {
+  id: number;
+  skater_id: number;
+  segment: "SP" | "FS";
+  elements: string[];
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface UpsertProgramPayload {
+  skater_id: number;
+  segment: "SP" | "FS";
+  elements: string[];
+}
+
+export interface TrainingMood {
+  id: number;
+  skater_id: number;
+  date: string;
+  rating: number;
+  created_at: string | null;
+}
+
+export interface CreateMoodPayload {
+  skater_id: number;
+  date: string;
+  rating: number;
+}
+
+export interface MoodWeeklySummary {
+  average: number | null;
+  count: number;
+  distribution: number[];
+}
+
+export interface ElementRating {
+  name: string;
+  rating: number;
+}
+
+export interface SelfEvaluation {
+  id: number;
+  skater_id: number;
+  mood_id: number | null;
+  date: string;
+  notes: string | null;
+  element_ratings: ElementRating[] | null;
+  shared: boolean;
+  created_at: string | null;
+  updated_at: string | null;
+}
+
+export interface CreateSelfEvaluationPayload {
+  skater_id: number;
+  date: string;
+  notes?: string;
+  element_ratings?: ElementRating[];
+  shared?: boolean;
+}
+
+export interface UpdateSelfEvaluationPayload {
+  notes?: string;
+  element_ratings?: ElementRating[];
+  shared?: boolean;
+}
+
+export type TimelineEntry =
+  | (WeeklyReview & { type: "review"; sort_date: string })
+  | (TrainingIncident & { type: "incident"; sort_date: string })
+  | (SelfEvaluation & { type: "self_evaluation"; sort_date: string });
 
 export interface AppNotification {
   id: number;
@@ -1014,6 +1083,62 @@ export const api = {
         }),
       delete: (id: number) =>
         request<void>(`/training/challenges/${id}`, { method: "DELETE" }),
+    },
+    programs: {
+      list: (skater_id: number) =>
+        request<SkaterProgram[]>(`/training/programs?skater_id=${skater_id}`),
+      upsert: (data: UpsertProgramPayload) =>
+        request<SkaterProgram>("/training/programs", {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: number) =>
+        request<void>(`/training/programs/${id}`, { method: "DELETE" }),
+    },
+    moods: {
+      list: (params: { skater_id: number; from?: string; to?: string }) => {
+        const qs = new URLSearchParams({ skater_id: String(params.skater_id) });
+        if (params.from) qs.set("from_date", params.from);
+        if (params.to) qs.set("to_date", params.to);
+        return request<TrainingMood[]>(`/training/moods?${qs}`);
+      },
+      create: (data: CreateMoodPayload) =>
+        request<TrainingMood>("/training/moods", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: number, data: { rating: number }) =>
+        request<TrainingMood>(`/training/moods/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      weeklySummary: (params?: { from?: string; to?: string }) => {
+        const qs = new URLSearchParams();
+        if (params?.from) qs.set("from_date", params.from);
+        if (params?.to) qs.set("to_date", params.to);
+        const query = qs.toString() ? `?${qs}` : "";
+        return request<MoodWeeklySummary>(`/training/moods/weekly-summary${query}`);
+      },
+    },
+    selfEvaluations: {
+      list: (params: { skater_id: number; from?: string; to?: string }) => {
+        const qs = new URLSearchParams({ skater_id: String(params.skater_id) });
+        if (params.from) qs.set("from_date", params.from);
+        if (params.to) qs.set("to_date", params.to);
+        return request<SelfEvaluation[]>(`/training/self-evaluations?${qs}`);
+      },
+      create: (data: CreateSelfEvaluationPayload) =>
+        request<SelfEvaluation>("/training/self-evaluations", {
+          method: "POST",
+          body: JSON.stringify(data),
+        }),
+      update: (id: number, data: UpdateSelfEvaluationPayload) =>
+        request<SelfEvaluation>(`/training/self-evaluations/${id}`, {
+          method: "PUT",
+          body: JSON.stringify(data),
+        }),
+      delete: (id: number) =>
+        request<void>(`/training/self-evaluations/${id}`, { method: "DELETE" }),
     },
     timeline: (params: { skater_id: number; from?: string; to?: string }) => {
       const qs = new URLSearchParams({ skater_id: String(params.skater_id) });
