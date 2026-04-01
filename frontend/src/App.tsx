@@ -195,7 +195,7 @@ function AuthenticatedLayout() {
           </nav>
         ) : (
           <nav className="flex-1 py-2">
-            {[...navLinksBase, ...(config?.training_enabled ? [trainingNavLink] : [])].map(({ to, label, icon, end }) => (
+            {[...navLinksBase, ...(config?.training_enabled && user?.role !== "reader" ? [trainingNavLink] : [])].map(({ to, label, icon, end }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -340,7 +340,7 @@ function AuthenticatedLayout() {
                 <Route path="/club/competition" element={<ClubCompetitionPage />} />
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
-                {config?.training_enabled && (
+                {config?.training_enabled && user?.role !== "reader" && (
                   <>
                     <Route path="/entrainement" element={<TrainingPage />} />
                     <Route path="/entrainement/patineurs/:id" element={<SkaterTrainingPage />} />
