@@ -145,10 +145,10 @@ export default function CompetitionsPage() {
     const today = new Date().toISOString().split("T")[0];
     const endDate = c.date_end ?? c.date;
     if (c.date > today) {
-      return { label: "Prochainement", className: "bg-surface-container text-on-surface-variant" };
+      return { label: "Prochainement", className: "bg-primary/10 text-primary" };
     }
     if (c.date <= today && endDate >= today) {
-      return { label: "En cours", className: "bg-primary/10 text-primary" };
+      return { label: "En cours", className: "bg-error/10 text-error" };
     }
     return null;
   }
