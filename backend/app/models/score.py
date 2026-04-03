@@ -33,6 +33,7 @@ class Score(Base):
     age_group: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
     gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
     is_titular: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=None)
+    club: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     competition: Mapped["Competition"] = relationship(  # noqa: F821
         "Competition", back_populates="scores"

@@ -38,6 +38,7 @@ class CategoryResult(Base):
     skating_level: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     age_group: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
     gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    club: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
 
     competition: Mapped["Competition"] = relationship(  # noqa: F821
         "Competition", back_populates="category_results"
