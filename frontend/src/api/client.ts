@@ -711,7 +711,9 @@ export interface TeamSkaterEntry {
   total_score: number | null;
   points: number | null;
   is_remplacant: boolean;
+  is_titular: boolean;
   rank: number | null;
+  starting_number: number | null;
 }
 
 export interface TeamClubResult {
@@ -921,6 +923,15 @@ export const api = {
       request<TeamMediansResponse>(`/competitions/${id}/team-medians`, {
         method: "PUT",
         body: JSON.stringify({ medians }),
+      }),
+    updateTitular: (competitionId: number, scoreId: number, is_titular: boolean) =>
+      request<{ score_id: number; is_titular: boolean }>(`/competitions/${competitionId}/team-titular/${scoreId}`, {
+        method: "PUT",
+        body: JSON.stringify({ is_titular }),
+      }),
+    resetTitular: (competitionId: number) =>
+      request<{ reset: boolean; count: number }>(`/competitions/${competitionId}/team-titular-reset`, {
+        method: "PUT",
       }),
   },
 

@@ -8,7 +8,7 @@ from app.models.competition import Competition
 from app.models.skater import Skater
 from app.models.score import Score
 from app.models.app_settings import AppSettings
-from app.services.team_scoring import compute_team_scores, DEFAULT_MEDIANS
+from app.services.team_scoring import compute_team_scores, auto_init_titular, DEFAULT_MEDIANS
 
 
 # --- Unit tests for compute_team_scores ---
@@ -17,6 +17,7 @@ from app.services.team_scoring import compute_team_scores, DEFAULT_MEDIANS
 def _make_score_stub(
     score_id, skater_id, first_name, last_name, club, nationality,
     category, total_score, rank, skating_level=None, age_group=None, gender=None,
+    is_titular=True, starting_number=None,
 ):
     """Create a mock Score-like object for testing."""
 
@@ -39,6 +40,8 @@ def _make_score_stub(
             self.skating_level = skating_level
             self.age_group = age_group
             self.gender = gender
+            self.is_titular = is_titular
+            self.starting_number = starting_number
 
     return FakeScore()
 
@@ -70,49 +73,54 @@ def test_basic_team_score_calculation():
     assert club_b["rank"] == 2
 
 
-def test_remplacant_excluded_by_nationality():
-    """Skaters with empty nationality are remplaçants and excluded from total."""
+def test_remplacant_excluded_by_is_titular():
+    """Skaters with is_titular=False are remplacants and excluded from total."""
     medians = {"Novices dames": {"D1": 40.0}}
     scores = [
         _make_score_stub(
             1, 1, "Alice", "DUPONT", "Club A", "FRA",
             "Novice D1 Femme", 40.0, 1,
             skating_level="National", age_group="Novice", gender="Femme",
+            is_titular=True,
         ),
         _make_score_stub(
-            2, 2, "Marie", "MARTIN", "Club A", None,  # empty nationality = remplaçant
+            2, 2, "Marie", "MARTIN", "Club A", "FRA",
             "Novice D1 Femme", 80.0, 2,
             skating_level="National", age_group="Novice", gender="Femme",
+            is_titular=False,  # substitute
         ),
     ]
     result = compute_team_scores(scores, medians)
 
     club_a = next(c for c in result["clubs"] if c["club"] == "Club A")
-    # Only Alice's points count (10.0), Marie is remplaçant
+    # Only Alice's points count (10.0), Marie is remplacant
     assert club_a["total_points"] == 10.0
     assert club_a["skater_count"] == 1
 
+    # Marie should be flagged as remplacant in entries
+    marie = next(s for s in club_a["skaters"] if s["skater_name"] == "Marie MARTIN")
+    assert marie["is_remplacant"] is True
+    assert marie["is_titular"] is False
 
-def test_remplacant_excluded_by_name():
-    """Skaters with REMPL in name are excluded from total."""
+
+def test_is_titular_none_treated_as_titular():
+    """Scores with is_titular=None are treated as titular (backward compat)."""
     medians = {"Novices dames": {"D1": 40.0}}
     scores = [
         _make_score_stub(
             1, 1, "Alice", "DUPONT", "Club A", "FRA",
             "Novice D1 Femme", 40.0, 1,
             skating_level="National", age_group="Novice", gender="Femme",
-        ),
-        _make_score_stub(
-            2, 2, "Marie REMPL", "MARTIN", "Club A", "FRA",
-            "Novice D1 Femme", 80.0, 2,
-            skating_level="National", age_group="Novice", gender="Femme",
+            is_titular=None,
         ),
     ]
     result = compute_team_scores(scores, medians)
 
-    club_a = next(c for c in result["clubs"] if c["club"] == "Club A")
+    club_a = result["clubs"][0]
     assert club_a["total_points"] == 10.0
     assert club_a["skater_count"] == 1
+    alice = club_a["skaters"][0]
+    assert alice["is_remplacant"] is False
 
 
 def test_division_from_category_name():
@@ -205,6 +213,23 @@ def test_couples_category():
     assert result["clubs"][0]["total_points"] == 10.0
 
 
+def test_entries_include_is_titular_and_starting_number():
+    """Skater entries include is_titular and starting_number fields."""
+    medians = {"Novices dames": {"D1": 40.0}}
+    scores = [
+        _make_score_stub(
+            1, 1, "Alice", "DUPONT", "Club A", "FRA",
+            "Novice D1 Femme", 40.0, 1,
+            skating_level="National", age_group="Novice", gender="Femme",
+            is_titular=True, starting_number=3,
+        ),
+    ]
+    result = compute_team_scores(scores, medians)
+    entry = result["clubs"][0]["skaters"][0]
+    assert entry["is_titular"] is True
+    assert entry["starting_number"] == 3
+
+
 # --- API integration tests ---
 
 
@@ -237,6 +262,7 @@ async def france_clubs_setup(db_session: AsyncSession):
         skating_level="National",
         age_group="Novice",
         gender="Femme",
+        starting_number=1,
     )
     score2 = Score(
         competition_id=comp.id,
@@ -248,6 +274,7 @@ async def france_clubs_setup(db_session: AsyncSession):
         skating_level="National",
         age_group="Novice",
         gender="Femme",
+        starting_number=2,
     )
     db_session.add_all([score1, score2])
     await db_session.commit()
@@ -268,6 +295,22 @@ async def test_team_scores_api(client, admin_token, france_clubs_setup):
     assert "categories" in data
     assert "medians" in data
     assert len(data["clubs"]) == 2
+
+
+async def test_team_scores_auto_init_titular(client, admin_token, france_clubs_setup, db_session):
+    """Team scores endpoint auto-initializes is_titular when NULL."""
+    comp = france_clubs_setup
+    # Scores should have is_titular=None initially
+    resp = await client.get(
+        f"/api/competitions/{comp.id}/team-scores",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    data = resp.json()
+    # Both skaters should be titular (< 6 per club per division)
+    for club in data["clubs"]:
+        for s in club["skaters"]:
+            assert s["is_titular"] is True
 
 
 async def test_team_scores_not_france_clubs(client, admin_token, db_session):
@@ -344,3 +387,137 @@ async def test_reader_cannot_update_medians(client, reader_token, france_clubs_s
         json={"medians": {}},
     )
     assert resp.status_code == 403
+
+
+async def test_toggle_titular_status(client, admin_token, france_clubs_setup, db_session):
+    """Admin can toggle is_titular on a score."""
+    comp = france_clubs_setup
+
+    # First load team scores to trigger auto-init
+    resp = await client.get(
+        f"/api/competitions/{comp.id}/team-scores",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    score_id = resp.json()["clubs"][0]["skaters"][0]["score_id"]
+
+    # Toggle to substitute
+    resp = await client.put(
+        f"/api/competitions/{comp.id}/team-titular/{score_id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"is_titular": False},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["is_titular"] is False
+
+    # Verify it's reflected in team scores
+    resp = await client.get(
+        f"/api/competitions/{comp.id}/team-scores",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    toggled = None
+    for club in resp.json()["clubs"]:
+        for s in club["skaters"]:
+            if s["score_id"] == score_id:
+                toggled = s
+                break
+    assert toggled is not None
+    assert toggled["is_remplacant"] is True
+    assert toggled["is_titular"] is False
+
+
+async def test_reset_titular(client, admin_token, france_clubs_setup, db_session):
+    """Admin can reset all titular statuses to auto-init defaults."""
+    comp = france_clubs_setup
+
+    # First load to auto-init, then toggle one
+    resp = await client.get(
+        f"/api/competitions/{comp.id}/team-scores",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    score_id = resp.json()["clubs"][0]["skaters"][0]["score_id"]
+
+    await client.put(
+        f"/api/competitions/{comp.id}/team-titular/{score_id}",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"is_titular": False},
+    )
+
+    # Reset
+    resp = await client.put(
+        f"/api/competitions/{comp.id}/team-titular-reset",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["reset"] is True
+
+    # All should be titular again (only 2 skaters, < 6 per div/club)
+    resp = await client.get(
+        f"/api/competitions/{comp.id}/team-scores",
+        headers={"Authorization": f"Bearer {admin_token}"},
+    )
+    for club in resp.json()["clubs"]:
+        for s in club["skaters"]:
+            assert s["is_titular"] is True
+
+
+async def test_reader_cannot_toggle_titular(client, reader_token, france_clubs_setup):
+    """Non-admin users cannot toggle titular status."""
+    comp = france_clubs_setup
+    resp = await client.put(
+        f"/api/competitions/{comp.id}/team-titular/1",
+        headers={"Authorization": f"Bearer {reader_token}"},
+        json={"is_titular": False},
+    )
+    assert resp.status_code == 403
+
+
+async def test_auto_init_limits_6_per_division_per_club(db_session: AsyncSession):
+    """Auto-init marks first 6 per division per club as titular, rest as substitute."""
+    settings = AppSettings(club_name="Test Club", club_short="TC", current_season="2025-2026")
+    db_session.add(settings)
+
+    comp = Competition(
+        name="FC Limit Test",
+        url="https://example.com/fc-limit",
+        competition_type="france_clubs",
+    )
+    db_session.add(comp)
+    await db_session.flush()
+
+    # Create 8 skaters in same club/division
+    skaters = []
+    for i in range(8):
+        sk = Skater(first_name=f"Skater{i}", last_name=f"LAST{i}", club="Club A", nationality="FRA")
+        db_session.add(sk)
+        skaters.append(sk)
+    await db_session.flush()
+
+    for i, sk in enumerate(skaters):
+        score = Score(
+            competition_id=comp.id,
+            skater_id=sk.id,
+            segment="FS",
+            category="Novice D1 Femme",
+            total_score=30.0 + i,
+            rank=i + 1,
+            skating_level="National",
+            age_group="Novice",
+            gender="Femme",
+            starting_number=i + 1,
+        )
+        db_session.add(score)
+    await db_session.flush()
+
+    await auto_init_titular(db_session, comp.id)
+
+    from sqlalchemy import select
+    stmt = select(Score).where(Score.competition_id == comp.id).order_by(Score.starting_number)
+    result = await db_session.execute(stmt)
+    scores = result.scalars().all()
+
+    titular_count = sum(1 for s in scores if s.is_titular is True)
+    sub_count = sum(1 for s in scores if s.is_titular is False)
+    assert titular_count == 6
+    assert sub_count == 2

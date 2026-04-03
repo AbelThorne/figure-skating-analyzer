@@ -3,15 +3,16 @@
 Each skater's score is compared to a reference median for their category/division:
     points = 10 * (score / median)
 
-Skaters marked as "REMPL" (remplaçant) or with empty nationality are excluded
-from the club total.
+Titular status (is_titular) is stored per score in DB. When NULL (not yet set),
+auto-initialization assigns the first 6 skaters per division per club (by
+starting_number) as titular and the rest as substitutes.
 """
 
 from __future__ import annotations
 
 import logging
 import re
-from typing import Optional
+from collections import defaultdict
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -51,35 +52,19 @@ _AGE_PLURAL: dict[str, str] = {
     "Senior": "Seniors",
 }
 
-_REMPL_PATTERN = re.compile(r"\bREMPL\b", re.IGNORECASE)
-
 # Pattern to extract division directly from category name (e.g., "Novice D2 Femme")
 _DIVISION_PATTERN = re.compile(r"\b(D[123])\b", re.IGNORECASE)
 
 # Pattern to detect couple/pair categories
 _COUPLE_PATTERN = re.compile(r"\bCouples?\b", re.IGNORECASE)
 
-
-def _is_remplacant(score: Score) -> bool:
-    """Check if a skater is a remplaçant (substitute) who doesn't count for the team."""
-    # Check for "REMPL" marker in skater name
-    skater = score.skater
-    if skater:
-        full_name = f"{skater.first_name or ''} {skater.last_name or ''}"
-        if _REMPL_PATTERN.search(full_name):
-            return True
-        # Empty nationality indicates a substitute
-        if not skater.nationality:
-            return True
-    return False
+# Max titular skaters per division per club
+MAX_TITULAR_PER_DIVISION = 6
+MAX_TITULAR_TOTAL = 18
 
 
 def _extract_division(category: str | None) -> str | None:
-    """Extract division (D1/D2/D3) from category name only.
-
-    Only categories with an explicit D1/D2/D3 marker are team categories.
-    Individual categories (Fédéral, National, R1 without Dx) are excluded.
-    """
+    """Extract division (D1/D2/D3) from category name only."""
     if category:
         m = _DIVISION_PATTERN.search(category)
         if m:
@@ -109,6 +94,53 @@ def _build_median_key(category: str | None, age_group: str | None, gender: str |
     return None
 
 
+async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
+    """Auto-initialize is_titular for scores that have NULL is_titular.
+
+    For each division, group scores by club and mark the first 6 (by
+    starting_number, then rank) as titular, the rest as substitutes.
+    """
+    stmt = (
+        select(Score)
+        .where(Score.competition_id == competition_id, Score.is_titular.is_(None))
+        .options(selectinload(Score.skater))
+        .order_by(Score.category, Score.starting_number, Score.rank)
+    )
+    result = await session.execute(stmt)
+    scores = result.scalars().all()
+
+    if not scores:
+        return
+
+    # Group by (club, division)
+    groups: dict[tuple[str, str], list[Score]] = defaultdict(list)
+    for score in scores:
+        division = _extract_division(score.category)
+        if not division:
+            continue
+        club = score.skater.club if score.skater else None
+        if not club:
+            continue
+        groups[(club, division)].append(score)
+
+    for (_club, _div), group_scores in groups.items():
+        # Sort by starting_number (None last), then rank (None last)
+        group_scores.sort(key=lambda s: (
+            s.starting_number if s.starting_number is not None else 9999,
+            s.rank if s.rank is not None else 9999,
+        ))
+        for i, score in enumerate(group_scores):
+            score.is_titular = i < MAX_TITULAR_PER_DIVISION
+
+    # Scores not in any D1/D2/D3 category: mark as titular (they won't count
+    # for team scoring anyway, but the field should not remain NULL)
+    for score in scores:
+        if score.is_titular is None:
+            score.is_titular = True
+
+    await session.flush()
+
+
 def compute_team_scores(
     scores: list[Score],
     medians: dict[str, dict[str, float]],
@@ -136,8 +168,9 @@ def compute_team_scores(
             if skater.first_name
             else skater.last_name or ""
         )
-        club = skater.club or "—"
-        remplacant = _is_remplacant(score)
+        club = skater.club or "\u2014"
+        # is_titular=None treated as titular (shouldn't happen after auto-init)
+        is_remplacant = score.is_titular is False
 
         # Determine division — only keep D1/D2/D3 categories
         division = _extract_division(score.category)
@@ -172,8 +205,10 @@ def compute_team_scores(
             "median_value": median_value,
             "total_score": score.total_score,
             "points": points,
-            "is_remplacant": remplacant,
+            "is_remplacant": is_remplacant,
+            "is_titular": score.is_titular is not False,
             "rank": score.rank,
+            "starting_number": score.starting_number,
         })
 
     # Aggregate by club
@@ -227,6 +262,9 @@ async def get_team_scores(session: AsyncSession, competition_id: int) -> dict | 
     comp = await session.get(Competition, competition_id)
     if not comp or comp.competition_type != "france_clubs":
         return None
+
+    # Auto-initialize titular status for scores that don't have it yet
+    await auto_init_titular(session, competition_id)
 
     # Get medians: competition-specific, or fall back to defaults from AppSettings
     medians = comp.team_medians

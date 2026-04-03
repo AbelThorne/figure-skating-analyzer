@@ -5,9 +5,50 @@ import { api, type TeamScoresResponse, type TeamClubResult, type TeamSkaterEntry
 import { useAuth } from "../auth/AuthContext";
 import MediansModal from "./MediansModal";
 
-function SkaterRow({ s }: { s: TeamSkaterEntry }) {
+function TitularCheckbox({
+  s,
+  competitionId,
+}: {
+  s: TeamSkaterEntry;
+  competitionId: number;
+}) {
+  const queryClient = useQueryClient();
+  const mutation = useMutation({
+    mutationFn: (isTitular: boolean) =>
+      api.competitions.updateTitular(competitionId, s.score_id, isTitular),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-scores", competitionId] });
+    },
+  });
+
+  return (
+    <input
+      type="checkbox"
+      checked={s.is_titular}
+      onChange={(e) => mutation.mutate(e.target.checked)}
+      disabled={mutation.isPending}
+      className="w-4 h-4 rounded accent-primary cursor-pointer disabled:opacity-50"
+      title={s.is_titular ? "Titulaire" : "Remplacant"}
+    />
+  );
+}
+
+function SkaterRow({
+  s,
+  isAdmin,
+  competitionId,
+}: {
+  s: TeamSkaterEntry;
+  isAdmin: boolean;
+  competitionId: number;
+}) {
   return (
     <tr className={`border-t border-gray-100 ${s.is_remplacant ? "opacity-50" : ""}`}>
+      {isAdmin && (
+        <td className="px-2 py-1.5 text-center">
+          <TitularCheckbox s={s} competitionId={competitionId} />
+        </td>
+      )}
       <td className="px-3 py-1.5">
         <Link
           to={`/patineurs/${s.skater_id}/analyse`}
@@ -21,23 +62,31 @@ function SkaterRow({ s }: { s: TeamSkaterEntry }) {
           </span>
         )}
       </td>
-      <td className="px-3 py-1.5 text-gray-500 text-xs max-w-[160px] truncate">{s.category ?? "—"}</td>
-      <td className="px-3 py-1.5 text-right font-mono">{s.total_score?.toFixed(2) ?? "—"}</td>
+      <td className="px-3 py-1.5 text-gray-500 text-xs max-w-[160px] truncate">{s.category ?? "\u2014"}</td>
+      <td className="px-3 py-1.5 text-right font-mono">{s.total_score?.toFixed(2) ?? "\u2014"}</td>
       <td className="px-3 py-1.5 text-right font-mono text-gray-400 text-xs">
-        {s.median_value?.toFixed(2) ?? "—"}
+        {s.median_value?.toFixed(2) ?? "\u2014"}
       </td>
       <td className="px-3 py-1.5 text-right font-mono font-bold">
         {s.is_remplacant ? (
-          <span className="text-gray-400">—</span>
+          <span className="text-gray-400">\u2014</span>
         ) : (
-          s.points?.toFixed(2) ?? "—"
+          s.points?.toFixed(2) ?? "\u2014"
         )}
       </td>
     </tr>
   );
 }
 
-function ClubCard({ club }: { club: TeamClubResult }) {
+function ClubCard({
+  club,
+  isAdmin,
+  competitionId,
+}: {
+  club: TeamClubResult;
+  isAdmin: boolean;
+  competitionId: number;
+}) {
   const [expanded, setExpanded] = useState(false);
 
   return (
@@ -75,6 +124,7 @@ function ClubCard({ club }: { club: TeamClubResult }) {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-left text-xs text-gray-500 uppercase tracking-wider">
               <tr>
+                {isAdmin && <th className="px-2 py-2 text-center w-10">Tit.</th>}
                 <th className="px-3 py-2">Patineur</th>
                 <th className="px-3 py-2">Categorie</th>
                 <th className="px-3 py-2 text-right">Score</th>
@@ -84,7 +134,7 @@ function ClubCard({ club }: { club: TeamClubResult }) {
             </thead>
             <tbody>
               {club.skaters.map((s) => (
-                <SkaterRow key={s.score_id} s={s} />
+                <SkaterRow key={s.score_id} s={s} isAdmin={isAdmin} competitionId={competitionId} />
               ))}
             </tbody>
           </table>
@@ -114,6 +164,13 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
     },
   });
 
+  const resetTitular = useMutation({
+    mutationFn: () => api.competitions.resetTitular(competitionId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["team-scores", competitionId] });
+    },
+  });
+
   if (isLoading) return <p className="text-gray-500 py-4">Chargement...</p>;
   if (error) return <p className="text-red-600 py-4">Erreur lors du chargement des scores.</p>;
   if (!data) return null;
@@ -129,13 +186,27 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
           </p>
         </div>
         {isAdmin && (
-          <button
-            onClick={() => setShowMedians(true)}
-            className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant"
-          >
-            <span className="material-symbols-outlined text-base">tune</span>
-            Medianes
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => {
+                if (confirm("Reinitialiser les titulaires (6 premiers par division/club) ?")) {
+                  resetTitular.mutate();
+                }
+              }}
+              disabled={resetTitular.isPending}
+              className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant disabled:opacity-50"
+            >
+              <span className="material-symbols-outlined text-base">restart_alt</span>
+              Titulaires
+            </button>
+            <button
+              onClick={() => setShowMedians(true)}
+              className="flex items-center gap-1 text-sm px-3 py-1.5 rounded-xl bg-surface-container hover:bg-surface-container-high transition-colors text-on-surface-variant"
+            >
+              <span className="material-symbols-outlined text-base">tune</span>
+              Medianes
+            </button>
+          </div>
         )}
       </div>
 
@@ -157,7 +228,7 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
       ) : (
         <div className="space-y-3">
           {data.clubs.map((club) => (
-            <ClubCard key={club.club} club={club} />
+            <ClubCard key={club.club} club={club} isAdmin={isAdmin} competitionId={competitionId} />
           ))}
         </div>
       )}
@@ -172,14 +243,15 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
                 <div className="px-4 py-2 bg-gray-50 flex items-center justify-between">
                   <span className="font-medium text-sm">{cat.category}</span>
                   <span className="text-xs text-gray-500">
-                    {cat.division && `${cat.division} · `}
-                    Mediane : {cat.median_value?.toFixed(2) ?? "—"}
+                    {cat.division && `${cat.division} \u00b7 `}
+                    Mediane : {cat.median_value?.toFixed(2) ?? "\u2014"}
                   </span>
                 </div>
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm">
                     <thead className="text-left text-xs text-gray-500 uppercase tracking-wider">
                       <tr>
+                        {isAdmin && <th className="px-2 py-2 text-center w-10">Tit.</th>}
                         <th className="px-3 py-2">Rang</th>
                         <th className="px-3 py-2">Patineur</th>
                         <th className="px-3 py-2">Club</th>
@@ -192,7 +264,12 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
                         .sort((a, b) => (a.rank ?? 999) - (b.rank ?? 999))
                         .map((s) => (
                           <tr key={s.score_id} className={`border-t border-gray-100 ${s.is_remplacant ? "opacity-50" : ""}`}>
-                            <td className="px-3 py-1.5">{s.rank ?? "—"}</td>
+                            {isAdmin && (
+                              <td className="px-2 py-1.5 text-center">
+                                <TitularCheckbox s={s} competitionId={competitionId} />
+                              </td>
+                            )}
+                            <td className="px-3 py-1.5">{s.rank ?? "\u2014"}</td>
                             <td className="px-3 py-1.5">
                               <Link
                                 to={`/patineurs/${s.skater_id}/analyse`}
@@ -207,9 +284,9 @@ export default function TeamScoresTab({ competitionId }: { competitionId: number
                               )}
                             </td>
                             <td className="px-3 py-1.5 text-gray-600 max-w-[160px] truncate">{s.club}</td>
-                            <td className="px-3 py-1.5 text-right font-mono">{s.total_score?.toFixed(2) ?? "—"}</td>
+                            <td className="px-3 py-1.5 text-right font-mono">{s.total_score?.toFixed(2) ?? "\u2014"}</td>
                             <td className="px-3 py-1.5 text-right font-mono font-bold">
-                              {s.is_remplacant ? "—" : (s.points?.toFixed(2) ?? "—")}
+                              {s.is_remplacant ? "\u2014" : (s.points?.toFixed(2) ?? "\u2014")}
                             </td>
                           </tr>
                         ))}
