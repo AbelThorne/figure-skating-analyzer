@@ -463,6 +463,6 @@ async def get_team_scores(session: AsyncSession, competition_id: int) -> dict | 
     )
     job_result = await session.execute(job_stmt)
     last_completed = job_result.scalar_one_or_none()
-    team_data["last_import_at"] = last_completed.isoformat() if last_completed else None
+    team_data["last_import_at"] = (last_completed.isoformat() + "Z") if last_completed else None
 
     return team_data
