@@ -131,8 +131,8 @@ def test_division_from_category_name():
     assert club_a["total_points"] == 10.0  # 10 * (30/30)
 
 
-def test_division_from_skating_level():
-    """Division extracted from skating_level when no D1/D2/D3 in name."""
+def test_division_from_skating_level_excluded():
+    """Categories without explicit D1/D2/D3 in name are excluded (individual categories)."""
     medians = {"Minimes messieurs": {"D2": 20.0}}
     scores = [
         _make_score_stub(
@@ -143,8 +143,8 @@ def test_division_from_skating_level():
     ]
     result = compute_team_scores(scores, medians)
 
-    club_a = result["clubs"][0]
-    assert club_a["total_points"] == 20.0  # 10 * (40/20)
+    # No clubs — individual categories (without D1/D2/D3 in name) are skipped
+    assert len(result["clubs"]) == 0
 
 
 def test_unmapped_category():

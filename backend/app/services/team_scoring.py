@@ -51,13 +51,6 @@ _AGE_PLURAL: dict[str, str] = {
     "Senior": "Seniors",
 }
 
-# Map skating_level to division code
-_LEVEL_TO_DIVISION: dict[str, str] = {
-    "National": "D1",
-    "Fédéral": "D2",
-    "R1": "D3",
-}
-
 _REMPL_PATTERN = re.compile(r"\bREMPL\b", re.IGNORECASE)
 
 # Pattern to extract division directly from category name (e.g., "Novice D2 Femme")
@@ -81,14 +74,16 @@ def _is_remplacant(score: Score) -> bool:
     return False
 
 
-def _extract_division(category: str | None, skating_level: str | None) -> str | None:
-    """Extract division (D1/D2/D3) from category name or skating level."""
+def _extract_division(category: str | None) -> str | None:
+    """Extract division (D1/D2/D3) from category name only.
+
+    Only categories with an explicit D1/D2/D3 marker are team categories.
+    Individual categories (Fédéral, National, R1 without Dx) are excluded.
+    """
     if category:
         m = _DIVISION_PATTERN.search(category)
         if m:
             return m.group(1).upper()
-    if skating_level and skating_level in _LEVEL_TO_DIVISION:
-        return _LEVEL_TO_DIVISION[skating_level]
     return None
 
 
@@ -145,7 +140,7 @@ def compute_team_scores(
         remplacant = _is_remplacant(score)
 
         # Determine division — only keep D1/D2/D3 categories
-        division = _extract_division(score.category, score.skating_level)
+        division = _extract_division(score.category)
         if not division:
             continue
 
