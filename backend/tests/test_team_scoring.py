@@ -42,6 +42,7 @@ def _make_score_stub(
             self.gender = gender
             self.is_titular = is_titular
             self.starting_number = starting_number
+            self.club = club
 
     return FakeScore()
 

@@ -136,7 +136,7 @@ async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
         division = _extract_division(score.category)
         if not division:
             continue
-        club = score.skater.club if score.skater else None
+        club = score.club or (score.skater.club if score.skater else None)
         if not club:
             continue
         groups[(club, division)].append(score)
@@ -259,7 +259,7 @@ def compute_team_scores(
             if skater.first_name
             else skater.last_name or ""
         )
-        club = skater.club or "\u2014"
+        club = score.club or skater.club or "\u2014"
         # is_titular=None treated as titular (shouldn't happen after auto-init)
         is_remplacant = score.is_titular is False
 
