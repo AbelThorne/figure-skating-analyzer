@@ -4,7 +4,7 @@ from typing import Optional
 
 from litestar import Request, Router, get
 from litestar.di import Provide
-from sqlalchemy import func, select
+from sqlalchemy import func, or_, select
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -29,6 +29,20 @@ async def get_dashboard(
     # Build a base subquery: scores joined with skaters (and competitions for season filter)
     # that belong to the club.
 
+    def _club_filter_score():
+        """Club filter for queries joining Score + Skater."""
+        return or_(
+            func.lower(Score.club) == club_name.lower(),
+            func.lower(Skater.club) == club_name.lower(),
+        )
+
+    def _club_filter_cat():
+        """Club filter for queries joining CategoryResult + Skater."""
+        return or_(
+            func.lower(CategoryResult.club) == club_name.lower(),
+            func.lower(Skater.club) == club_name.lower(),
+        )
+
     # --- Helper: base statement selecting Score joined to Skater and Competition ---
     def _base_stmt():
         stmt = (
@@ -37,7 +51,7 @@ async def get_dashboard(
             .join(Score.competition)
         )
         if club_name != "":
-            stmt = stmt.where(func.lower(Skater.club) == club_name.lower())
+            stmt = stmt.where(_club_filter_score())
         if season is not None:
             stmt = stmt.where(Competition.season == season)
         return stmt
@@ -49,9 +63,7 @@ async def get_dashboard(
         .join(Score.competition)
     )
     if club_name != "":
-        active_skaters_stmt = active_skaters_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        active_skaters_stmt = active_skaters_stmt.where(_club_filter_score())
     if season is not None:
         active_skaters_stmt = active_skaters_stmt.where(Competition.season == season)
 
@@ -65,9 +77,7 @@ async def get_dashboard(
         .join(Score.competition)
     )
     if club_name != "":
-        competitions_tracked_stmt = competitions_tracked_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        competitions_tracked_stmt = competitions_tracked_stmt.where(_club_filter_score())
     if season is not None:
         competitions_tracked_stmt = competitions_tracked_stmt.where(
             Competition.season == season
@@ -83,9 +93,7 @@ async def get_dashboard(
         .join(Score.competition)
     )
     if club_name != "":
-        total_programs_stmt = total_programs_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        total_programs_stmt = total_programs_stmt.where(_club_filter_score())
     if season is not None:
         total_programs_stmt = total_programs_stmt.where(Competition.season == season)
 
@@ -102,9 +110,7 @@ async def get_dashboard(
         .order_by(CategoryResult.overall_rank)
     )
     if club_name != "":
-        medals_stmt = medals_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        medals_stmt = medals_stmt.where(_club_filter_cat())
     if season is not None:
         medals_stmt = medals_stmt.where(Competition.season == season)
 
@@ -133,9 +139,7 @@ async def get_dashboard(
         .limit(5)
     )
     if club_name != "":
-        top_scores_stmt = top_scores_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        top_scores_stmt = top_scores_stmt.where(_club_filter_cat())
     if season is not None:
         top_scores_stmt = top_scores_stmt.where(Competition.season == season)
 
@@ -169,9 +173,7 @@ async def get_dashboard(
         .order_by(Competition.date.asc())
     )
     if club_name != "":
-        all_cat_stmt = all_cat_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        all_cat_stmt = all_cat_stmt.where(_club_filter_cat())
     if season is not None:
         all_cat_stmt = all_cat_stmt.where(Competition.season == season)
 
@@ -221,9 +223,7 @@ async def get_dashboard(
         .limit(3)
     )
     if club_name != "":
-        recent_comp_stmt = recent_comp_stmt.where(
-            func.lower(Skater.club) == club_name.lower()
-        )
+        recent_comp_stmt = recent_comp_stmt.where(_club_filter_score())
     if season is not None:
         recent_comp_stmt = recent_comp_stmt.where(Competition.season == season)
 
