@@ -31,6 +31,7 @@ async def init_db() -> None:
         await conn.run_sync(Base.metadata.create_all)
         await _migrate_add_columns(conn)
         await _migrate_drop_constraints(conn)
+        await _backfill_score_club(conn)
 
     await _backfill_categories()
     await _merge_pair_skaters()
@@ -115,6 +116,21 @@ async def _migrate_drop_constraints(conn) -> None:
             logger.info("Dropped unique constraint uq_self_eval_skater_date")
     except Exception:
         logger.exception("Failed to drop unique constraint on self_evaluations")
+
+
+async def _backfill_score_club(conn) -> None:
+    """One-time backfill: copy skater.club to scores/category_results where club is NULL."""
+    await conn.execute(text("""
+        UPDATE scores SET club = (
+            SELECT skaters.club FROM skaters WHERE skaters.id = scores.skater_id
+        ) WHERE scores.club IS NULL
+    """))
+    await conn.execute(text("""
+        UPDATE category_results SET club = (
+            SELECT skaters.club FROM skaters WHERE skaters.id = category_results.skater_id
+        ) WHERE category_results.club IS NULL
+    """))
+    logger.info("Backfilled score/category_result club from skater.club")
 
 
 async def _backfill_categories() -> None:
