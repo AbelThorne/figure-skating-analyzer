@@ -26,6 +26,7 @@ class Competition(Base):
     polling_enabled: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     polling_activated_at: Mapped[Optional[datetime]] = mapped_column(DateTime, nullable=True)
     last_import_log: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
+    team_medians: Mapped[Optional[dict]] = mapped_column(JSON, nullable=True)
 
     scores: Mapped[list["Score"]] = relationship(  # noqa: F821
         "Score", back_populates="competition", cascade="all, delete-orphan"

@@ -1,7 +1,9 @@
+import { useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api, Score, CategoryResult, Competition } from "../api/client";
 import ScoreChart from "../components/ScoreChart";
+import TeamScoresTab from "../components/TeamScoresTab";
 
 // --- Grouping helpers ---
 
@@ -203,9 +205,85 @@ function SegmentScoresTable({ scores }: { scores: Score[] }) {
 
 // --- Main page ---
 
+function ResultsContent({
+  scores,
+  catResults,
+}: {
+  scores: Score[];
+  catResults: CategoryResult[];
+}) {
+  const groups = buildCategoryGroups(scores, catResults);
+
+  if (scores.length === 0) {
+    return (
+      <p className="text-gray-500">
+        Aucun résultat. Utilisez le bouton Importer sur la page Compétitions.
+      </p>
+    );
+  }
+
+  return (
+    <>
+      {/* Category navigation */}
+      {groups.length > 1 && (
+        <nav className="flex flex-wrap gap-2 mb-6">
+          {groups.map(({ category }) => {
+            const anchor = (category ?? "").replace(/\s+/g, "-");
+            return (
+              <a
+                key={anchor}
+                href={`#${anchor}`}
+                className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200"
+              >
+                {category ?? "—"}
+              </a>
+            );
+          })}
+        </nav>
+      )}
+
+      {groups.map((group) => {
+        const anchor = (group.category ?? "").replace(/\s+/g, "-");
+        const hasOverallResults = group.categoryResults.length > 0;
+        const isMultiSegment = group.segmentCount > 1;
+
+        return (
+          <div key={anchor} id={anchor} className="mt-8 scroll-mt-16">
+            <div className="mb-2">
+              {group.category && (
+                <h2 className="text-lg font-semibold">{group.category}</h2>
+              )}
+              {isMultiSegment && (
+                <p className="text-xs text-gray-400">
+                  {group.segmentCount} programmes (SP + PL)
+                </p>
+              )}
+            </div>
+
+            {hasOverallResults && <OverallResultsTable group={group} />}
+
+            {group.segments.map(({ segment, scores: segScores }) => (
+              <div key={segment} className="mt-6">
+                <div className="mb-2">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {segment}
+                  </p>
+                </div>
+                <ScoreChart scores={segScores} />
+                <SegmentScoresTable scores={segScores} />
+              </div>
+            ))}
+          </div>
+        );
+      })}
+    </>
+  );
+}
+
 export default function CompetitionPage() {
   const { id } = useParams<{ id: string }>();
   const competitionId = Number(id);
+  const [activeTab, setActiveTab] = useState<"results" | "team">("results");
 
   const { data: competition, isLoading: loadingComp } = useQuery({
     queryKey: ["competition", competitionId],
@@ -227,7 +305,7 @@ export default function CompetitionPage() {
   if (!competition)
     return <p className="text-red-600">Compétition introuvable.</p>;
 
-  const groups = buildCategoryGroups(scores ?? [], catResults ?? []);
+  const isFranceClubs = competition.competition_type === "france_clubs";
 
   function getCompetitionStatus(c: Competition): { label: string; className: string } | null {
     if (!c.date) return null;
@@ -287,67 +365,42 @@ export default function CompetitionPage() {
           .join(" · ")}
       </div>
 
-      {(!scores || scores.length === 0) && (
-        <p className="text-gray-500">
-          Aucun résultat. Utilisez le bouton Importer sur la page Compétitions.
-        </p>
-      )}
-
-      {/* Category navigation */}
-      {groups.length > 1 && (
-        <nav className="flex flex-wrap gap-2 mb-6">
-          {groups.map(({ category }) => {
-            const anchor = (category ?? "").replace(/\s+/g, "-");
-            return (
-              <a
-                key={anchor}
-                href={`#${anchor}`}
-                className="text-sm px-3 py-1 rounded-full bg-blue-100 text-blue-700 hover:bg-blue-200"
-              >
-                {category ?? "—"}
-              </a>
-            );
-          })}
+      {/* Tabs - only show if France Clubs */}
+      {isFranceClubs && (
+        <nav className="flex gap-1 mb-6 border-b">
+          <button
+            onClick={() => setActiveTab("results")}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "results"
+                ? "border-primary text-primary"
+                : "border-transparent text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            Résultats
+          </button>
+          <button
+            onClick={() => setActiveTab("team")}
+            className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
+              activeTab === "team"
+                ? "border-primary text-primary"
+                : "border-transparent text-on-surface-variant hover:text-on-surface"
+            }`}
+          >
+            <span className="flex items-center gap-1">
+              <span className="material-symbols-outlined text-base">groups</span>
+              Score équipe
+            </span>
+          </button>
         </nav>
       )}
 
-      {groups.map((group) => {
-        const anchor = (group.category ?? "").replace(/\s+/g, "-");
-        const hasOverallResults = group.categoryResults.length > 0;
-        const isMultiSegment = group.segmentCount > 1;
-
-        return (
-          <div key={anchor} id={anchor} className="mt-8 scroll-mt-16">
-            {/* Category title */}
-            <div className="mb-2">
-              {group.category && (
-                <h2 className="text-lg font-semibold">{group.category}</h2>
-              )}
-              {isMultiSegment && (
-                <p className="text-xs text-gray-400">
-                  {group.segmentCount} programmes (SP + PL)
-                </p>
-              )}
-            </div>
-
-            {/* Overall results table for this category */}
-            {hasOverallResults && <OverallResultsTable group={group} />}
-
-            {/* Segment detail tables */}
-            {group.segments.map(({ segment, scores: segScores }) => (
-              <div key={segment} className="mt-6">
-                <div className="mb-2">
-                  <p className="text-xs font-semibold uppercase tracking-wide text-gray-400">
-                    {segment}
-                  </p>
-                </div>
-                <ScoreChart scores={segScores} />
-                <SegmentScoresTable scores={segScores} />
-              </div>
-            ))}
-          </div>
-        );
-      })}
+      {/* Tab content */}
+      {activeTab === "results" && (
+        <ResultsContent scores={scores ?? []} catResults={catResults ?? []} />
+      )}
+      {activeTab === "team" && isFranceClubs && (
+        <TeamScoresTab competitionId={competitionId} />
+      )}
     </div>
   );
 }

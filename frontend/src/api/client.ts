@@ -697,6 +697,82 @@ export interface CompetitionClubAnalysis {
   results: ClubSkaterResult[];
 }
 
+// --- Team Scoring Types ---
+
+export interface TeamSkaterEntry {
+  score_id: number;
+  skater_id: number;
+  skater_name: string;
+  club: string;
+  category: string | null;
+  division: string | null;
+  median_key: string | null;
+  median_value: number | null;
+  total_score: number | null;
+  points: number | null;
+  is_remplacant: boolean;
+  is_titular: boolean;
+  rank: number | null;
+  starting_number: number | null;
+}
+
+export interface TeamClubResult {
+  rank: number;
+  club: string;
+  total_points: number;
+  skater_count: number;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamCategoryResult {
+  category: string;
+  division: string | null;
+  median_key: string | null;
+  median_value: number | null;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamDivisionClub {
+  rank: number;
+  club: string;
+  total_points: number;
+  skater_count: number;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamChallengeEntry {
+  rank: number;
+  club: string;
+  challenge_points: number;
+  division_ranks: Record<string, number>;
+  division_points: Record<string, number>;
+}
+
+export interface TeamViolation {
+  club: string;
+  division: string;
+  category: string | null;
+  rule: string;
+  message: string;
+}
+
+export interface TeamScoresResponse {
+  clubs: TeamClubResult[];
+  division_rankings: Record<string, TeamDivisionClub[]>;
+  challenge: TeamChallengeEntry[];
+  categories: TeamCategoryResult[];
+  violations: TeamViolation[];
+  unmapped: string[];
+  medians: Record<string, Record<string, number>>;
+  medians_source: "competition" | "default";
+  last_import_at: string | null;
+}
+
+export interface TeamMediansResponse {
+  medians: Record<string, Record<string, number>>;
+  source: "competition" | "default";
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -713,6 +789,14 @@ export const api = {
         request<SmtpSettings>("/config/smtp", { method: "PATCH", body: JSON.stringify(data) }),
       test: (to?: string) =>
         request<SmtpTestResult>("/config/smtp-test", { method: "POST", body: JSON.stringify({ to }) }),
+    },
+    defaultTeamMedians: {
+      get: () => request<{ medians: Record<string, Record<string, number>> }>("/competitions/default-team-medians"),
+      update: (medians: Record<string, Record<string, number>>) =>
+        request<{ medians: Record<string, Record<string, number>> }>("/competitions/default-team-medians", {
+          method: "PUT",
+          body: JSON.stringify({ medians }),
+        }),
     },
     uploadLogo: async (file: File): Promise<{ logo_url: string }> => {
       const form = new FormData();
@@ -858,6 +942,24 @@ export const api = {
       request<Competition>(`/competitions/${id}/polling`, {
         method: "POST",
         body: JSON.stringify({ enabled }),
+      }),
+    teamScores: (id: number) =>
+      request<TeamScoresResponse>(`/competitions/${id}/team-scores`),
+    teamMedians: (id: number) =>
+      request<TeamMediansResponse>(`/competitions/${id}/team-medians`),
+    updateTeamMedians: (id: number, medians: Record<string, Record<string, number>>) =>
+      request<TeamMediansResponse>(`/competitions/${id}/team-medians`, {
+        method: "PUT",
+        body: JSON.stringify({ medians }),
+      }),
+    updateTitular: (competitionId: number, scoreId: number, is_titular: boolean) =>
+      request<{ score_id: number; is_titular: boolean }>(`/competitions/${competitionId}/team-titular/${scoreId}`, {
+        method: "PUT",
+        body: JSON.stringify({ is_titular }),
+      }),
+    resetTitular: (competitionId: number) =>
+      request<{ reset: boolean; count: number }>(`/competitions/${competitionId}/team-titular-reset`, {
+        method: "PUT",
       }),
   },
 

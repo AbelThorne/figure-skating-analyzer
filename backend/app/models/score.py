@@ -1,7 +1,7 @@
 from datetime import date
 from typing import Optional
 
-from sqlalchemy import Date, ForeignKey, String, Float, Integer, JSON, Text, UniqueConstraint
+from sqlalchemy import Boolean, Date, ForeignKey, String, Float, Integer, JSON, Text, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
@@ -32,6 +32,7 @@ class Score(Base):
     skating_level: Mapped[Optional[str]] = mapped_column(String(20), nullable=True)
     age_group: Mapped[Optional[str]] = mapped_column(String(30), nullable=True)
     gender: Mapped[Optional[str]] = mapped_column(String(10), nullable=True)
+    is_titular: Mapped[Optional[bool]] = mapped_column(Boolean, nullable=True, default=None)
 
     competition: Mapped["Competition"] = relationship(  # noqa: F821
         "Competition", back_populates="scores"
