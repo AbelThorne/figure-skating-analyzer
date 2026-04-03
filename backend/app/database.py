@@ -63,6 +63,8 @@ async def _migrate_add_columns(conn) -> None:
         ("competitions", "date_end", "DATE"),
         ("competitions", "polling_enabled", "BOOLEAN DEFAULT 0"),
         ("competitions", "polling_activated_at", "DATETIME"),
+        ("competitions", "team_medians", "JSON"),
+        ("app_settings", "default_team_medians", "JSON"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:

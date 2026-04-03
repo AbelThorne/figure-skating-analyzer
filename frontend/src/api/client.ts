@@ -697,6 +697,52 @@ export interface CompetitionClubAnalysis {
   results: ClubSkaterResult[];
 }
 
+// --- Team Scoring Types ---
+
+export interface TeamSkaterEntry {
+  score_id: number;
+  skater_id: number;
+  skater_name: string;
+  club: string;
+  category: string | null;
+  division: string | null;
+  median_key: string | null;
+  median_value: number | null;
+  total_score: number | null;
+  points: number | null;
+  is_remplacant: boolean;
+  rank: number | null;
+}
+
+export interface TeamClubResult {
+  rank: number;
+  club: string;
+  total_points: number;
+  skater_count: number;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamCategoryResult {
+  category: string;
+  division: string | null;
+  median_key: string | null;
+  median_value: number | null;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamScoresResponse {
+  clubs: TeamClubResult[];
+  categories: TeamCategoryResult[];
+  unmapped: string[];
+  medians: Record<string, Record<string, number>>;
+  medians_source: "competition" | "default";
+}
+
+export interface TeamMediansResponse {
+  medians: Record<string, Record<string, number>>;
+  source: "competition" | "default";
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -713,6 +759,14 @@ export const api = {
         request<SmtpSettings>("/config/smtp", { method: "PATCH", body: JSON.stringify(data) }),
       test: (to?: string) =>
         request<SmtpTestResult>("/config/smtp-test", { method: "POST", body: JSON.stringify({ to }) }),
+    },
+    defaultTeamMedians: {
+      get: () => request<{ medians: Record<string, Record<string, number>> }>("/competitions/default-team-medians"),
+      update: (medians: Record<string, Record<string, number>>) =>
+        request<{ medians: Record<string, Record<string, number>> }>("/competitions/default-team-medians", {
+          method: "PUT",
+          body: JSON.stringify({ medians }),
+        }),
     },
     uploadLogo: async (file: File): Promise<{ logo_url: string }> => {
       const form = new FormData();
@@ -858,6 +912,15 @@ export const api = {
       request<Competition>(`/competitions/${id}/polling`, {
         method: "POST",
         body: JSON.stringify({ enabled }),
+      }),
+    teamScores: (id: number) =>
+      request<TeamScoresResponse>(`/competitions/${id}/team-scores`),
+    teamMedians: (id: number) =>
+      request<TeamMediansResponse>(`/competitions/${id}/team-medians`),
+    updateTeamMedians: (id: number, medians: Record<string, Record<string, number>>) =>
+      request<TeamMediansResponse>(`/competitions/${id}/team-medians`, {
+        method: "PUT",
+        body: JSON.stringify({ medians }),
       }),
   },
 

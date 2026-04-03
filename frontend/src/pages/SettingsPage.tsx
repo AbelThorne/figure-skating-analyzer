@@ -5,6 +5,7 @@ import { api, type UserRecord, type ImportResult, type Skater } from "../api/cli
 import { countryFlag } from "../utils/countryFlags";
 import { useJobs, type Lot } from "../contexts/JobContext";
 import AdminJobsTab from "../components/AdminJobsTab";
+import MediansModal from "../components/MediansModal";
 
 const inputCls =
   "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
@@ -285,6 +286,21 @@ export default function SettingsPage() {
 
   // --- Tabs ---
   const [activeTab, setActiveTab] = useState<"general" | "users" | "training" | "jobs">("general");
+
+  // --- Default team medians ---
+  const [showMediansModal, setShowMediansModal] = useState(false);
+  const { data: defaultMediansData } = useQuery({
+    queryKey: ["default-team-medians"],
+    queryFn: () => api.config.defaultTeamMedians.get(),
+  });
+  const saveDefaultMedians = useMutation({
+    mutationFn: (medians: Record<string, Record<string, number>>) =>
+      api.config.defaultTeamMedians.update(medians),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["default-team-medians"] });
+      setShowMediansModal(false);
+    },
+  });
 
   useEffect(() => {
     if (activeTab === "training" && !config?.training_enabled) {
@@ -1158,6 +1174,62 @@ export default function SettingsPage() {
           </div>
         )}
       </section>
+
+      {/* Default team medians */}
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <div className="flex justify-between items-center mb-2">
+          <h2 className="font-headline font-bold text-on-surface text-lg">
+            Médianes France Clubs
+          </h2>
+          <button
+            onClick={() => setShowMediansModal(true)}
+            className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors flex items-center gap-1"
+          >
+            <span className="material-symbols-outlined text-sm">edit</span>
+            Modifier
+          </button>
+        </div>
+        <p className="text-sm text-on-surface-variant mb-4">
+          Valeurs de référence par défaut pour le calcul des scores équipe.
+          Chaque compétition peut avoir ses propres médianes.
+        </p>
+        {defaultMediansData && (
+          <div className="overflow-x-auto">
+            <table className="w-full text-sm">
+              <thead className="text-left text-xs text-on-surface-variant uppercase tracking-wider">
+                <tr>
+                  <th className="py-2 pr-4">Catégorie</th>
+                  <th className="py-2 px-2 text-right">D1</th>
+                  <th className="py-2 px-2 text-right">D2</th>
+                  <th className="py-2 px-2 text-right">D3</th>
+                </tr>
+              </thead>
+              <tbody>
+                {Object.entries(defaultMediansData.medians)
+                  .sort(([a], [b]) => a.localeCompare(b))
+                  .map(([cat, divs]) => (
+                    <tr key={cat} className="border-t border-gray-100">
+                      <td className="py-1.5 pr-4 font-medium">{cat}</td>
+                      <td className="py-1.5 px-2 text-right font-mono">{divs.D1?.toFixed(2) ?? "—"}</td>
+                      <td className="py-1.5 px-2 text-right font-mono">{divs.D2?.toFixed(2) ?? "—"}</td>
+                      <td className="py-1.5 px-2 text-right font-mono">{divs.D3?.toFixed(2) ?? "—"}</td>
+                    </tr>
+                  ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </section>
+
+      {showMediansModal && defaultMediansData && (
+        <MediansModal
+          medians={defaultMediansData.medians}
+          onSave={(m) => saveDefaultMedians.mutate(m)}
+          onClose={() => setShowMediansModal(false)}
+          saving={saveDefaultMedians.isPending}
+          title="Médianes par défaut (saison)"
+        />
+      )}
 
       </div>
       )}
