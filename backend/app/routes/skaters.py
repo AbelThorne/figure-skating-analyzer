@@ -5,7 +5,7 @@ from typing import Optional
 from litestar import Request, Router, delete, get, patch, post
 from litestar.di import Provide
 from litestar.exceptions import ClientException, NotFoundException
-from sqlalchemy import func, select, union_all
+from sqlalchemy import func, or_, select, union_all
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -25,7 +25,14 @@ async def list_skaters(request: Request, session: AsyncSession, club: Optional[s
     reject_skater_role(request)
     stmt = select(Skater)
     if club:
-        stmt = stmt.where(func.lower(Skater.club) == club.lower())
+        stmt = stmt.where(
+            or_(
+                func.lower(Skater.club) == club.lower(),
+                Skater.id.in_(
+                    select(Score.skater_id).where(func.lower(Score.club) == club.lower())
+                ),
+            )
+        )
     if training_tracked is not None:
         stmt = stmt.where(Skater.training_tracked == training_tracked)
     if search:

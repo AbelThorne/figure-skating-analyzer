@@ -4,7 +4,7 @@ from dataclasses import dataclass
 from datetime import date, datetime
 from typing import Optional
 
-from sqlalchemy import select, func
+from sqlalchemy import or_, select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import selectinload
 
@@ -153,7 +153,14 @@ async def get_club_report_data(
     club_short = CLUB_SHORT or club_name
     club_logo = settings.logo_path if settings else None
 
-    club_skaters_stmt = select(Skater).where(func.lower(Skater.club) == club_short.lower())
+    club_skaters_stmt = select(Skater).where(
+        or_(
+            func.lower(Skater.club) == club_short.lower(),
+            Skater.id.in_(
+                select(Score.skater_id).where(func.lower(Score.club) == club_short.lower())
+            ),
+        )
+    )
     club_skaters = (await session.execute(club_skaters_stmt)).scalars().all()
     club_skater_ids = [s.id for s in club_skaters]
 

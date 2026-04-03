@@ -66,7 +66,7 @@ async def compute_competition_club_analysis(
         for cr in cat_results:
             if cr.overall_rank is None:
                 continue
-            skater_club = (cr.skater.club or "").upper()
+            skater_club = (cr.club or cr.skater.club or "").upper()
             pts = compute_club_challenge_points(cr.overall_rank, n)
             cat_clubs[skater_club]["points"] += pts["total"]
             cat_clubs[skater_club]["podium_points"] += pts["podium"]
