@@ -76,7 +76,7 @@ async def _get_or_create_skater(
     else:
         if not skater.nationality and nationality:
             skater.nationality = nationality
-        if not skater.club and club:
+        if club:
             skater.club = club
     return skater
 
@@ -185,6 +185,7 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             score.skating_level = parsed["skating_level"]
             score.age_group = parsed["age_group"]
             score.gender = parsed["gender"]
+            score.club = r.club
             session.add(score)
             imported += 1
         except Exception as e:
@@ -217,6 +218,7 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             cat_result.skating_level = parsed["skating_level"]
             cat_result.age_group = parsed["age_group"]
             cat_result.gender = parsed["gender"]
+            cat_result.club = cr.club
             session.add(cat_result)
             cat_imported += 1
         except Exception as e:
