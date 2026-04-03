@@ -732,12 +732,40 @@ export interface TeamCategoryResult {
   skaters: TeamSkaterEntry[];
 }
 
+export interface TeamDivisionClub {
+  rank: number;
+  club: string;
+  total_points: number;
+  skater_count: number;
+  skaters: TeamSkaterEntry[];
+}
+
+export interface TeamChallengeEntry {
+  rank: number;
+  club: string;
+  challenge_points: number;
+  division_ranks: Record<string, number>;
+  division_points: Record<string, number>;
+}
+
+export interface TeamViolation {
+  club: string;
+  division: string;
+  category: string | null;
+  rule: string;
+  message: string;
+}
+
 export interface TeamScoresResponse {
   clubs: TeamClubResult[];
+  division_rankings: Record<string, TeamDivisionClub[]>;
+  challenge: TeamChallengeEntry[];
   categories: TeamCategoryResult[];
+  violations: TeamViolation[];
   unmapped: string[];
   medians: Record<string, Record<string, number>>;
   medians_source: "competition" | "default";
+  last_import_at: string | null;
 }
 
 export interface TeamMediansResponse {

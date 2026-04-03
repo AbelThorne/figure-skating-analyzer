@@ -6,6 +6,12 @@ Each skater's score is compared to a reference median for their category/divisio
 Titular status (is_titular) is stored per score in DB. When NULL (not yet set),
 auto-initialization assigns the first 6 skaters per division per club (by
 starting_number) as titular and the rest as substitutes.
+
+Division rankings rank clubs within each division (D1, D2, D3) by total points.
+
+Challenge scoring converts each division rank into challenge points via a lookup
+table (CSNPA Book Chapter 4, Section E.3). The challenge total is the sum across
+all divisions. Tiebreaker: best D1 rank, then D2, then D3.
 """
 
 from __future__ import annotations
@@ -60,7 +66,17 @@ _COUPLE_PATTERN = re.compile(r"\bCouples?\b", re.IGNORECASE)
 
 # Max titular skaters per division per club
 MAX_TITULAR_PER_DIVISION = 6
+MAX_TITULAR_PER_CATEGORY = 2
+MAX_SUBSTITUTES_PER_DIVISION = 6
 MAX_TITULAR_TOTAL = 18
+
+# Challenge points tables (CSNPA Book Ch.4 E.3)
+# Key = division, value = list where index 0 = 1st place points, etc.
+CHALLENGE_POINTS: dict[str, list[int]] = {
+    "D1": [35, 32, 29, 26, 23, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6],
+    "D2": [30, 28, 26, 24, 22, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6],
+    "D3": [25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6],
+}
 
 
 def _extract_division(category: str | None) -> str | None:
@@ -97,8 +113,10 @@ def _build_median_key(category: str | None, age_group: str | None, gender: str |
 async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
     """Auto-initialize is_titular for scores that have NULL is_titular.
 
-    For each division, group scores by club and mark the first 6 (by
-    starting_number, then rank) as titular, the rest as substitutes.
+    For each division per club, assigns titulaires respecting:
+    - Max 6 titulaires per division per club
+    - Max 2 titulaires per category per club (within a division)
+    Scores are sorted by starting_number then rank (best first).
     """
     stmt = (
         select(Score)
@@ -129,8 +147,16 @@ async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
             s.starting_number if s.starting_number is not None else 9999,
             s.rank if s.rank is not None else 9999,
         ))
-        for i, score in enumerate(group_scores):
-            score.is_titular = i < MAX_TITULAR_PER_DIVISION
+        titular_count = 0
+        cat_titular_count: dict[str, int] = defaultdict(int)
+        for score in group_scores:
+            cat = score.category or ""
+            if titular_count < MAX_TITULAR_PER_DIVISION and cat_titular_count[cat] < MAX_TITULAR_PER_CATEGORY:
+                score.is_titular = True
+                titular_count += 1
+                cat_titular_count[cat] += 1
+            else:
+                score.is_titular = False
 
     # Scores not in any D1/D2/D3 category: mark as titular (they won't count
     # for team scoring anyway, but the field should not remain NULL)
@@ -141,6 +167,68 @@ async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
     await session.flush()
 
 
+def _validate_teams(skater_entries: list[dict]) -> list[dict]:
+    """Validate team composition rules (CSNPA Book Ch.4 D.1).
+
+    Returns a list of violation dicts:
+        {club, division, category (optional), rule, message}
+    """
+    violations: list[dict] = []
+
+    # Group titular entries by (club, division)
+    div_groups: dict[tuple[str, str], list[dict]] = defaultdict(list)
+    # Group all entries (titular + sub) by (club, division) for sub count
+    div_all: dict[tuple[str, str], list[dict]] = defaultdict(list)
+
+    for entry in skater_entries:
+        club = entry["club"]
+        div = entry["division"]
+        if not div:
+            continue
+        div_all[(club, div)].append(entry)
+        if entry["is_titular"]:
+            div_groups[(club, div)].append(entry)
+
+    for (club, div), titular_entries in div_groups.items():
+        # Rule: max 6 titular per division per club
+        if len(titular_entries) > MAX_TITULAR_PER_DIVISION:
+            violations.append({
+                "club": club,
+                "division": div,
+                "category": None,
+                "rule": "max_titular_per_division",
+                "message": f"Max {MAX_TITULAR_PER_DIVISION} titulaires par division ({len(titular_entries)} trouves)",
+            })
+
+        # Rule: max 2 titular per category per club
+        cat_counts: dict[str, int] = defaultdict(int)
+        for e in titular_entries:
+            cat_counts[e["category"] or "?"] += 1
+        for cat, count in cat_counts.items():
+            if count > MAX_TITULAR_PER_CATEGORY:
+                violations.append({
+                    "club": club,
+                    "division": div,
+                    "category": cat,
+                    "rule": "max_titular_per_category",
+                    "message": f"Max {MAX_TITULAR_PER_CATEGORY} titulaires par categorie ({count} trouves)",
+                })
+
+    # Rule: max 6 substitutes per division per club
+    for (club, div), all_entries in div_all.items():
+        sub_count = sum(1 for e in all_entries if e["is_remplacant"])
+        if sub_count > MAX_SUBSTITUTES_PER_DIVISION:
+            violations.append({
+                "club": club,
+                "division": div,
+                "category": None,
+                "rule": "max_substitutes_per_division",
+                "message": f"Max {MAX_SUBSTITUTES_PER_DIVISION} remplacants par division ({sub_count} trouves)",
+            })
+
+    return violations
+
+
 def compute_team_scores(
     scores: list[Score],
     medians: dict[str, dict[str, float]],
@@ -149,7 +237,10 @@ def compute_team_scores(
 
     Returns a dict with:
         - clubs: list of {club, total_points, skater_count, skaters: [...]}
+        - division_rankings: dict of division -> ranked club list
+        - challenge: list of challenge scoring entries
         - categories: list of {category, division, median, skaters: [...]}
+        - violations: list of rule violations
         - unmapped: list of categories that couldn't be mapped to a median
     """
     skater_entries: list[dict] = []
@@ -231,6 +322,73 @@ def compute_team_scores(
         # Sort skaters within club by category then points
         club["skaters"].sort(key=lambda s: (s["category"] or "", -(s["points"] or 0)))
 
+    # --- Division rankings ---
+    # Group entries by (division, club) and sum titular points
+    div_club_points: dict[str, dict[str, dict]] = {}  # div -> club -> {points, count, skaters}
+    for entry in skater_entries:
+        div = entry["division"]
+        if not div:
+            continue
+        club_name = entry["club"]
+        if div not in div_club_points:
+            div_club_points[div] = {}
+        if club_name not in div_club_points[div]:
+            div_club_points[div][club_name] = {"total_points": 0.0, "skater_count": 0, "skaters": []}
+        bucket = div_club_points[div][club_name]
+        bucket["skaters"].append(entry)
+        if not entry["is_remplacant"] and entry["points"] is not None:
+            bucket["total_points"] += entry["points"]
+            bucket["skater_count"] += 1
+
+    division_rankings: dict[str, list[dict]] = {}
+    for div in sorted(div_club_points.keys()):
+        div_clubs = []
+        for club_name, bucket in div_club_points[div].items():
+            div_clubs.append({
+                "club": club_name,
+                "total_points": round(bucket["total_points"], 2),
+                "skater_count": bucket["skater_count"],
+                "skaters": sorted(bucket["skaters"], key=lambda s: (s["category"] or "", -(s["points"] or 0))),
+            })
+        # Sort by total points desc, tiebreaker: more skaters first
+        div_clubs.sort(key=lambda c: (-c["total_points"], -c["skater_count"]))
+        for i, dc in enumerate(div_clubs, 1):
+            dc["rank"] = i
+        division_rankings[div] = div_clubs
+
+    # --- Challenge scoring ---
+    # For each club, look up their rank in each division and convert to challenge points
+    challenge_map: dict[str, dict] = {}
+    for div, div_clubs in division_rankings.items():
+        points_table = CHALLENGE_POINTS.get(div, [])
+        for dc in div_clubs:
+            club_name = dc["club"]
+            if club_name not in challenge_map:
+                challenge_map[club_name] = {
+                    "club": club_name,
+                    "challenge_points": 0,
+                    "division_ranks": {},
+                    "division_points": {},
+                }
+            rank = dc["rank"]
+            cp = points_table[rank - 1] if rank <= len(points_table) else max(points_table[-1] - (rank - len(points_table)), 1) if points_table else 0
+            challenge_map[club_name]["division_ranks"][div] = rank
+            challenge_map[club_name]["division_points"][div] = cp
+            challenge_map[club_name]["challenge_points"] += cp
+
+    # Sort by challenge points desc, tiebreaker: best D1 rank, then D2, then D3
+    challenge = sorted(
+        challenge_map.values(),
+        key=lambda c: (
+            -c["challenge_points"],
+            c["division_ranks"].get("D1", 999),
+            c["division_ranks"].get("D2", 999),
+            c["division_ranks"].get("D3", 999),
+        ),
+    )
+    for i, ch in enumerate(challenge, 1):
+        ch["rank"] = i
+
     # Build category summary
     cat_map: dict[str, dict] = {}
     for entry in skater_entries:
@@ -247,9 +405,15 @@ def compute_team_scores(
 
     categories = sorted(cat_map.values(), key=lambda c: c["category"])
 
+    # --- Validate team composition ---
+    violations = _validate_teams(skater_entries)
+
     return {
         "clubs": clubs,
+        "division_rankings": division_rankings,
+        "challenge": challenge,
         "categories": categories,
+        "violations": violations,
         "unmapped": sorted(unmapped_categories),
     }
 
@@ -287,4 +451,18 @@ async def get_team_scores(session: AsyncSession, competition_id: int) -> dict | 
     team_data = compute_team_scores(scores, medians)
     team_data["medians"] = medians
     team_data["medians_source"] = "competition" if comp.team_medians else "default"
+
+    # Add last import timestamp from most recent completed job
+    from app.models.job import Job
+    job_stmt = (
+        select(Job.completed_at)
+        .where(Job.competition_id == competition_id)
+        .where(Job.status == "completed")
+        .order_by(Job.completed_at.desc())
+        .limit(1)
+    )
+    job_result = await session.execute(job_stmt)
+    last_completed = job_result.scalar_one_or_none()
+    team_data["last_import_at"] = last_completed.isoformat() if last_completed else None
+
     return team_data
