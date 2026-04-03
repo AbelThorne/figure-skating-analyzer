@@ -144,9 +144,13 @@ def compute_team_scores(
         club = skater.club or "—"
         remplacant = _is_remplacant(score)
 
-        # Determine median key and division
-        median_key = _build_median_key(score.category, score.age_group, score.gender)
+        # Determine division — only keep D1/D2/D3 categories
         division = _extract_division(score.category, score.skating_level)
+        if not division:
+            continue
+
+        # Determine median key and look up median value
+        median_key = _build_median_key(score.category, score.age_group, score.gender)
 
         median_value: float | None = None
         if median_key and division:
