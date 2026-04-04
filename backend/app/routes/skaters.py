@@ -179,6 +179,7 @@ async def get_skater_scores(skater_id: int, request: Request, session: AsyncSess
             "gender": s.gender,
             "event_date": s.event_date.isoformat() if s.event_date else None,
             "pdf_url": _pdf_serving_url(s.pdf_path),
+            "skater_club": s.club or (skater.club if skater else None),
         }
         for s in scores
     ]

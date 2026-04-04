@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date as date_type, datetime, timezone
 
-from sqlalchemy import select, delete as sa_delete
+from sqlalchemy import select, delete as sa_delete, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.competition import Competition
@@ -23,6 +23,7 @@ async def _get_or_create_skater(
     raw_name: str,
     nationality: str | None,
     club: str | None,
+    competition_date: date_type | None = None,
 ) -> Skater:
     first_name, last_name = parse_skater_name(raw_name)
     stmt = select(Skater).where(
@@ -77,7 +78,18 @@ async def _get_or_create_skater(
         if not skater.nationality and nationality:
             skater.nationality = nationality
         if club:
-            skater.club = club
+            # Only update Skater.club if this competition is the most recent
+            if competition_date:
+                latest_stmt = (
+                    select(func.max(Competition.date))
+                    .join(Score, Score.competition_id == Competition.id)
+                    .where(Score.skater_id == skater.id, Score.club.isnot(None))
+                )
+                latest = (await session.execute(latest_stmt)).scalar_one_or_none()
+                if latest is None or competition_date >= latest:
+                    skater.club = club
+            else:
+                skater.club = club
     return skater
 
 
@@ -155,7 +167,7 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
 
     for r in results:
         try:
-            skater = await _get_or_create_skater(session, r.name, r.nationality, r.club)
+            skater = await _get_or_create_skater(session, r.name, r.nationality, r.club, comp.date)
             existing = await session.execute(
                 select(Score).where(
                     Score.competition_id == comp.id,
@@ -193,7 +205,7 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
 
     for cr in cat_results:
         try:
-            skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club)
+            skater = await _get_or_create_skater(session, cr.name, cr.nationality, cr.club, comp.date)
             existing = await session.execute(
                 select(CategoryResult).where(
                     CategoryResult.competition_id == comp.id,
