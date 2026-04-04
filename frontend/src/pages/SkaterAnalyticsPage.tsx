@@ -419,6 +419,7 @@ export default function SkaterAnalyticsPage() {
     competitionName: string | null;
     competitionDate: string | null;
     category: string | null;
+    club: string | null;
     catResult: CategoryResult | null;
     segmentScores: Score[];
   }
@@ -437,6 +438,7 @@ export default function SkaterAnalyticsPage() {
           competitionName: s.competition_name,
           competitionDate: s.competition_date,
           category: s.category,
+          club: s.skater_club,
           catResult: cr,
           segmentScores: [],
         });
@@ -1056,13 +1058,13 @@ export default function SkaterAnalyticsPage() {
                 <table className="w-full min-w-[560px] border-collapse">
                   <thead className="sticky top-0 z-10">
                     <tr className="bg-surface-container-low">
-                      {["", "Compétition", "Catégorie", "Rang", "Total", "TES", "PCS", "Date"].map(
+                      {["", "Compétition", "Catégorie", "Rang", "Total", "TES", "PCS", "Date", "Club"].map(
                         (col, i) => (
                           <th
                             key={col || `col-${i}`}
                             className={`text-[10px] font-black uppercase tracking-widest text-on-surface-variant px-3 py-2.5 ${
                               i <= 1 ? "text-left" : "text-right"
-                            } ${i === 0 ? "rounded-tl-xl" : ""} ${i === 7 ? "rounded-tr-xl" : ""}`}
+                            } ${i === 0 ? "rounded-tl-xl" : ""} ${i === 8 ? "rounded-tr-xl" : ""}`}
                           >
                             {col}
                           </th>
@@ -1142,6 +1144,10 @@ export default function SkaterAnalyticsPage() {
                               {/* col 7: date */}
                               <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
                                 {row.competitionDate ? row.competitionDate.slice(0, 10) : "—"}
+                              </td>
+                              {/* col 8: club */}
+                              <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
+                                {row.club ?? "—"}
                               </td>
                             </tr>
                           ) : null}
@@ -1236,6 +1242,14 @@ export default function SkaterAnalyticsPage() {
                               ) : (
                                 <td className="px-3 py-2 text-right font-mono text-sm text-on-surface-variant whitespace-nowrap">
                                   {s.competition_date ? s.competition_date.slice(0, 10) : "—"}
+                                </td>
+                              )}
+                              {/* col 8: club */}
+                              {isMultiSegment ? (
+                                <td className="px-3 py-2" />
+                              ) : (
+                                <td className="px-3 py-2 text-right text-sm text-on-surface-variant whitespace-nowrap">
+                                  {s.skater_club ?? "—"}
                                 </td>
                               )}
                             </tr>
