@@ -228,7 +228,10 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
     season: str = data.get("season", "")
     discipline: str = data.get("discipline", "")
 
-    job_ids = []
+    # First pass: create any missing competitions and commit so the write
+    # transaction is closed before job_queue.create_job opens its own session
+    # (SQLite does not support concurrent writers).
+    comp_ids = []
     for raw_url in urls:
         url = raw_url.strip()
         existing = await session.execute(
@@ -243,15 +246,19 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
             session.add(comp)
             await session.flush()
             await session.refresh(comp)
+        comp_ids.append(comp.id)
+    await session.commit()
 
-        job = await job_queue.create_job("import", comp.id, trigger="bulk")
+    # Second pass: submit jobs (each create_job opens its own session)
+    job_ids = []
+    for comp_id in comp_ids:
+        job = await job_queue.create_job("import", comp_id, trigger="bulk")
         job_ids.append(job["id"])
 
         if enrich:
-            enrich_job = await job_queue.create_job("enrich", comp.id, trigger="bulk")
+            enrich_job = await job_queue.create_job("enrich", comp_id, trigger="bulk")
             job_ids.append(enrich_job["id"])
 
-    await session.commit()
     return {"job_ids": job_ids, "total": len(job_ids)}
 
 
