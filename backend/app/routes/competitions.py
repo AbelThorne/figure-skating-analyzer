@@ -262,6 +262,38 @@ async def bulk_import(data: dict, session: AsyncSession) -> dict:
     return {"job_ids": job_ids, "total": len(job_ids)}
 
 
+@post("/bulk-action")
+async def bulk_action(data: dict, request: Request, session: AsyncSession) -> dict:
+    """Reimport and/or enrich multiple existing competitions at once."""
+    require_admin(request)
+    from app.services.job_queue import job_queue
+
+    competition_ids: list[int] = data.get("competition_ids", [])
+    action: str = data.get("action", "reimport")  # reimport | enrich | reimport+enrich
+
+    if not competition_ids:
+        return {"job_ids": [], "total": 0}
+
+    # Validate all IDs exist
+    stmt = select(Competition).where(Competition.id.in_(competition_ids))
+    result = await session.execute(stmt)
+    found_ids = {c.id for c in result.scalars()}
+    missing = set(competition_ids) - found_ids
+    if missing:
+        raise NotFoundException(f"Competitions not found: {sorted(missing)}")
+
+    job_ids = []
+    for comp_id in competition_ids:
+        if action in ("reimport", "reimport+enrich"):
+            job = await job_queue.create_job("reimport", comp_id, trigger="bulk")
+            job_ids.append(job["id"])
+        if action in ("enrich", "reimport+enrich"):
+            job = await job_queue.create_job("enrich", comp_id, trigger="bulk")
+            job_ids.append(job["id"])
+
+    return {"job_ids": job_ids, "total": len(job_ids)}
+
+
 @get("/seasons")
 async def list_seasons(session: AsyncSession) -> list[str]:
     result = await session.execute(
@@ -302,6 +334,7 @@ router = Router(
         confirm_metadata,
         backfill_metadata,
         bulk_import,
+        bulk_action,
         toggle_polling,
     ],
     dependencies={"session": Provide(get_session)},

@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { api, Competition, JobInfo, COMPETITION_TYPES, LIGUES } from "../api/client";
+import { api, Competition, JobInfo, BulkImportResult, COMPETITION_TYPES, LIGUES } from "../api/client";
 import { useAuth } from "../auth/AuthContext";
 import { useJobs } from "../contexts/JobContext";
 import ErrorDetailModal from "../components/ErrorDetailModal";
@@ -44,6 +44,29 @@ export default function CompetitionsPage() {
   const [confirmingDeleteId, setConfirmingDeleteId] = useState<number | null>(null);
   const [filterLigue, setFilterLigue] = useState<string>("all");
   const [showPolledOnly, setShowPolledOnly] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [confirmingBulkAction, setConfirmingBulkAction] = useState<"reimport" | "enrich" | "reimport+enrich" | null>(null);
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const bulkActionMutation = useMutation({
+    mutationFn: (action: "reimport" | "enrich" | "reimport+enrich") =>
+      api.competitions.bulkAction({ competition_ids: Array.from(selectedIds), action }),
+    onSuccess: (result: BulkImportResult) => {
+      result.job_ids.forEach((jobId) => {
+        api.jobs.get(jobId).then((job) => trackJob(job));
+      });
+      setSelectedIds(new Set());
+      setConfirmingBulkAction(null);
+    },
+  });
 
   const createMutation = useMutation({
     mutationFn: async (url: string) => {
@@ -320,6 +343,94 @@ export default function CompetitionsPage() {
             />
             Suivi auto
           </label>
+          {isAdmin && (
+            <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer sm:ml-2">
+              <input
+                type="checkbox"
+                checked={filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id))}
+                ref={(el) => {
+                  if (el) {
+                    const allSelected = filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id));
+                    const someSelected = filteredCompetitions.some((c) => selectedIds.has(c.id));
+                    el.indeterminate = someSelected && !allSelected;
+                  }
+                }}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedIds(new Set(filteredCompetitions.map((c) => c.id)));
+                  } else {
+                    setSelectedIds(new Set());
+                  }
+                }}
+                className="accent-primary"
+              />
+              Tout sélectionner
+            </label>
+          )}
+        </div>
+      )}
+
+      {/* Bulk action bar */}
+      {isAdmin && selectedIds.size > 0 && (
+        <div className="bg-primary/5 rounded-xl p-4 mb-4 flex items-center gap-3 flex-wrap">
+          <span className="text-sm font-medium text-on-surface">
+            {selectedIds.size} compétition{selectedIds.size > 1 ? "s" : ""} sélectionnée{selectedIds.size > 1 ? "s" : ""}
+          </span>
+          <button
+            onClick={() => setSelectedIds(new Set())}
+            className="text-xs text-on-surface-variant hover:text-on-surface transition-colors"
+          >
+            Tout désélectionner
+          </button>
+          <div className="flex gap-2 sm:ml-auto">
+            {confirmingBulkAction ? (
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-on-surface-variant">
+                  {confirmingBulkAction === "reimport" && "Réimporter"}
+                  {confirmingBulkAction === "enrich" && "Enrichir"}
+                  {confirmingBulkAction === "reimport+enrich" && "Réimporter + Enrichir"}
+                  {" "}{selectedIds.size} compétition{selectedIds.size > 1 ? "s" : ""} ?
+                </span>
+                <button
+                  onClick={() => bulkActionMutation.mutate(confirmingBulkAction)}
+                  disabled={bulkActionMutation.isPending}
+                  className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all disabled:opacity-50"
+                >
+                  {bulkActionMutation.isPending ? "En cours..." : "Confirmer"}
+                </button>
+                <button
+                  onClick={() => setConfirmingBulkAction(null)}
+                  className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold"
+                >
+                  Annuler
+                </button>
+              </div>
+            ) : (
+              <>
+                <button
+                  onClick={() => setConfirmingBulkAction("reimport")}
+                  className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-base leading-none">refresh</span>
+                  Réimporter
+                </button>
+                <button
+                  onClick={() => setConfirmingBulkAction("enrich")}
+                  className="bg-surface-container text-on-surface-variant rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-base leading-none">description</span>
+                  Enrichir PDF
+                </button>
+                <button
+                  onClick={() => setConfirmingBulkAction("reimport+enrich")}
+                  className="bg-primary text-on-primary rounded-lg py-1.5 px-3 text-xs font-bold active:scale-95 transition-all flex items-center gap-1"
+                >
+                  <span className="material-symbols-outlined text-base leading-none">sync</span>
+                  Réimporter + Enrichir
+                </button>
+              </>
+            )}
+          </div>
         </div>
       )}
 
@@ -363,6 +474,15 @@ export default function CompetitionsPage() {
             <div key={c.id}>
               <div className="bg-surface-container-lowest rounded-xl shadow-sm p-5 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                 {/* Left: name + meta */}
+                <div className="min-w-0 flex items-start gap-3">
+                  {isAdmin && (
+                    <input
+                      type="checkbox"
+                      checked={selectedIds.has(c.id)}
+                      onChange={() => toggleSelect(c.id)}
+                      className="accent-primary mt-1 shrink-0"
+                    />
+                  )}
                 <div className="min-w-0">
                   <div className="flex items-center gap-1.5 flex-wrap">
                     <Link
@@ -407,6 +527,7 @@ export default function CompetitionsPage() {
                       c.ligue,
                     ].filter(Boolean).join(" · ")}
                   </p>
+                </div>
                 </div>
 
                 {/* Right: action buttons (admin only) */}

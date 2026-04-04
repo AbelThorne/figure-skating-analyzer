@@ -936,6 +936,11 @@ export const api = {
       }),
     confirmMetadata: (id: number) =>
       request<Competition>(`/competitions/${id}/confirm-metadata`, { method: "POST" }),
+    bulkAction: (data: { competition_ids: number[]; action: "reimport" | "enrich" | "reimport+enrich" }) =>
+      request<BulkImportResult>("/competitions/bulk-action", {
+        method: "POST",
+        body: JSON.stringify(data),
+      }),
     backfillMetadata: () =>
       request<{ status: string; competitions_updated: number }>("/competitions/backfill-metadata", { method: "POST" }),
     togglePolling: (id: number, enabled: boolean) =>
