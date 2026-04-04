@@ -383,6 +383,11 @@ export default function SettingsPage() {
     },
   });
 
+  const recalcClubsMutation = useMutation({
+    mutationFn: () => api.admin.recalculateClubs(),
+    onSuccess: () => qc.invalidateQueries({ queryKey: ["skaters"] }),
+  });
+
   // --- Skater merge ---
   const [mergeSearch, setMergeSearch] = useState("");
   const [debouncedMergeSearch, setDebouncedMergeSearch] = useState("");
@@ -1164,6 +1169,37 @@ export default function SettingsPage() {
           title="Médianes par défaut (saison)"
         />
       )}
+
+      {/* Maintenance */}
+      <section className="rounded-2xl p-6 shadow-arctic bg-surface-container-lowest">
+        <h2 className="font-headline font-bold text-on-surface text-lg mb-2">
+          Maintenance
+        </h2>
+        <div className="flex items-center gap-4">
+          <div className="flex-1">
+            <p className="text-sm text-on-surface font-medium">Recalculer les clubs</p>
+            <p className="text-xs text-on-surface-variant">
+              Met à jour le club de chaque patineur avec celui de sa compétition la plus récente.
+            </p>
+          </div>
+          <button
+            onClick={() => recalcClubsMutation.mutate()}
+            disabled={recalcClubsMutation.isPending}
+            className="px-4 py-2 bg-primary text-on-primary rounded-xl text-sm font-bold hover:bg-primary/90 transition-colors disabled:opacity-50 flex items-center gap-2 shrink-0"
+          >
+            <span className="material-symbols-outlined text-sm">sync</span>
+            {recalcClubsMutation.isPending ? "En cours..." : "Recalculer"}
+          </button>
+        </div>
+        {recalcClubsMutation.isSuccess && (
+          <p className="text-xs text-primary mt-2">
+            {recalcClubsMutation.data.skaters_updated} patineur{recalcClubsMutation.data.skaters_updated > 1 ? "s" : ""} mis à jour.
+          </p>
+        )}
+        {recalcClubsMutation.isError && (
+          <p className="text-xs text-error mt-2">{String(recalcClubsMutation.error)}</p>
+        )}
+      </section>
 
       {/* Danger zone */}
       <section className="rounded-2xl p-6 shadow-arctic border-2 border-error/30 bg-error-container/10">

@@ -977,6 +977,8 @@ export const api = {
   admin: {
     resetDatabase: () =>
       request<{ status: string; message: string }>("/admin/reset-database", { method: "POST" }),
+    recalculateClubs: () =>
+      request<{ status: string; skaters_updated: number }>("/admin/recalculate-clubs", { method: "POST" }),
   },
 
   skaters: {
