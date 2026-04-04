@@ -10,8 +10,13 @@ import MediansModal from "../components/MediansModal";
 const inputCls =
   "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
+function parseUTC(iso: string): Date {
+  // Backend returns naive ISO strings (no Z suffix) that are actually UTC
+  return new Date(iso.endsWith("Z") ? iso : iso + "Z");
+}
+
 function formatRelativeTime(isoDate: string): string {
-  const date = new Date(isoDate);
+  const date = parseUTC(isoDate);
   const now = new Date();
   const diffMs = now.getTime() - date.getTime();
   const diffSec = Math.floor(diffMs / 1000);
@@ -28,7 +33,7 @@ function formatRelativeTime(isoDate: string): string {
 }
 
 function formatFullDate(isoDate: string): string {
-  return new Date(isoDate).toLocaleString("fr-FR", {
+  return parseUTC(isoDate).toLocaleString("fr-FR", {
     dateStyle: "long",
     timeStyle: "short",
   });

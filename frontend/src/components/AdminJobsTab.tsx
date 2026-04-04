@@ -2,8 +2,13 @@ import { useState, useRef, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, type JobInfo, type ImportResult, type EnrichResult } from "../api/client";
 
+function parseUTC(iso: string): Date {
+  // Backend returns naive ISO strings (no Z suffix) that are actually UTC
+  return new Date(iso.endsWith("Z") ? iso : iso + "Z");
+}
+
 function formatRelativeTime(iso: string): string {
-  const diff = Date.now() - new Date(iso).getTime();
+  const diff = Date.now() - parseUTC(iso).getTime();
   const sec = Math.floor(diff / 1000);
   const min = Math.floor(sec / 60);
   const hr = Math.floor(min / 60);
@@ -15,14 +20,14 @@ function formatRelativeTime(iso: string): string {
 }
 
 function formatFullDate(iso: string): string {
-  return new Date(iso).toLocaleString("fr-FR", {
+  return parseUTC(iso).toLocaleString("fr-FR", {
     dateStyle: "long",
     timeStyle: "short",
   });
 }
 
 function formatDuration(startedAt: string, completedAt: string): string {
-  const ms = new Date(completedAt).getTime() - new Date(startedAt).getTime();
+  const ms = parseUTC(completedAt).getTime() - parseUTC(startedAt).getTime();
   const sec = Math.floor(ms / 1000);
   if (sec < 60) return `${sec}s`;
   const min = Math.floor(sec / 60);

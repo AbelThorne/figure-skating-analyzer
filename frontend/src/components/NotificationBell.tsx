@@ -108,7 +108,7 @@ export default function NotificationBell() {
                     </p>
                     {n.created_at && (
                       <p className="text-[10px] text-on-surface-variant mt-1">
-                        {new Date(n.created_at).toLocaleDateString("fr-FR", {
+                        {new Date(n.created_at.endsWith("Z") ? n.created_at : n.created_at + "Z").toLocaleDateString("fr-FR", {
                           day: "numeric",
                           month: "short",
                           hour: "2-digit",
