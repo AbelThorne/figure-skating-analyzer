@@ -873,7 +873,7 @@ export default function SkaterTrainingPage() {
         {TABS.map((tab) => (
           <button
             key={tab.key}
-            onClick={() => setActiveTab(tab.key)}
+            onClick={() => { setActiveTab(tab.key); window.scrollTo(0, 0); }}
             className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
               activeTab === tab.key
                 ? "text-primary border-primary"

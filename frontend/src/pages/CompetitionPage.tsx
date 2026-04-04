@@ -369,7 +369,7 @@ export default function CompetitionPage() {
       {isFranceClubs && (
         <nav className="flex gap-1 mb-6 border-b">
           <button
-            onClick={() => setActiveTab("results")}
+            onClick={() => { setActiveTab("results"); window.scrollTo(0, 0); }}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === "results"
                 ? "border-primary text-primary"
@@ -379,7 +379,7 @@ export default function CompetitionPage() {
             Résultats
           </button>
           <button
-            onClick={() => setActiveTab("team")}
+            onClick={() => { setActiveTab("team"); window.scrollTo(0, 0); }}
             className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
               activeTab === "team"
                 ? "border-primary text-primary"

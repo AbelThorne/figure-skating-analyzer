@@ -1495,7 +1495,7 @@ export default function SkaterAnalyticsPage() {
               {TRAINING_TABS.map((tab) => (
                 <button
                   key={tab.key}
-                  onClick={() => setTrainingSubTab(tab.key)}
+                  onClick={() => { setTrainingSubTab(tab.key); window.scrollTo(0, 0); }}
                   className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
                     trainingSubTab === tab.key
                       ? "text-primary border-primary"

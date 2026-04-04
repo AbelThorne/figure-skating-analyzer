@@ -472,7 +472,7 @@ export default function SettingsPage() {
       {/* Tab bar */}
       <div className="flex gap-0 mb-2">
         <button
-          onClick={() => setActiveTab("general")}
+          onClick={() => { setActiveTab("general"); window.scrollTo(0, 0); }}
           className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
             activeTab === "general"
               ? "text-primary border-primary"
@@ -482,7 +482,7 @@ export default function SettingsPage() {
           Général
         </button>
         <button
-          onClick={() => setActiveTab("users")}
+          onClick={() => { setActiveTab("users"); window.scrollTo(0, 0); }}
           className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
             activeTab === "users"
               ? "text-primary border-primary"
@@ -493,7 +493,7 @@ export default function SettingsPage() {
         </button>
         {config?.training_enabled && (
           <button
-            onClick={() => setActiveTab("training")}
+            onClick={() => { setActiveTab("training"); window.scrollTo(0, 0); }}
             className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
               activeTab === "training"
                 ? "text-primary border-primary"
@@ -504,7 +504,7 @@ export default function SettingsPage() {
           </button>
         )}
         <button
-          onClick={() => setActiveTab("jobs")}
+          onClick={() => { setActiveTab("jobs"); window.scrollTo(0, 0); }}
           className={`px-5 py-2 text-sm font-semibold transition-colors border-b-2 ${
             activeTab === "jobs"
               ? "text-primary border-primary"

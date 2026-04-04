@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Routes, Route, NavLink, Link, useLocation, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
@@ -90,6 +90,14 @@ function SkaterRedirect() {
     : "/mes-patineurs";
 
   return <Navigate to={target} replace />;
+}
+
+function ScrollToTop() {
+  const { pathname } = useLocation();
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+  return null;
 }
 
 function AuthenticatedLayout() {
@@ -300,6 +308,7 @@ function AuthenticatedLayout() {
           <NotificationBell />
         </header>
 
+        <ScrollToTop />
         {/* Page content */}
         <main className="p-4 lg:p-8 max-w-7xl mx-auto">
           <Routes>
