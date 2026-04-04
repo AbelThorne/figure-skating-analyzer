@@ -29,28 +29,42 @@ async def recalculate_clubs(request: Request, session: AsyncSession) -> dict:
     """Update Skater.club to match the club from their most recent score."""
     require_admin(request)
 
-    from sqlalchemy import select, func
+    from sqlalchemy import select, func, update
     from app.models.skater import Skater
     from app.models.score import Score
     from app.models.competition import Competition
 
-    # For each skater, find the club from the score with the most recent competition date
-    skaters = (await session.execute(select(Skater))).scalars().all()
-    updated = 0
-
-    for skater in skaters:
-        # Get the club from the most recent competition
-        stmt = (
-            select(Score.club)
-            .join(Competition, Score.competition_id == Competition.id)
-            .where(Score.skater_id == skater.id, Score.club.isnot(None), Score.club != "")
-            .order_by(Competition.date.desc().nullslast())
-            .limit(1)
+    # Single query: for each skater, get the club from the score with the latest competition date
+    # Use a subquery with DISTINCT ON equivalent for SQLite (window function)
+    latest_club_subq = (
+        select(
+            Score.skater_id,
+            Score.club,
+            func.row_number().over(
+                partition_by=Score.skater_id,
+                order_by=Competition.date.desc().nullslast(),
+            ).label("rn"),
         )
-        latest_club = (await session.execute(stmt)).scalar_one_or_none()
-        if latest_club and latest_club != skater.club:
-            skater.club = latest_club
-            updated += 1
+        .join(Competition, Score.competition_id == Competition.id)
+        .where(Score.club.isnot(None), Score.club != "")
+        .subquery()
+    )
+
+    latest_clubs = (
+        await session.execute(
+            select(latest_club_subq.c.skater_id, latest_club_subq.c.club)
+            .where(latest_club_subq.c.rn == 1)
+        )
+    ).all()
+
+    updated = 0
+    for skater_id, club in latest_clubs:
+        result = await session.execute(
+            update(Skater)
+            .where(Skater.id == skater_id, Skater.club != club)
+            .values(club=club)
+        )
+        updated += result.rowcount
 
     await session.commit()
     return {"status": "ok", "skaters_updated": updated}
