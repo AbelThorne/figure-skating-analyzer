@@ -343,29 +343,38 @@ export default function CompetitionsPage() {
             />
             Suivi auto
           </label>
-          {isAdmin && (
-            <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer sm:ml-2">
-              <input
-                type="checkbox"
-                checked={filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id))}
-                ref={(el) => {
-                  if (el) {
-                    const allSelected = filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id));
-                    const someSelected = filteredCompetitions.some((c) => selectedIds.has(c.id));
-                    el.indeterminate = someSelected && !allSelected;
-                  }
-                }}
-                onChange={(e) => {
-                  if (e.target.checked) {
-                    setSelectedIds(new Set(filteredCompetitions.map((c) => c.id)));
-                  } else {
-                    setSelectedIds(new Set());
-                  }
-                }}
-                className="accent-primary"
-              />
-              Tout sélectionner
-            </label>
+        </div>
+      )}
+
+      {/* Select all (admin only, separate from filters) */}
+      {isAdmin && competitions && competitions.length > 0 && (
+        <div className="flex items-center gap-3 mb-4 px-1">
+          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+            <input
+              type="checkbox"
+              checked={filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id))}
+              ref={(el) => {
+                if (el) {
+                  const allSelected = filteredCompetitions.length > 0 && filteredCompetitions.every((c) => selectedIds.has(c.id));
+                  const someSelected = filteredCompetitions.some((c) => selectedIds.has(c.id));
+                  el.indeterminate = someSelected && !allSelected;
+                }
+              }}
+              onChange={(e) => {
+                if (e.target.checked) {
+                  setSelectedIds(new Set(filteredCompetitions.map((c) => c.id)));
+                } else {
+                  setSelectedIds(new Set());
+                }
+              }}
+              className="accent-primary"
+            />
+            Tout sélectionner
+          </label>
+          {selectedIds.size > 0 && (
+            <span className="text-xs text-on-surface-variant">
+              ({selectedIds.size} sélectionnée{selectedIds.size > 1 ? "s" : ""})
+            </span>
           )}
         </div>
       )}
