@@ -271,78 +271,82 @@ export default function CompetitionsPage() {
 
       {/* Filter bar */}
       {competitions && competitions.length > 0 && (
-        <div className="bg-surface-container-lowest rounded-xl shadow-sm p-4 mb-4 flex items-center gap-4 flex-wrap">
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Saison</span>
-            <select
-              value={filterSeason}
-              onChange={(e) => setFilterSeason(e.target.value)}
-              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">Toutes</option>
-              {seasons.map((s) => (
-                <option key={s} value={s}>{s}</option>
-              ))}
-            </select>
+        <div className="bg-surface-container-lowest rounded-xl shadow-sm p-4 mb-4 space-y-3">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Saison</span>
+              <select
+                value={filterSeason}
+                onChange={(e) => setFilterSeason(e.target.value)}
+                className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Toutes</option>
+                {seasons.map((s) => (
+                  <option key={s} value={s}>{s}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Type</span>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value)}
+                className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Tous</option>
+                {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
+                  <option key={code} value={code}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Ligue</span>
+              <select
+                value={filterLigue}
+                onChange={(e) => setFilterLigue(e.target.value)}
+                className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">Toutes</option>
+                {Object.entries(LIGUES).map(([code, label]) => (
+                  <option key={code} value={code}>{label}</option>
+                ))}
+              </select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Trier par</span>
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="date-desc">Date ↓</option>
+                <option value="date-asc">Date ↑</option>
+                <option value="city-asc">Ville A→Z</option>
+                <option value="city-desc">Ville Z→A</option>
+                <option value="country-asc">Pays A→Z</option>
+              </select>
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Type</span>
-            <select
-              value={filterType}
-              onChange={(e) => setFilterType(e.target.value)}
-              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">Tous</option>
-              {Object.entries(COMPETITION_TYPES).map(([code, label]) => (
-                <option key={code} value={code}>{label}</option>
-              ))}
-            </select>
+          <div className="flex items-center gap-4 justify-end">
+            <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showUnconfirmedOnly}
+                onChange={(e) => setShowUnconfirmedOnly(e.target.checked)}
+                className="accent-error"
+              />
+              À vérifier uniquement
+            </label>
+            <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+              <input
+                type="checkbox"
+                checked={showPolledOnly}
+                onChange={(e) => setShowPolledOnly(e.target.checked)}
+                className="accent-primary"
+              />
+              Suivi auto
+            </label>
           </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Ligue</span>
-            <select
-              value={filterLigue}
-              onChange={(e) => setFilterLigue(e.target.value)}
-              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="all">Toutes</option>
-              {Object.entries(LIGUES).map(([code, label]) => (
-                <option key={code} value={code}>{label}</option>
-              ))}
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-[11px] uppercase tracking-wider text-on-surface-variant">Trier par</span>
-            <select
-              value={sortBy}
-              onChange={(e) => setSortBy(e.target.value)}
-              className="bg-surface-container rounded-lg px-3 py-1.5 text-sm text-on-surface border-none focus:ring-2 focus:ring-primary"
-            >
-              <option value="date-desc">Date ↓</option>
-              <option value="date-asc">Date ↑</option>
-              <option value="city-asc">Ville A→Z</option>
-              <option value="city-desc">Ville Z→A</option>
-              <option value="country-asc">Pays A→Z</option>
-            </select>
-          </div>
-          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer sm:ml-auto">
-            <input
-              type="checkbox"
-              checked={showUnconfirmedOnly}
-              onChange={(e) => setShowUnconfirmedOnly(e.target.checked)}
-              className="accent-error"
-            />
-            À vérifier uniquement
-          </label>
-          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
-            <input
-              type="checkbox"
-              checked={showPolledOnly}
-              onChange={(e) => setShowPolledOnly(e.target.checked)}
-              className="accent-primary"
-            />
-            Suivi auto
-          </label>
         </div>
       )}
 
