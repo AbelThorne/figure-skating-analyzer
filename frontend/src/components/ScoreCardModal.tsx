@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { Score } from "../api/client";
+import { Score, componentScore } from "../api/client";
 
 interface Props {
   score: Score;
@@ -239,67 +239,82 @@ export default function ScoreCardModal({ score, skaterName, onClose }: Props) {
             </div>
           )}
 
-          {/* Components + deductions */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {/* PCS */}
-            {Object.keys(components).length > 0 && (
+          {/* Components table */}
+          {Object.keys(components).length > 0 && (() => {
+            // Detect enriched format (with judges) vs legacy (plain numbers)
+            const firstVal = Object.values(components)[0];
+            const isEnriched = typeof firstVal === "object" && firstVal !== null;
+            const compJudgeCount = isEnriched
+              ? Math.max(...Object.values(components).map((v) => typeof v === "object" && v !== null ? v.judges.length : 0))
+              : 0;
+
+            return (
               <div>
                 <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
                   Composantes du programme
                 </h3>
-                <div className="bg-surface-container-lowest rounded-xl overflow-hidden">
-                  <table className="w-full border-collapse text-sm">
+                <div className="overflow-x-auto rounded-xl">
+                  <table className="w-full border-collapse text-xs font-mono">
+                    <thead>
+                      <tr className="bg-surface-container-low">
+                        <th className="text-left font-black uppercase tracking-widest text-on-surface-variant px-3 py-2 rounded-tl-xl">Composante</th>
+                        {isEnriched && (
+                          <th className="text-right font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">Coef.</th>
+                        )}
+                        {compJudgeCount > 0 && Array.from({ length: compJudgeCount }, (_, i) => (
+                          <th key={i} className="text-right font-black uppercase tracking-widest text-on-surface-variant px-2 py-2">
+                            J{i + 1}
+                          </th>
+                        ))}
+                        <th className="text-right font-black uppercase tracking-widest text-on-surface-variant px-3 py-2 rounded-tr-xl">Score</th>
+                      </tr>
+                    </thead>
                     <tbody>
-                      {Object.entries(components).map(([key, val], i) => (
-                        <tr key={key} className={i % 2 === 0 ? "bg-surface-container-lowest" : "bg-surface-container-low/30"}>
-                          <td className="px-4 py-2 text-on-surface-variant font-body">
-                            {COMPONENT_LABELS[key] ?? key}
-                            <span className="ml-2 text-[10px] font-mono text-on-surface-variant/60">{key}</span>
-                          </td>
-                          <td className="px-4 py-2 text-right font-mono font-bold text-on-surface">{fmt(val)}</td>
-                        </tr>
-                      ))}
+                      {Object.entries(components).map(([key, val], i) => {
+                        const rowBg = i % 2 === 0 ? "bg-surface-container-lowest" : "bg-surface-container-low/30";
+                        const enriched = typeof val === "object" && val !== null;
+                        const scoreVal = componentScore(val);
+                        return (
+                          <tr key={key} className={rowBg}>
+                            <td className="px-3 py-1.5 text-on-surface font-medium font-body">
+                              {COMPONENT_LABELS[key] ?? key}
+                              <span className="ml-2 text-[10px] font-mono text-on-surface-variant/60">{key}</span>
+                            </td>
+                            {isEnriched && (
+                              <td className="px-3 py-1.5 text-right text-on-surface-variant">
+                                {enriched ? fmt(val.factor) : "—"}
+                              </td>
+                            )}
+                            {compJudgeCount > 0 && Array.from({ length: compJudgeCount }, (_, j) => (
+                              <td key={j} className="px-2 py-1.5 text-right text-on-surface-variant">
+                                {enriched && j < val.judges.length ? fmt(val.judges[j]) : "—"}
+                              </td>
+                            ))}
+                            <td className="px-3 py-1.5 text-right font-bold text-on-surface">{fmt(scoreVal)}</td>
+                          </tr>
+                        );
+                      })}
+                      {/* Total row */}
                       <tr className="bg-surface-container-low border-t border-outline-variant/30">
-                        <td className="px-4 py-2 font-black uppercase tracking-widest text-on-surface-variant text-[10px]">Total PCS</td>
-                        <td className="px-4 py-2 text-right font-mono font-bold text-on-surface">{fmt(score.component_score)}</td>
+                        <td className="px-3 py-2 font-black uppercase tracking-widest text-on-surface-variant text-[10px]">Total PCS</td>
+                        {isEnriched && <td />}
+                        {compJudgeCount > 0 && <td colSpan={compJudgeCount} />}
+                        <td className="px-3 py-2 text-right font-bold text-on-surface">{fmt(score.component_score)}</td>
                       </tr>
                     </tbody>
                   </table>
                 </div>
               </div>
-            )}
+            );
+          })()}
 
-            {/* Score breakdown */}
-            <div>
-              <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
-                Récapitulatif
-              </h3>
-              <div className="bg-surface-container-lowest rounded-xl overflow-hidden">
-                <table className="w-full border-collapse text-sm">
-                  <tbody>
-                    <tr className="bg-surface-container-lowest">
-                      <td className="px-4 py-2 text-on-surface-variant font-body">Note technique</td>
-                      <td className="px-4 py-2 text-right font-mono font-bold text-on-surface">{fmt(score.technical_score)}</td>
-                    </tr>
-                    <tr className="bg-surface-container-low/30">
-                      <td className="px-4 py-2 text-on-surface-variant font-body">Composantes</td>
-                      <td className="px-4 py-2 text-right font-mono font-bold text-on-surface">{fmt(score.component_score)}</td>
-                    </tr>
-                    {(score.deductions ?? 0) !== 0 && (
-                      <tr className="bg-surface-container-lowest">
-                        <td className="px-4 py-2 text-on-surface-variant font-body">Déductions</td>
-                        <td className="px-4 py-2 text-right font-mono font-bold text-[#ba1a1a]">−{Math.abs(score.deductions ?? 0).toFixed(2)}</td>
-                      </tr>
-                    )}
-                    <tr className="bg-surface-container-low border-t border-outline-variant/30">
-                      <td className="px-4 py-2 font-black uppercase tracking-widest text-on-surface-variant text-[10px]">Total</td>
-                      <td className="px-4 py-2 text-right font-mono font-bold text-on-surface text-base">{fmt(score.total_score)}</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+          {/* Deductions (only if non-zero) */}
+          {(score.deductions ?? 0) !== 0 && (
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant">Déductions</span>
+              <span className="font-mono font-bold text-[#ba1a1a]">−{Math.abs(score.deductions ?? 0).toFixed(2)}</span>
             </div>
-          </div>
+          )}
 
           {/* Marker legend if any markers present */}
           {elements.some((el) => (el.markers ?? []).some((m) => m !== "+")) && (

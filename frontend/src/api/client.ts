@@ -193,12 +193,19 @@ export interface Score {
   technical_score: number | null;
   component_score: number | null;
   deductions: number | null;
-  components: Record<string, number> | null;
+  components: Record<string, number | { score: number; factor: number; judges: number[] }> | null;
   elements: ScoreElement[] | null;
   skating_level: string | null;
   age_group: string | null;
   gender: string | null;
   pdf_url: string | null;
+}
+
+/** Extract the numeric score from a components entry (handles both old float and new enriched format). */
+export function componentScore(val: number | { score: number; factor: number; judges: number[] } | undefined): number {
+  if (val == null) return 0;
+  if (typeof val === "number") return val;
+  return val.score;
 }
 
 export interface CategoryResult {

@@ -11,7 +11,7 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { api, downloadPdf, Element, Score, CategoryResult, WeeklyReview, TrainingIncident, TrainingChallenge, SelfEvaluation } from "../api/client";
+import { api, downloadPdf, Element, Score, CategoryResult, WeeklyReview, TrainingIncident, TrainingChallenge, SelfEvaluation, componentScore } from "../api/client";
 import ElementGOEChart from "../components/ElementGOEChart";
 import PCSRadarChart from "../components/PCSRadarChart";
 import ElementDifficultyChart from "../components/ElementDifficultyChart";
@@ -399,7 +399,7 @@ export default function SkaterAnalyticsPage() {
       }
       const entry = map.get(key)!;
       for (const [name, value] of Object.entries(s.components)) {
-        entry[name] = value;
+        entry[name] = componentScore(value);
       }
     }
     return [...map.values()].sort((a, b) => (String(a.date) > String(b.date) ? 1 : -1));

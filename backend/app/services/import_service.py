@@ -310,12 +310,23 @@ async def run_enrich(session: AsyncSession, competition_id: int, force: bool = F
                     stmt = stmt.where(Score.segment == seg_code)
                 result = await session.execute(stmt)
                 scores = result.scalars().all()
+                # Build enriched components dict from PDF data
+                pdf_components = entry.get("components")
+                enriched_components = None
+                if pdf_components:
+                    enriched_components = {
+                        c["name"]: {"score": c["score"], "factor": c["factor"], "judges": c["judges"]}
+                        for c in pdf_components
+                    }
+
                 if scores:
                     for score in scores:
                         if not score.elements or force:
                             score.elements = elements
                             score.pdf_path = str(pdf_path)
                             enriched += 1
+                        if enriched_components and (not score.components or force or isinstance(next(iter(score.components.values()), None), (int, float))):
+                            score.components = enriched_components
                 else:
                     unmatched.append(skater_name)
         except Exception as e:

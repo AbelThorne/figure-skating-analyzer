@@ -473,3 +473,42 @@ class TestParseElementsFromText:
         numbers = [e["number"] for e in results[0]["elements"]]
         assert numbers == sorted(numbers)
         assert numbers[0] == 1
+
+    # ── Component parsing tests ──────────────────────────────────────────
+
+    def test_first_skater_has_components(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        comps = results[0]["components"]
+        assert comps is not None
+        assert len(comps) == 3
+
+    def test_component_names(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        names = [c["name"] for c in results[0]["components"]]
+        assert names == ["CO", "PR", "SK"]
+
+    def test_component_factor(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        co = results[0]["components"][0]
+        assert co["factor"] == 2.67
+
+    def test_component_judges_9(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        co = results[0]["components"][0]
+        assert len(co["judges"]) == 9
+        assert co["judges"] == [4.25, 4.00, 3.75, 4.00, 4.50, 4.25, 4.00, 4.25, 4.00]
+
+    def test_component_score(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        co = results[0]["components"][0]
+        assert co["score"] == 4.08
+
+    def test_third_skater_components_5_judges(self, protocol_text):
+        results = parse_elements_from_text(protocol_text)
+        comps = results[2]["components"]
+        assert comps is not None
+        assert len(comps) == 3
+        co = comps[0]
+        assert len(co["judges"]) == 5
+        assert co["judges"] == [2.00, 2.50, 1.75, 2.25, 2.00]
+        assert co["score"] == 2.08

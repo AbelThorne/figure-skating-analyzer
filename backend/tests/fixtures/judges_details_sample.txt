@@ -15,6 +15,12 @@ R2 NOVICE FEMME FREE SKATING
  8  2Aq                           3.30  -1.11  -1  -1  -2  -1  -1  -1  -1  -1  -1   2.19
  9  FCoSp3                        3.00   0.33   0   1   0   0   1   0   0   1   0   3.33
 10  ChSq1                         3.00   1.22   1   1   2   1   1   1   2   1   1   4.22
+Program Components Factor
+Composition 2.67 4.25 4.00 3.75 4.00 4.50 4.25 4.00 4.25 4.00 4.08
+Presentation 2.67 4.00 3.75 4.00 4.25 4.50 4.00 4.25 4.00 4.25 4.11
+Skating Skills 2.67 4.50 4.25 4.00 4.25 4.75 4.50 4.25 4.50 4.25 4.36
+Judges Total Program Component Score (factored) 15.64
+Deductions: 0.00
 
 2  DUPONT Lea                  FRA   5   22.80   9.40   13.40   0.00
 # Executed Elements
@@ -25,6 +31,12 @@ R2 NOVICE FEMME FREE SKATING
  3  2Lz                           2.10   0.67   1   0   1   1   1   0   1   0   1   2.77
  4  CCoSp4                        3.50   1.11   1   1   1   2   1   1   1   1   1   4.61
  5  2F                            1.80   0.00   0   0   0   0   0   0   0   0   0   1.80
+Program Components Factor
+Composition 2.67 3.50 3.25 3.50 3.75 3.50 3.25 3.50 3.50 3.25 3.44
+Presentation 2.67 3.25 3.50 3.25 3.50 3.25 3.00 3.25 3.25 3.50 3.31
+Skating Skills 2.67 3.75 3.50 3.50 3.75 3.50 3.50 3.75 3.50 3.50 3.58
+Judges Total Program Component Score (factored) 13.40
+Deductions: 0.00
 
 3  ERNY Saskia                  FRA   8   29.50   11.22   18.28   0.00
 # Executed Elements
@@ -39,3 +51,9 @@ R2 NOVICE FEMME FREE SKATING
  7  1Lo+1A+1Lo+SEQ    x           2.10   0.00   0  -1   0   0   0   2.10
  8  ChSq1                         3.00   0.33   0   1   1   1   0   3.33
  9  2S                F  x        1.30  -0.65  -5  -5  -5  -5  -5   0.65
+Program Components Factor
+Composition 1.50 2.00 2.50 1.75 2.25 2.00 2.08
+Presentation 1.50 1.75 2.50 2.00 2.25 1.75 2.08
+Skating Skills 1.50 1.75 2.50 1.25 2.00 1.75 1.83
+Judges Total Program Component Score (factored) 18.28
+Deductions: 0.00

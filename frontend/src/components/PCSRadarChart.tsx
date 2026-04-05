@@ -8,7 +8,7 @@ import {
   ResponsiveContainer,
   Tooltip,
 } from "recharts";
-import { Score } from "../api/client";
+import { Score, componentScore } from "../api/client";
 
 interface Props {
   scores: Score[];
@@ -43,7 +43,7 @@ export default function PCSRadarChart({ scores }: Props) {
   const radarData = PCS_KEYS.map(({ key, label }) => {
     const entry: Record<string, string | number> = { subject: label };
     last3.forEach((score, idx) => {
-      entry[`score_${idx}`] = score.components?.[key] ?? 0;
+      entry[`score_${idx}`] = componentScore(score.components?.[key]);
     });
     return entry;
   });

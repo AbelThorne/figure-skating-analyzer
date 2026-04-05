@@ -266,6 +266,72 @@ def _parse_element_row(line: str) -> dict | None:
 
 
 # ---------------------------------------------------------------------------
+# Component row parsing
+# ---------------------------------------------------------------------------
+
+_COMPONENT_NAME_MAP = {
+    "composition": "CO",
+    "presentation": "PR",
+    "skating skills": "SK",
+    "interpretation": "IN",
+    "transitions": "TR",
+    "performance": "PE",
+    "choreography": "CH",
+}
+
+
+def _parse_component_row(line: str) -> dict | None:
+    """Parse one component row from extracted ISU Judges Details protocol text.
+
+    Expected format (space-separated):
+        ComponentName  Factor  J1  J2  ...  Jn  Score
+
+    Returns a dict: {"name": "CO", "factor": 1.50, "judges": [2.00, 2.50, 1.75], "score": 2.08}
+    or None if the line does not match.
+    """
+    m = re.match(r"^([A-Za-z ]+?)\s+(\d+\.\d+)\s+(.+)$", line.strip())
+    if not m:
+        return None
+
+    raw_name = m.group(1).strip().lower()
+    code = _COMPONENT_NAME_MAP.get(raw_name)
+    if code is None:
+        return None
+
+    factor = float(m.group(2))
+    rest = m.group(3).split()
+    if len(rest) < 2:  # at least 1 judge + score
+        return None
+
+    try:
+        values = [float(v) for v in rest]
+    except ValueError:
+        return None
+
+    judges = values[:-1]
+    score = values[-1]
+
+    return {"name": code, "factor": factor, "judges": judges, "score": score}
+
+
+def _parse_components_block(block: str) -> list[dict]:
+    """Extract all component rows from a skater's text block."""
+    components: list[dict] = []
+    in_section = False
+    for line in block.splitlines():
+        if "Program Components" in line and "Factor" in line:
+            in_section = True
+            continue
+        if in_section:
+            if "Judges Total" in line or "Deductions" in line or "Legend" in line:
+                break
+            comp = _parse_component_row(line)
+            if comp is not None:
+                components.append(comp)
+    return components
+
+
+# ---------------------------------------------------------------------------
 # Skater header pattern
 # ---------------------------------------------------------------------------
 
@@ -310,11 +376,14 @@ def parse_elements_from_text(text: str) -> list[dict]:
             if elem is not None:
                 elements.append(elem)
 
+        components = _parse_components_block(block)
+
         if elements:
             results.append({
                 "skater_name": skater_name,
                 "category_segment": category_segment,
                 "elements": elements,
+                "components": components if components else None,
             })
 
     return results
