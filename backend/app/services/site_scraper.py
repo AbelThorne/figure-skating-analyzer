@@ -321,7 +321,9 @@ class FSManagerScraper:
         component_cols: list[tuple[int, str]] = []
         for i, h in enumerate(headers):
             h = h.strip().rstrip(".=+- ").strip()
-            if h in ("pl", "fpl"):
+            if h == "pl":
+                col_map["rank"] = i
+            elif h == "fpl" and "rank" not in col_map:
                 col_map["rank"] = i
             elif h == "name":
                 col_map["name"] = i

@@ -176,7 +176,11 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                     Score.segment == r.segment,
                 )
             )
-            if existing.scalar_one_or_none():
+            existing_score = existing.scalar_one_or_none()
+            if existing_score:
+                # Update rank (may change as more skaters complete the segment)
+                if r.rank is not None and existing_score.rank != r.rank:
+                    existing_score.rank = r.rank
                 skipped += 1
                 continue
             score = Score(
@@ -213,7 +217,19 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                     CategoryResult.category == cr.category,
                 )
             )
-            if existing.scalar_one_or_none():
+            existing_cr = existing.scalar_one_or_none()
+            if existing_cr:
+                # Update ranks and totals (change as competition progresses)
+                if cr.overall_rank is not None:
+                    existing_cr.overall_rank = cr.overall_rank
+                if cr.combined_total is not None:
+                    existing_cr.combined_total = cr.combined_total
+                if cr.sp_rank is not None:
+                    existing_cr.sp_rank = cr.sp_rank
+                if cr.fs_rank is not None:
+                    existing_cr.fs_rank = cr.fs_rank
+                if cr.segment_count is not None:
+                    existing_cr.segment_count = cr.segment_count
                 cat_skipped += 1
                 continue
             cat_result = CategoryResult(
