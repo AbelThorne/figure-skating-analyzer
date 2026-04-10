@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import date as date_type, datetime, timezone
 
-from sqlalchemy import select, delete as sa_delete, func
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.competition import Competition
@@ -109,15 +109,6 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
     if not comp:
         raise ValueError(f"Competition {competition_id} not found")
 
-    if force:
-        await session.execute(
-            sa_delete(Score).where(Score.competition_id == competition_id)
-        )
-        await session.execute(
-            sa_delete(CategoryResult).where(CategoryResult.competition_id == competition_id)
-        )
-        await session.flush()
-
     scraper = get_scraper(comp.url)
     events, results, cat_results, comp_info, index_html = await scraper.scrape(comp.url)
 
@@ -178,9 +169,32 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             )
             existing_score = existing.scalar_one_or_none()
             if existing_score:
-                # Update rank (may change as more skaters complete the segment)
-                if r.rank is not None and existing_score.rank != r.rank:
+                if force:
+                    # Update all scraped fields, but preserve enriched data (elements, pdf_path)
                     existing_score.rank = r.rank
+                    existing_score.total_score = r.total_score
+                    existing_score.technical_score = r.technical_score
+                    existing_score.component_score = r.component_score
+                    existing_score.deductions = r.deductions
+                    existing_score.starting_number = r.starting_number
+                    if r.event_date:
+                        existing_score.event_date = date_type.fromisoformat(r.event_date)
+                    existing_score.club = r.club
+                    parsed = parse_category(r.category)
+                    existing_score.skating_level = parsed["skating_level"]
+                    existing_score.age_group = parsed["age_group"]
+                    existing_score.gender = parsed["gender"]
+                    # Only overwrite components if not already enriched with per-judge data
+                    if r.components and (
+                        not existing_score.components
+                        or isinstance(next(iter(existing_score.components.values()), None), (int, float))
+                    ):
+                        existing_score.components = r.components
+                    # elements and pdf_path are intentionally preserved (set by run_enrich)
+                else:
+                    # Update rank (may change as more skaters complete the segment)
+                    if r.rank is not None and existing_score.rank != r.rank:
+                        existing_score.rank = r.rank
                 skipped += 1
                 continue
             score = Score(
@@ -230,6 +244,13 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                     existing_cr.fs_rank = cr.fs_rank
                 if cr.segment_count is not None:
                     existing_cr.segment_count = cr.segment_count
+                if force:
+                    if cr.club is not None:
+                        existing_cr.club = cr.club
+                    parsed = parse_category(cr.category)
+                    existing_cr.skating_level = parsed["skating_level"]
+                    existing_cr.age_group = parsed["age_group"]
+                    existing_cr.gender = parsed["gender"]
                 cat_skipped += 1
                 continue
             cat_result = CategoryResult(
