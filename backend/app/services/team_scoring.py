@@ -64,6 +64,18 @@ _DIVISION_PATTERN = re.compile(r"\b(D[123])\b", re.IGNORECASE)
 # Pattern to detect couple/pair categories
 _COUPLE_PATTERN = re.compile(r"\bCouples?\b", re.IGNORECASE)
 
+
+def _normalize_couple_club(club: str | None, is_couple: bool) -> str | None:
+    """For couple/pair entries, take only the first club if two are listed.
+
+    France Clubs rules require both partners to compete for the same club.
+    Some scraped sources concatenate both clubs as "Club A / Club B"; this
+    function normalises that to just the first club name.
+    """
+    if is_couple and club and " / " in club:
+        return club.split(" / ", 1)[0].strip() or None
+    return club
+
 # Max titular skaters per division per club
 MAX_TITULAR_PER_DIVISION = 6
 MAX_TITULAR_PER_CATEGORY = 2
@@ -136,7 +148,10 @@ async def auto_init_titular(session: AsyncSession, competition_id: int) -> None:
         division = _extract_division(score.category)
         if not division:
             continue
-        club = score.club or (score.skater.club if score.skater else None)
+        skater = score.skater
+        is_couple = skater and not skater.first_name and " / " in (skater.last_name or "")
+        raw_club = score.club or (skater.club if skater else None)
+        club = _normalize_couple_club(raw_club, bool(is_couple))
         if not club:
             continue
         groups[(club, division)].append(score)
@@ -259,7 +274,8 @@ def compute_team_scores(
             if skater.first_name
             else skater.last_name or ""
         )
-        club = score.club or skater.club or "\u2014"
+        is_couple = not skater.first_name and " / " in (skater.last_name or "")
+        club = _normalize_couple_club(score.club or skater.club or None, is_couple) or "\u2014"
         # is_titular=None treated as titular (shouldn't happen after auto-init)
         is_remplacant = score.is_titular is False
 

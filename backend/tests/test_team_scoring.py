@@ -214,6 +214,37 @@ def test_couples_category():
     assert result["clubs"][0]["total_points"] == 10.0
 
 
+def test_couples_double_club_normalized():
+    """Couples with 'Club A / Club B' club are attributed to the first club only.
+
+    For France Clubs, both partners must belong to the same club. Some scraped
+    sources list both clubs as 'Club A / Club B'; that must not create a phantom
+    double-club entry that skews the ranking.
+    """
+    medians = {"Couples novices": {"D1": 41.54}, "Novices dames": {"D1": 40.0}}
+    scores = [
+        # Couple whose club was scraped as "Club A / Club A" (same club, doubled)
+        _make_score_stub(
+            1, 1, "", "Alice DUPONT / Bob DUPONT", "Club A / Club A", "FRA",
+            "Couples Novice D1", 41.54, 1,
+            skating_level="National", age_group="Novice", gender=None,
+        ),
+        # Individual skater from the same real club
+        _make_score_stub(
+            2, 2, "Marie", "MARTIN", "Club A", "FRA",
+            "Novice D1 Femme", 40.0, 1,
+            skating_level="National", age_group="Novice", gender="Femme",
+        ),
+    ]
+    result = compute_team_scores(scores, medians)
+
+    # Must be exactly one club entry ("Club A"), not two
+    assert len(result["clubs"]) == 1
+    assert result["clubs"][0]["club"] == "Club A"
+    # Both skaters' points are counted for the same club
+    assert result["clubs"][0]["skater_count"] == 2
+
+
 def test_entries_include_is_titular_and_starting_number():
     """Skater entries include is_titular and starting_number fields."""
     medians = {"Novices dames": {"D1": 40.0}}
