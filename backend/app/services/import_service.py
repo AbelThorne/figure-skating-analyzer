@@ -18,6 +18,17 @@ from app.services.name_parser import parse_skater_name
 from app.services.category_parser import parse_category
 
 
+def _normalize_couple_club(club: str | None, first_name: str, last_name: str) -> str | None:
+    """For couples (first_name="" and last_name contains " / "), take only the first club.
+
+    France Clubs rules require both partners to compete for the same club.
+    Some sources list both clubs as "Club A / Club B"; we normalize to "Club A".
+    """
+    if not first_name and " / " in last_name and club and " / " in club:
+        return club.split(" / ", 1)[0].strip() or None
+    return club
+
+
 async def _get_or_create_skater(
     session: AsyncSession,
     raw_name: str,
@@ -26,6 +37,7 @@ async def _get_or_create_skater(
     competition_date: date_type | None = None,
 ) -> Skater:
     first_name, last_name = parse_skater_name(raw_name)
+    club = _normalize_couple_club(club, first_name, last_name)
     stmt = select(Skater).where(
         Skater.first_name == first_name,
         Skater.last_name == last_name,
@@ -179,7 +191,8 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
                     existing_score.starting_number = r.starting_number
                     if r.event_date:
                         existing_score.event_date = date_type.fromisoformat(r.event_date)
-                    existing_score.club = r.club
+                    pf, pl = parse_skater_name(r.name)
+                    existing_score.club = _normalize_couple_club(r.club, pf, pl)
                     parsed = parse_category(r.category)
                     existing_score.skating_level = parsed["skating_level"]
                     existing_score.age_group = parsed["age_group"]
@@ -215,7 +228,8 @@ async def run_import(session: AsyncSession, competition_id: int, force: bool = F
             score.skating_level = parsed["skating_level"]
             score.age_group = parsed["age_group"]
             score.gender = parsed["gender"]
-            score.club = r.club
+            pf, pl = parse_skater_name(r.name)
+            score.club = _normalize_couple_club(r.club, pf, pl)
             session.add(score)
             imported += 1
         except Exception as e:
