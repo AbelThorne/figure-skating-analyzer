@@ -245,6 +245,28 @@ def test_couples_double_club_normalized():
     assert result["clubs"][0]["skater_count"] == 2
 
 
+def test_couples_club_no_spaces_around_slash():
+    """Couples with 'CLUB/CLUB' (no spaces around slash) are normalized correctly."""
+    medians = {"Couples novices": {"D1": 41.54}, "Novices dames": {"D1": 40.0}}
+    scores = [
+        _make_score_stub(
+            1, 1, "", "Alice DUPONT / Bob DUPONT", "CHAMP/CHAMP", "FRA",
+            "Couples Novice D1", 41.54, 1,
+            skating_level="National", age_group="Novice", gender=None,
+        ),
+        _make_score_stub(
+            2, 2, "Marie", "MARTIN", "CHAMP", "FRA",
+            "Novice D1 Femme", 40.0, 1,
+            skating_level="National", age_group="Novice", gender="Femme",
+        ),
+    ]
+    result = compute_team_scores(scores, medians)
+
+    assert len(result["clubs"]) == 1
+    assert result["clubs"][0]["club"] == "CHAMP"
+    assert result["clubs"][0]["skater_count"] == 2
+
+
 def test_entries_include_is_titular_and_starting_number():
     """Skater entries include is_titular and starting_number fields."""
     medians = {"Novices dames": {"D1": 40.0}}

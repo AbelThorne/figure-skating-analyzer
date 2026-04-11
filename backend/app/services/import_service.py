@@ -24,8 +24,8 @@ def _normalize_couple_club(club: str | None, first_name: str, last_name: str) ->
     France Clubs rules require both partners to compete for the same club.
     Some sources list both clubs as "Club A / Club B"; we normalize to "Club A".
     """
-    if not first_name and " / " in last_name and club and " / " in club:
-        return club.split(" / ", 1)[0].strip() or None
+    if not first_name and " / " in last_name and club and "/" in club:
+        return club.split("/", 1)[0].strip() or None
     return club
 
 

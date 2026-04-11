@@ -72,8 +72,8 @@ def _normalize_couple_club(club: str | None, is_couple: bool) -> str | None:
     Some scraped sources concatenate both clubs as "Club A / Club B"; this
     function normalises that to just the first club name.
     """
-    if is_couple and club and " / " in club:
-        return club.split(" / ", 1)[0].strip() or None
+    if is_couple and club and "/" in club:
+        return club.split("/", 1)[0].strip() or None
     return club
 
 # Max titular skaters per division per club
