@@ -23,6 +23,8 @@ build/
 *.sqlite3
 data/pdfs/
 data/
+!backend/app/data/
+!backend/app/data/*.json
 
 # Node
 node_modules/

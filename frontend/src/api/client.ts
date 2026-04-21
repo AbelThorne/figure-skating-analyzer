@@ -780,6 +780,59 @@ export interface TeamMediansResponse {
   source: "competition" | "default";
 }
 
+// ── Program Builder types ───────────────────────────────────────────────
+
+export interface SovElement {
+  category: "single" | "pair";
+  type: "jump" | "spin" | "step" | "choreo" | "lift" | "throw" | "twist" | "death_spiral" | "pair_spin" | "pivot";
+  base_value: number;
+  goe: number[]; // 10 values: [-5, -4, -3, -2, -1, +1, +2, +3, +4, +5]
+}
+
+export interface SovData {
+  season: string;
+  elements: Record<string, SovElement>;
+}
+
+export interface ProgramRuleSegment {
+  label?: string;
+  duration?: string;
+  total_elements?: number;
+  max_jump_elements?: number;
+  max_spins?: number;
+  max_steps?: number;
+  max_choreo?: number;
+  max_jump_level?: number | null;
+  max_spin_level?: number | null;
+  max_step_level?: number | null;
+  triples_allowed?: boolean;
+  quads_allowed?: boolean;
+  combo_allowed?: boolean;
+  max_combos?: number;
+  max_combo_jumps?: number;
+  max_sequences?: number;
+  max_combo_with_3_jumps?: number;
+  allowed_jumps?: string[];
+  allowed_spin_types?: string[];
+  axel_required?: boolean;
+  bonus_second_half?: boolean;
+  component_factor?: number;
+  component_factor_m?: number;
+  component_factor_f?: number;
+  has_duo_element?: boolean;
+  notes?: string;
+}
+
+export interface ProgramRuleCategory {
+  label: string;
+  segments: Record<string, ProgramRuleSegment>;
+}
+
+export interface ProgramRulesData {
+  season: string;
+  categories: Record<string, ProgramRuleCategory>;
+}
+
 // --- API Functions ---
 
 export const api = {
@@ -1264,5 +1317,10 @@ export const api = {
       if (params.to) qs.set("to_date", params.to);
       return request<TimelineEntry[]>(`/training/timeline?${qs}`);
     },
+  },
+
+  programBuilder: {
+    sov: () => request<SovData>("/program-builder/sov"),
+    rules: () => request<ProgramRulesData>("/program-builder/rules"),
   },
 };
