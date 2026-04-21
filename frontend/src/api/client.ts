@@ -814,6 +814,7 @@ export interface ProgramRuleSegment {
   max_combo_with_3_jumps?: number;
   allowed_jumps?: string[];
   allowed_spin_types?: string[];
+  axel_required?: boolean;
   bonus_second_half?: boolean;
   component_factor?: number;
   component_factor_m?: number;
