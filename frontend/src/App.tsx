@@ -21,6 +21,7 @@ import ProfilePage from "./pages/ProfilePage";
 import MySkatersPage from "./pages/MySkatersPage";
 import TrainingPage from "./pages/TrainingPage";
 import SkaterTrainingPage from "./pages/SkaterTrainingPage";
+import ProgramBuilderPage from "./pages/ProgramBuilderPage";
 
 const navLinksBase = [
   { to: "/", label: "TABLEAU DE BORD", icon: "dashboard", end: true },
@@ -44,6 +45,7 @@ function getPageTitle(pathname: string): string {
   if (pathname === "/profil") return "Mon compte";
   if (pathname === "/entrainement") return "Suivi entraînement";
   if (pathname.startsWith("/entrainement/")) return "Suivi entraînement";
+  if (pathname === "/programme") return "Programme";
   return "";
 }
 
@@ -183,6 +185,7 @@ function AuthenticatedLayout() {
               { to: "/patineurs", label: "PATINEURS", icon: "people", end: false },
               { to: "/competitions", label: "COMPÉTITIONS", icon: "emoji_events", end: false },
               { to: "/club", label: "CLUB", icon: "bar_chart", end: false },
+              { to: "/programme", label: "PROGRAMME", icon: "sports_score", end: true },
             ].map(({ to, label, icon, end }) => (
               <NavLink
                 key={to}
@@ -203,7 +206,7 @@ function AuthenticatedLayout() {
           </nav>
         ) : (
           <nav className="flex-1 py-2">
-            {[...navLinksBase, ...(config?.training_enabled && user?.role !== "reader" ? [trainingNavLink] : [])].map(({ to, label, icon, end }) => (
+            {[...navLinksBase, ...(user?.role !== "reader" ? [{ to: "/programme", label: "PROGRAMME", icon: "sports_score", end: true }] : []), ...(config?.training_enabled && user?.role !== "reader" ? [trainingNavLink] : [])].map(({ to, label, icon, end }) => (
               <NavLink
                 key={to}
                 to={to}
@@ -335,6 +338,7 @@ function AuthenticatedLayout() {
                 <Route path="/club/saison" element={<StatsPage />} />
                 <Route path="/club/competition" element={<ClubCompetitionPage />} />
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
+                <Route path="/programme" element={<ProgramBuilderPage />} />
                 <Route path="/profil" element={<ProfilePage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>
@@ -349,6 +353,7 @@ function AuthenticatedLayout() {
                 <Route path="/club/competition" element={<ClubCompetitionPage />} />
                 <Route path="/club" element={<Navigate to="/club/saison" replace />} />
                 <Route path="/stats" element={<Navigate to="/club/saison" replace />} />
+                <Route path="/programme" element={<ProgramBuilderPage />} />
                 {config?.training_enabled && user?.role !== "reader" && (
                   <>
                     <Route path="/entrainement" element={<TrainingPage />} />
