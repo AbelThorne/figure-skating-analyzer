@@ -326,7 +326,7 @@ Table avec les colonnes :
 | **BV** | Base value après application des markers et multiplicateurs. `font-mono`. |
 | **Min** | Score total à GOE -5. `font-mono`, couleur `text-[#ba1a1a]`. Hover (délai 300ms) : tooltip avec les valeurs de -5 à -1. |
 | **Max** | Score total à GOE +5. `font-mono`, couleur `text-primary`. Hover (délai 300ms) : tooltip avec les valeurs de +1 à +5. |
-| **Actions** | Bouton "+" (ajouter un saut à la combo, visible pour les sauts uniquement, max 3 sauts), bouton "×" (supprimer l'élément) |
+| **Actions** | Bouton "+" (ajouter un saut à la combo, visible pour les sauts uniquement, max 3 sauts), icône corbeille `delete` (Material Symbols, supprime l'élément de la liste) |
 
 **Édition inline d'un élément** :
 - Cliquer sur le nom d'un élément dans la colonne "Élément" ouvre un **popover** (mini-modal ancré à l'élément) contenant le même sélecteur d'éléments que le picker principal (dropdown avec recherche, groupé par type).
