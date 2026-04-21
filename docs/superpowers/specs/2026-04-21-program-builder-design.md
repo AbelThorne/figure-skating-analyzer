@@ -328,6 +328,13 @@ Table avec les colonnes :
 | **Max** | Score total à GOE +5. `font-mono`, couleur `text-primary`. Hover (délai 300ms) : tooltip avec les valeurs de +1 à +5. |
 | **Actions** | Bouton "+" (ajouter un saut à la combo, visible pour les sauts uniquement, max 3 sauts), bouton "×" (supprimer l'élément) |
 
+**Édition inline d'un élément** :
+- Cliquer sur le nom d'un élément dans la colonne "Élément" ouvre un **popover** (mini-modal ancré à l'élément) contenant le même sélecteur d'éléments que le picker principal (dropdown avec recherche, groupé par type).
+- Sélectionner un nouvel élément **remplace** l'élément cliqué.
+- Si l'élément était une combinaison de sauts (ex: `3Lz+2T`), il est remplacé par le nouvel élément **simple**. La combinaison est défaite — le coach doit ensuite utiliser le bouton "+" pour reconstruire une combo s'il le souhaite.
+- Les modificateurs de l'élément remplacé sont réinitialisés.
+- Cliquer en dehors du popover ou appuyer sur Échap le ferme sans modification.
+
 **Ligne de total** en bas du tableau :
 - BV total (somme des BV)
 - Min total (somme des Min)
