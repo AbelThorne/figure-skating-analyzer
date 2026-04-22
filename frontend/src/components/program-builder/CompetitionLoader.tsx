@@ -21,8 +21,8 @@ export default function CompetitionLoader({ onLoad }: Props) {
   // Fetch skaters — filter by club unless "Tous les patineurs" is checked
   const { data: skaters } = useQuery({
     queryKey: ["skaters", showAll ? "all" : "club"],
-    queryFn: () => api.skaters.list(showAll ? {} : { club: config?.club_name }),
-    enabled: showAll || !!config?.club_name,
+    queryFn: () => api.skaters.list(showAll ? {} : { club: config?.club_short }),
+    enabled: showAll || !!config?.club_short,
   });
 
   // Fetch scores for selected skater
