@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import type { ProgramRulesData } from "../../api/client";
 import type { ProgramElement } from "../../utils/program-validator";
 import type { CategoryMatch } from "../../utils/category-matcher";
@@ -9,6 +10,31 @@ interface Props {
 }
 
 export default function CategoryPanel({ elements, rulesData }: Props) {
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
+
+  // Reset selection when elements change and selected category no longer exists
+  const matches = rulesData && elements.length > 0
+    ? matchCategories(elements, rulesData)
+    : [];
+  const compatible = getCompatibleCategories(matches);
+  const best = getBestMatch(matches);
+
+  // Show top matches: all compatible + up to 3 with violations
+  const withViolations = matches.filter(m => m.violations > 0).slice(0, 3);
+  const displayed = [...compatible, ...withViolations];
+
+  // The selected match for displaying validation details
+  const selected = selectedKey
+    ? matches.find(m => `${m.categoryName}-${m.segmentKey}` === selectedKey) ?? best
+    : best;
+
+  // Auto-select best when selection becomes invalid
+  useEffect(() => {
+    if (selectedKey && !matches.find(m => `${m.categoryName}-${m.segmentKey}` === selectedKey)) {
+      setSelectedKey(null);
+    }
+  }, [matches, selectedKey]);
+
   if (!rulesData || elements.length === 0) {
     return (
       <div className="space-y-6">
@@ -20,39 +46,54 @@ export default function CategoryPanel({ elements, rulesData }: Props) {
     );
   }
 
-  const matches = matchCategories(elements, rulesData);
-  const compatible = getCompatibleCategories(matches);
-  const best = getBestMatch(matches);
-
   return (
     <div className="space-y-6">
       {/* Category suggestion */}
       <div>
         <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
-          Catégorie détectée
+          Catégories détectées
         </h3>
-        {compatible.length > 0 ? (
-          <div className="space-y-2">
-            {compatible.map((m, i) => (
-              <div
-                key={`${m.categoryName}-${m.segmentKey}`}
-                className={`px-3 py-2 rounded-lg ${
-                  i === 0
-                    ? "bg-primary/10 border border-primary/20"
-                    : "bg-surface-container-low"
-                }`}
-              >
-                <span className={`text-sm font-bold ${i === 0 ? "text-primary" : "text-on-surface"}`}>
-                  {m.categoryLabel}
-                </span>
-                <span className="text-xs text-on-surface-variant ml-2">
-                  — {m.segmentLabel}
-                </span>
-              </div>
-            ))}
+        {displayed.length > 0 ? (
+          <div className="space-y-1.5">
+            {displayed.map(m => {
+              const key = `${m.categoryName}-${m.segmentKey}`;
+              const isSelected = selected && `${selected.categoryName}-${selected.segmentKey}` === key;
+              const isCompatible = m.violations === 0;
+
+              return (
+                <button
+                  key={key}
+                  onClick={() => setSelectedKey(key)}
+                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                    isSelected
+                      ? isCompatible
+                        ? "bg-primary/10 ring-2 ring-primary/40"
+                        : "bg-error/5 ring-2 ring-error/30"
+                      : isCompatible
+                        ? "bg-surface-container-low hover:bg-primary/5"
+                        : "bg-surface-container-low hover:bg-error/5"
+                  }`}
+                >
+                  <span className={`text-sm font-bold ${isCompatible ? "text-primary" : "text-on-surface"}`}>
+                    {m.categoryLabel}
+                  </span>
+                  <span className="text-xs text-on-surface-variant ml-2">
+                    — {m.segmentLabel}
+                  </span>
+                  {m.violations > 0 && (
+                    <span className="text-xs text-error ml-2">
+                      ({m.violations} violation{m.violations > 1 ? "s" : ""})
+                    </span>
+                  )}
+                </button>
+              );
+            })}
           </div>
         ) : best ? (
-          <div className="px-3 py-2 rounded-lg bg-error/5 border border-error/20">
+          <button
+            onClick={() => setSelectedKey(`${best.categoryName}-${best.segmentKey}`)}
+            className="w-full text-left px-3 py-2 rounded-lg bg-error/5 ring-2 ring-error/30 cursor-pointer"
+          >
             <span className="text-sm font-bold text-on-surface">
               {best.categoryLabel}
             </span>
@@ -62,18 +103,18 @@ export default function CategoryPanel({ elements, rulesData }: Props) {
             <span className="text-xs text-error ml-2">
               ({best.violations} violation{best.violations > 1 ? "s" : ""})
             </span>
-          </div>
+          </button>
         ) : null}
       </div>
 
-      {/* Validation checklist */}
-      {best && (
+      {/* Validation checklist for selected category */}
+      {selected && (
         <div>
           <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
-            Validation — {best.categoryLabel} ({best.segmentLabel})
+            Validation — {selected.categoryLabel} ({selected.segmentLabel})
           </h3>
           <div className="space-y-1.5">
-            {best.results.map((r, i) => (
+            {selected.results.map((r, i) => (
               <div key={i} className="flex items-start gap-2 text-xs">
                 <span className="shrink-0 mt-0.5">
                   {r.status === "ok" && (

@@ -78,7 +78,7 @@ export function validateProgram(
     results.push({
       rule: "max_jump_elements",
       label: "Éléments sauts",
-      status: count > max ? "error" : "ok",
+      status: count > max ? "error" : count < max ? "warning" : "ok",
       detail: `${count}/${max}`,
     });
   }
@@ -90,7 +90,7 @@ export function validateProgram(
     results.push({
       rule: "max_spins",
       label: "Pirouettes",
-      status: count > max ? "error" : "ok",
+      status: count > max ? "error" : count < max ? "warning" : "ok",
       detail: `${count}/${max}`,
     });
   }
@@ -102,7 +102,7 @@ export function validateProgram(
     results.push({
       rule: "max_steps",
       label: "Pas",
-      status: count > max ? "error" : "ok",
+      status: count > max ? "error" : count < max ? "warning" : "ok",
       detail: `${count}/${max}`,
     });
   }
@@ -114,7 +114,7 @@ export function validateProgram(
     results.push({
       rule: "max_choreo",
       label: "Chorégraphique",
-      status: count > max ? "error" : "ok",
+      status: count > max ? "error" : count < max ? "warning" : "ok",
       detail: `${count}/${max}`,
     });
   }
@@ -210,7 +210,7 @@ export function validateProgram(
     results.push({
       rule: "max_combos",
       label: "Combinaisons",
-      status: combos.length > rules.max_combos ? "error" : "ok",
+      status: combos.length > rules.max_combos ? "error" : combos.length < rules.max_combos ? "warning" : "ok",
       detail: `${combos.length}/${rules.max_combos}`,
     });
   }
@@ -233,7 +233,7 @@ export function validateProgram(
     results.push({
       rule: "total_elements",
       label: "Total éléments",
-      status: total > max ? "error" : "ok",
+      status: total > max ? "error" : total < max ? "warning" : "ok",
       detail: `${total}/${max}`,
     });
   }
