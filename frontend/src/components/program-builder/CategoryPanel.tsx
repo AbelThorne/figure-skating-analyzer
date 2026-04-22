@@ -55,6 +55,7 @@ export default function CategoryPanel({ elements, rulesData }: Props) {
           {displayed.map(m => {
             const key = `${m.categoryName}-${m.segmentKey}`;
             const isSelected = selected && `${selected.categoryName}-${selected.segmentKey}` === key;
+            const isPerfect = m.violations === 0 && m.warnings === 0;
             const isCompatible = m.violations === 0;
 
             return (
@@ -63,25 +64,46 @@ export default function CategoryPanel({ elements, rulesData }: Props) {
                 onClick={() => setSelectedKey(key)}
                 className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
                   isSelected
-                    ? isCompatible
-                      ? "bg-primary/10 ring-2 ring-primary/40"
-                      : "bg-error/5 ring-2 ring-error/30"
-                    : isCompatible
-                      ? "bg-surface-container-low hover:bg-primary/5"
-                      : "bg-surface-container-low hover:bg-error/5"
+                    ? isPerfect
+                      ? "bg-green-600/10 ring-2 ring-green-600/40"
+                      : isCompatible
+                        ? "bg-primary/10 ring-2 ring-primary/40"
+                        : "bg-error/5 ring-2 ring-error/30"
+                    : isPerfect
+                      ? "bg-green-600/5 hover:bg-green-600/10"
+                      : isCompatible
+                        ? "bg-surface-container-low hover:bg-primary/5"
+                        : "bg-surface-container-low hover:bg-error/5"
                 }`}
               >
-                <span className={`text-sm font-bold ${isCompatible ? "text-primary" : "text-on-surface"}`}>
+                <span className={`text-sm font-bold ${
+                  isPerfect ? "text-green-700" : isCompatible ? "text-primary" : "text-on-surface"
+                }`}>
                   {m.categoryLabel}
                 </span>
                 <span className="text-xs text-on-surface-variant ml-2">
                   — {m.segmentLabel}
                 </span>
-                {m.violations > 0 && (
-                  <span className="text-xs text-error ml-2">
-                    ({m.violations} violation{m.violations > 1 ? "s" : ""})
-                  </span>
-                )}
+                {/* Violation and warning badges */}
+                <span className="float-right flex items-center gap-2">
+                  {m.violations > 0 && (
+                    <span className="inline-flex items-center gap-0.5 text-error">
+                      <span className="material-symbols-outlined text-sm">cancel</span>
+                      <span className="text-xs font-bold">{m.violations}</span>
+                    </span>
+                  )}
+                  {m.warnings > 0 && (
+                    <span className="inline-flex items-center gap-0.5 text-orange-500">
+                      <span className="material-symbols-outlined text-sm">warning</span>
+                      <span className="text-xs font-bold">{m.warnings}</span>
+                    </span>
+                  )}
+                  {isPerfect && (
+                    <span className="inline-flex items-center gap-0.5 text-green-600">
+                      <span className="material-symbols-outlined text-sm">check_circle</span>
+                    </span>
+                  )}
+                </span>
               </button>
             );
           })}

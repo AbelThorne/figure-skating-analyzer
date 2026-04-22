@@ -169,11 +169,11 @@ export function getGoeBreakdown(
 
   if (side === "negative") {
     return [
-      { level: -5, value: Math.round((bv + goe[0]) * 100) / 100 },
-      { level: -4, value: Math.round((bv + goe[1]) * 100) / 100 },
-      { level: -3, value: Math.round((bv + goe[2]) * 100) / 100 },
-      { level: -2, value: Math.round((bv + goe[3]) * 100) / 100 },
       { level: -1, value: Math.round((bv + goe[4]) * 100) / 100 },
+      { level: -2, value: Math.round((bv + goe[3]) * 100) / 100 },
+      { level: -3, value: Math.round((bv + goe[2]) * 100) / 100 },
+      { level: -4, value: Math.round((bv + goe[1]) * 100) / 100 },
+      { level: -5, value: Math.round((bv + goe[0]) * 100) / 100 },
     ];
   }
 
@@ -183,6 +183,53 @@ export function getGoeBreakdown(
     { level: +3, value: Math.round((bv + goe[7]) * 100) / 100 },
     { level: +4, value: Math.round((bv + goe[8]) * 100) / 100 },
     { level: +5, value: Math.round((bv + goe[9]) * 100) / 100 },
+  ];
+}
+
+/**
+ * Get full GOE breakdown for a combo element (sum of individual jump GOE at each level).
+ */
+export function getComboGoeBreakdown(
+  sov: SovData,
+  jumps: ComboJump[],
+  comboMarkers: string[],
+  side: "negative" | "positive",
+): { level: number; value: number }[] | null {
+  if (comboMarkers.includes("*")) return null;
+
+  // Collect GOE arrays for each jump
+  const jumpGoes: number[][] = [];
+  let totalBV = 0;
+  for (const jump of jumps) {
+    const jumpMarkers = jump.markers.filter(m => !["x", "+REP"].includes(m));
+    const goe = getElementGoe(sov, jump.code, jumpMarkers);
+    if (!goe) return null;
+    jumpGoes.push(goe);
+    totalBV += calculateElementBV(sov, jump.code, jumpMarkers);
+  }
+
+  // Apply combo-level multipliers to totalBV
+  if (comboMarkers.includes("x")) totalBV *= 1.10;
+  if (comboMarkers.includes("+REP")) totalBV *= 0.70;
+  totalBV = Math.round(totalBV * 100) / 100;
+
+  // Sum GOE at each level across jumps
+  if (side === "negative") {
+    return [
+      { level: -1, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[4], 0)) * 100) / 100 },
+      { level: -2, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[3], 0)) * 100) / 100 },
+      { level: -3, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[2], 0)) * 100) / 100 },
+      { level: -4, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[1], 0)) * 100) / 100 },
+      { level: -5, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[0], 0)) * 100) / 100 },
+    ];
+  }
+
+  return [
+    { level: +1, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[5], 0)) * 100) / 100 },
+    { level: +2, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[6], 0)) * 100) / 100 },
+    { level: +3, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[7], 0)) * 100) / 100 },
+    { level: +4, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[8], 0)) * 100) / 100 },
+    { level: +5, value: Math.round((totalBV + jumpGoes.reduce((s, g) => s + g[9], 0)) * 100) / 100 },
   ];
 }
 

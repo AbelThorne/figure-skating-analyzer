@@ -4,9 +4,10 @@ import { api } from "../../api/client";
 
 interface Props {
   onLoad: (elements: { code: string; markers: string[] }[]) => void;
+  exportActions?: React.ReactNode;
 }
 
-export default function CompetitionLoader({ onLoad }: Props) {
+export default function CompetitionLoader({ onLoad, exportActions }: Props) {
   const [showAll, setShowAll] = useState(false);
   const [selectedSkaterId, setSelectedSkaterId] = useState<number | null>(null);
   const [selectedScoreId, setSelectedScoreId] = useState<number | null>(null);
@@ -106,19 +107,22 @@ export default function CompetitionLoader({ onLoad }: Props) {
         </button>
       </div>
 
-      <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
-        <input
-          type="checkbox"
-          checked={showAll}
-          onChange={e => {
-            setShowAll(e.target.checked);
-            setSelectedSkaterId(null);
-            setSelectedScoreId(null);
-          }}
-          className="rounded"
-        />
-        Tous les patineurs
-      </label>
+      <div className="flex items-center justify-between">
+        <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer">
+          <input
+            type="checkbox"
+            checked={showAll}
+            onChange={e => {
+              setShowAll(e.target.checked);
+              setSelectedSkaterId(null);
+              setSelectedScoreId(null);
+            }}
+            className="rounded"
+          />
+          Tous les patineurs
+        </label>
+        {exportActions}
+      </div>
     </div>
   );
 }

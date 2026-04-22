@@ -27,7 +27,7 @@ async function _tryRefresh(): Promise<string | null> {
   }
 }
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+export async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
     ...(options?.headers as Record<string, string>),
@@ -96,6 +96,40 @@ export async function downloadPdf(path: string, filename?: string): Promise<void
   const a = document.createElement("a");
   a.href = url;
   a.download = filename || res.headers.get("content-disposition")?.match(/filename="?(.+?)"?$/)?.[1] || "rapport.pdf";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+export async function downloadPdfPost(path: string, body: unknown, filename?: string): Promise<void> {
+  const headers: Record<string, string> = { "Content-Type": "application/json" };
+  if (_accessToken) {
+    headers["Authorization"] = `Bearer ${_accessToken}`;
+  }
+
+  let res = await fetch(`${BASE}${path}`, { method: "POST", headers, credentials: "include", body: JSON.stringify(body) });
+
+  if (res.status === 401 && _accessToken) {
+    if (!_refreshPromise) _refreshPromise = _tryRefresh();
+    const newToken = await _refreshPromise;
+    _refreshPromise = null;
+    if (newToken) {
+      headers["Authorization"] = `Bearer ${newToken}`;
+      res = await fetch(`${BASE}${path}`, { method: "POST", headers, credentials: "include", body: JSON.stringify(body) });
+    }
+  }
+
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`${res.status}: ${text}`);
+  }
+
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = filename || res.headers.get("content-disposition")?.match(/filename="?(.+?)"?$/)?.[1] || "programme.pdf";
   document.body.appendChild(a);
   a.click();
   document.body.removeChild(a);

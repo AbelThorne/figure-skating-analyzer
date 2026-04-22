@@ -160,16 +160,18 @@ export function useProgramBuilder(sov: SovData | undefined) {
     const newElements: ProgramElement[] = [];
 
     for (const { code, markers } of scoreElements) {
-      const parts = code.split("+");
+      // Filter out "+SEQ" notation (sequence marker, not a jump)
+      const parts = code.split("+").filter(p => p !== "SEQ");
       const firstPart = parts[0];
       const sovEl = sov.elements[firstPart];
       if (!sovEl) continue;
 
+      const baseCode = parts.join("+");
       const el: ProgramElement = {
         id: genId(),
-        baseCode: code,
+        baseCode,
         type: sovEl.type,
-        markers: markers.filter(m => ["x", "+REP"].includes(m)),
+        markers: markers.filter(m => m === "+REP"),
         bv: 0,
         min: 0,
         max: 0,
@@ -191,6 +193,16 @@ export function useProgramBuilder(sov: SovData | undefined) {
     setElements(newElements);
   }, [sov]);
 
+  /** Reorder elements by moving one from oldIndex to newIndex. */
+  const reorderElements = useCallback((oldIndex: number, newIndex: number) => {
+    setElements(prev => {
+      const result = [...prev];
+      const [removed] = result.splice(oldIndex, 1);
+      result.splice(newIndex, 0, removed);
+      return result;
+    });
+  }, []);
+
   /** Clear all elements. */
   const clearProgram = useCallback(() => {
     setElements([]);
@@ -204,6 +216,7 @@ export function useProgramBuilder(sov: SovData | undefined) {
     addComboJump,
     replaceElement,
     deleteElement,
+    reorderElements,
     loadFromScore,
     clearProgram,
   };
