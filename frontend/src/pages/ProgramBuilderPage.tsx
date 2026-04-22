@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { useSovData } from "../hooks/useSovData";
 import { useProgramRules } from "../hooks/useProgramRules";
 import { useProgramBuilder } from "../hooks/useProgramBuilder";
@@ -10,7 +9,6 @@ import CategoryPanel from "../components/program-builder/CategoryPanel";
 export default function ProgramBuilderPage() {
   const { data: sov, isLoading: sovLoading } = useSovData();
   const { data: rules, isLoading: rulesLoading } = useProgramRules();
-  const [includePairs, setIncludePairs] = useState(false);
 
   const {
     elements,
@@ -54,21 +52,11 @@ export default function ProgramBuilderPage() {
           <div className="flex-1 min-w-[200px]">
             <ElementPicker
               sov={sov}
-              includePairs={includePairs}
+              includePairs={false}
               onSelect={addElement}
               placeholder="Ajouter un élément..."
             />
           </div>
-
-          <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer shrink-0">
-            <input
-              type="checkbox"
-              checked={includePairs}
-              onChange={e => setIncludePairs(e.target.checked)}
-              className="rounded"
-            />
-            Éléments couples
-          </label>
 
           {elements.length > 0 && (
             <button
@@ -84,7 +72,7 @@ export default function ProgramBuilderPage() {
         <ProgramTable
           sov={sov}
           elements={elements}
-          includePairs={includePairs}
+          includePairs={false}
           onUpdateMarkers={updateMarkers}
           onUpdateComboJumpMarkers={updateComboJumpMarkers}
           onAddComboJump={addComboJump}
