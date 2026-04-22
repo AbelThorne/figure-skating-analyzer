@@ -74,6 +74,19 @@ export default function CompetitionLoader({ onLoad }: Props) {
             </option>
           ))}
         </select>
+        <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer mt-1.5">
+          <input
+            type="checkbox"
+            checked={showAll}
+            onChange={e => {
+              setShowAll(e.target.checked);
+              setSelectedSkaterId(null);
+              setSelectedScoreId(null);
+            }}
+            className="rounded"
+          />
+          Tous les patineurs
+        </label>
       </div>
 
       <div className="flex-1 min-w-[200px]">
@@ -95,20 +108,6 @@ export default function CompetitionLoader({ onLoad }: Props) {
           ))}
         </select>
       </div>
-
-      <label className="flex items-center gap-1.5 text-xs text-on-surface-variant cursor-pointer shrink-0">
-        <input
-          type="checkbox"
-          checked={showAll}
-          onChange={e => {
-            setShowAll(e.target.checked);
-            setSelectedSkaterId(null);
-            setSelectedScoreId(null);
-          }}
-          className="rounded"
-        />
-        Tous les patineurs
-      </label>
 
       <button
         onClick={handleLoad}

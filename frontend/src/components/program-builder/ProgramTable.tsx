@@ -122,12 +122,13 @@ export default function ProgramTable({
         <thead>
           <tr className="bg-surface-container-low">
             <th className="text-left font-black uppercase tracking-widest text-on-surface-variant px-3 py-2 rounded-tl-xl w-8">#</th>
+            <th className="w-8 px-1 py-2"></th>
             <th className="text-left font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">Élément</th>
             <th className="text-left font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">Mod.</th>
             <th className="text-right font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">BV</th>
             <th className="text-right font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">Min</th>
             <th className="text-right font-black uppercase tracking-widest text-on-surface-variant px-3 py-2">Max</th>
-            <th className="text-center font-black uppercase tracking-widest text-on-surface-variant px-3 py-2 rounded-tr-xl w-20"></th>
+            <th className="w-10 px-1 py-2 rounded-tr-xl"></th>
           </tr>
         </thead>
         <tbody>
@@ -139,6 +140,19 @@ export default function ProgramTable({
             return (
               <tr key={el.id} className={rowBg}>
                 <td className="px-3 py-2 text-on-surface-variant">{i + 1}</td>
+
+                {/* Combo add button */}
+                <td className="px-1 py-2 text-center">
+                  {canAddCombo && (
+                    <AddComboButton
+                      sov={sov}
+                      includePairs={includePairs}
+                      elementId={el.id}
+                      currentJumps={el.comboJumps?.length ?? 1}
+                      onAdd={onAddComboJump}
+                    />
+                  )}
+                </td>
 
                 {/* Element name — click to edit */}
                 <td className="px-3 py-2 relative">
@@ -230,26 +244,15 @@ export default function ProgramTable({
                   </GoeTooltip>
                 </td>
 
-                {/* Actions */}
-                <td className="px-3 py-2 text-center">
-                  <div className="flex items-center justify-center gap-1">
-                    {canAddCombo && (
-                      <AddComboButton
-                        sov={sov}
-                        includePairs={includePairs}
-                        elementId={el.id}
-                        currentJumps={el.comboJumps?.length ?? 1}
-                        onAdd={onAddComboJump}
-                      />
-                    )}
-                    <button
-                      onClick={() => onDeleteElement(el.id)}
-                      className="text-on-surface-variant hover:text-error transition-colors p-0.5"
-                      title="Supprimer"
-                    >
-                      <span className="material-symbols-outlined text-base">delete</span>
-                    </button>
-                  </div>
+                {/* Delete */}
+                <td className="px-1 py-2 text-center">
+                  <button
+                    onClick={() => onDeleteElement(el.id)}
+                    className="text-on-surface-variant hover:text-error transition-colors p-0.5"
+                    title="Supprimer"
+                  >
+                    <span className="material-symbols-outlined text-base">delete</span>
+                  </button>
                 </td>
               </tr>
             );
@@ -258,7 +261,7 @@ export default function ProgramTable({
           {/* Total row */}
           {elements.length > 0 && (
             <tr className="bg-surface-container-low border-t border-outline-variant/30">
-              <td colSpan={3} className="px-3 py-2 font-black uppercase tracking-widest text-on-surface-variant text-[10px]">
+              <td colSpan={4} className="px-3 py-2 font-black uppercase tracking-widest text-on-surface-variant text-[10px]">
                 Total
               </td>
               <td className="px-3 py-2 text-right font-mono font-bold text-on-surface">
@@ -277,7 +280,7 @@ export default function ProgramTable({
           {/* Empty state */}
           {elements.length === 0 && (
             <tr>
-              <td colSpan={7} className="px-3 py-8 text-center text-on-surface-variant text-sm">
+              <td colSpan={8} className="px-3 py-8 text-center text-on-surface-variant text-sm">
                 Aucun élément. Utilisez le sélecteur ci-dessus pour ajouter des éléments.
               </td>
             </tr>
@@ -327,7 +330,7 @@ function AddComboButton({
       </button>
 
       {isOpen && (
-        <div className="absolute z-50 top-full right-0 mt-1 w-48 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/20 p-2">
+        <div className="absolute z-50 top-full left-0 mt-1 w-48 bg-surface-container-lowest rounded-xl shadow-lg border border-outline-variant/20 p-2">
           <ElementPicker
             sov={sov}
             includePairs={includePairs}
