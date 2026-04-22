@@ -11,10 +11,18 @@ export default function CompetitionLoader({ onLoad }: Props) {
   const [selectedSkaterId, setSelectedSkaterId] = useState<number | null>(null);
   const [selectedScoreId, setSelectedScoreId] = useState<number | null>(null);
 
-  // Fetch skaters
+  // Get club name from app config
+  const { data: config } = useQuery({
+    queryKey: ["config"],
+    queryFn: api.config.get,
+    staleTime: Infinity,
+  });
+
+  // Fetch skaters — filter by club unless "Tous les patineurs" is checked
   const { data: skaters } = useQuery({
     queryKey: ["skaters", showAll ? "all" : "club"],
-    queryFn: () => api.skaters.list(showAll ? {} : {}),
+    queryFn: () => api.skaters.list(showAll ? {} : { club: config?.club_name }),
+    enabled: showAll || !!config?.club_name,
   });
 
   // Fetch scores for selected skater
