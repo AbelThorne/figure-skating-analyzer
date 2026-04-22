@@ -8,6 +8,7 @@ export interface CategoryMatch {
   segmentKey: string;
   segmentLabel: string;
   violations: number;
+  warnings: number;
   results: ValidationResult[];
 }
 
@@ -30,16 +31,17 @@ export function matchCategories(
         segmentKey: segKey,
         segmentLabel: seg.label ?? segKey,
         violations: countViolations(results),
+        warnings: results.filter(r => r.status === "warning").length,
         results,
       });
     }
   }
 
-  // Sort: compatible first (0 violations), then by violations ascending
-  // Among compatible categories, sort by restrictiveness (more rules = more restrictive)
+  // Sort: fewest violations first, then fewest warnings (best fit for the program),
+  // then most restrictive (more rules = more specific category)
   matches.sort((a, b) => {
     if (a.violations !== b.violations) return a.violations - b.violations;
-    // More validation results = more restrictive = show first
+    if (a.warnings !== b.warnings) return a.warnings - b.warnings;
     return b.results.length - a.results.length;
   });
 

@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import type { ProgramRulesData } from "../../api/client";
 import type { ProgramElement } from "../../utils/program-validator";
-import type { CategoryMatch } from "../../utils/category-matcher";
-import { matchCategories, getCompatibleCategories, getBestMatch } from "../../utils/category-matcher";
+import { matchCategories, getBestMatch } from "../../utils/category-matcher";
 
 interface Props {
   elements: ProgramElement[];
@@ -11,17 +10,16 @@ interface Props {
 
 export default function CategoryPanel({ elements, rulesData }: Props) {
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
+  const [showAll, setShowAll] = useState(false);
 
-  // Reset selection when elements change and selected category no longer exists
   const matches = rulesData && elements.length > 0
     ? matchCategories(elements, rulesData)
     : [];
-  const compatible = getCompatibleCategories(matches);
   const best = getBestMatch(matches);
 
-  // Show top matches: all compatible + up to 3 with violations
-  const withViolations = matches.filter(m => m.violations > 0).slice(0, 3);
-  const displayed = [...compatible, ...withViolations];
+  // Default display: top 5 matches (sorted by violations then warnings)
+  const displayed = showAll ? matches : matches.slice(0, 5);
+  const hasMore = matches.length > 5;
 
   // The selected match for displaying validation details
   const selected = selectedKey
@@ -48,63 +46,56 @@ export default function CategoryPanel({ elements, rulesData }: Props) {
 
   return (
     <div className="space-y-6">
-      {/* Category suggestion */}
+      {/* Category list */}
       <div>
         <h3 className="text-[10px] font-black uppercase tracking-widest text-on-surface-variant mb-3">
           Catégories détectées
         </h3>
-        {displayed.length > 0 ? (
-          <div className="space-y-1.5">
-            {displayed.map(m => {
-              const key = `${m.categoryName}-${m.segmentKey}`;
-              const isSelected = selected && `${selected.categoryName}-${selected.segmentKey}` === key;
-              const isCompatible = m.violations === 0;
+        <div className="space-y-1.5">
+          {displayed.map(m => {
+            const key = `${m.categoryName}-${m.segmentKey}`;
+            const isSelected = selected && `${selected.categoryName}-${selected.segmentKey}` === key;
+            const isCompatible = m.violations === 0;
 
-              return (
-                <button
-                  key={key}
-                  onClick={() => setSelectedKey(key)}
-                  className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
-                    isSelected
-                      ? isCompatible
-                        ? "bg-primary/10 ring-2 ring-primary/40"
-                        : "bg-error/5 ring-2 ring-error/30"
-                      : isCompatible
-                        ? "bg-surface-container-low hover:bg-primary/5"
-                        : "bg-surface-container-low hover:bg-error/5"
-                  }`}
-                >
-                  <span className={`text-sm font-bold ${isCompatible ? "text-primary" : "text-on-surface"}`}>
-                    {m.categoryLabel}
+            return (
+              <button
+                key={key}
+                onClick={() => setSelectedKey(key)}
+                className={`w-full text-left px-3 py-2 rounded-lg transition-colors cursor-pointer ${
+                  isSelected
+                    ? isCompatible
+                      ? "bg-primary/10 ring-2 ring-primary/40"
+                      : "bg-error/5 ring-2 ring-error/30"
+                    : isCompatible
+                      ? "bg-surface-container-low hover:bg-primary/5"
+                      : "bg-surface-container-low hover:bg-error/5"
+                }`}
+              >
+                <span className={`text-sm font-bold ${isCompatible ? "text-primary" : "text-on-surface"}`}>
+                  {m.categoryLabel}
+                </span>
+                <span className="text-xs text-on-surface-variant ml-2">
+                  — {m.segmentLabel}
+                </span>
+                {m.violations > 0 && (
+                  <span className="text-xs text-error ml-2">
+                    ({m.violations} violation{m.violations > 1 ? "s" : ""})
                   </span>
-                  <span className="text-xs text-on-surface-variant ml-2">
-                    — {m.segmentLabel}
-                  </span>
-                  {m.violations > 0 && (
-                    <span className="text-xs text-error ml-2">
-                      ({m.violations} violation{m.violations > 1 ? "s" : ""})
-                    </span>
-                  )}
-                </button>
-              );
-            })}
-          </div>
-        ) : best ? (
+                )}
+              </button>
+            );
+          })}
+        </div>
+        {hasMore && (
           <button
-            onClick={() => setSelectedKey(`${best.categoryName}-${best.segmentKey}`)}
-            className="w-full text-left px-3 py-2 rounded-lg bg-error/5 ring-2 ring-error/30 cursor-pointer"
+            onClick={() => setShowAll(!showAll)}
+            className="mt-2 text-xs text-primary hover:text-primary/80 transition-colors cursor-pointer"
           >
-            <span className="text-sm font-bold text-on-surface">
-              {best.categoryLabel}
-            </span>
-            <span className="text-xs text-on-surface-variant ml-2">
-              — {best.segmentLabel}
-            </span>
-            <span className="text-xs text-error ml-2">
-              ({best.violations} violation{best.violations > 1 ? "s" : ""})
-            </span>
+            {showAll
+              ? "Moins de catégories"
+              : `Voir les ${matches.length - 5} autres catégories`}
           </button>
-        ) : null}
+        )}
       </div>
 
       {/* Validation checklist for selected category */}
