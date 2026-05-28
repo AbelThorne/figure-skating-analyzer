@@ -5,7 +5,7 @@ description = "Download and analyze figure skating score cards"
 requires-python = ">=3.11"
 dependencies = [
     "litestar[standard]>=2.12",
-    "sqlalchemy[asyncio]>=2.0",
+    "sqlalchemy[asyncio]>=2.0.50",
     "aiosqlite>=0.20",
     "httpx>=0.27",
     "pdfplumber>=0.11",
