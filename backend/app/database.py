@@ -117,6 +117,45 @@ async def _migrate_drop_constraints(conn) -> None:
     except Exception:
         logger.exception("Failed to drop unique constraint on self_evaluations")
 
+    # Widen weekly_reviews unique constraint to include coach_id
+    try:
+        result = await conn.execute(
+            text("SELECT sql FROM sqlite_master WHERE type='table' AND name='weekly_reviews'")
+        )
+        row = result.fetchone()
+        sql = row[0] or "" if row else ""
+        if "uq_review_skater_week" in sql and "uq_review_skater_week_coach" not in sql:
+            logger.info("Recreating weekly_reviews table to widen unique constraint with coach_id")
+            await conn.execute(text("ALTER TABLE weekly_reviews RENAME TO _weekly_reviews_old"))
+            await conn.execute(text("""
+                CREATE TABLE weekly_reviews (
+                    id INTEGER NOT NULL PRIMARY KEY,
+                    skater_id INTEGER NOT NULL,
+                    coach_id VARCHAR(36) NOT NULL,
+                    week_start DATE NOT NULL,
+                    attendance VARCHAR(20) NOT NULL,
+                    engagement INTEGER NOT NULL,
+                    progression INTEGER NOT NULL,
+                    attitude INTEGER NOT NULL,
+                    strengths TEXT NOT NULL,
+                    improvements TEXT NOT NULL,
+                    visible_to_skater BOOLEAN NOT NULL,
+                    created_at DATETIME NOT NULL,
+                    updated_at DATETIME NOT NULL,
+                    CONSTRAINT uq_review_skater_week_coach UNIQUE (skater_id, week_start, coach_id),
+                    FOREIGN KEY(skater_id) REFERENCES skaters (id) ON DELETE CASCADE,
+                    FOREIGN KEY(coach_id) REFERENCES users (id) ON DELETE CASCADE
+                )
+            """))
+            await conn.execute(text("""
+                INSERT INTO weekly_reviews
+                SELECT * FROM _weekly_reviews_old
+            """))
+            await conn.execute(text("DROP TABLE _weekly_reviews_old"))
+            logger.info("Widened unique constraint to uq_review_skater_week_coach")
+    except Exception:
+        logger.exception("Failed to widen unique constraint on weekly_reviews")
+
 
 async def _backfill_score_club(conn) -> None:
     """One-time backfill: copy skater.club to scores/category_results where club is NULL."""

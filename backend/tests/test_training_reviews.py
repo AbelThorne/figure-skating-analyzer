@@ -27,6 +27,22 @@ async def coach_and_skater(db_session):
 
 
 @pytest.fixture
+async def second_coach(db_session, coach_and_skater):
+    _, _, skater = coach_and_skater
+    coach2 = User(
+        email="coach2@test.com",
+        password_hash=hash_password("coach2pass1"),
+        display_name="Second Coach",
+        role="coach",
+    )
+    db_session.add(coach2)
+    await db_session.commit()
+    await db_session.refresh(coach2)
+    token = create_access_token(user_id=coach2.id, role=coach2.role)
+    return coach2, token, skater
+
+
+@pytest.fixture
 async def skater_parent(db_session, coach_and_skater):
     _, _, skater = coach_and_skater
     parent = User(
@@ -229,3 +245,31 @@ async def test_skater_sees_visible_reviews(client, coach_and_skater, skater_pare
     )
     assert resp.status_code == 200
     assert len(resp.json()) == 1
+
+
+async def test_two_coaches_coexist_same_week(client, coach_and_skater, second_coach):
+    _, token1, skater = coach_and_skater
+    _, token2, _ = second_coach
+    body = {
+        "skater_id": skater.id,
+        "week_start": "2026-03-23",
+        "attendance": "3/4",
+        "engagement": 4,
+        "progression": 3,
+        "attitude": 5,
+        "strengths": "Bon",
+        "improvements": "Mieux",
+        "visible_to_skater": True,
+    }
+    r1 = await client.post("/api/training/reviews", json=body,
+                           headers={"Authorization": f"Bearer {token1}"})
+    r2 = await client.post("/api/training/reviews", json=body,
+                           headers={"Authorization": f"Bearer {token2}"})
+    assert r1.status_code == 201
+    assert r2.status_code == 201
+    assert r1.json()["id"] != r2.json()["id"]
+
+    listing = await client.get(f"/api/training/reviews?skater_id={skater.id}",
+                               headers={"Authorization": f"Bearer {token1}"})
+    assert listing.status_code == 200
+    assert len(listing.json()) == 2

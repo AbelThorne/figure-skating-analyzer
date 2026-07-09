@@ -13,7 +13,7 @@ def _utcnow() -> datetime:
 class WeeklyReview(Base):
     __tablename__ = "weekly_reviews"
     __table_args__ = (
-        UniqueConstraint("skater_id", "week_start", name="uq_review_skater_week"),
+        UniqueConstraint("skater_id", "week_start", "coach_id", name="uq_review_skater_week_coach"),
     )
 
     id: Mapped[int] = mapped_column(primary_key=True)
