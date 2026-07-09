@@ -1524,6 +1524,9 @@ export default function SkaterAnalyticsPage() {
                         className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
                       >
                         <span className="text-xs text-on-surface-variant w-16 shrink-0">{weekDate}</span>
+                        {r.coach_name && (
+                          <span className="text-[11px] text-on-surface-variant truncate max-w-[6rem] shrink-0">{r.coach_name}</span>
+                        )}
                         <div className="flex gap-2 shrink-0">
                           {(["engagement", "progression", "attitude"] as const).map((field) => (
                             <div key={field} className="flex gap-0.5">
@@ -1674,9 +1677,14 @@ export default function SkaterAnalyticsPage() {
             {viewingReview && (
               <div className="fixed inset-0 bg-scrim/50 z-50 flex items-center justify-center p-4" onClick={() => setViewingReview(undefined)}>
                 <div className="bg-surface rounded-3xl p-6 w-full max-w-lg max-h-[90vh] overflow-y-auto space-y-4" onClick={(e) => e.stopPropagation()}>
-                  <h3 className="font-headline font-bold text-on-surface text-lg">
-                    Semaine du {new Date(viewingReview.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
-                  </h3>
+                  <div>
+                    <h3 className="font-headline font-bold text-on-surface text-lg">
+                      Semaine du {new Date(viewingReview.week_start).toLocaleDateString("fr-FR", { day: "numeric", month: "long", year: "numeric" })}
+                    </h3>
+                    {viewingReview.coach_name && (
+                      <p className="text-xs text-on-surface-variant">par {viewingReview.coach_name}</p>
+                    )}
+                  </div>
                   <div className="grid grid-cols-3 gap-4">
                     {(["engagement", "progression", "attitude"] as const).map((field) => (
                       <div key={field}>
