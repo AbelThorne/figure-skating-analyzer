@@ -337,3 +337,21 @@ async def test_admin_can_edit_any_review(client, coach_and_skater, admin_token):
         headers={"Authorization": f"Bearer {admin_token}"})
     assert resp.status_code == 200
     assert resp.json()["engagement"] == 1
+
+
+async def test_review_includes_coach_name(client, coach_and_skater):
+    coach, token, skater = coach_and_skater
+    created = (await client.post("/api/training/reviews", json={
+        "skater_id": skater.id, "week_start": "2026-03-23", "attendance": "3/4",
+        "engagement": 4, "progression": 3, "attitude": 5,
+        "strengths": "Bon", "improvements": "", "visible_to_skater": True,
+    }, headers={"Authorization": f"Bearer {token}"})).json()
+    assert created["coach_name"] == coach.display_name
+
+    listing = (await client.get(f"/api/training/reviews?skater_id={skater.id}",
+               headers={"Authorization": f"Bearer {token}"})).json()
+    assert listing[0]["coach_name"] == coach.display_name
+
+    one = (await client.get(f"/api/training/reviews/{created['id']}",
+           headers={"Authorization": f"Bearer {token}"})).json()
+    assert one["coach_name"] == coach.display_name

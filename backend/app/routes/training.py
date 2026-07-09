@@ -17,19 +17,31 @@ from app.models.incident import Incident
 from app.models.challenge import Challenge
 from app.models.user_skater import UserSkater
 from app.models.self_evaluation import SelfEvaluation
+from app.models.user import User
 from app.services.notification_service import notify_review, notify_incident
 from app.routes.self_eval import self_eval_handlers
+
+
+async def _coach_names(session: AsyncSession, coach_ids: set[str]) -> dict[str, str]:
+    """Map coach_id -> display_name for a set of ids, in one query."""
+    if not coach_ids:
+        return {}
+    rows = (await session.execute(
+        select(User.id, User.display_name).where(User.id.in_(coach_ids))
+    )).all()
+    return {row[0]: row[1] for row in rows}
 
 
 def _snap_to_monday(d: date) -> date:
     return d - timedelta(days=d.weekday())
 
 
-def _review_to_dict(r: WeeklyReview) -> dict:
+def _review_to_dict(r: WeeklyReview, coach_name: str | None = None) -> dict:
     return {
         "id": r.id,
         "skater_id": r.skater_id,
         "coach_id": r.coach_id,
+        "coach_name": coach_name,
         "week_start": r.week_start.isoformat(),
         "attendance": r.attendance,
         "engagement": r.engagement,
@@ -43,11 +55,12 @@ def _review_to_dict(r: WeeklyReview) -> dict:
     }
 
 
-def _incident_to_dict(i: Incident) -> dict:
+def _incident_to_dict(i: Incident, coach_name: str | None = None) -> dict:
     return {
         "id": i.id,
         "skater_id": i.skater_id,
         "coach_id": i.coach_id,
+        "coach_name": coach_name,
         "date": i.date.isoformat(),
         "incident_type": i.incident_type,
         "description": i.description,
@@ -103,8 +116,9 @@ async def list_reviews(
     if to_date:
         stmt = stmt.where(WeeklyReview.week_start <= date.fromisoformat(to_date))
 
-    result = await session.execute(stmt)
-    return [_review_to_dict(r) for r in result.scalars().all()]
+    rows = (await session.execute(stmt)).scalars().all()
+    names = await _coach_names(session, {r.coach_id for r in rows})
+    return [_review_to_dict(r, names.get(r.coach_id)) for r in rows]
 
 
 @get("/reviews/{review_id:int}")
@@ -123,7 +137,8 @@ async def get_review(review_id: int, request: Request, session: AsyncSession) ->
     elif role not in ("coach", "admin"):
         raise PermissionDeniedException("Access denied")
 
-    return _review_to_dict(review)
+    coach = await session.get(User, review.coach_id)
+    return _review_to_dict(review, coach.display_name if coach else None)
 
 
 @post("/reviews", status_code=HTTP_201_CREATED)
@@ -155,7 +170,8 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
         if existing.visible_to_skater:
             await notify_review(session, existing)
             await session.commit()
-        return _review_to_dict(existing)
+        coach = await session.get(User, existing.coach_id)
+        return _review_to_dict(existing, coach.display_name if coach else None)
 
     review = WeeklyReview(
         skater_id=data["skater_id"],
@@ -174,7 +190,8 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
     await session.refresh(review)
     await notify_review(session, review)
     await session.commit()
-    return _review_to_dict(review)
+    coach = await session.get(User, review.coach_id)
+    return _review_to_dict(review, coach.display_name if coach else None)
 
 
 @put("/reviews/{review_id:int}")
@@ -201,7 +218,8 @@ async def update_review(review_id: int, request: Request, session: AsyncSession,
     if data.get("visible_to_skater") and review.visible_to_skater:
         await notify_review(session, review)
         await session.commit()
-    return _review_to_dict(review)
+    coach = await session.get(User, review.coach_id)
+    return _review_to_dict(review, coach.display_name if coach else None)
 
 
 @delete("/reviews/{review_id:int}", status_code=HTTP_204_NO_CONTENT)
@@ -256,8 +274,9 @@ async def list_incidents(
     if to_date:
         stmt = stmt.where(Incident.date <= date.fromisoformat(to_date))
 
-    result = await session.execute(stmt)
-    return [_incident_to_dict(i) for i in result.scalars().all()]
+    rows = (await session.execute(stmt)).scalars().all()
+    names = await _coach_names(session, {i.coach_id for i in rows})
+    return [_incident_to_dict(i, names.get(i.coach_id)) for i in rows]
 
 
 @get("/incidents/{incident_id:int}")
@@ -276,7 +295,8 @@ async def get_incident(incident_id: int, request: Request, session: AsyncSession
     elif role not in ("coach", "admin"):
         raise PermissionDeniedException("Access denied")
 
-    return _incident_to_dict(incident)
+    coach = await session.get(User, incident.coach_id)
+    return _incident_to_dict(incident, coach.display_name if coach else None)
 
 
 @post("/incidents", status_code=HTTP_201_CREATED)
@@ -297,7 +317,8 @@ async def create_incident(request: Request, session: AsyncSession, data: dict) -
     await session.refresh(incident)
     await notify_incident(session, incident)
     await session.commit()
-    return _incident_to_dict(incident)
+    coach = await session.get(User, incident.coach_id)
+    return _incident_to_dict(incident, coach.display_name if coach else None)
 
 
 @put("/incidents/{incident_id:int}")
@@ -327,7 +348,8 @@ async def update_incident(incident_id: int, request: Request, session: AsyncSess
     if data.get("visible_to_skater") and incident.visible_to_skater:
         await notify_incident(session, incident)
         await session.commit()
-    return _incident_to_dict(incident)
+    coach = await session.get(User, incident.coach_id)
+    return _incident_to_dict(incident, coach.display_name if coach else None)
 
 
 @delete("/incidents/{incident_id:int}", status_code=HTTP_204_NO_CONTENT)
@@ -498,14 +520,17 @@ async def get_timeline(
         eval_stmt = eval_stmt.where(SelfEvaluation.date <= date.fromisoformat(to_date))
     self_evals = (await session.execute(eval_stmt)).scalars().all()
 
+    coach_ids = {r.coach_id for r in reviews} | {i.coach_id for i in incidents}
+    names = await _coach_names(session, coach_ids)
+
     timeline = []
     for r in reviews:
-        entry = _review_to_dict(r)
+        entry = _review_to_dict(r, names.get(r.coach_id))
         entry["type"] = "review"
         entry["sort_date"] = r.week_start.isoformat()
         timeline.append(entry)
     for i in incidents:
-        entry = _incident_to_dict(i)
+        entry = _incident_to_dict(i, names.get(i.coach_id))
         entry["type"] = "incident"
         entry["sort_date"] = i.date.isoformat()
         timeline.append(entry)

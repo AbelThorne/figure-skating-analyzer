@@ -126,3 +126,17 @@ async def test_skater_hidden_incident_not_visible(client, coach_and_skater, db_s
     )
     assert resp.status_code == 200
     assert len(resp.json()) == 0
+
+
+async def test_incident_includes_coach_name(client, coach_and_skater):
+    coach, token, skater = coach_and_skater
+    created = (await client.post("/api/training/incidents", json={
+        "skater_id": skater.id, "date": "2026-03-23",
+        "incident_type": "behavior", "description": "Retard",
+        "visible_to_skater": True,
+    }, headers={"Authorization": f"Bearer {token}"})).json()
+    assert created["coach_name"] == coach.display_name
+
+    listing = (await client.get(f"/api/training/incidents?skater_id={skater.id}",
+               headers={"Authorization": f"Bearer {token}"})).json()
+    assert listing[0]["coach_name"] == coach.display_name
