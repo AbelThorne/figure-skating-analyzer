@@ -24,7 +24,7 @@ export default function GoeTooltip({
 }: Props) {
   const [visible, setVisible] = useState(false);
   const [flipUp, setFlipUp] = useState(true);
-  const timeoutRef = useRef<ReturnType<typeof setTimeout>>();
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const breakdown = precomputedBreakdown !== undefined
