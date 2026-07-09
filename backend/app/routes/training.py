@@ -133,16 +133,16 @@ async def create_review(request: Request, session: AsyncSession, data: dict) -> 
 
     week_start = _snap_to_monday(date.fromisoformat(data["week_start"]))
 
-    # Upsert: if a review already exists for this skater+week, update it
+    # Upsert per coach: only the current coach's own review for this skater+week
     existing = (await session.execute(
         select(WeeklyReview).where(
             WeeklyReview.skater_id == data["skater_id"],
             WeeklyReview.week_start == week_start,
+            WeeklyReview.coach_id == state["user_id"],
         )
     )).scalar_one_or_none()
 
     if existing:
-        existing.coach_id = state["user_id"]
         existing.attendance = data.get("attendance", "")
         existing.engagement = data["engagement"]
         existing.progression = data["progression"]
@@ -189,12 +189,12 @@ async def update_review(review_id: int, request: Request, session: AsyncSession,
     if not review:
         raise NotFoundException("Review not found")
 
+    if role == "coach" and review.coach_id != state["user_id"]:
+        raise PermissionDeniedException("You can only edit your own reviews")
+
     for field in ("attendance", "engagement", "progression", "attitude", "strengths", "improvements", "visible_to_skater"):
         if field in data:
             setattr(review, field, data[field])
-
-    # Per spec: any coach can edit any review, coach_id updates to current editor
-    review.coach_id = state["user_id"]
 
     await session.commit()
     await session.refresh(review)

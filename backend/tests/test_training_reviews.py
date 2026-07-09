@@ -273,3 +273,67 @@ async def test_two_coaches_coexist_same_week(client, coach_and_skater, second_co
                                headers={"Authorization": f"Bearer {token1}"})
     assert listing.status_code == 200
     assert len(listing.json()) == 2
+
+
+async def test_coach_reupsert_only_own_review(client, coach_and_skater, second_coach):
+    _, token1, skater = coach_and_skater
+    _, token2, _ = second_coach
+    body = {
+        "skater_id": skater.id, "week_start": "2026-03-23", "attendance": "3/4",
+        "engagement": 4, "progression": 3, "attitude": 5,
+        "strengths": "Coach1", "improvements": "", "visible_to_skater": True,
+    }
+    await client.post("/api/training/reviews", json=body,
+                      headers={"Authorization": f"Bearer {token1}"})
+    await client.post("/api/training/reviews", json={**body, "strengths": "Coach2"},
+                      headers={"Authorization": f"Bearer {token2}"})
+    # Coach1 re-enregistre -> met à jour SON retour, sans toucher celui de Coach2
+    await client.post("/api/training/reviews", json={**body, "engagement": 2},
+                      headers={"Authorization": f"Bearer {token1}"})
+    listing = (await client.get(f"/api/training/reviews?skater_id={skater.id}",
+               headers={"Authorization": f"Bearer {token1}"})).json()
+    assert len(listing) == 2
+    by_text = {r["strengths"]: r for r in listing}
+    assert by_text["Coach1"]["engagement"] == 2
+    assert by_text["Coach2"]["engagement"] == 4
+
+
+async def test_coach_cannot_edit_other_coach_review(client, coach_and_skater, second_coach):
+    _, token1, skater = coach_and_skater
+    _, token2, _ = second_coach
+    created = (await client.post("/api/training/reviews", json={
+        "skater_id": skater.id, "week_start": "2026-03-23", "attendance": "3/4",
+        "engagement": 4, "progression": 3, "attitude": 5,
+        "strengths": "Bon", "improvements": "", "visible_to_skater": True,
+    }, headers={"Authorization": f"Bearer {token1}"})).json()
+    resp = await client.put(f"/api/training/reviews/{created['id']}",
+        json={"engagement": 1},
+        headers={"Authorization": f"Bearer {token2}"})
+    assert resp.status_code == 403
+
+
+async def test_coach_cannot_delete_other_coach_review(client, coach_and_skater, second_coach):
+    _, token1, skater = coach_and_skater
+    _, token2, _ = second_coach
+    created = (await client.post("/api/training/reviews", json={
+        "skater_id": skater.id, "week_start": "2026-03-23", "attendance": "3/4",
+        "engagement": 4, "progression": 3, "attitude": 5,
+        "strengths": "Bon", "improvements": "", "visible_to_skater": True,
+    }, headers={"Authorization": f"Bearer {token1}"})).json()
+    resp = await client.delete(f"/api/training/reviews/{created['id']}",
+        headers={"Authorization": f"Bearer {token2}"})
+    assert resp.status_code == 403
+
+
+async def test_admin_can_edit_any_review(client, coach_and_skater, admin_token):
+    _, token1, skater = coach_and_skater
+    created = (await client.post("/api/training/reviews", json={
+        "skater_id": skater.id, "week_start": "2026-03-23", "attendance": "3/4",
+        "engagement": 4, "progression": 3, "attitude": 5,
+        "strengths": "Bon", "improvements": "", "visible_to_skater": True,
+    }, headers={"Authorization": f"Bearer {token1}"})).json()
+    resp = await client.put(f"/api/training/reviews/{created['id']}",
+        json={"engagement": 1},
+        headers={"Authorization": f"Bearer {admin_token}"})
+    assert resp.status_code == 200
+    assert resp.json()["engagement"] == 1
