@@ -480,6 +480,7 @@ export interface WeeklyReview {
   id: number;
   skater_id: number;
   coach_id: string;
+  coach_name: string | null;
   week_start: string;
   engagement: number;
   progression: number;
@@ -515,6 +516,7 @@ export interface TrainingIncident {
   id: number;
   skater_id: number;
   coach_id: string;
+  coach_name: string | null;
   date: string;
   incident_type: "injury" | "behavior" | "other";
   description: string;

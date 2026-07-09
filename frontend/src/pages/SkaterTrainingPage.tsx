@@ -4,6 +4,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { api, Skater, WeeklyReview, TrainingIncident, TrainingChallenge, TimelineEntry } from "../api/client";
 import TrainingEvolutionChart from "../components/TrainingEvolutionChart";
 import { seasonDateRange, currentSeason } from "../utils/season";
+import { useAuth } from "../auth/AuthContext";
 
 const TABS = [
   { key: "reviews", label: "Retours", icon: "rate_review" },
@@ -77,9 +78,14 @@ function ReviewCard({ review, onEdit }: { review: WeeklyReview; onEdit?: () => v
   return (
     <div className="bg-surface-container-low rounded-2xl p-5 space-y-3">
       <div className="flex items-center justify-between">
-        <h4 className="font-headline font-bold text-on-surface text-sm">
-          Semaine du {weekDate}
-        </h4>
+        <div>
+          <h4 className="font-headline font-bold text-on-surface text-sm">
+            Semaine du {weekDate}
+          </h4>
+          {review.coach_name && (
+            <p className="text-[11px] text-on-surface-variant">par {review.coach_name}</p>
+          )}
+        </div>
         <div className="flex items-center gap-2">
           {!review.visible_to_skater && (
             <span className="material-symbols-outlined text-on-surface-variant text-sm" title="Non visible par le patineur">
@@ -167,9 +173,14 @@ function ReviewDetailModal({ review, onClose, onEdit }: { review: WeeklyReview; 
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between">
-          <h3 className="font-headline font-bold text-on-surface text-lg">
-            Semaine du {weekDate}
-          </h3>
+          <div>
+            <h3 className="font-headline font-bold text-on-surface text-lg">
+              Semaine du {weekDate}
+            </h3>
+            {review.coach_name && (
+              <p className="text-xs text-on-surface-variant">par {review.coach_name}</p>
+            )}
+          </div>
           <div className="flex items-center gap-2">
             {!review.visible_to_skater && (
               <span className="material-symbols-outlined text-on-surface-variant text-sm" title="Non visible par le patineur">
@@ -293,7 +304,10 @@ function IncidentDetailModal({ incident, onClose, onEdit }: { incident: Training
             )}
           </div>
         </div>
-        <p className="text-xs text-on-surface-variant">{dateStr}</p>
+        <p className="text-xs text-on-surface-variant">
+          {dateStr}
+          {incident.coach_name && <> · par {incident.coach_name}</>}
+        </p>
         <p className="text-sm text-on-surface">{incident.description}</p>
         <div className="flex justify-end pt-2">
           <button onClick={onClose} className="py-2 px-4 rounded-xl text-sm font-bold text-on-surface-variant hover:bg-surface-container transition-colors">
@@ -321,6 +335,9 @@ function ReviewRow({ review, onClick }: { review: WeeklyReview; onClick: () => v
       className="w-full flex items-center gap-3 px-3 py-2.5 rounded-xl hover:bg-surface-container-low transition-colors text-left"
     >
       <span className="text-xs text-on-surface-variant w-16 shrink-0">{weekDate}</span>
+      {review.coach_name && (
+        <span className="text-[11px] text-on-surface-variant truncate max-w-[6rem] shrink-0">{review.coach_name}</span>
+      )}
       <div className="flex gap-2 shrink-0">
         {(["engagement", "progression", "attitude"] as const).map((field) => (
           <div key={field} className="flex gap-0.5">
@@ -732,6 +749,9 @@ function ChallengeFormModal({
 export default function SkaterTrainingPage() {
   const { id } = useParams<{ id: string }>();
   const skaterId = Number(id);
+  const { user } = useAuth();
+  const canEditReview = (r: WeeklyReview) => user?.role === "admin" || user?.id === r.coach_id;
+  const canEditIncident = (i: TrainingIncident) => user?.role === "admin" || user?.id === i.coach_id;
   const [selectedSeason, setSelectedSeason] = useState<string>(currentSeason());
   const [activeTab, setActiveTab] = useState<Tab>("reviews");
   const [editingReview, setEditingReview] = useState<WeeklyReview | undefined>();
@@ -860,7 +880,7 @@ export default function SkaterTrainingPage() {
       {(latestReview || activeChallenges.length > 0) && (
         <div className="space-y-3">
           {latestReview && (
-            <ReviewCard review={latestReview} onEdit={() => { setEditingReview(latestReview); setShowReviewForm(true); }} />
+            <ReviewCard review={latestReview} onEdit={canEditReview(latestReview) ? () => { setEditingReview(latestReview); setShowReviewForm(true); } : undefined} />
           )}
           {activeChallenges.map((c) => (
             <ChallengeCard key={c.id} challenge={c} onEdit={() => { setEditingChallenge(c); setShowChallengeForm(true); }} />
@@ -1013,11 +1033,11 @@ export default function SkaterTrainingPage() {
         <ReviewDetailModal
           review={viewingReview}
           onClose={() => setViewingReview(undefined)}
-          onEdit={() => {
+          onEdit={canEditReview(viewingReview) ? () => {
             setViewingReview(undefined);
             setEditingReview(viewingReview);
             setShowReviewForm(true);
-          }}
+          } : undefined}
         />
       )}
       {viewingChallenge && (
@@ -1035,11 +1055,11 @@ export default function SkaterTrainingPage() {
         <IncidentDetailModal
           incident={viewingIncident}
           onClose={() => setViewingIncident(undefined)}
-          onEdit={() => {
+          onEdit={canEditIncident(viewingIncident) ? () => {
             setViewingIncident(undefined);
             setEditingIncident(viewingIncident);
             setShowIncidentForm(true);
-          }}
+          } : undefined}
         />
       )}
     </div>
