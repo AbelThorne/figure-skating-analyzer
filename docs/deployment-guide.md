@@ -315,6 +315,89 @@ docker compose restart
 
 ---
 
+## Déploiement sur le VPS partagé (routeur de bordure)
+
+> ⚠️ **La production actuelle est sur GCP** (`skatelab.toulouseclubpatinage.com`) et
+> n'est **pas** affectée par cette section. La VM GCP a son **propre**
+> `docker-compose.yml`, écrit à la main sur la VM (voir `docs/gcp-setup.md` §6) — il
+> n'est pas dans ce dépôt et référence des images pré-construites d'Artifact Registry
+> au lieu d'un `build:` local. Le `docker-compose.yml` racine de ce dépôt sert au
+> développement local (ports publiés, pratique) et de référence documentaire du
+> déploiement — il n'est lu ni par la VM GCP, ni directement par le VPS. La
+> configuration VPS vit dans une **surcouche**, `deploy/compose.vps.yml`, appliquée
+> uniquement sur le VPS.
+
+Ce dépôt porte l'infrastructure commune du VPS, sous `deploy/` :
+
+| Fichier | Rôle |
+|---|---|
+| `deploy/bootstrap-vps.sh` | Provisionne un VPS Debian vierge : Docker, utilisateur `deploy` (uid 1000), ufw, fail2ban, durcissement SSH, réseau Docker `web`, clé de déploiement GitHub. À lancer **une fois, en root**. |
+| `deploy/proxy/` | Le stack Caddy de bordure : seul à publier 80/443, termine le TLS, route par domaine. Déployé dans `/opt/stacks/proxy`. |
+| `deploy/compose.vps.yml` | Surcouche VPS de ce dépôt : retire les ports publiés, fixe `container_name: skatelab-frontend`, rejoint le réseau `web`. |
+| `deploy/install-app.sh` | Clone/met à jour puis démarre une app dans `/opt/stacks/<nom>`, avec surcouche optionnelle. |
+
+### Topologie
+
+```
+Internet :80 :443
+      |
+      v
+  stack proxy (Caddy, TLS)
+      |-- {LIGUE_DOMAIN}    --> ligue-caddy:80
+      '-- {SKATELAB_DOMAIN} --> skatelab-frontend:80
+```
+
+Sur le VPS, aucune application ne publie de port : le socle les joint par le réseau
+Docker partagé `web`, sous des **noms de conteneurs qui sont un contrat**
+(`skatelab-frontend` pour ce dépôt). Chaque app garde ses propres règles de routage
+interne — ici, `nginx.conf`, inchangé.
+
+### Ordre d'installation
+
+```bash
+# 1. Socle (en root, une fois)
+ssh vps-tcp 'bash -s' < deploy/bootstrap-vps.sh
+#    → ajouter la clé publique affichée en « Deploy key » sur les deux dépôts
+
+# 2. Proxy (en deploy) — après avoir pointé les DNS A vers l'IP du VPS
+scp deploy/proxy/* deploy@<ip>:/opt/stacks/proxy/
+ssh deploy@<ip> 'cd /opt/stacks/proxy && cp -n .env.example .env'
+#    → éditer /opt/stacks/proxy/.env avec les vrais domaines
+ssh deploy@<ip> 'cd /opt/stacks/proxy && docker compose up -d'
+
+# 3. Applications (en deploy) — noter la surcouche pour SkateLab
+ssh deploy@<ip> '/opt/stacks/skatelab/deploy/install-app.sh \
+    skatelab git@github.com:AbelThorne/figure-skating-analyzer.git deploy/compose.vps.yml'
+```
+
+Sur le VPS, **toute** commande compose de ce dépôt doit répéter les deux `-f` :
+
+```bash
+cd /opt/stacks/skatelab
+docker compose -f docker-compose.yml -f deploy/compose.vps.yml logs -f
+```
+
+### DNS — à faire AVANT le premier démarrage du proxy
+
+Un enregistrement **A** par domaine, pointant vers l'IP du VPS. Sans cela, le
+challenge HTTP-01 de Let's Encrypt échoue et aucun certificat n'est émis.
+
+### ⚠️ Google OAuth
+
+`VITE_GOOGLE_CLIENT_ID` est injecté **au build de l'image frontend**. Le domaine
+utilisé sur le VPS doit être déclaré dans les **origines JavaScript autorisées** de
+la console Google Cloud, sinon la connexion Google échoue alors qu'elle fonctionne
+sur GCP. Changer de domaine impose un rebuild de l'image.
+
+### Migration GCP → VPS (à terme)
+
+La bascule n'est pas préparée par cette infrastructure : quand elle aura lieu, il
+faudra migrer le volume `app-data` (base SQLite, PDF, logos) depuis la VM GCP,
+ajouter le domaine de production aux origines Google OAuth, puis basculer le DNS.
+Jusque-là, GCP reste la production et le VPS ne sert que Ligue.
+
+---
+
 ## Reference des variables d'environnement
 
 ### Variables backend
