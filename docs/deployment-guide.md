@@ -424,6 +424,10 @@ sur GCP. Changer de domaine impose un rebuild de l'image.
 
 ### Migration GCP → VPS (à terme)
 
+> **Plan détaillé : [`migration-gcp-vers-vps.md`](./migration-gcp-vers-vps.md)** —
+> procédure complète en 11 étapes, avec copie du volume de données, bascule DNS
+> et retour arrière.
+
 La bascule n'est pas préparée par cette infrastructure : quand elle aura lieu, il
 faudra migrer le volume `app-data` (base SQLite, PDF, logos) depuis la VM GCP,
 ajouter le domaine de production aux origines Google OAuth, puis basculer le DNS.
