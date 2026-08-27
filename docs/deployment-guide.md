@@ -376,13 +376,13 @@ ssh deploy@<ip> 'cd /opt/stacks/proxy && docker compose up -d'
 #    s'installe SANS surcouche (le 3e argument, optionnel, ne sert qu'à
 #    SkateLab, dont le compose racine cible le développement local) :
 ssh deploy@<ip> '/opt/stacks/install-app.sh \
-    ligue git@github.com:AbelThorne/ligue-app-competitions.git'
+    ligue git@github-ligue:AbelThorne/ligue-app-competitions.git'
 
 #    Cas futur — bascule GCP → VPS de SkateLab (voir « Migration GCP → VPS »
 #    ci-dessous) : la surcouche devient nécessaire, car le compose racine de
 #    ce dépôt cible le développement local, pas le VPS.
 ssh deploy@<ip> '/opt/stacks/install-app.sh \
-    skatelab git@github.com:AbelThorne/figure-skating-analyzer.git deploy/compose.vps.yml'
+    skatelab git@github-skatelab:AbelThorne/figure-skating-analyzer.git deploy/compose.vps.yml'
 ```
 
 Pour Ligue, une fois installé, toute commande compose se fait normalement
@@ -400,6 +400,15 @@ commande compose de ce dépôt doit répéter les deux `-f` :
 cd /opt/stacks/skatelab
 docker compose -f docker-compose.yml -f deploy/compose.vps.yml logs -f
 ```
+
+> **⚠️ Les URL de clone utilisent un ALIAS SSH, pas `github.com`.** Une deploy key
+> GitHub ne vaut que pour **un seul dépôt** — la même clé ne peut pas être
+> enregistrée sur deux dépôts. `bootstrap-vps.sh` génère donc **une clé par
+> dépôt** (`id_ed25519_ligue`, `id_ed25519_skatelab`) et écrit un `~/.ssh/config`
+> qui associe chaque alias à sa clé. Cloner via `git@github.com:` ferait proposer
+> la première clé venue, et GitHub répondrait **`Repository not found`** — message
+> trompeur qui parle d'un dépôt inexistant alors que le problème est un droit
+> d'accès. Vérifier l'accès : `ssh -T git@github-ligue`.
 
 ### DNS — à faire AVANT le premier démarrage du proxy
 

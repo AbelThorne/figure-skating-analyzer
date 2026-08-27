@@ -174,13 +174,49 @@ fi
 # --- 10. Clé de déploiement GitHub --------------------------------------
 # Les deux dépôts sont privés et clonés en SSH : le VPS a besoin de sa
 # propre clé, déclarée en « deploy key » sur chaque dépôt.
-DEPLOY_KEY="$DEPLOY_SSH/id_ed25519"
-if [[ -f "$DEPLOY_KEY" ]]; then
-    ok "Clé de déploiement déjà présente"
-else
-    sudo -u "$DEPLOY_USER" ssh-keygen -t ed25519 -N "" -C "vps-tcp-deploy" -f "$DEPLOY_KEY" >/dev/null
-    ok "Clé de déploiement générée"
-fi
+# ⚠️ Une deploy key GitHub ne vaut que pour UN SEUL dépôt : la même clé ne
+# peut pas être enregistrée sur deux dépôts (GitHub la refuse avec « key is
+# already in use »). On génère donc une clé PAR dépôt, plus un alias SSH qui
+# force l'usage de la bonne — sans quoi ssh proposerait la première clé et
+# GitHub répondrait « Repository not found », message trompeur qui parle d'un
+# dépôt inexistant alors que le problème est un droit d'accès.
+#
+# Alias créés :  github-ligue  -> dépôt Ligue
+#                github-skatelab -> dépôt SkateLab
+# Les URL de clone deviennent  git@github-ligue:AbelThorne/<dépôt>.git
+
+declare -A REPO_KEYS=(
+    [ligue]="AbelThorne/ligue-app-competitions"
+    [skatelab]="AbelThorne/figure-skating-analyzer"
+)
+
+SSH_CONFIG="$DEPLOY_SSH/config"
+touch "$SSH_CONFIG"
+
+for repo_alias in "${!REPO_KEYS[@]}"; do
+    key="$DEPLOY_SSH/id_ed25519_$repo_alias"
+    if [[ -f "$key" ]]; then
+        ok "Clé de déploiement '$repo_alias' déjà présente"
+    else
+        sudo -u "$DEPLOY_USER" ssh-keygen -t ed25519 -N "" \
+            -C "vps-tcp-deploy-$repo_alias" -f "$key" >/dev/null
+        ok "Clé de déploiement '$repo_alias' générée"
+    fi
+    if ! grep -q "^Host github-$repo_alias$" "$SSH_CONFIG" 2>/dev/null; then
+        cat >> "$SSH_CONFIG" <<CONF
+
+Host github-$repo_alias
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_$repo_alias
+  IdentitiesOnly yes
+CONF
+        ok "Alias SSH 'github-$repo_alias' configuré"
+    fi
+done
+chmod 600 "$SSH_CONFIG"
+chown "$DEPLOY_USER:$DEPLOY_USER" "$SSH_CONFIG"
+
 sudo -u "$DEPLOY_USER" bash -c "ssh-keyscan -H github.com >> $DEPLOY_SSH/known_hosts 2>/dev/null" || true
 sort -u "$DEPLOY_SSH/known_hosts" -o "$DEPLOY_SSH/known_hosts" 2>/dev/null || true
 chown "$DEPLOY_USER:$DEPLOY_USER" "$DEPLOY_SSH/known_hosts" 2>/dev/null || true
@@ -190,21 +226,29 @@ echo "======================================================================"
 echo " BOOTSTRAP TERMINÉ"
 echo "======================================================================"
 echo
-echo " Étape suivante — AJOUTE CETTE CLÉ PUBLIQUE en « Deploy key » sur les"
-echo " deux dépôts GitHub (Settings → Deploy keys → Add deploy key) :"
+echo " Étape suivante — AJOUTE CHAQUE CLÉ en « Deploy key » sur SON dépôt."
+echo " Une deploy key ne vaut que pour un seul dépôt : ce sont deux clés"
+echo " DIFFÉRENTES, à ne pas intervertir. Laisse « Allow write access »"
+echo " DÉCOCHÉ — le VPS n'a besoin que de lire."
 echo
-echo "   https://github.com/AbelThorne/ligue-app-competitions/settings/keys"
-echo "   https://github.com/AbelThorne/figure-skating-analyzer/settings/keys"
-echo
+for repo_alias in "${!REPO_KEYS[@]}"; do
+    echo "----------------------------------------------------------------------"
+    echo " Dépôt : ${REPO_KEYS[$repo_alias]}"
+    echo " https://github.com/${REPO_KEYS[$repo_alias]}/settings/keys"
+    echo
+    cat "$DEPLOY_SSH/id_ed25519_$repo_alias.pub"
+    echo
+done
 echo "----------------------------------------------------------------------"
-cat "$DEPLOY_KEY.pub"
-echo "----------------------------------------------------------------------"
 echo
-echo " Une même clé peut servir aux deux dépôts SI tu coches « Allow write"
-echo " access » sur aucun des deux ET que GitHub l'accepte ; sinon, génère"
-echo " une seconde clé ou utilise un compte machine."
+echo " Vérifie ensuite depuis le VPS (une commande par dépôt) :"
+for repo_alias in "${!REPO_KEYS[@]}"; do
+    echo "   sudo -u $DEPLOY_USER ssh -T git@github-$repo_alias"
+done
 echo
-echo " Vérifie ensuite depuis le VPS :"
-echo "   sudo -u $DEPLOY_USER ssh -T git@github.com"
+echo " ⚠️ Les URL de clone utilisent l'ALIAS, pas github.com :"
+for repo_alias in "${!REPO_KEYS[@]}"; do
+    echo "   git@github-$repo_alias:${REPO_KEYS[$repo_alias]}.git"
+done
 echo
 echo "======================================================================"
