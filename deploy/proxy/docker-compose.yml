@@ -1,0 +1,40 @@
+# Routeur de bordure — SEUL stack autorisé à publier 80/443 sur ce VPS.
+#
+# Rôle : terminer le TLS (Let's Encrypt, obtention ET renouvellement
+# automatiques) et router par nom de domaine vers le proxy interne de
+# chaque application, joint par le réseau Docker partagé `web`.
+#
+# Ce stack ne connaît RIEN des applications : ni leurs volumes, ni leurs
+# règles de routage internes. Il ne connaît que des noms de conteneurs.
+# Ajouter une application = 3 lignes dans le Caddyfile, sans toucher aux
+# autres stacks.
+
+services:
+  caddy:
+    image: caddy:2-alpine
+    container_name: edge-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3
+    env_file:
+      - .env
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      # Certificats et état ACME persistés : sans ce volume, chaque
+      # redéploiement redemanderait des certificats à Let's Encrypt,
+      # qui applique des quotas stricts (5 par domaine et par semaine).
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+
+networks:
+  # Créé par deploy/bootstrap-vps.sh, partagé avec tous les stacks d'app.
+  web:
+    external: true
+
+volumes:
+  caddy_data:
+  caddy_config:
