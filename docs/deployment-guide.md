@@ -315,6 +315,128 @@ docker compose restart
 
 ---
 
+## Déploiement sur le VPS partagé (routeur de bordure)
+
+> ⚠️ **La production actuelle est sur GCP** (`skatelab.toulouseclubpatinage.com`) et
+> n'est **pas** affectée par cette section. La VM GCP a son **propre**
+> `docker-compose.yml`, écrit à la main sur la VM (voir `docs/gcp-setup.md` §6) — il
+> n'est pas dans ce dépôt et référence des images pré-construites d'Artifact Registry
+> au lieu d'un `build:` local. Le `docker-compose.yml` racine de ce dépôt sert au
+> développement local (ports publiés, pratique) et de référence documentaire du
+> déploiement — il n'est lu ni par la VM GCP, ni directement par le VPS. La
+> configuration VPS vit dans une **surcouche**, `deploy/compose.vps.yml`, appliquée
+> uniquement sur le VPS.
+
+Ce dépôt porte l'infrastructure commune du VPS, sous `deploy/` :
+
+| Fichier | Rôle |
+|---|---|
+| `deploy/bootstrap-vps.sh` | Provisionne un VPS Debian vierge : Docker, utilisateur `deploy` (uid 1000), ufw, fail2ban, durcissement SSH, réseau Docker `web`, clé de déploiement GitHub. À lancer **une fois, en root**. |
+| `deploy/proxy/` | Le stack Caddy de bordure : seul à publier 80/443, termine le TLS, route par domaine. Déployé dans `/opt/stacks/proxy`. |
+| `deploy/compose.vps.yml` | Surcouche VPS de ce dépôt : retire les ports publiés, fixe `container_name: skatelab-frontend`, rejoint le réseau `web`. |
+| `deploy/install-app.sh` | Clone/met à jour puis démarre une app dans `/opt/stacks/<nom>`, avec surcouche optionnelle. Copié une fois sur le VPS en `/opt/stacks/install-app.sh` (§ « Ordre d'installation » ci-dessous) — cet emplacement stable évite l'amorçage circulaire d'un chemin qui vivrait dans un dépôt encore à cloner. |
+
+### Topologie
+
+```
+Internet :80 :443
+      |
+      v
+  stack proxy (Caddy, TLS)
+      |-- {LIGUE_DOMAIN}    --> ligue-caddy:80
+      '-- {SKATELAB_DOMAIN} --> skatelab-frontend:80
+```
+
+Sur le VPS, aucune application ne publie de port : le socle les joint par le réseau
+Docker partagé `web`, sous des **noms de conteneurs qui sont un contrat**
+(`skatelab-frontend` pour ce dépôt). Chaque app garde ses propres règles de routage
+interne — ici, `nginx.conf`, inchangé.
+
+### Ordre d'installation
+
+```bash
+# 1. Socle (en root, une fois)
+ssh vps-tcp 'bash -s' < deploy/bootstrap-vps.sh
+#    → ajouter la clé publique affichée en « Deploy key » sur les deux dépôts
+
+# 2. Proxy + script d'installation (en deploy) — après avoir pointé les DNS A
+#    vers l'IP du VPS. install-app.sh est copié ici, à côté du proxy : c'est
+#    un fichier autonome (pas un clone de dépôt), donc rien n'empêche de le
+#    poser avant que quoi que ce soit ne soit cloné — y compris pour Ligue,
+#    qui n'a pas ce script dans son propre dépôt.
+ssh deploy@<ip> 'mkdir -p /opt/stacks'
+scp -r deploy/proxy deploy@<ip>:/opt/stacks/
+scp deploy/install-app.sh deploy@<ip>:/opt/stacks/
+ssh deploy@<ip> 'cd /opt/stacks/proxy && cp -n .env.example .env'
+#    → éditer /opt/stacks/proxy/.env avec les vrais domaines
+ssh deploy@<ip> 'cd /opt/stacks/proxy && docker compose up -d'
+
+# 3. Applications (en deploy), depuis l'emplacement stable du script —
+#    cas nominal : Ligue, seule app réellement déployée dans ce premier jet,
+#    s'installe SANS surcouche (le 3e argument, optionnel, ne sert qu'à
+#    SkateLab, dont le compose racine cible le développement local) :
+ssh deploy@<ip> '/opt/stacks/install-app.sh \
+    ligue git@github-ligue:AbelThorne/ligue-app-competitions.git'
+
+#    Cas futur — bascule GCP → VPS de SkateLab (voir « Migration GCP → VPS »
+#    ci-dessous) : la surcouche devient nécessaire, car le compose racine de
+#    ce dépôt cible le développement local, pas le VPS.
+ssh deploy@<ip> '/opt/stacks/install-app.sh \
+    skatelab git@github-skatelab:AbelThorne/figure-skating-analyzer.git deploy/compose.vps.yml'
+```
+
+Pour Ligue, une fois installé, toute commande compose se fait normalement
+(pas de surcouche, un seul `-f` implicite) :
+
+```bash
+cd /opt/stacks/ligue
+docker compose logs -f
+```
+
+Sur le VPS, **quand la surcouche est utilisée** (SkateLab), **toute**
+commande compose de ce dépôt doit répéter les deux `-f` :
+
+```bash
+cd /opt/stacks/skatelab
+docker compose -f docker-compose.yml -f deploy/compose.vps.yml logs -f
+```
+
+> **⚠️ Les URL de clone utilisent un ALIAS SSH, pas `github.com`.** Une deploy key
+> GitHub ne vaut que pour **un seul dépôt** — la même clé ne peut pas être
+> enregistrée sur deux dépôts. `bootstrap-vps.sh` génère donc **une clé par
+> dépôt** (`id_ed25519_ligue`, `id_ed25519_skatelab`) et écrit un `~/.ssh/config`
+> qui associe chaque alias à sa clé. Cloner via `git@github.com:` ferait proposer
+> la première clé venue, et GitHub répondrait **`Repository not found`** — message
+> trompeur qui parle d'un dépôt inexistant alors que le problème est un droit
+> d'accès. Vérifier l'accès : `ssh -T git@github-ligue`.
+
+### DNS — à faire AVANT le premier démarrage du proxy
+
+Un enregistrement **A** par domaine, pointant vers l'IP du VPS. Sans cela, le
+challenge HTTP-01 de Let's Encrypt échoue et aucun certificat n'est émis.
+
+### ⚠️ Google OAuth
+
+`VITE_GOOGLE_CLIENT_ID` est injecté **au build de l'image frontend**. Le domaine
+utilisé sur le VPS doit être déclaré dans les **origines JavaScript autorisées** de
+la console Google Cloud, sinon la connexion Google échoue alors qu'elle fonctionne
+sur GCP. Changer de domaine impose un rebuild de l'image.
+
+### Migration GCP → VPS (à terme)
+
+> **Plan détaillé : [`migration-gcp-vers-vps.md`](./migration-gcp-vers-vps.md)** —
+> procédure complète en 11 étapes, avec copie du volume de données, bascule DNS
+> et retour arrière.
+
+La bascule n'est pas préparée par cette infrastructure : quand elle aura lieu, il
+faudra migrer le volume `app-data` (base SQLite, PDF, logos) depuis la VM GCP,
+ajouter le domaine de production aux origines Google OAuth, puis basculer le DNS.
+C'est à ce moment-là que l'installation de SkateLab avec la surcouche
+`deploy/compose.vps.yml` (étape 3 ci-dessus) entre en jeu. Jusque-là, GCP reste
+la production et le VPS ne sert que Ligue.
+
+---
+
 ## Reference des variables d'environnement
 
 ### Variables backend

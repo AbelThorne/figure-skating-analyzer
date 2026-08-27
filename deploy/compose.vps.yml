@@ -1,0 +1,40 @@
+# Surcouche VPS — à combiner avec le compose racine :
+#   docker compose -f docker-compose.yml -f deploy/compose.vps.yml up -d
+#
+# POURQUOI UNE SURCOUCHE PLUTÔT QU'UNE MODIFICATION DU COMPOSE RACINE :
+# le `docker-compose.yml` de ce dépôt sert au développement local (ports
+# publiés, pratique pour tester en direct) et de référence documentaire du
+# déploiement (cf. docs/gcp-setup.md, docs/deployment-guide.md). La VM GCP de
+# production (skatelab.toulouseclubpatinage.com) ne le lit PAS : elle a son
+# propre `docker-compose.yml`, écrit à la main sur la VM (docs/gcp-setup.md
+# §6), qui référence des images pré-construites d'Artifact Registry au lieu
+# d'un `build:` local. Ce dépôt et cette VM sont donc déjà découplés.
+# Le VPS partagé introduit un troisième environnement, aux besoins opposés du
+# premier : le routeur de bordure possède seul les ports 80/443 et joint les
+# conteneurs par le réseau Docker `web` — aucun port ne doit être publié ici.
+# Cette surcouche sépare ces deux environnements (local : ports publiés ;
+# VPS : aucun port) sans imposer de choisir l'un au détriment de l'autre, et
+# sans toucher au compose racine ni à la VM GCP.
+#
+# `!reset` annule une liste héritée du fichier de base (Compose v2.24+).
+# Si la version installée est plus ancienne, remplacer `!reset []` par `[]`.
+
+services:
+  backend:
+    # Le backend n'a pas à être joignable depuis l'extérieur : `frontend`
+    # (nginx) l'atteint par le réseau interne du stack.
+    ports: !reset []
+
+  frontend:
+    # Nom de conteneur figé : le routeur de bordure route dessus.
+    # C'est un CONTRAT avec deploy/proxy/Caddyfile.
+    container_name: skatelab-frontend
+    ports: !reset []
+    networks:
+      - default   # pour joindre `backend`
+      - web       # par lequel le routeur de bordure nous joint
+
+networks:
+  # Créé par deploy/bootstrap-vps.sh, partagé avec le routeur de bordure.
+  web:
+    external: true

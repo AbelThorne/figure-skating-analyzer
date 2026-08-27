@@ -1,0 +1,40 @@
+# Routage de bordure. Un bloc par application.
+#
+# Chaque application garde SES propres règles (SPA, cache, fallback) dans
+# son propre dépôt : ici on ne fait que du routage par domaine + TLS.
+
+{
+	email {$TLS_EMAIL}
+}
+
+# --- Ligue (gestion des compétitions) ---------------------------------
+{$LIGUE_DOMAIN} {
+	encode gzip
+
+	handle /api/* {
+		# La « zone de danger » de Ligue accepte des archives de
+		# restauration d'environ 100 Mo. Cette limite DOIT être répétée
+		# ici : le socle coupe le corps de la requête avant qu'il
+		# n'atteigne le Caddy interne de l'app, qui a la même règle.
+		request_body {
+			max_size 110MB
+		}
+		reverse_proxy ligue-caddy:80
+	}
+
+	handle {
+		reverse_proxy ligue-caddy:80
+	}
+}
+
+# --- SkateLab — INACTIF -----------------------------------------------
+# L'application est encore servie par GCP ; elle n'est pas déployée sur ce
+# VPS. Laisser ce bloc actif ferait tenter à Caddy une émission ACME pour
+# un domaine qu'il ne sert pas, consommant le quota Let's Encrypt
+# (5 échecs par domaine et par heure).
+# Décommenter au moment de la bascule GCP → VPS.
+#
+# {$SKATELAB_DOMAIN} {
+# 	encode gzip
+# 	reverse_proxy skatelab-frontend:80
+# }
