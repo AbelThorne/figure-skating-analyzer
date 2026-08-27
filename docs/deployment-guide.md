@@ -334,7 +334,7 @@ Ce dépôt porte l'infrastructure commune du VPS, sous `deploy/` :
 | `deploy/bootstrap-vps.sh` | Provisionne un VPS Debian vierge : Docker, utilisateur `deploy` (uid 1000), ufw, fail2ban, durcissement SSH, réseau Docker `web`, clé de déploiement GitHub. À lancer **une fois, en root**. |
 | `deploy/proxy/` | Le stack Caddy de bordure : seul à publier 80/443, termine le TLS, route par domaine. Déployé dans `/opt/stacks/proxy`. |
 | `deploy/compose.vps.yml` | Surcouche VPS de ce dépôt : retire les ports publiés, fixe `container_name: skatelab-frontend`, rejoint le réseau `web`. |
-| `deploy/install-app.sh` | Clone/met à jour puis démarre une app dans `/opt/stacks/<nom>`, avec surcouche optionnelle. |
+| `deploy/install-app.sh` | Clone/met à jour puis démarre une app dans `/opt/stacks/<nom>`, avec surcouche optionnelle. Copié une fois sur le VPS en `/opt/stacks/install-app.sh` (§ « Ordre d'installation » ci-dessous) — cet emplacement stable évite l'amorçage circulaire d'un chemin qui vivrait dans un dépôt encore à cloner. |
 
 ### Topologie
 
@@ -359,18 +359,42 @@ interne — ici, `nginx.conf`, inchangé.
 ssh vps-tcp 'bash -s' < deploy/bootstrap-vps.sh
 #    → ajouter la clé publique affichée en « Deploy key » sur les deux dépôts
 
-# 2. Proxy (en deploy) — après avoir pointé les DNS A vers l'IP du VPS
-scp deploy/proxy/* deploy@<ip>:/opt/stacks/proxy/
+# 2. Proxy + script d'installation (en deploy) — après avoir pointé les DNS A
+#    vers l'IP du VPS. install-app.sh est copié ici, à côté du proxy : c'est
+#    un fichier autonome (pas un clone de dépôt), donc rien n'empêche de le
+#    poser avant que quoi que ce soit ne soit cloné — y compris pour Ligue,
+#    qui n'a pas ce script dans son propre dépôt.
+ssh deploy@<ip> 'mkdir -p /opt/stacks'
+scp -r deploy/proxy deploy@<ip>:/opt/stacks/
+scp deploy/install-app.sh deploy@<ip>:/opt/stacks/
 ssh deploy@<ip> 'cd /opt/stacks/proxy && cp -n .env.example .env'
 #    → éditer /opt/stacks/proxy/.env avec les vrais domaines
 ssh deploy@<ip> 'cd /opt/stacks/proxy && docker compose up -d'
 
-# 3. Applications (en deploy) — noter la surcouche pour SkateLab
-ssh deploy@<ip> '/opt/stacks/skatelab/deploy/install-app.sh \
+# 3. Applications (en deploy), depuis l'emplacement stable du script —
+#    cas nominal : Ligue, seule app réellement déployée dans ce premier jet,
+#    s'installe SANS surcouche (le 3e argument, optionnel, ne sert qu'à
+#    SkateLab, dont le compose racine cible le développement local) :
+ssh deploy@<ip> '/opt/stacks/install-app.sh \
+    ligue git@github.com:AbelThorne/ligue-app-competitions.git'
+
+#    Cas futur — bascule GCP → VPS de SkateLab (voir « Migration GCP → VPS »
+#    ci-dessous) : la surcouche devient nécessaire, car le compose racine de
+#    ce dépôt cible le développement local, pas le VPS.
+ssh deploy@<ip> '/opt/stacks/install-app.sh \
     skatelab git@github.com:AbelThorne/figure-skating-analyzer.git deploy/compose.vps.yml'
 ```
 
-Sur le VPS, **toute** commande compose de ce dépôt doit répéter les deux `-f` :
+Pour Ligue, une fois installé, toute commande compose se fait normalement
+(pas de surcouche, un seul `-f` implicite) :
+
+```bash
+cd /opt/stacks/ligue
+docker compose logs -f
+```
+
+Sur le VPS, **quand la surcouche est utilisée** (SkateLab), **toute**
+commande compose de ce dépôt doit répéter les deux `-f` :
 
 ```bash
 cd /opt/stacks/skatelab
@@ -394,7 +418,9 @@ sur GCP. Changer de domaine impose un rebuild de l'image.
 La bascule n'est pas préparée par cette infrastructure : quand elle aura lieu, il
 faudra migrer le volume `app-data` (base SQLite, PDF, logos) depuis la VM GCP,
 ajouter le domaine de production aux origines Google OAuth, puis basculer le DNS.
-Jusque-là, GCP reste la production et le VPS ne sert que Ligue.
+C'est à ce moment-là que l'installation de SkateLab avec la surcouche
+`deploy/compose.vps.yml` (étape 3 ci-dessus) entre en jeu. Jusque-là, GCP reste
+la production et le VPS ne sert que Ligue.
 
 ---
 

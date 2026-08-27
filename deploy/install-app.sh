@@ -66,6 +66,12 @@ if [[ ! -f .env ]]; then
     fi
     die "Aucun .env ni .env.example dans $APP_DIR."
 fi
+# Garde-fou : refuse de démarrer si .env contient encore une valeur d'exemple
+# manifeste (ex. le SECRET_KEY par défaut de Ligue, dev-insecure-secret-change-me).
+# Générique : ce script sert plusieurs apps, on ne connaît pas leurs variables.
+if grep -qE 'change-me|changeme|CHANGE_ME|insecure|<[A-Za-z_-]+>' .env; then
+    die "$APP_DIR/.env contient encore une valeur d'exemple (motif type 'change-me' détecté). Édite-le avec de vraies valeurs avant de continuer."
+fi
 ok ".env présent"
 
 # --- 4. Préparer les dossiers d'état ------------------------------------
