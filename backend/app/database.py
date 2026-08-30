@@ -69,6 +69,10 @@ async def _migrate_add_columns(conn) -> None:
         ("scores", "is_titular", "BOOLEAN"),
         ("scores", "club", "VARCHAR(255)"),
         ("category_results", "club", "VARCHAR(255)"),
+        ("skaters", "licence_number", "VARCHAR(50)"),
+        ("app_settings", "french_ranking_url", "VARCHAR(500)"),
+        ("app_settings", "account_requests_enabled", "INTEGER DEFAULT 0"),
+        ("app_settings", "french_ranking_club_names", "JSON"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
