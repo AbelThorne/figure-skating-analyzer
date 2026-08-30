@@ -81,6 +81,22 @@ async def _migrate_add_columns(conn) -> None:
         except Exception:
             pass  # Column already exists
 
+    # SQLite's ALTER TABLE ADD COLUMN cannot add a UNIQUE constraint, so
+    # skaters.licence_number needs an explicit unique index for migrated
+    # databases to match what Base.metadata.create_all gives fresh ones.
+    # NULLs are treated as distinct by SQLite unique indexes, so existing
+    # rows (licence_number IS NULL) are unaffected.
+    try:
+        await conn.execute(
+            text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS "
+                "ix_skaters_licence_number ON skaters (licence_number)"
+            )
+        )
+        logger.info("Ensured unique index on skaters.licence_number")
+    except Exception:
+        pass  # Index already exists or column not yet present
+
 
 async def _migrate_drop_constraints(conn) -> None:
     """Drop constraints that are no longer needed.

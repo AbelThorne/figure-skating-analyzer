@@ -1,7 +1,11 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import select
+import pytest
+from sqlalchemy import select, text
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy.ext.asyncio import create_async_engine
 
+from app.database import _migrate_add_columns
 from app.models.account_request import AccountRequest
 from app.models.app_settings import AppSettings
 from app.models.french_ranking_entry import FrenchRankingEntry
@@ -69,3 +73,59 @@ async def test_account_request_persiste_une_demande(db_session):
     assert found.licence_numbers == ["123456", "789012"]
     assert found.status == "created"
     assert found.resolved_at is None
+
+
+async def test_migration_impose_unicite_licence_sur_base_deja_existante():
+    """Simule une base pré-existante (skaters sans licence_number, donc sans
+    contrainte unique dessus) et vérifie que `_migrate_add_columns` fait
+    converger la contrainte d'unicité avec ce qu'obtient une base neuve via
+    `Base.metadata.create_all`.
+    """
+    engine = create_async_engine("sqlite+aiosqlite:///:memory:", echo=False)
+    try:
+        async with engine.begin() as conn:
+            # Schéma "pré-migration" : skaters existe déjà, mais sans la
+            # colonne licence_number (donc sans contrainte unique dessus).
+            await conn.execute(
+                text(
+                    "CREATE TABLE skaters ("
+                    "id INTEGER PRIMARY KEY, "
+                    "first_name VARCHAR(255) NOT NULL DEFAULT '', "
+                    "last_name VARCHAR(255) NOT NULL"
+                    ")"
+                )
+            )
+            await _migrate_add_columns(conn)
+
+        async with engine.begin() as conn:
+            # Deux patineurs sans licence : ne doivent pas entrer en conflit
+            # (SQLite traite les NULL comme distincts dans un index unique).
+            await conn.execute(
+                text(
+                    "INSERT INTO skaters (first_name, last_name, licence_number) "
+                    "VALUES ('Alice', 'MARTIN', NULL)"
+                )
+            )
+            await conn.execute(
+                text(
+                    "INSERT INTO skaters (first_name, last_name, licence_number) "
+                    "VALUES ('Bob', 'DURAND', NULL)"
+                )
+            )
+
+            # Une licence, puis une deuxième identique : doit échouer.
+            await conn.execute(
+                text(
+                    "INSERT INTO skaters (first_name, last_name, licence_number) "
+                    "VALUES ('Léa', 'DUPONT', '999999')"
+                )
+            )
+            with pytest.raises(IntegrityError):
+                await conn.execute(
+                    text(
+                        "INSERT INTO skaters (first_name, last_name, licence_number) "
+                        "VALUES ('Autre', 'PERSONNE', '999999')"
+                    )
+                )
+    finally:
+        await engine.dispose()
