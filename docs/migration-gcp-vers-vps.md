@@ -4,7 +4,31 @@ Bascule de l'application SkateLab depuis la VM GCP (`skatelab-vm`, projet
 `skating-analyzer`) vers le VPS mutualisé qui héberge déjà l'application Ligue,
 **avec reprise des données** (base SQLite, PDF, logos).
 
-> **État au 2026-08-27** — le VPS (`192.162.69.191`) tourne avec son routeur de
+> ## ✅ **MIGRATION EFFECTUÉE LE 2026-08-30**
+>
+> SkateLab tourne sur le VPS et sert le trafic de production sur
+> `https://skatelab.toulouseclubpatinage.com`. Certificat Let's Encrypt émis
+> (valide jusqu'au 2026-11-28, renouvellement automatique).
+>
+> **Reprise des données vérifiée** — compteurs identiques des deux côtés :
+> `competitions` 127, `skaters` 3299, `scores` 18488, `category_results` 14935,
+> `users` 12 ; `PRAGMA integrity_check` = `ok`.
+>
+> **Étapes 1 à 8 : faites.** Écart au plan rencontré : la deploy key SkateLab
+> n'existait pas sur le VPS (bootstrap antérieur à la gestion de deux dépôts) —
+> générée, enregistrée en lecture seule sur le dépôt, vérifiée.
+>
+> **Étape 9 (CI) : faite** — les workflows `.github/workflows/ci-*.yml` qui
+> poussaient vers Artifact Registry ont été supprimés.
+>
+> **Reste à faire : §11, décommissionnement GCP.** La VM `skatelab-vm` est
+> volontairement **conservée quelques jours** comme filet de retour arrière.
+> ⚠️ Un retour arrière perdrait toutes les écritures faites sur le VPS depuis
+> le 2026-08-30 16h45.
+>
+> ---
+>
+> **État au 2026-08-27 (avant bascule)** — le VPS (`192.162.69.191`) tourne avec son routeur de
 > bordure (`edge-caddy`) et l'application Ligue en production sur
 > `competitions-ligue.toulouseclubpatinage.com`. Le bloc SkateLab du Caddyfile
 > socle est **écrit mais commenté**, prêt à être activé. Tout ce que décrit ce
