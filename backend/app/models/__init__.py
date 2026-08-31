@@ -15,6 +15,8 @@ from app.models.job import Job
 from app.models.skater_program import SkaterProgram
 from app.models.training_mood import TrainingMood
 from app.models.self_evaluation import SelfEvaluation
+from app.models.french_ranking_entry import FrenchRankingEntry
+from app.models.account_request import AccountRequest
 
 __all__ = [
     "Competition",
@@ -34,4 +36,6 @@ __all__ = [
     "SkaterProgram",
     "TrainingMood",
     "SelfEvaluation",
+    "FrenchRankingEntry",
+    "AccountRequest",
 ]

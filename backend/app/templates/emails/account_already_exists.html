@@ -1,0 +1,7 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 16px;">Vous avez déjà un compte</h2>
+<p>Bonjour {{ display_name }},</p>
+<p>Une demande de création de compte {{ club_name }} vient d'être faite avec cette adresse email, mais un compte existe déjà.</p>
+<p>Utilisez la page de connexion habituelle. Si vous avez oublié votre mot de passe, contactez le club.</p>
+{% endblock %}

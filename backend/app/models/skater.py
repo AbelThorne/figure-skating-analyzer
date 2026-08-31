@@ -20,6 +20,9 @@ class Skater(Base):
     birth_year: Mapped[Optional[int]] = mapped_column(Integer, nullable=True)
     training_tracked: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
     manual_create: Mapped[bool] = mapped_column(Boolean, default=False, server_default="0")
+    licence_number: Mapped[Optional[str]] = mapped_column(
+        String(50), nullable=True, unique=True
+    )
 
     scores: Mapped[list["Score"]] = relationship(  # noqa: F821
         "Score", back_populates="skater"

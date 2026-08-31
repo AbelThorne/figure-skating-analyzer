@@ -54,9 +54,10 @@ cd backend && uv lock
 - **Roles**: `admin` (full access), `reader` (browse, no manage), `skater` (sees only linked skaters via `UserSkater` join table)
 - **Job queue**: `services/job_queue.py` — in-process async queue for import/reimport/enrich jobs. Routes submit jobs, lifespan worker processes them
 - **Import pipeline**: URL → `scraper_factory.py` selects scraper → scraper fetches HTML + PDFs → `parser.py` extracts scores → stored in DB. Scrapers in `services/scrapers/` extend `BaseScraper` (ABC)
+- **Demande de compte**: formulaire public (`/request-account`) → `services/account_request.py` vérifie la licence contre le cache French Ranking (`services/french_ranking/`, TTL 1h, portage depuis `ligue-app-competitions`) → compte `skater` créé automatiquement + mot de passe temporaire (7 j) par email. Réponse HTTP toujours neutre (pas d'oracle d'énumération). Cas ambigus routés vers validation admin.
 - **PDF reports**: `services/report_data.py` + `templates/reports/` (Jinja2 + WeasyPrint)
 
-**Models**: Competition, Skater, Score, CategoryResult, User, UserSkater, AllowedDomain, AppSettings
+**Models**: Competition, Skater, Score, CategoryResult, User, UserSkater, AllowedDomain, AppSettings, AccountRequest, FrenchRankingEntry
 
 **Routes** (all under `/api`): auth, competitions, skaters, scores, dashboard, stats, reports, users, admin, domains, club_config, jobs, me
 

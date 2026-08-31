@@ -69,6 +69,10 @@ async def _migrate_add_columns(conn) -> None:
         ("scores", "is_titular", "BOOLEAN"),
         ("scores", "club", "VARCHAR(255)"),
         ("category_results", "club", "VARCHAR(255)"),
+        ("skaters", "licence_number", "VARCHAR(50)"),
+        ("app_settings", "french_ranking_url", "VARCHAR(500)"),
+        ("app_settings", "account_requests_enabled", "INTEGER DEFAULT 0"),
+        ("app_settings", "french_ranking_club_names", "JSON"),
     ]
     for table, column, col_type in _MIGRATIONS:
         try:
@@ -76,6 +80,22 @@ async def _migrate_add_columns(conn) -> None:
             logger.info("Added column %s.%s", table, column)
         except Exception:
             pass  # Column already exists
+
+    # SQLite's ALTER TABLE ADD COLUMN cannot add a UNIQUE constraint, so
+    # skaters.licence_number needs an explicit unique index for migrated
+    # databases to match what Base.metadata.create_all gives fresh ones.
+    # NULLs are treated as distinct by SQLite unique indexes, so existing
+    # rows (licence_number IS NULL) are unaffected.
+    try:
+        await conn.execute(
+            text(
+                "CREATE UNIQUE INDEX IF NOT EXISTS "
+                "ix_skaters_licence_number ON skaters (licence_number)"
+            )
+        )
+        logger.info("Ensured unique index on skaters.licence_number")
+    except Exception:
+        pass  # Index already exists or column not yet present
 
 
 async def _migrate_drop_constraints(conn) -> None:

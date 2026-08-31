@@ -414,6 +414,9 @@ export interface ConfigResponse {
   current_season?: string;
   google_client_id?: string;
   training_enabled?: boolean;
+  french_ranking_url?: string;
+  account_requests_enabled?: boolean;
+  french_ranking_club_names?: string[];
 }
 
 export interface SmtpSettings {
@@ -869,12 +872,37 @@ export interface ProgramRulesData {
   categories: Record<string, ProgramRuleCategory>;
 }
 
+export interface AccountRequestLicence {
+  licence_number: string;
+  birth_date: string;
+}
+
+export interface AccountRequestPayload {
+  email: string;
+  display_name: string;
+  licences: AccountRequestLicence[];
+}
+
+export interface AccountRequestSummary {
+  id: number;
+  email: string;
+  display_name: string;
+  licence_numbers: string[];
+  status: string;
+  reject_reason: string | null;
+  created_at: string | null;
+  resolved_at: string | null;
+  user_id: string | null;
+}
+
 // --- API Functions ---
 
 export const api = {
   config: {
     get: () => request<ConfigResponse>("/config/"),
-    update: (data: { club_name?: string; club_short?: string; current_season?: string; training_enabled?: boolean }) =>
+    accountRequestsEnabled: () =>
+      request<{ enabled: boolean }>("/config/account-requests-enabled"),
+    update: (data: { club_name?: string; club_short?: string; current_season?: string; training_enabled?: boolean; french_ranking_url?: string; account_requests_enabled?: boolean; french_ranking_club_names?: string[] }) =>
       request<ConfigResponse>("/config/", {
         method: "PATCH",
         body: JSON.stringify(data),
@@ -924,6 +952,11 @@ export const api = {
     refresh: () =>
       request<LoginResponse>("/auth/refresh", { method: "POST" }),
     logout: () => request<void>("/auth/logout", { method: "POST" }),
+    requestAccount: (payload: AccountRequestPayload) =>
+      request<{ detail: string }>("/auth/request-account", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     setup: (data: {
       email: string;
       password: string;
@@ -1075,6 +1108,14 @@ export const api = {
       request<{ status: string; message: string }>("/admin/reset-database", { method: "POST" }),
     recalculateClubs: () =>
       request<{ status: string; skaters_updated: number }>("/admin/recalculate-clubs", { method: "POST" }),
+    accountRequests: {
+      list: () => request<AccountRequestSummary[]>("/admin/account-requests"),
+      approve: (requestId: number, skaterIds: number[]) =>
+        request<{ detail: string; user_id: string }>(`/admin/account-requests/${requestId}/approve`, {
+          method: "POST",
+          body: JSON.stringify({ skater_ids: skaterIds }),
+        }),
+    },
   },
 
   skaters: {

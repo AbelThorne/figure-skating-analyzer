@@ -1,5 +1,20 @@
 # GCP Setup — SkateHub
 
+> ⚠️ **DOCUMENT HISTORIQUE — ce déploiement n'est plus la production.**
+>
+> Depuis le **2026-08-30**, SkateLab tourne sur le VPS mutualisé
+> (`192.162.69.191`), aux côtés de l'application Ligue. Voir
+> [migration-gcp-vers-vps.md](migration-gcp-vers-vps.md).
+>
+> Les workflows CI qui poussaient les images vers Artifact Registry
+> (`.github/workflows/ci-*.yml`) ont été **supprimés** : le VPS construit les
+> images depuis les sources via `/opt/stacks/install-app.sh`.
+>
+> La VM GCP est **conservée quelques jours** comme filet de retour arrière
+> (repointer le DNS vers `34.8.236.77`). Ce document reste la référence tant
+> qu'elle existe ; il sera à supprimer avec elle — voir §11 du plan de
+> migration pour la procédure de décommissionnement.
+
 **Project:** `skating-analyzer`
 **Domain:** `skatelab.toulouseclubpatinage.com`
 **Region:** `europe-west9` (Paris)

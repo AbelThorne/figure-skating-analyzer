@@ -9,7 +9,12 @@ from app.auth.tokens import decode_token
 # Paths that skip JWT auth entirely
 _PUBLIC_PREFIXES = ("/api/auth/", "/api/health")
 # Exact paths (with or without trailing slash) that are public
-_PUBLIC_EXACT = ("/api/config", "/api/config/")
+_PUBLIC_EXACT = (
+    "/api/config",
+    "/api/config/",
+    "/api/config/account-requests-enabled",
+    "/api/config/account-requests-enabled/",
+)
 
 
 async def auth_guard(request: Request) -> None:

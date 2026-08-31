@@ -1,21 +1,32 @@
 from __future__ import annotations
 
+import logging
+
 from litestar import Router, Request, post, Response
 from litestar.di import Provide
 from litestar.exceptions import NotAuthorizedException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from app.auth.passwords import hash_password, verify_password
 from app.auth.tokens import create_access_token, create_refresh_token, decode_token
-from app.auth.rate_limit import login_limiter
+from app.auth.rate_limit import account_request_limiter, login_limiter
 from app.config import SECURE_COOKIES, GOOGLE_CLIENT_ID
 from app.database import get_session
+from app.models.account_request import AccountRequest
 from app.models.user import User
 from app.models.allowed_domain import AllowedDomain
 from app.models.app_settings import AppSettings
+from app.services.account_request import process_request
+
+logger = logging.getLogger(__name__)
+
+_NEUTRAL_RESPONSE = {
+    "detail": "Si les informations fournies sont valides, vous recevrez un email."
+}
+_TEMP_PASSWORD_TTL = timedelta(days=7)
 
 
 def _set_refresh_cookie(response: Response, token: str) -> None:
@@ -61,6 +72,26 @@ async def login(data: dict, session: AsyncSession) -> Response:
 
     if not user.is_active:
         raise NotAuthorizedException("Account is disabled")
+
+    # Mot de passe temporaire périmé : la demande devient caduque (évalué à la
+    # connexion, pas de tâche planifiée).
+    if user.must_change_password:
+        pending = (
+            await session.execute(
+                select(AccountRequest)
+                .where(AccountRequest.user_id == user.id, AccountRequest.status == "created")
+                .order_by(AccountRequest.created_at.desc())
+                .limit(1)
+            )
+        ).scalar_one_or_none()
+        if pending is not None:
+            created = pending.created_at
+            if created.tzinfo is None:
+                created = created.replace(tzinfo=timezone.utc)
+            if datetime.now(timezone.utc) - created > _TEMP_PASSWORD_TTL:
+                pending.status = "expired"
+                await session.commit()
+                raise NotAuthorizedException("Temporary password has expired")
 
     user.last_login_at = datetime.now(timezone.utc)
     await session.commit()
@@ -185,9 +216,6 @@ async def setup(data: dict, session: AsyncSession) -> Response:
 @post("/google")
 async def google_login(data: dict, session: AsyncSession) -> Response:
     """Google OAuth: verify ID token, match or create user."""
-    import logging
-    logger = logging.getLogger(__name__)
-
     try:
         if not GOOGLE_CLIENT_ID:
             return Response(
@@ -318,8 +346,60 @@ async def change_password(data: dict, request: Request, session: AsyncSession) -
     return response
 
 
+@post("/request-account")
+async def request_account(data: dict, request: Request, session: AsyncSession) -> Response:
+    """Demande publique de création de compte.
+
+    La réponse est TOUJOURS identique (202) quel que soit le résultat : sans
+    cela, le endpoint permettrait d'énumérer les licences du club.
+    """
+    settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+    if settings is None or not settings.account_requests_enabled:
+        return Response(
+            content={"detail": "Les demandes de compte ne sont pas activées."},
+            status_code=403,
+        )
+
+    email = str(data.get("email", "")).strip().lower()
+    display_name = str(data.get("display_name", "")).strip()
+    licences = data.get("licences") or []
+
+    if not email or not display_name or not isinstance(licences, list) or not licences:
+        return Response(
+            content={"detail": "Email, nom et au moins une licence sont requis."},
+            status_code=400,
+        )
+
+    client_ip = request.client.host if request.client else "inconnu"
+    for key in (email, client_ip):
+        if not account_request_limiter.is_allowed(key):
+            return Response(
+                content={"detail": "Trop de demandes. Réessayez plus tard."},
+                status_code=429,
+            )
+    for key in (email, client_ip):
+        account_request_limiter.record(key)
+
+    try:
+        await process_request(
+            session, email, display_name, licences, datetime.now(timezone.utc)
+        )
+    except Exception:
+        logger.exception("Échec du traitement d'une demande de compte")
+
+    return Response(content=_NEUTRAL_RESPONSE, status_code=202)
+
+
 router = Router(
     path="/api/auth",
-    route_handlers=[login, refresh, logout, setup, google_login, change_password],
+    route_handlers=[
+        login,
+        refresh,
+        logout,
+        setup,
+        google_login,
+        change_password,
+        request_account,
+    ],
     dependencies={"session": Provide(get_session)},
 )

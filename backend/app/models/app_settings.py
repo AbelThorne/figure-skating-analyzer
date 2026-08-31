@@ -26,3 +26,8 @@ class AppSettings(Base):
     smtp_from: Mapped[str | None] = mapped_column(String(255), nullable=True)
     smtp_from_name: Mapped[str | None] = mapped_column(String(255), nullable=True)
     default_team_medians: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    french_ranking_url: Mapped[str | None] = mapped_column(String(500), nullable=True)
+    account_requests_enabled: Mapped[bool] = mapped_column(
+        Integer, nullable=False, default=0, server_default="0"
+    )
+    french_ranking_club_names: Mapped[list | None] = mapped_column(JSON, nullable=True)

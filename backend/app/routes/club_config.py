@@ -36,6 +36,9 @@ async def get_config(request: Request, session: AsyncSession) -> dict:
         "current_season": settings.current_season,
         "training_enabled": bool(settings.training_enabled),
         "google_client_id": GOOGLE_CLIENT_ID or None,
+        "french_ranking_url": settings.french_ranking_url or "",
+        "account_requests_enabled": bool(settings.account_requests_enabled),
+        "french_ranking_club_names": settings.french_ranking_club_names or [],
     }
 
 
@@ -58,6 +61,13 @@ async def update_config(
         settings.current_season = data["current_season"]
     if "training_enabled" in data:
         settings.training_enabled = bool(data["training_enabled"])
+    if "french_ranking_url" in data:
+        settings.french_ranking_url = (data["french_ranking_url"] or "").strip() or None
+    if "account_requests_enabled" in data:
+        settings.account_requests_enabled = bool(data["account_requests_enabled"])
+    if "french_ranking_club_names" in data:
+        names = data["french_ranking_club_names"] or []
+        settings.french_ranking_club_names = [str(n).strip() for n in names if str(n).strip()]
 
     await session.commit()
     await session.refresh(settings)
@@ -69,6 +79,9 @@ async def update_config(
             "logo_url": f"/api/logos/{settings.logo_path}" if settings.logo_path else "",
             "current_season": settings.current_season,
             "training_enabled": bool(settings.training_enabled),
+            "french_ranking_url": settings.french_ranking_url or "",
+            "account_requests_enabled": bool(settings.account_requests_enabled),
+            "french_ranking_club_names": settings.french_ranking_club_names or [],
         },
         status_code=200,
     )
@@ -187,12 +200,28 @@ async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Resp
         return Response(content={"success": False, "message": "Échec de l'envoi — vérifiez les paramètres SMTP"}, status_code=200)
 
 
+@get("/account-requests-enabled")
+async def account_requests_enabled(session: AsyncSession) -> dict:
+    """Public : dit au front s'il doit afficher le lien de demande de compte."""
+    result = await session.execute(select(AppSettings).limit(1))
+    settings = result.scalar_one_or_none()
+    return {"enabled": bool(settings and settings.account_requests_enabled)}
+
+
 def _ext(name: str) -> str:
     return "." + name.rsplit(".", 1)[-1] if "." in name else ".png"
 
 
 router = Router(
     path="/api/config",
-    route_handlers=[get_config, update_config, upload_logo, get_smtp_settings, update_smtp_settings, test_smtp],
+    route_handlers=[
+        get_config,
+        update_config,
+        upload_logo,
+        get_smtp_settings,
+        update_smtp_settings,
+        test_smtp,
+        account_requests_enabled,
+    ],
     dependencies={"session": Provide(get_session)},
 )

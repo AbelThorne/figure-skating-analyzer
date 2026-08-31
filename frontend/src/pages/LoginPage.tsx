@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef, useCallback, type FormEvent } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../auth/AuthContext";
 import { api } from "../api/client";
@@ -29,6 +29,12 @@ export default function LoginPage() {
   const { data: config } = useQuery({
     queryKey: ["config"],
     queryFn: api.config.get,
+    staleTime: Infinity,
+  });
+
+  const { data: accountRequests } = useQuery({
+    queryKey: ["account-requests-enabled"],
+    queryFn: api.config.accountRequestsEnabled,
     staleTime: Infinity,
   });
 
@@ -163,6 +169,16 @@ export default function LoginPage() {
               {loading ? "Connexion..." : "Se connecter"}
             </button>
           </form>
+
+          {/* Demande de compte — seulement si le club l'a activée */}
+          {accountRequests?.enabled && (
+            <p className="text-on-surface-variant text-xs text-center mt-4">
+              Pas encore de compte ?{" "}
+              <Link to="/request-account" className="text-primary font-medium">
+                Demander un accès
+              </Link>
+            </p>
+          )}
 
           {/* Google OAuth — only if configured */}
           {config?.google_client_id && (
