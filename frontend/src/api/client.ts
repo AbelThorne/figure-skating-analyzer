@@ -414,6 +414,9 @@ export interface ConfigResponse {
   current_season?: string;
   google_client_id?: string;
   training_enabled?: boolean;
+  french_ranking_url?: string;
+  account_requests_enabled?: boolean;
+  french_ranking_club_names?: string[];
 }
 
 export interface SmtpSettings {
@@ -899,7 +902,7 @@ export const api = {
     get: () => request<ConfigResponse>("/config/"),
     accountRequestsEnabled: () =>
       request<{ enabled: boolean }>("/config/account-requests-enabled"),
-    update: (data: { club_name?: string; club_short?: string; current_season?: string; training_enabled?: boolean }) =>
+    update: (data: { club_name?: string; club_short?: string; current_season?: string; training_enabled?: boolean; french_ranking_url?: string; account_requests_enabled?: boolean; french_ranking_club_names?: string[] }) =>
       request<ConfigResponse>("/config/", {
         method: "PATCH",
         body: JSON.stringify(data),

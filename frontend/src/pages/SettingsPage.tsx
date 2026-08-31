@@ -7,6 +7,13 @@ import { useJobs, type Lot } from "../contexts/JobContext";
 import AdminJobsTab from "../components/AdminJobsTab";
 import MediansModal from "../components/MediansModal";
 
+const REQUEST_STATUS_LABELS: Record<string, string> = {
+  created: "Compte créé",
+  pending_admin: "En attente de validation",
+  rejected: "Refusée",
+  expired: "Expirée",
+};
+
 const inputCls =
   "w-full px-3 py-2 bg-surface-container-low rounded-xl text-on-surface text-sm focus:outline-none focus:ring-2 focus:ring-primary";
 
@@ -445,6 +452,60 @@ export default function SettingsPage() {
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["smtp-settings"] });
       setSmtpPassword("");
+    },
+  });
+
+  // --- Demandes de compte (French Ranking) ---
+  const [frUrl, setFrUrl] = useState("");
+  const [frEnabled, setFrEnabled] = useState(false);
+  const [frClubNames, setFrClubNames] = useState("");
+  const [frLoaded, setFrLoaded] = useState(false);
+
+  useEffect(() => {
+    if (config && !frLoaded) {
+      setFrUrl(config.french_ranking_url ?? "");
+      setFrEnabled(!!config.account_requests_enabled);
+      setFrClubNames((config.french_ranking_club_names ?? []).join("\n"));
+      setFrLoaded(true);
+    }
+  }, [config, frLoaded]);
+
+  const frMutation = useMutation({
+    mutationFn: () =>
+      api.config.update({
+        french_ranking_url: frUrl,
+        account_requests_enabled: frEnabled,
+        french_ranking_club_names: frClubNames
+          .split("\n")
+          .map((n) => n.trim())
+          .filter(Boolean),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["config"] });
+      qc.invalidateQueries({ queryKey: ["account-requests-enabled"] });
+    },
+  });
+
+  const { data: accountRequests = [] } = useQuery({
+    queryKey: ["account-requests"],
+    queryFn: api.admin.accountRequests.list,
+    enabled: !!config,
+  });
+
+  const { data: skatersForApproval = [] } = useQuery({
+    queryKey: ["skaters-for-approval"],
+    queryFn: () => api.skaters.list(),
+    enabled: !!config,
+  });
+
+  const [approveSelection, setApproveSelection] = useState<Record<number, string>>({});
+
+  const approveRequest = useMutation({
+    mutationFn: ({ id, skaterId }: { id: number; skaterId: number }) =>
+      api.admin.accountRequests.approve(id, [skaterId]),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["account-requests"] });
+      qc.invalidateQueries({ queryKey: ["users"] });
     },
   });
 
@@ -1111,6 +1172,131 @@ export default function SettingsPage() {
           <p className={`text-xs mt-2 font-semibold ${smtpTestResult.success ? "text-primary" : "text-error"}`}>
             {smtpTestResult.message}
           </p>
+        )}
+      </section>
+
+      {/* Demandes de création de compte */}
+      <section className="bg-surface-container-lowest rounded-2xl p-6 shadow-arctic">
+        <h2 className="font-headline font-bold text-on-surface text-lg mb-1">
+          Demandes de création de compte
+        </h2>
+        <p className="text-on-surface-variant text-xs mb-4">
+          Les parents et patineurs peuvent demander un compte en fournissant un numéro de licence,
+          vérifié contre le classement national.
+        </p>
+
+        <div className="max-w-lg space-y-4">
+          <label className="flex items-center gap-2 text-sm text-on-surface">
+            <input
+              type="checkbox"
+              checked={frEnabled}
+              onChange={(e) => setFrEnabled(e.target.checked)}
+              className="rounded"
+            />
+            Activer le formulaire public de demande de compte
+          </label>
+
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              URL du classement national (Google Sheets)
+            </label>
+            <input
+              value={frUrl}
+              onChange={(e) => setFrUrl(e.target.value)}
+              placeholder="https://docs.google.com/spreadsheets/d/..."
+              className={inputCls}
+            />
+          </div>
+
+          <div>
+            <label className="block text-xs font-label font-medium text-on-surface-variant mb-1">
+              Graphies du club dans le classement (une par ligne)
+            </label>
+            <textarea
+              value={frClubNames}
+              onChange={(e) => setFrClubNames(e.target.value)}
+              rows={3}
+              placeholder={"TOULOUSE CLUB PATINAGE\nCLUB PATINAGE TOULOUSAIN"}
+              className={inputCls}
+            />
+          </div>
+
+          <button
+            onClick={() => frMutation.mutate()}
+            disabled={frMutation.isPending}
+            className="px-4 py-2 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            {frMutation.isPending ? "Enregistrement..." : "Enregistrer"}
+          </button>
+          {frMutation.isSuccess && (
+            <p className="text-xs text-primary font-semibold">Réglages enregistrés</p>
+          )}
+          {frMutation.isError && (
+            <p className="text-xs text-error">{String(frMutation.error)}</p>
+          )}
+        </div>
+
+        <h3 className="font-headline font-bold text-on-surface text-sm mt-6 mb-2">
+          Demandes reçues
+        </h3>
+        {accountRequests.length === 0 ? (
+          <p className="text-on-surface-variant text-xs">Aucune demande pour le moment.</p>
+        ) : (
+          <div className="space-y-2">
+            {accountRequests.map((req) => (
+              <div key={req.id} className="bg-surface-container rounded-xl p-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <div>
+                    <p className="text-sm text-on-surface font-medium">
+                      {req.display_name}{" "}
+                      <span className="text-on-surface-variant font-normal">({req.email})</span>
+                    </p>
+                    <p className="text-xs text-on-surface-variant">
+                      Licences : <span className="font-mono">{req.licence_numbers.join(", ")}</span>
+                    </p>
+                  </div>
+                  <span className="text-xs font-semibold text-on-surface-variant">
+                    {REQUEST_STATUS_LABELS[req.status] ?? req.status}
+                  </span>
+                </div>
+
+                {req.reject_reason && (
+                  <p className="text-xs text-error mt-1">{req.reject_reason}</p>
+                )}
+
+                {req.status === "pending_admin" && (
+                  <div className="flex flex-wrap items-center gap-2 mt-2">
+                    <select
+                      value={approveSelection[req.id] ?? ""}
+                      onChange={(e) =>
+                        setApproveSelection((prev) => ({ ...prev, [req.id]: e.target.value }))
+                      }
+                      className={inputCls}
+                    >
+                      <option value="">Choisir un patineur…</option>
+                      {skatersForApproval.map((skater) => (
+                        <option key={skater.id} value={skater.id}>
+                          {skater.first_name} {skater.last_name}
+                        </option>
+                      ))}
+                    </select>
+                    <button
+                      onClick={() =>
+                        approveRequest.mutate({
+                          id: req.id,
+                          skaterId: Number(approveSelection[req.id]),
+                        })
+                      }
+                      disabled={!approveSelection[req.id] || approveRequest.isPending}
+                      className="px-3 py-1.5 bg-primary text-on-primary rounded-xl text-xs font-bold hover:bg-primary/90 transition-colors disabled:opacity-50"
+                    >
+                      Approuver
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
         )}
       </section>
 
