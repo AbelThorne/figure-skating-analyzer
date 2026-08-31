@@ -83,7 +83,7 @@ Code pur, sans I/O ni DB. Portage 1:1 depuis `../ligue-app-competitions/backend/
 - Consumes: rien.
 - Produces: `LicenceRow` (dataclass frozen : `licence: str`, `last: str`, `first: str`, `sex: str`, `birth: str`, `club_name: str`, `filiere_raw: str`, `region_raw: str`) ; `split_csv_line(line: str) -> list[str]` ; `normalize_birth(fr: str) -> str` ; `parse_french_ranking(csv: str) -> list[LicenceRow]` ; constante `NL_PREFIX = "NL - "`.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 ```python
 # backend/tests/test_french_ranking_parser.py
@@ -147,12 +147,12 @@ def test_nl_prefix_marque_les_sans_licence_competition():
     assert rows[0].club_name.startswith(NL_PREFIX)
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_parser.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.services.french_ranking'`
 
-- [ ] **Step 3: Écrire `types.py`**
+- [x] **Step 3: Écrire `types.py`**
 
 ```python
 # backend/app/services/french_ranking/types.py
@@ -192,7 +192,7 @@ class FrenchRankingEntryRow:
     ligue_code: str | None
 ```
 
-- [ ] **Step 4: Écrire `parser.py`**
+- [x] **Step 4: Écrire `parser.py`**
 
 ```python
 # backend/app/services/french_ranking/parser.py
@@ -302,19 +302,19 @@ def parse_french_ranking(csv: str) -> list[LicenceRow]:
     return rows
 ```
 
-- [ ] **Step 5: Écrire `__init__.py`**
+- [x] **Step 5: Écrire `__init__.py`**
 
 ```python
 # backend/app/services/french_ranking/__init__.py
 """Lecteur du French Ranking (classement national FFSG)."""
 ```
 
-- [ ] **Step 6: Lancer les tests pour vérifier le succès**
+- [x] **Step 6: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_parser.py -v`
 Expected: PASS — 8 tests
 
-- [ ] **Step 7: Commit**
+- [x] **Step 7: Commit**
 
 ```bash
 git add backend/app/services/french_ranking/ backend/tests/test_french_ranking_parser.py
@@ -333,7 +333,7 @@ git commit -m "feat(french-ranking): parsing CSV du classement national"
 - Consumes: rien.
 - Produces: `normalize_french_ranking_url(raw_url: str) -> str`.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 ```python
 # backend/tests/test_french_ranking_url.py
@@ -374,12 +374,12 @@ def test_supprime_les_espaces_autour():
     assert normalize_french_ranking_url("  https://exemple.fr/a.csv  ") == "https://exemple.fr/a.csv"
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_url.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.services.french_ranking.url'`
 
-- [ ] **Step 3: Écrire `url.py`**
+- [x] **Step 3: Écrire `url.py`**
 
 ```python
 # backend/app/services/french_ranking/url.py
@@ -415,12 +415,12 @@ def normalize_french_ranking_url(raw_url: str) -> str:
     return url
 ```
 
-- [ ] **Step 4: Lancer les tests pour vérifier le succès**
+- [x] **Step 4: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_url.py -v`
 Expected: PASS — 6 tests
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/app/services/french_ranking/url.py backend/tests/test_french_ranking_url.py
@@ -445,7 +445,7 @@ Nouvelles tables (`french_ranking_entries`, `account_requests`) et nouvelles col
 - Consumes: rien.
 - Produces: `FrenchRankingEntry` (colonnes `id`, `licence_number`, `last_name`, `first_name`, `sex`, `birth_date`, `club_name_raw`, `has_competition_licence`, `filiere`, `ligue_code`, `fetched_at`) ; `AccountRequest` (`id`, `email`, `display_name`, `licence_numbers` JSON, `status`, `reject_reason`, `created_at`, `resolved_at`, `user_id`) ; `Skater.licence_number` ; `AppSettings.french_ranking_url`, `.account_requests_enabled`, `.french_ranking_club_names`.
 
-- [ ] **Step 1: Écrire le test qui échoue**
+- [x] **Step 1: Écrire le test qui échoue**
 
 ```python
 # backend/tests/test_account_request_models.py
@@ -522,12 +522,12 @@ async def test_account_request_persiste_une_demande(db_session):
     assert found.resolved_at is None
 ```
 
-- [ ] **Step 2: Lancer le test pour vérifier l'échec**
+- [x] **Step 2: Lancer le test pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_models.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.models.account_request'`
 
-- [ ] **Step 3: Écrire `french_ranking_entry.py`**
+- [x] **Step 3: Écrire `french_ranking_entry.py`**
 
 ```python
 # backend/app/models/french_ranking_entry.py
@@ -565,7 +565,7 @@ class FrenchRankingEntry(Base):
     fetched_at: Mapped[datetime] = mapped_column(DateTime, nullable=False)
 ```
 
-- [ ] **Step 4: Écrire `account_request.py`**
+- [x] **Step 4: Écrire `account_request.py`**
 
 ```python
 # backend/app/models/account_request.py
@@ -602,7 +602,7 @@ class AccountRequest(Base):
     user_id: Mapped[str | None] = mapped_column(String(36), nullable=True, default=None)
 ```
 
-- [ ] **Step 5: Ajouter `licence_number` à `Skater`**
+- [x] **Step 5: Ajouter `licence_number` à `Skater`**
 
 Dans `backend/app/models/skater.py`, après la ligne `manual_create` :
 
@@ -612,7 +612,7 @@ Dans `backend/app/models/skater.py`, après la ligne `manual_create` :
     )
 ```
 
-- [ ] **Step 6: Ajouter les colonnes à `AppSettings`**
+- [x] **Step 6: Ajouter les colonnes à `AppSettings`**
 
 Dans `backend/app/models/app_settings.py`, après `default_team_medians` :
 
@@ -624,7 +624,7 @@ Dans `backend/app/models/app_settings.py`, après `default_team_medians` :
     french_ranking_club_names: Mapped[list | None] = mapped_column(JSON, nullable=True)
 ```
 
-- [ ] **Step 7: Ajouter les migrations de colonnes**
+- [x] **Step 7: Ajouter les migrations de colonnes**
 
 Dans `backend/app/database.py`, ajouter à la fin de la liste `_MIGRATIONS` (ligne 41) :
 
@@ -635,7 +635,7 @@ Dans `backend/app/database.py`, ajouter à la fin de la liste `_MIGRATIONS` (lig
         ("app_settings", "french_ranking_club_names", "JSON"),
 ```
 
-- [ ] **Step 8: Importer les nouveaux modèles**
+- [x] **Step 8: Importer les nouveaux modèles**
 
 Vérifier que `backend/app/main.py` (ou `database.py`) importe les nouveaux modèles pour que `Base.metadata.create_all` crée les tables. Chercher où les autres modèles sont importés :
 
@@ -648,17 +648,17 @@ from app.models.account_request import AccountRequest  # noqa: F401
 from app.models.french_ranking_entry import FrenchRankingEntry  # noqa: F401
 ```
 
-- [ ] **Step 9: Lancer les tests pour vérifier le succès**
+- [x] **Step 9: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_models.py -v`
 Expected: PASS — 4 tests
 
-- [ ] **Step 10: Vérifier l'absence de régression**
+- [x] **Step 10: Vérifier l'absence de régression**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest -q`
 Expected: tous les tests passent.
 
-- [ ] **Step 11: Commit**
+- [x] **Step 11: Commit**
 
 ```bash
 git add backend/app/models/ backend/app/database.py backend/app/main.py backend/tests/test_account_request_models.py
@@ -680,7 +680,7 @@ git commit -m "feat(models): cache French Ranking, demandes de compte, licence p
 
 **Comportement clé :** `ensure_fresh_cache` **ne lève jamais**. Toute erreur réseau ou de parsing sert le cache existant tel quel, même périmé.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 ```python
 # backend/tests/test_french_ranking_cache.py
@@ -795,12 +795,12 @@ async def test_find_by_licence_ignore_les_espaces():
     assert find_by_licence([row], "000") is None
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_cache.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.services.french_ranking.cache'`
 
-- [ ] **Step 3: Écrire `cache_repository.py`**
+- [x] **Step 3: Écrire `cache_repository.py`**
 
 ```python
 # backend/app/services/french_ranking/cache_repository.py
@@ -871,7 +871,7 @@ async def fetch_entries(session: AsyncSession) -> list[FrenchRankingEntryRow]:
     ]
 ```
 
-- [ ] **Step 4: Écrire `cache.py`**
+- [x] **Step 4: Écrire `cache.py`**
 
 ```python
 # backend/app/services/french_ranking/cache.py
@@ -966,12 +966,12 @@ def find_by_licence(
     return next((e for e in entries if e.licence_number == n), None)
 ```
 
-- [ ] **Step 5: Lancer les tests pour vérifier le succès**
+- [x] **Step 5: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_french_ranking_cache.py -v`
 Expected: PASS — 7 tests
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add backend/app/services/french_ranking/ backend/tests/test_french_ranking_cache.py
@@ -997,7 +997,7 @@ Le cœur : vérification licence + date de naissance, appartenance au club, rés
   - `resolve_skater(session, entry) -> tuple[Skater | None, str]` — `mode` ∈ `"exact"`, `"ambiguous"`, `"absent"`.
   - `generate_temp_password() -> str`.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 ```python
 # backend/tests/test_account_request_service.py
@@ -1138,12 +1138,12 @@ def test_generate_temp_password_est_assez_long_et_aleatoire():
     assert a != b
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_service.py -v`
 Expected: FAIL — `ModuleNotFoundError: No module named 'app.services.account_request'`
 
-- [ ] **Step 3: Écrire `account_request.py`**
+- [x] **Step 3: Écrire `account_request.py`**
 
 ```python
 # backend/app/services/account_request.py
@@ -1262,12 +1262,12 @@ def generate_temp_password(length: int = 14) -> str:
     return "".join(secrets.choice(alphabet) for _ in range(length))
 ```
 
-- [ ] **Step 4: Lancer les tests pour vérifier le succès**
+- [x] **Step 4: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_service.py -v`
 Expected: PASS — 16 tests
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add backend/app/services/account_request.py backend/tests/test_account_request_service.py
@@ -1291,7 +1291,7 @@ Assemble : traitement d'une demande complète, création du compte, envoi des em
 - Consumes: tout Task 5 ; `send_email`, `get_smtp_config` (`app/services/email_service.py`) ; `AccountRequest` (Task 3) ; `User`, `UserSkater`.
 - Produces: `process_request(session, email: str, display_name: str, licences: list[dict], now: datetime, *, client=None) -> AccountRequest` — `licences` est une liste de `{"licence_number": str, "birth_date": str}`.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 Ajouter à `backend/tests/test_account_request_service.py` :
 
@@ -1503,12 +1503,12 @@ async def test_process_request_ne_duplique_pas_un_email_existant(db_session):
     assert len(users) == 1
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_service.py -v -k process_request`
 Expected: FAIL — `ImportError: cannot import name 'process_request'`
 
-- [ ] **Step 3: Ajouter `process_request` à `account_request.py`**
+- [x] **Step 3: Ajouter `process_request` à `account_request.py`**
 
 Ajouter les imports en tête du fichier :
 
@@ -1712,7 +1712,7 @@ async def _notify_admins(
             logger.exception("Échec notification admin pour la demande %s", request_row.id)
 ```
 
-- [ ] **Step 4: Écrire les templates d'email**
+- [x] **Step 4: Écrire les templates d'email**
 
 `backend/app/templates/emails/account_created.html` :
 
@@ -1777,12 +1777,12 @@ async def _notify_admins(
 {% endblock %}
 ```
 
-- [ ] **Step 5: Lancer les tests pour vérifier le succès**
+- [x] **Step 5: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_service.py -v`
 Expected: PASS — 24 tests
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add backend/app/services/account_request.py backend/app/templates/emails/ backend/tests/test_account_request_service.py
@@ -1804,7 +1804,7 @@ git commit -m "feat(compte): orchestration de la demande et emails"
 
 **Contrainte :** la réponse est **identique** dans tous les cas — succès, licence inconnue, mauvais club, email existant.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 ```python
 # backend/tests/test_account_request_routes.py
@@ -1976,12 +1976,12 @@ async def test_login_accepte_un_mot_de_passe_temporaire_recent(client, db_sessio
     assert resp.status_code == 200
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_routes.py -v`
 Expected: FAIL — `ImportError: cannot import name 'account_request_limiter'`
 
-- [ ] **Step 3: Ajouter le limiteur**
+- [x] **Step 3: Ajouter le limiteur**
 
 À la fin de `backend/app/auth/rate_limit.py` :
 
@@ -1991,7 +1991,7 @@ Expected: FAIL — `ImportError: cannot import name 'account_request_limiter'`
 account_request_limiter = LoginRateLimiter(max_attempts=3, window_seconds=3600.0)
 ```
 
-- [ ] **Step 4: Ajouter le endpoint dans `auth.py`**
+- [x] **Step 4: Ajouter le endpoint dans `auth.py`**
 
 Imports à ajouter en tête de `backend/app/routes/auth.py` :
 
@@ -2075,7 +2075,7 @@ router = Router(
 )
 ```
 
-- [ ] **Step 5: Ajouter l'expiration dans `login`**
+- [x] **Step 5: Ajouter l'expiration dans `login`**
 
 Dans le handler `login` de `backend/app/routes/auth.py`, juste après le contrôle `if not user.is_active:` :
 
@@ -2101,17 +2101,17 @@ Dans le handler `login` de `backend/app/routes/auth.py`, juste après le contrô
                 raise NotAuthorizedException("Temporary password has expired")
 ```
 
-- [ ] **Step 6: Lancer les tests pour vérifier le succès**
+- [x] **Step 6: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_routes.py -v`
 Expected: PASS — 7 tests
 
-- [ ] **Step 7: Vérifier l'absence de régression sur l'auth**
+- [x] **Step 7: Vérifier l'absence de régression sur l'auth**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/ -q`
 Expected: tous les tests passent.
 
-- [ ] **Step 8: Commit**
+- [x] **Step 8: Commit**
 
 ```bash
 git add backend/app/routes/auth.py backend/app/auth/rate_limit.py backend/tests/test_account_request_routes.py
@@ -2131,7 +2131,7 @@ git commit -m "feat(compte): endpoint public de demande + expiration du mot de p
 - Consumes: `AccountRequest` (Task 3) ; `resolve_skater`, `generate_temp_password` (Task 5) ; `require_admin`.
 - Produces: `GET /api/admin/account-requests` ; `POST /api/admin/account-requests/{request_id}/approve` (payload `{"skater_ids": [int]}`) ; `GET /api/club-config/account-requests-enabled`.
 
-- [ ] **Step 1: Écrire les tests qui échouent**
+- [x] **Step 1: Écrire les tests qui échouent**
 
 Ajouter à `backend/tests/test_account_request_routes.py` :
 
@@ -2227,12 +2227,12 @@ async def test_le_front_sait_si_le_formulaire_est_actif(client, db_session):
     assert resp.json() == {"enabled": True}
 ```
 
-- [ ] **Step 2: Lancer les tests pour vérifier l'échec**
+- [x] **Step 2: Lancer les tests pour vérifier l'échec**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_routes.py -v -k "admin or front"`
 Expected: FAIL — 404 sur les nouvelles routes.
 
-- [ ] **Step 3: Ajouter les handlers admin**
+- [x] **Step 3: Ajouter les handlers admin**
 
 Dans `backend/app/routes/admin.py`, aligner les imports sur ceux déjà présents puis ajouter :
 
@@ -2355,7 +2355,7 @@ async def approve_account_request(
 
 Enregistrer les deux handlers dans le `Router` d'`admin.py` (ajouter `list_account_requests` et `approve_account_request` à `route_handlers`).
 
-- [ ] **Step 4: Ajouter le endpoint public de configuration**
+- [x] **Step 4: Ajouter le endpoint public de configuration**
 
 Dans `backend/app/routes/club_config.py`, ajouter le handler et l'enregistrer dans le `Router` :
 
@@ -2371,12 +2371,12 @@ async def account_requests_enabled(session: AsyncSession) -> dict:
 
 Vérifier que ce chemin est bien accessible sans authentification. Si `club_config.py` est protégé par le `auth_guard` global, exempter explicitement ce chemin dans `backend/app/auth/guards.py` (chercher la liste des chemins publics : `grep -n "public\|exempt\|/api/auth" backend/app/auth/guards.py`).
 
-- [ ] **Step 5: Lancer les tests pour vérifier le succès**
+- [x] **Step 5: Lancer les tests pour vérifier le succès**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest tests/test_account_request_routes.py -v`
 Expected: PASS — 12 tests
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add backend/app/routes/admin.py backend/app/routes/club_config.py backend/app/auth/guards.py backend/tests/test_account_request_routes.py
@@ -2397,7 +2397,7 @@ git commit -m "feat(compte): endpoints admin de gestion des demandes"
 - Consumes: `POST /api/auth/request-account`, `GET /api/club-config/account-requests-enabled` (Tasks 7-8).
 - Produces: types `AccountRequestLicence`, `AccountRequestPayload` ; fonctions `requestAccount`, `getAccountRequestsEnabled` ; route `/request-account`.
 
-- [ ] **Step 1: Ajouter les types et appels API**
+- [x] **Step 1: Ajouter les types et appels API**
 
 Dans `frontend/src/api/client.ts`, suivre le style des fonctions voisines :
 
@@ -2431,7 +2431,7 @@ export async function getAccountRequestsEnabled(): Promise<{ enabled: boolean }>
 }
 ```
 
-- [ ] **Step 2: Écrire `RequestAccountPage.tsx`**
+- [x] **Step 2: Écrire `RequestAccountPage.tsx`**
 
 ```tsx
 import { useState } from "react";
@@ -2577,7 +2577,7 @@ export default function RequestAccountPage() {
 }
 ```
 
-- [ ] **Step 3: Déclarer la route**
+- [x] **Step 3: Déclarer la route**
 
 Dans `frontend/src/App.tsx`, ajouter l'import et la route, à côté de celle de `/login` (route publique, hors `ProtectedRoute`) :
 
@@ -2589,7 +2589,7 @@ import RequestAccountPage from "./pages/RequestAccountPage";
 <Route path="/request-account" element={<RequestAccountPage />} />
 ```
 
-- [ ] **Step 4: Ajouter le lien conditionnel sur `LoginPage`**
+- [x] **Step 4: Ajouter le lien conditionnel sur `LoginPage`**
 
 Dans `frontend/src/pages/LoginPage.tsx` :
 
@@ -2617,12 +2617,12 @@ Puis, sous le bouton de connexion :
   )}
 ```
 
-- [ ] **Step 5: Vérifier la compilation**
+- [x] **Step 5: Vérifier la compilation**
 
 Run: `cd frontend && PATH="/opt/homebrew/bin:$PATH" npm run build`
 Expected: build réussi, aucune erreur TypeScript.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add frontend/src/pages/RequestAccountPage.tsx frontend/src/api/client.ts frontend/src/App.tsx frontend/src/pages/LoginPage.tsx
@@ -2642,7 +2642,7 @@ git commit -m "feat(compte): formulaire public de demande de compte"
 - Consumes: `GET /api/admin/account-requests`, `POST /api/admin/account-requests/{id}/approve` (Task 8).
 - Produces: types `AccountRequest` ; fonctions `listAccountRequests`, `approveAccountRequest`, `updateFrenchRankingSettings`.
 
-- [ ] **Step 1: Ajouter la persistance des réglages côté backend**
+- [x] **Step 1: Ajouter la persistance des réglages côté backend**
 
 Repérer dans `backend/app/routes/club_config.py` le handler qui met à jour `AppSettings` (`grep -n "patch\|put\|update" backend/app/routes/club_config.py`) et y traiter les trois nouveaux champs, en suivant le style existant :
 
@@ -2658,7 +2658,7 @@ Repérer dans `backend/app/routes/club_config.py` le handler qui met à jour `Ap
 
 Vérifier que le handler existant renvoie aussi ces champs en lecture.
 
-- [ ] **Step 2: Ajouter les appels API frontend**
+- [x] **Step 2: Ajouter les appels API frontend**
 
 Dans `frontend/src/api/client.ts` :
 
@@ -2689,20 +2689,20 @@ export async function approveAccountRequest(
 
 Adapter `apiGet`/`apiPost` aux helpers réellement présents dans le fichier (vérifier les noms avant d'écrire).
 
-- [ ] **Step 3: Ajouter la carte de réglages French Ranking**
+- [x] **Step 3: Ajouter la carte de réglages French Ranking**
 
 Dans `frontend/src/pages/SettingsPage.tsx`, à côté de la carte SMTP existante, ajouter une carte « Demandes de compte » avec : un champ URL French Ranking, une case à cocher d'activation, et un champ texte pour les graphies de club (une par ligne, converties en tableau). Réutiliser le style et le pattern de mutation de la carte SMTP voisine.
 
-- [ ] **Step 4: Ajouter la liste des demandes en attente**
+- [x] **Step 4: Ajouter la liste des demandes en attente**
 
 Toujours dans `SettingsPage.tsx`, ajouter une section listant les demandes (`listAccountRequests`), avec pour chaque demande en `pending_admin` un sélecteur de patineur et un bouton « Approuver » appelant `approveAccountRequest`. Les autres statuts sont affichés en lecture seule, avec leur motif.
 
-- [ ] **Step 5: Vérifier la compilation**
+- [x] **Step 5: Vérifier la compilation**
 
 Run: `cd frontend && PATH="/opt/homebrew/bin:$PATH" npm run build`
 Expected: build réussi.
 
-- [ ] **Step 6: Commit**
+- [x] **Step 6: Commit**
 
 ```bash
 git add frontend/src/pages/SettingsPage.tsx frontend/src/api/client.ts backend/app/routes/club_config.py
@@ -2716,12 +2716,12 @@ git commit -m "feat(compte): réglages French Ranking et gestion des demandes"
 **Files:**
 - Modify: `CLAUDE.md`
 
-- [ ] **Step 1: Lancer toute la suite backend**
+- [x] **Step 1: Lancer toute la suite backend**
 
 Run: `cd backend && PATH="/opt/homebrew/bin:$PATH" uv run pytest -v`
 Expected: tous les tests passent, aucun échec ni erreur.
 
-- [ ] **Step 2: Lancer le build frontend**
+- [x] **Step 2: Lancer le build frontend**
 
 Run: `cd frontend && PATH="/opt/homebrew/bin:$PATH" npm run build`
 Expected: build réussi.
@@ -2744,7 +2744,7 @@ docker compose exec backend sqlite3 /app/data/skatelab.db \
 
 5. Se connecter avec le mot de passe temporaire et vérifier que le changement de mot de passe est imposé.
 
-- [ ] **Step 4: Documenter dans CLAUDE.md**
+- [x] **Step 4: Documenter dans CLAUDE.md**
 
 Dans la section « Architecture » / backend de `CLAUDE.md`, ajouter après la ligne décrivant le pipeline d'import :
 
@@ -2754,7 +2754,7 @@ Dans la section « Architecture » / backend de `CLAUDE.md`, ajouter après la l
 
 Ajouter `AccountRequest` et `FrenchRankingEntry` à la liste des **Models**.
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 git add CLAUDE.md
