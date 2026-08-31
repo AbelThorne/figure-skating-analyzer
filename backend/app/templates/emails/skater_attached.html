@@ -1,0 +1,10 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 16px;">Patineur rattaché</h2>
+<p>Bonjour {{ display_name }},</p>
+<p>Votre demande a été validée. Vous suivez désormais également les résultats de :</p>
+<ul>
+  {% for skater in skaters %}<li>{{ skater }}</li>{% endfor %}
+</ul>
+<p>Vos identifiants de connexion {{ club_name }} restent inchangés.</p>
+{% endblock %}

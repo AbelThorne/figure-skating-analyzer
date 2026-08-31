@@ -9,6 +9,7 @@ import MediansModal from "../components/MediansModal";
 
 const REQUEST_STATUS_LABELS: Record<string, string> = {
   created: "Compte créé",
+  already_linked: "Déjà rattaché",
   pending_admin: "En attente de validation",
   rejected: "Refusée",
   expired: "Expirée",
@@ -1254,6 +1255,11 @@ export default function SettingsPage() {
                     <p className="text-xs text-on-surface-variant">
                       Licences : <span className="font-mono">{req.licence_numbers.join(", ")}</span>
                     </p>
+                    {req.user_id && req.status === "pending_admin" && (
+                      <p className="text-xs text-on-surface-variant mt-0.5">
+                        Rattachement à un compte existant
+                      </p>
+                    )}
                   </div>
                   <span className="text-xs font-semibold text-on-surface-variant">
                     {REQUEST_STATUS_LABELS[req.status] ?? req.status}

@@ -26,3 +26,8 @@ login_limiter = LoginRateLimiter(max_attempts=5, window_seconds=60.0)
 # Formulaire public de demande de compte : plus strict que le login, il est
 # ouvert à tous et permettrait sinon d'énumérer les licences du club.
 account_request_limiter = LoginRateLimiter(max_attempts=3, window_seconds=3600.0)
+
+# Rattachement d'un patineur par un compte déjà connecté : le compte est
+# authentifié, mais sans plafond il pourrait tester les licences du club une
+# à une jusqu'à trouver une date de naissance valide.
+skater_attach_limiter = LoginRateLimiter(max_attempts=5, window_seconds=3600.0)

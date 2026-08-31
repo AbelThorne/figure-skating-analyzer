@@ -400,6 +400,18 @@ export interface MySkater {
   club: string;
 }
 
+export type AttachSkaterStatus =
+  | "created"
+  | "already_linked"
+  | "pending_admin"
+  | "rejected";
+
+export interface AttachSkaterResponse {
+  status: AttachSkaterStatus;
+  detail: string;
+  skater: { id: number; first_name: string; last_name: string } | null;
+}
+
 export interface AllowedDomainRecord {
   id: string;
   domain: string;
@@ -977,6 +989,11 @@ export const api = {
 
   me: {
     skaters: (): Promise<MySkater[]> => request<MySkater[]>("/me/skaters"),
+    attachSkater: (payload: { licence_number: string; birth_date: string }) =>
+      request<AttachSkaterResponse>("/me/skaters/attach", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      }),
     notifications: {
       list: (unread?: boolean) => {
         const qs = unread !== undefined ? `?unread=${unread}` : "";

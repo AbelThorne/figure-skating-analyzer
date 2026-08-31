@@ -133,21 +133,34 @@ async def approve_account_request(
     existing = (
         await session.execute(select(User).where(User.email == req.email))
     ).scalar_one_or_none()
-    if existing is not None:
-        return Response(
-            content={"detail": "Un compte existe déjà pour cette adresse."}, status_code=400
-        )
 
-    temp_password = generate_temp_password()
-    user = User(
-        email=req.email,
-        display_name=req.display_name,
-        role="skater",
-        password_hash=hash_password(temp_password),
-        must_change_password=True,
-    )
-    session.add(user)
-    await session.flush()
+    # Une demande portant un `user_id` vient d'un compte déjà connecté qui
+    # rattache un patineur de plus : on lie à ce compte au lieu d'en créer un.
+    is_attach = req.user_id is not None
+    if is_attach:
+        user = await session.get(User, req.user_id)
+        if user is None:
+            return Response(
+                content={"detail": "Le compte à l'origine de la demande n'existe plus."},
+                status_code=400,
+            )
+        temp_password = None
+    else:
+        if existing is not None:
+            return Response(
+                content={"detail": "Un compte existe déjà pour cette adresse."},
+                status_code=400,
+            )
+        temp_password = generate_temp_password()
+        user = User(
+            email=req.email,
+            display_name=req.display_name,
+            role="skater",
+            password_hash=hash_password(temp_password),
+            must_change_password=True,
+        )
+        session.add(user)
+        await session.flush()
 
     linked_names: list[str] = []
     for skater_id in skater_ids:
@@ -156,7 +169,15 @@ async def approve_account_request(
             continue
         if skater.licence_number is None and req.licence_numbers:
             skater.licence_number = req.licence_numbers[0]
-        session.add(UserSkater(user_id=user.id, skater_id=skater.id))
+        already = (
+            await session.execute(
+                select(UserSkater).where(
+                    UserSkater.user_id == user.id, UserSkater.skater_id == skater.id
+                )
+            )
+        ).scalar_one_or_none()
+        if already is None:
+            session.add(UserSkater(user_id=user.id, skater_id=skater.id))
         linked_names.append(skater.display_name)
 
     req.status = "created"
@@ -168,22 +189,36 @@ async def approve_account_request(
     smtp = await get_smtp_config(session)
     if smtp:
         club_name = settings.club_name if settings else "SkateLab"
-        await send_email(
-            to=req.email,
-            subject=f"Votre compte {club_name} est prêt",
-            template_name="account_created.html",
-            context={
-                "club_name": club_name,
-                "display_name": user.display_name,
-                "email": req.email,
-                "temp_password": temp_password,
-                "skaters": linked_names,
-                "failures": [],
-            },
-            smtp_config=smtp,
-        )
+        if is_attach:
+            await send_email(
+                to=req.email,
+                subject=f"Patineur rattaché à votre compte {club_name}",
+                template_name="skater_attached.html",
+                context={
+                    "club_name": club_name,
+                    "display_name": user.display_name,
+                    "skaters": linked_names,
+                },
+                smtp_config=smtp,
+            )
+        else:
+            await send_email(
+                to=req.email,
+                subject=f"Votre compte {club_name} est prêt",
+                template_name="account_created.html",
+                context={
+                    "club_name": club_name,
+                    "display_name": user.display_name,
+                    "email": req.email,
+                    "temp_password": temp_password,
+                    "skaters": linked_names,
+                    "failures": [],
+                },
+                smtp_config=smtp,
+            )
 
-    return Response(content={"detail": "Compte créé", "user_id": user.id}, status_code=200)
+    detail = "Patineur rattaché" if is_attach else "Compte créé"
+    return Response(content={"detail": detail, "user_id": user.id}, status_code=200)
 
 
 router = Router(

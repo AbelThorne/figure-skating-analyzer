@@ -1,15 +1,36 @@
 from __future__ import annotations
 
-from litestar import Router, get, patch, Request
+import logging
+from datetime import datetime, timezone
+
+from litestar import Router, Response, get, patch, post, Request
 from litestar.di import Provide
 from litestar.exceptions import PermissionDeniedException
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.auth.rate_limit import skater_attach_limiter
 from app.database import get_session
 from app.models.user_skater import UserSkater
 from app.models.skater import Skater
 from app.models.user import User
+from app.services.account_request import attach_skater
+
+logger = logging.getLogger(__name__)
+
+# Messages rendus à l'utilisateur : ils ne disent jamais si une licence existe,
+# seulement si le couple licence + naissance qu'il a fourni correspond.
+_ATTACH_MESSAGES = {
+    "created": "Patineur rattaché à votre compte.",
+    "already_linked": "Ce patineur est déjà rattaché à votre compte.",
+    "pending_admin": (
+        "Votre demande a été transmise à un administrateur pour vérification."
+    ),
+    "rejected": (
+        "Aucun patineur de ce club ne correspond au numéro de licence et à la "
+        "date de naissance fournis."
+    ),
+}
 
 
 @get("/skaters")
@@ -39,6 +60,65 @@ async def my_skaters(request: Request, session: AsyncSession) -> list[dict]:
     ]
 
 
+@post("/skaters/attach")
+async def attach_my_skater(request: Request, session: AsyncSession, data: dict) -> Response:
+    """Rattache un patineur supplémentaire au compte connecté.
+
+    Le formulaire public ne sert qu'à la création : ce endpoint est le chemin
+    d'un parent dont un second enfant prend une licence en cours de saison.
+    """
+    state = request.scope.get("state", {})
+    if state.get("user_role") != "skater":
+        raise PermissionDeniedException(
+            "Seuls les comptes patineur gèrent leur liste de patineurs."
+        )
+
+    licence_number = str(data.get("licence_number", "")).strip()
+    birth_date = str(data.get("birth_date", "")).strip()
+    if not licence_number or not birth_date:
+        return Response(
+            content={"detail": "Numéro de licence et date de naissance sont requis."},
+            status_code=400,
+        )
+
+    user = await session.get(User, state["user_id"])
+
+    if not skater_attach_limiter.is_allowed(user.id):
+        return Response(
+            content={"detail": "Trop de tentatives. Réessayez plus tard."},
+            status_code=429,
+        )
+    skater_attach_limiter.record(user.id)
+
+    try:
+        result = await attach_skater(
+            session, user, licence_number, birth_date, datetime.now(timezone.utc)
+        )
+    except Exception:
+        logger.exception("Échec du rattachement d'un patineur pour %s", user.id)
+        return Response(
+            content={"detail": "Le rattachement a échoué. Réessayez plus tard."},
+            status_code=500,
+        )
+
+    return Response(
+        content={
+            "status": result.status,
+            "detail": _ATTACH_MESSAGES.get(result.status, _ATTACH_MESSAGES["rejected"]),
+            "skater": (
+                {
+                    "id": result.skater.id,
+                    "first_name": result.skater.first_name,
+                    "last_name": result.skater.last_name,
+                }
+                if result.status == "created" and result.skater
+                else None
+            ),
+        },
+        status_code=200,
+    )
+
+
 @patch("/preferences")
 async def update_preferences(request: Request, session: AsyncSession, data: dict) -> dict:
     state = request.scope.get("state", {})
@@ -55,6 +135,6 @@ async def update_preferences(request: Request, session: AsyncSession, data: dict
 
 router = Router(
     path="/api/me",
-    route_handlers=[my_skaters, update_preferences],
+    route_handlers=[my_skaters, attach_my_skater, update_preferences],
     dependencies={"session": Provide(get_session)},
 )

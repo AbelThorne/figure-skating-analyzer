@@ -13,6 +13,7 @@ import re
 import secrets
 import string
 import unicodedata
+from dataclasses import dataclass
 from datetime import datetime
 
 from sqlalchemy import select
@@ -272,6 +273,114 @@ async def process_request(
         )
     await _notify_admins(session, request_row, club_name, smtp)
     return request_row
+
+
+@dataclass
+class AttachResult:
+    """Issue d'une demande de rattachement par un utilisateur connecté.
+
+    `status` : created | already_linked | pending_admin | rejected
+    """
+
+    status: str
+    reason: str | None = None
+    skater: Skater | None = None
+
+
+async def attach_skater(
+    session: AsyncSession,
+    user: User,
+    licence_number: str,
+    birth_date: str,
+    now: datetime,
+    *,
+    client=None,
+) -> AttachResult:
+    """Rattache un patineur supplémentaire à un compte `skater` existant.
+
+    Même preuve d'appartenance que le formulaire public (licence + date de
+    naissance + club), pour la même raison : ces deux données réunies sont ce
+    qui distingue un parent d'un curieux. Le compte étant déjà authentifié,
+    rien n'est créé côté utilisateur — seul le lien l'est.
+
+    Ne lève jamais pour un motif métier : l'issue est portée par le `status`.
+    """
+    licence_number = licence_number.strip()
+    birth_date = birth_date.strip()
+
+    request_row = AccountRequest(
+        email=user.email,
+        display_name=user.display_name,
+        licence_numbers=[licence_number],
+        status="rejected",
+        user_id=user.id,
+    )
+    session.add(request_row)
+
+    settings = (await session.execute(select(AppSettings).limit(1))).scalar_one_or_none()
+    smtp = await get_smtp_config(session)
+    club_name = settings.club_name if settings else "SkateLab"
+
+    entries = await ensure_fresh_cache(
+        session, settings.french_ranking_url if settings else None, now, client=client
+    )
+
+    entry, reason = verify_licence(entries, licence_number, birth_date)
+    if entry is None:
+        request_row.reject_reason = _REJECT_LABELS.get(reason, reason)
+        request_row.resolved_at = now
+        await session.commit()
+        return AttachResult(status="rejected", reason=reason)
+
+    if settings is None or not is_club_member(entry, settings):
+        request_row.reject_reason = _REJECT_LABELS["hors_club"]
+        request_row.resolved_at = now
+        await session.commit()
+        return AttachResult(status="rejected", reason="hors_club")
+
+    skater, mode = await resolve_skater(session, entry)
+
+    # Un match approchant lierait un homonyme : c'est à un admin de trancher.
+    if mode == "ambiguous":
+        request_row.status = "pending_admin"
+        await session.commit()
+        await _notify_admins(session, request_row, club_name, smtp)
+        return AttachResult(status="pending_admin", skater=skater)
+
+    if skater is None:
+        skater = Skater(
+            first_name=entry.first_name,
+            last_name=entry.last_name,
+            club=entry.club_name_raw,
+            birth_year=int(entry.birth_date[:4]) if entry.birth_date else None,
+            licence_number=entry.licence_number,
+            manual_create=True,
+        )
+        session.add(skater)
+        await session.flush()
+    elif skater.licence_number is None:
+        skater.licence_number = entry.licence_number
+
+    already = (
+        await session.execute(
+            select(UserSkater).where(
+                UserSkater.user_id == user.id, UserSkater.skater_id == skater.id
+            )
+        )
+    ).scalar_one_or_none()
+    if already is not None:
+        request_row.status = "already_linked"
+        request_row.resolved_at = now
+        await session.commit()
+        return AttachResult(status="already_linked", skater=skater)
+
+    session.add(UserSkater(user_id=user.id, skater_id=skater.id))
+    request_row.status = "created"
+    request_row.resolved_at = now
+    await session.commit()
+
+    await _notify_admins(session, request_row, club_name, smtp)
+    return AttachResult(status="created", skater=skater)
 
 
 async def _notify_admins(
