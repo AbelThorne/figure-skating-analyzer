@@ -13,11 +13,13 @@ NEUTRAL = {"detail": "Si les informations fournies sont valides, vous recevrez u
 
 @pytest.fixture(autouse=True)
 def _reset_limiter():
-    from app.auth.rate_limit import account_request_limiter
+    from app.auth.rate_limit import account_request_limiter, login_limiter
 
-    account_request_limiter._attempts.clear()
+    for limiter in (account_request_limiter, login_limiter):
+        limiter._attempts.clear()
     yield
-    account_request_limiter._attempts.clear()
+    for limiter in (account_request_limiter, login_limiter):
+        limiter._attempts.clear()
 
 
 async def _seed(db_session):
@@ -101,6 +103,10 @@ async def test_limite_le_nombre_de_demandes(client, db_session):
 
 
 async def test_login_refuse_un_mot_de_passe_temporaire_perime(client, db_session):
+    # `id` explicite : l'app ASGI est réutilisée entre les tests et la session
+    # que voient les handlers garde ses objets en identity map
+    # (expire_on_commit=False). Deux demandes portant la même clé primaire se
+    # masqueraient l'une l'autre d'un test à l'autre.
     from app.auth.passwords import hash_password
 
     user = User(
@@ -114,6 +120,7 @@ async def test_login_refuse_un_mot_de_passe_temporaire_perime(client, db_session
     await db_session.flush()
     db_session.add(
         AccountRequest(
+            id=901,
             email="perime@exemple.fr",
             display_name="Périmé",
             licence_numbers=["1"],
@@ -151,6 +158,7 @@ async def test_login_accepte_un_mot_de_passe_temporaire_recent(client, db_sessio
     await db_session.flush()
     db_session.add(
         AccountRequest(
+            id=902,
             email="frais@exemple.fr",
             display_name="Frais",
             licence_numbers=["1"],
@@ -165,3 +173,94 @@ async def test_login_accepte_un_mot_de_passe_temporaire_recent(client, db_sessio
         "/api/auth/login", json={"email": "frais@exemple.fr", "password": "Temporaire123"}
     )
     assert resp.status_code == 200
+
+
+async def test_liste_admin_des_demandes(client, db_session, admin_token):
+    await _seed(db_session)
+    db_session.add(
+        AccountRequest(
+            email="parent@exemple.fr",
+            display_name="Marie",
+            licence_numbers=["123456"],
+            status="pending_admin",
+        )
+    )
+    await db_session.commit()
+
+    resp = await client.get(
+        "/api/admin/account-requests", headers={"Authorization": f"Bearer {admin_token}"}
+    )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert len(body) == 1
+    assert body[0]["status"] == "pending_admin"
+
+
+async def test_liste_admin_refusee_aux_non_admins(client, db_session, reader_token):
+    await _seed(db_session)
+    resp = await client.get(
+        "/api/admin/account-requests", headers={"Authorization": f"Bearer {reader_token}"}
+    )
+    assert resp.status_code in (401, 403)
+
+
+async def test_approbation_cree_le_compte_et_les_liens(client, db_session, admin_token):
+    from app.models.skater import Skater
+    from app.models.user_skater import UserSkater
+
+    await _seed(db_session)
+    skater = Skater(first_name="Léa", last_name="DUPOND")
+    db_session.add(skater)
+    await db_session.flush()
+    req = AccountRequest(
+        email="parent@exemple.fr",
+        display_name="Marie DUPONT",
+        licence_numbers=["123456"],
+        status="pending_admin",
+    )
+    db_session.add(req)
+    await db_session.commit()
+
+    resp = await client.post(
+        f"/api/admin/account-requests/{req.id}/approve",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"skater_ids": [skater.id]},
+    )
+    assert resp.status_code == 200
+
+    user = (
+        await db_session.execute(select(User).where(User.email == "parent@exemple.fr"))
+    ).scalar_one()
+    assert user.role == "skater"
+    assert user.must_change_password is True
+
+    links = (
+        await db_session.execute(select(UserSkater).where(UserSkater.user_id == user.id))
+    ).scalars().all()
+    assert len(links) == 1
+
+
+async def test_approbation_refuse_une_demande_deja_resolue(client, db_session, admin_token):
+    await _seed(db_session)
+    req = AccountRequest(
+        email="parent@exemple.fr",
+        display_name="Marie",
+        licence_numbers=["1"],
+        status="created",
+    )
+    db_session.add(req)
+    await db_session.commit()
+
+    resp = await client.post(
+        f"/api/admin/account-requests/{req.id}/approve",
+        headers={"Authorization": f"Bearer {admin_token}"},
+        json={"skater_ids": []},
+    )
+    assert resp.status_code == 400
+
+
+async def test_le_front_sait_si_le_formulaire_est_actif(client, db_session):
+    await _seed(db_session)
+    resp = await client.get("/api/config/account-requests-enabled")
+    assert resp.status_code == 200
+    assert resp.json() == {"enabled": True}

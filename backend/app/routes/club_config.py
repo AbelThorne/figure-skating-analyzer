@@ -187,12 +187,28 @@ async def test_smtp(data: dict, request: Request, session: AsyncSession) -> Resp
         return Response(content={"success": False, "message": "Échec de l'envoi — vérifiez les paramètres SMTP"}, status_code=200)
 
 
+@get("/account-requests-enabled")
+async def account_requests_enabled(session: AsyncSession) -> dict:
+    """Public : dit au front s'il doit afficher le lien de demande de compte."""
+    result = await session.execute(select(AppSettings).limit(1))
+    settings = result.scalar_one_or_none()
+    return {"enabled": bool(settings and settings.account_requests_enabled)}
+
+
 def _ext(name: str) -> str:
     return "." + name.rsplit(".", 1)[-1] if "." in name else ".png"
 
 
 router = Router(
     path="/api/config",
-    route_handlers=[get_config, update_config, upload_logo, get_smtp_settings, update_smtp_settings, test_smtp],
+    route_handlers=[
+        get_config,
+        update_config,
+        upload_logo,
+        get_smtp_settings,
+        update_smtp_settings,
+        test_smtp,
+        account_requests_enabled,
+    ],
     dependencies={"session": Provide(get_session)},
 )
