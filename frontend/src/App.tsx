@@ -15,6 +15,7 @@ import SkaterAnalyticsPage from "./pages/SkaterAnalyticsPage";
 import StatsPage from "./pages/StatsPage";
 import ClubCompetitionPage from "./pages/ClubCompetitionPage";
 import LoginPage from "./pages/LoginPage";
+import RequestAccountPage from "./pages/RequestAccountPage";
 import SetupPage from "./pages/SetupPage";
 import SettingsPage from "./pages/SettingsPage";
 import ProfilePage from "./pages/ProfilePage";
@@ -402,6 +403,7 @@ export default function App() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/request-account" element={<RequestAccountPage />} />
       <Route
         path="/setup"
         element={
