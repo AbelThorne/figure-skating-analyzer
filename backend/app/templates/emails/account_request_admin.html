@@ -1,0 +1,10 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 16px;">Demande de compte — {{ status }}</h2>
+<p><strong>Demandeur :</strong> {{ display_name }} ({{ email }})</p>
+<p><strong>Licences :</strong> {{ licences | join(", ") }}</p>
+{% if reject_reason %}<p><strong>Motifs :</strong> {{ reject_reason }}</p>{% endif %}
+{% if status == "pending_admin" %}
+<p>Cette demande attend une validation manuelle : un patineur approchant existe déjà, une création automatique risquerait de créer un doublon.</p>
+{% endif %}
+{% endblock %}

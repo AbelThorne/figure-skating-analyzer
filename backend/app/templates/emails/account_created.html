@@ -1,0 +1,19 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 16px;">Votre compte est prêt</h2>
+<p>Bonjour {{ display_name }},</p>
+<p>Votre compte {{ club_name }} a été créé. Vous pouvez suivre les résultats de :</p>
+<ul>
+  {% for skater in skaters %}<li>{{ skater }}</li>{% endfor %}
+</ul>
+<p><strong>Identifiant :</strong> {{ email }}<br>
+<strong>Mot de passe temporaire :</strong> <code style="font-family: monospace; background: #f1f1f1; padding: 2px 6px; border-radius: 4px;">{{ temp_password }}</code></p>
+<p>Ce mot de passe est valable <strong>7 jours</strong> et devra être changé à votre première connexion.</p>
+{% if failures %}
+<p style="color: #ba1a1a;"><strong>Licences non rattachées :</strong></p>
+<ul style="color: #ba1a1a;">
+  {% for failure in failures %}<li>{{ failure }}</li>{% endfor %}
+</ul>
+<p>Vous pouvez refaire une demande pour ces patineurs après avoir vérifié les informations saisies.</p>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,7 @@
+{% extends "base_email.html" %}
+{% block content %}
+<h2 style="font-family: Manrope, sans-serif; font-size: 18px; margin: 0 0 16px;">Demande de compte</h2>
+<p>Bonjour,</p>
+<p>Votre demande de compte {{ club_name }} n'a pas pu aboutir : aucune des licences fournies n'a pu être rattachée à un patineur du club.</p>
+<p>Vérifiez le numéro de licence et la date de naissance saisis, puis refaites une demande. Si le problème persiste, contactez le club.</p>
+{% endblock %}
