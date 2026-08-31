@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { api, type AttachSkaterResponse } from "../api/client";
 
 /** `request` lève « 429 Too Many Requests: {"detail": "..."} » : on n'affiche
@@ -116,7 +116,10 @@ function AddSkaterForm({ onDone }: { onDone: () => void }) {
 
 export default function MySkatersPage() {
   const queryClient = useQueryClient();
-  const [showAdd, setShowAdd] = useState(false);
+  // `?ajouter=1` : on arrive par le lien « Ajouter un patineur » de la nav,
+  // le formulaire est donc déjà ce qu'on venait chercher.
+  const [searchParams] = useSearchParams();
+  const [showAdd, setShowAdd] = useState(searchParams.get("ajouter") === "1");
   const { data: skaters, isLoading } = useQuery({
     queryKey: ["me", "skaters"],
     queryFn: api.me.skaters,

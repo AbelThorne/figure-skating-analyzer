@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, NavLink, Link, useLocation, Navigate } from "react-router-dom";
+import { Routes, Route, NavLink, Link, useLocation, Navigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { api } from "./api/client";
 import { useAuth } from "./auth/AuthContext";
@@ -56,10 +56,17 @@ function SkaterNav({ closeSidebar, collapsed }: { closeSidebar: () => void; coll
     queryFn: api.me.skaters,
   });
 
-  const label = skaters && skaters.length === 1 ? "MON PATINEUR" : "MES PATINEURS";
-  const to = skaters && skaters.length === 1
-    ? `/patineurs/${skaters[0].id}/analyse`
-    : "/mes-patineurs";
+  // Avec un seul patineur, la nav mène droit à sa page : « Mes patineurs »
+  // devient alors inatteignable, et avec elle le rattachement d'un patineur
+  // supplémentaire. D'où le second lien ci-dessous dans ce cas précis.
+  const single = skaters && skaters.length === 1;
+  const label = single ? "MON PATINEUR" : "MES PATINEURS";
+  const to = single ? `/patineurs/${skaters[0].id}/analyse` : "/mes-patineurs";
+
+  const linkCls = ({ isActive }: { isActive: boolean }) =>
+    isActive
+      ? `bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 py-3 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
+      : `text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 py-3 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`;
 
   return (
     <nav className="flex-1 py-2">
@@ -67,15 +74,26 @@ function SkaterNav({ closeSidebar, collapsed }: { closeSidebar: () => void; coll
         to={to}
         onClick={closeSidebar}
         title={collapsed ? label : undefined}
-        className={({ isActive }) =>
-          isActive
-            ? `bg-white text-primary shadow-sm rounded-xl mx-2 my-0.5 py-3 font-bold flex items-center gap-3 ${collapsed ? "justify-center px-0" : "px-4"}`
-            : `text-on-surface-variant hover:bg-surface-container rounded-xl mx-2 my-0.5 py-3 flex items-center gap-3 transition-colors ${collapsed ? "justify-center px-0" : "px-4"}`
-        }
+        className={linkCls}
       >
         <span className="material-symbols-outlined text-xl">ice_skating</span>
         {!collapsed && <span className="text-[11px] font-bold uppercase tracking-wider">{label}</span>}
       </NavLink>
+      {single && (
+        <NavLink
+          to="/mes-patineurs?ajouter=1"
+          onClick={closeSidebar}
+          title={collapsed ? "AJOUTER UN PATINEUR" : undefined}
+          className={linkCls}
+        >
+          <span className="material-symbols-outlined text-xl">person_add</span>
+          {!collapsed && (
+            <span className="text-[11px] font-bold uppercase tracking-wider">
+              AJOUTER UN PATINEUR
+            </span>
+          )}
+        </NavLink>
+      )}
     </nav>
   );
 }
@@ -93,6 +111,25 @@ function SkaterRedirect() {
     : "/mes-patineurs";
 
   return <Navigate to={target} replace />;
+}
+
+/** `/mes-patineurs` avec un seul patineur : la liste n'apporte rien et on
+ * renvoie sur sa page d'analyse — SAUF si l'on vient demander l'ajout d'un
+ * patineur, seul chemin vers ce formulaire dans ce cas. */
+function MySkatersRoute() {
+  const [searchParams] = useSearchParams();
+  const { data: skaters, isLoading } = useQuery({
+    queryKey: ["me", "skaters"],
+    queryFn: api.me.skaters,
+  });
+
+  if (isLoading) return null;
+
+  if (searchParams.get("ajouter") !== "1" && skaters && skaters.length === 1) {
+    return <Navigate to={`/patineurs/${skaters[0].id}/analyse`} replace />;
+  }
+
+  return <MySkatersPage />;
 }
 
 function ScrollToTop() {
@@ -319,7 +356,7 @@ function AuthenticatedLayout() {
             {user?.role === "skater" ? (
               <>
                 <Route path="/patineurs/:id/analyse" element={<SkaterAnalyticsPage />} />
-                <Route path="/mes-patineurs" element={<MySkatersPage />} />
+                <Route path="/mes-patineurs" element={<MySkatersRoute />} />
                 <Route path="/profil" element={<ProfilePage />} />
                 <Route path="*" element={<SkaterRedirect />} />
               </>
