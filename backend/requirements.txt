@@ -7,7 +7,7 @@ beautifulsoup4>=4.12
 cryptography>=36.0
 python-multipart>=0.0.9
 uvicorn[standard]>=0.30
-aiosmtplib>=2.0
+aiosmtplib>=5.1.1
 # dev
 pytest>=8.0
 pytest-asyncio>=1.4.0
