@@ -9,5 +9,5 @@ python-multipart>=0.0.9
 uvicorn[standard]>=0.30
 aiosmtplib>=2.0
 # dev
-pytest>=8.0
+pytest>=9.0.3
 pytest-asyncio>=1.4.0
